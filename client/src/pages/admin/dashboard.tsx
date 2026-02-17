@@ -1,175 +1,167 @@
-import { useQuery } from "@tanstack/react-query";
-import { useVenue } from "@/lib/venue-context";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Building2, Users, CalendarCheck, MessageSquare, LifeBuoy } from "lucide-react";
-import type { Venue, User, ContactMessage, Reservation, SupportTicket } from "@shared/schema";
+import { Link } from "wouter";
+import { 
+  Building2, 
+  CreditCard, 
+  BarChart3, 
+  ChevronRight,
+  Globe,
+  MessageSquare,
+  Phone,
+  Bed,
+  Headset,
+  Download,
+  Volume2,
+  TrendingUp,
+  FileEdit,
+  Search,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { AdminLayout } from "@/components/admin-layout";
+
+const stats = [
+  { label: "Total Clients", value: "47", change: "+3 this month", icon: Building2 },
+  { label: "Active Subscriptions", value: "43", change: "$12,857/mo", icon: CreditCard },
+  { label: "Table Bookings", value: "2,847", change: "+234 this week", icon: BarChart3 },
+  { label: "Room Bookings", value: "156", change: "+18 this week", icon: Bed },
+  { label: "AI Calls Handled", value: "1,293", change: "This month", icon: Phone },
+  { label: "SMS Sent", value: "3,847", change: "+312 this week", icon: MessageSquare },
+  { label: "Widget Voice", value: "179", change: "+47 this week", icon: Volume2 },
+  { label: "Keywords Tracked", value: "342", change: "Across 38 clients", icon: TrendingUp },
+  { label: "Website Changes", value: "23", change: "8 pending review", icon: FileEdit },
+  { label: "Support Tickets", value: "12", change: "3 open", icon: Headset },
+];
+
+const recentClients = [
+  { name: "La Bella Italia", plan: "Complete Solution", status: "Active", date: "Jan 28, 2026" },
+  { name: "The Golden Dragon", plan: "Virtual Concierge", status: "Active", date: "Jan 25, 2026" },
+  { name: "Ocean View Bistro", plan: "Complete Solution", status: "Pending Setup", date: "Jan 24, 2026" },
+  { name: "Mountain Lodge Hotel", plan: "Complete Solution", status: "Active", date: "Jan 20, 2026" },
+];
 
 export default function AdminDashboard() {
-  useVenue();
-
-  const { data: allVenues = [], isLoading: venuesLoading } = useQuery<Venue[]>({
-    queryKey: ["/api/venues"],
-  });
-
-  const { data: users = [], isLoading: usersLoading } = useQuery<User[]>({
-    queryKey: ["/api/users"],
-  });
-
-  const { data: reservations = [], isLoading: reservationsLoading } = useQuery<Reservation[]>({
-    queryKey: ["/api/admin/reservations"],
-  });
-
-  const { data: contactMessages = [], isLoading: messagesLoading } = useQuery<ContactMessage[]>({
-    queryKey: ["/api/contact-messages"],
-  });
-
-  const { data: tickets = [], isLoading: ticketsLoading } = useQuery<SupportTicket[]>({
-    queryKey: ["/api/admin/support-tickets"],
-  });
-
-  const isLoading = venuesLoading || usersLoading || messagesLoading || reservationsLoading || ticketsLoading;
-
-  const venueMap = new Map(allVenues.map((v) => [v.id, v]));
-
-  const stats = [
-    { title: "Total Venues", value: allVenues.length, icon: Building2, testId: "stat-total-venues" },
-    { title: "Total Users", value: users.length, icon: Users, testId: "stat-total-users" },
-    { title: "Reservations", value: reservations.length, icon: CalendarCheck, testId: "stat-reservations" },
-    { title: "Contact Messages", value: contactMessages.length, icon: MessageSquare, testId: "stat-contact-messages" },
-    { title: "Support Tickets", value: tickets.length, icon: LifeBuoy, testId: "stat-support-tickets" },
-  ];
-
-  const recentReservations = reservations.slice(0, 5);
-  const recentTickets = tickets.slice(0, 5);
-
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-semibold" data-testid="page-title-dashboard">
-        Admin Dashboard
-      </h1>
+    <AdminLayout>
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <p className="text-muted-foreground">Platform overview and management</p>
+      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5 mb-6">
         {stats.map((stat) => (
-          <Card key={stat.testId} data-testid={stat.testId}>
-            <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
+          <Card key={stat.label}>
+            <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                {stat.title}
+                {stat.label}
               </CardTitle>
               <stat.icon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              {isLoading ? (
-                <Skeleton className="h-8 w-20" />
-              ) : (
-                <div className="text-2xl font-bold" data-testid={`${stat.testId}-value`}>
-                  {stat.value}
-                </div>
-              )}
+              <div className="text-2xl font-bold">{stat.value}</div>
+              <p className="text-xs text-muted-foreground">{stat.change}</p>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Recent Reservations</CardTitle>
+            <CardTitle>Recent Clients</CardTitle>
+            <CardDescription>Latest signups and their status</CardDescription>
           </CardHeader>
           <CardContent>
-            {reservationsLoading ? (
-              <div className="space-y-3">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <Skeleton key={i} className="h-10 w-full" />
-                ))}
-              </div>
-            ) : recentReservations.length === 0 ? (
-              <p className="text-muted-foreground text-center py-8" data-testid="empty-recent-reservations">
-                No recent reservations.
-              </p>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Guest</TableHead>
-                    <TableHead>Venue</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {recentReservations.map((r) => (
-                    <TableRow key={r.id} data-testid={`row-recent-reservation-${r.id}`}>
-                      <TableCell className="font-medium">{r.guestName}</TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {venueMap.get(r.venueId)?.name || r.venueId}
-                      </TableCell>
-                      <TableCell className="text-muted-foreground">{r.date}</TableCell>
-                      <TableCell>
-                        <Badge variant={r.status === "confirmed" ? "default" : "outline"}>
-                          {r.status}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
+            <div className="space-y-4">
+              {recentClients.map((client) => (
+                <div key={client.name} className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">{client.name}</p>
+                    <p className="text-sm text-muted-foreground">{client.plan}</p>
+                  </div>
+                  <div className="text-right">
+                    <span className={`text-xs px-2 py-1 rounded-full ${
+                      client.status === "Active" 
+                        ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300" 
+                        : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300"
+                    }`}>
+                      {client.status}
+                    </span>
+                    <p className="text-xs text-muted-foreground mt-1">{client.date}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <Link href="/admin/clients">
+              <Button variant="ghost" className="w-full mt-4" data-testid="button-view-all-clients">
+                View All Clients <ChevronRight className="h-4 w-4 ml-1" />
+              </Button>
+            </Link>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Recent Support Tickets</CardTitle>
+            <CardTitle>Quick Actions</CardTitle>
+            <CardDescription>Common administrative tasks</CardDescription>
           </CardHeader>
-          <CardContent>
-            {ticketsLoading ? (
-              <div className="space-y-3">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <Skeleton key={i} className="h-10 w-full" />
-                ))}
-              </div>
-            ) : recentTickets.length === 0 ? (
-              <p className="text-muted-foreground text-center py-8" data-testid="empty-recent-tickets">
-                No recent tickets.
-              </p>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Subject</TableHead>
-                    <TableHead>Venue</TableHead>
-                    <TableHead>Priority</TableHead>
-                    <TableHead>Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {recentTickets.map((t) => (
-                    <TableRow key={t.id} data-testid={`row-recent-ticket-${t.id}`}>
-                      <TableCell className="font-medium">{t.subject}</TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {venueMap.get(t.venueId)?.name || t.venueId}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={t.priority === "high" || t.priority === "urgent" ? "destructive" : "secondary"}>
-                          {t.priority}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={t.status === "resolved" ? "default" : "outline"}>
-                          {t.status}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
+          <CardContent className="space-y-2">
+            <Link href="/admin/clients">
+              <Button variant="outline" className="w-full justify-start" data-testid="button-add-client">
+                <Building2 className="h-4 w-4 mr-2" />
+                Add New Client
+              </Button>
+            </Link>
+            <Link href="/admin/websites">
+              <Button variant="outline" className="w-full justify-start" data-testid="button-create-website">
+                <Globe className="h-4 w-4 mr-2" />
+                Create Website
+              </Button>
+            </Link>
+            <Link href="/admin/website-changes">
+              <Button variant="outline" className="w-full justify-start" data-testid="button-review-changes">
+                <FileEdit className="h-4 w-4 mr-2" />
+                Review Website Changes
+              </Button>
+            </Link>
+            <Link href="/admin/widgets">
+              <Button variant="outline" className="w-full justify-start" data-testid="button-configure-widget">
+                <MessageSquare className="h-4 w-4 mr-2" />
+                Configure Widget
+              </Button>
+            </Link>
+            <Link href="/admin/seo">
+              <Button variant="outline" className="w-full justify-start" data-testid="button-seo-rankings">
+                <TrendingUp className="h-4 w-4 mr-2" />
+                SEO & Rankings
+              </Button>
+            </Link>
+            <Link href="/admin/billing">
+              <Button variant="outline" className="w-full justify-start" data-testid="button-view-billing">
+                <CreditCard className="h-4 w-4 mr-2" />
+                View Billing Reports
+              </Button>
+            </Link>
+            <Link href="/admin/twilio">
+              <Button variant="outline" className="w-full justify-start" data-testid="button-manage-twilio">
+                <Phone className="h-4 w-4 mr-2" />
+                Twilio Management
+              </Button>
+            </Link>
+            <Link href="/admin/support">
+              <Button variant="outline" className="w-full justify-start" data-testid="button-view-support">
+                <Headset className="h-4 w-4 mr-2" />
+                Support Tickets
+              </Button>
+            </Link>
+            <Link href="/admin/export-data">
+              <Button variant="outline" className="w-full justify-start" data-testid="button-export-data">
+                <Download className="h-4 w-4 mr-2" />
+                Export Data
+              </Button>
+            </Link>
           </CardContent>
         </Card>
       </div>
-    </div>
+    </AdminLayout>
   );
 }

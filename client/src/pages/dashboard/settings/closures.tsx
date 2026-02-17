@@ -1,162 +1,169 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useVenue } from "@/lib/venue-context";
-import { apiRequest, queryClient } from "@/lib/queryClient";
-import { useToast } from "@/hooks/use-toast";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+import { useParams } from "wouter";
+import { CalendarX, Plus, Trash2 } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { Switch } from "@/components/ui/switch";
-import { Plus, Trash2, XCircle } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import { DashboardLayout } from "@/components/dashboard-layout";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 
-const closureFormSchema = z.object({
-  date: z.string().min(1, "Date is required"),
-  reason: z.string().optional(),
-  allDay: z.boolean(),
-});
-
-type ClosureFormValues = z.infer<typeof closureFormSchema>;
+interface Closure {
+  id: number;
+  venueId: string;
+  date: string;
+  reason: string | null;
+  createdAt: string;
+}
 
 export default function SettingsClosures() {
-  const { selectedVenue } = useVenue();
-  const venueId = selectedVenue?.id;
+  const { venueId } = useParams<{ venueId: string }>();
+  const [newDate, setNewDate] = useState("");
+  const [newReason, setNewReason] = useState("");
   const { toast } = useToast();
-  const [dialogOpen, setDialogOpen] = useState(false);
 
-  const form = useForm<ClosureFormValues>({
-    resolver: zodResolver(closureFormSchema),
-    defaultValues: { date: "", reason: "", allDay: true },
+  useEffect(() => {
+    document.title = "Closures - Resto Dashboard";
+  }, []);
+
+  const { data: closures = [], isLoading } = useQuery<Closure[]>({
+    queryKey: ["/api/venues", venueId, "closures"],
   });
 
-  const { data: closures = [], isLoading } = useQuery<any[]>({
-    queryKey: [`/api/closures?venueId=${venueId}`],
-    enabled: !!venueId,
-  });
-
-  const createMutation = useMutation({
-    mutationFn: async (values: ClosureFormValues) => {
-      await apiRequest("POST", "/api/closures", {
-        venueId,
-        date: values.date,
-        reason: values.reason || undefined,
-        allDay: values.allDay,
+  const addMutation = useMutation({
+    mutationFn: (data: { date: string; reason: string }) =>
+      apiRequest("POST", `/api/venues/${venueId}/closures`, { ...data, venueId }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "closures"] });
+      setNewDate("");
+      setNewReason("");
+      toast({
+        title: "Closure added",
+        description: "Your venue will be marked as closed on the selected date.",
       });
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/closures?venueId=${venueId}`] });
-      setDialogOpen(false);
-      form.reset();
-      toast({ title: "Closure added" });
-    },
-    onError: (err: Error) => {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
+    onError: () => {
+      toast({ title: "Error", description: "Failed to add closure.", variant: "destructive" });
     },
   });
 
   const deleteMutation = useMutation({
-    mutationFn: async (id: number) => {
-      await apiRequest("DELETE", `/api/closures/${id}`);
-    },
+    mutationFn: (id: number) => apiRequest("DELETE", `/api/closures/${id}`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/closures?venueId=${venueId}`] });
+      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "closures"] });
       toast({ title: "Closure removed" });
-    },
-    onError: (err: Error) => {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
     },
   });
 
-  if (!venueId) {
-    return <div className="p-6 text-muted-foreground" data-testid="no-venue-message">Please select a venue from the sidebar to manage closures.</div>;
-  }
+  const handleAddClosure = () => {
+    if (!newDate) return;
+    addMutation.mutate({ date: newDate, reason: newReason || "Closed" });
+  };
 
-  if (isLoading) {
-    return (
-      <div className="p-6 space-y-6">
-        <h1 className="text-2xl font-semibold">Closures</h1>
-        <Card><CardContent className="p-6"><Skeleton className="h-48 w-full" /></CardContent></Card>
-      </div>
-    );
-  }
+  const handleRemoveClosure = (id: number) => {
+    deleteMutation.mutate(id);
+  };
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between gap-4 flex-wrap">
-        <h1 className="text-2xl font-semibold" data-testid="page-title">Closures</h1>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button data-testid="button-add-closure"><Plus className="h-4 w-4 mr-2" />Add Closure</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader><DialogTitle>Add Closure</DialogTitle></DialogHeader>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit((v) => createMutation.mutate(v))} className="space-y-4">
-                <FormField control={form.control} name="date" render={({ field }) => (
-                  <FormItem><FormLabel>Date</FormLabel><FormControl><Input data-testid="input-closure-date" type="date" {...field} /></FormControl><FormMessage /></FormItem>
-                )} />
-                <FormField control={form.control} name="reason" render={({ field }) => (
-                  <FormItem><FormLabel>Reason</FormLabel><FormControl><Input data-testid="input-closure-reason" {...field} /></FormControl><FormMessage /></FormItem>
-                )} />
-                <FormField control={form.control} name="allDay" render={({ field }) => (
-                  <FormItem className="flex items-center gap-2 space-y-0">
-                    <FormLabel>All Day</FormLabel>
-                    <FormControl>
-                      <Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-all-day" />
-                    </FormControl>
-                  </FormItem>
-                )} />
-                <Button type="submit" className="w-full" disabled={createMutation.isPending} data-testid="button-submit-closure">
-                  {createMutation.isPending ? "Adding..." : "Add Closure"}
-                </Button>
-              </form>
-            </Form>
-          </DialogContent>
-        </Dialog>
-      </div>
+    <DashboardLayout>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold">Closures</h1>
+          <p className="text-muted-foreground">Mark dates when your venue is closed</p>
+        </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2"><XCircle className="h-5 w-5" />Scheduled Closures</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {closures.length === 0 ? (
-            <p className="text-muted-foreground" data-testid="empty-state">No closures scheduled.</p>
-          ) : (
-            <Table data-testid="closures-table">
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Reason</TableHead>
-                  <TableHead>All Day</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {closures.map((c: any) => (
-                  <TableRow key={c.id} data-testid={`closure-row-${c.id}`}>
-                    <TableCell>{c.date}</TableCell>
-                    <TableCell>{c.reason || "-"}</TableCell>
-                    <TableCell><Badge variant={c.allDay ? "default" : "secondary"}>{c.allDay ? "Yes" : "No"}</Badge></TableCell>
-                    <TableCell>
-                      <Button size="icon" variant="ghost" onClick={() => deleteMutation.mutate(c.id)} data-testid={`button-delete-closure-${c.id}`}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Plus className="w-5 h-5" />
+              Add Closure
+            </CardTitle>
+            <CardDescription>
+              The booking system will block reservations on these dates.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-4 items-end">
+              <div className="space-y-2">
+                <Label>Date</Label>
+                <Input
+                  type="date"
+                  value={newDate}
+                  onChange={(e) => setNewDate(e.target.value)}
+                  className="w-48"
+                  data-testid="input-closure-date"
+                />
+              </div>
+              <div className="space-y-2 flex-1 min-w-48">
+                <Label>Reason (optional)</Label>
+                <Input
+                  placeholder="e.g., Holiday, Private Event"
+                  value={newReason}
+                  onChange={(e) => setNewReason(e.target.value)}
+                  data-testid="input-closure-reason"
+                />
+              </div>
+              <Button onClick={handleAddClosure} className="gap-2" disabled={addMutation.isPending} data-testid="button-add-closure">
+                <Plus className="w-4 h-4" />
+                Add Closure
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <CalendarX className="w-5 h-5" />
+              Scheduled Closures
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {isLoading ? (
+              <p className="text-muted-foreground text-center py-8">Loading...</p>
+            ) : closures.length === 0 ? (
+              <p className="text-muted-foreground text-center py-8">
+                No closures scheduled. Add a closure above.
+              </p>
+            ) : (
+              <div className="space-y-3">
+                {closures.map((closure) => (
+                  <div 
+                    key={closure.id} 
+                    className="flex items-center justify-between p-3 sm:p-4 rounded-lg border gap-3"
+                    data-testid={`closure-${closure.id}`}
+                  >
+                    <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+                      <div className="text-center min-w-[60px] sm:min-w-20 flex-shrink-0">
+                        <p className="font-bold text-sm sm:text-base">
+                          {new Date(closure.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(closure.date).getFullYear()}
+                        </p>
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-medium text-sm sm:text-base truncate">{closure.reason}</p>
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-destructive hover:text-destructive flex-shrink-0"
+                      onClick={() => handleRemoveClosure(closure.id)}
+                      data-testid={`button-remove-${closure.id}`}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
                 ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </DashboardLayout>
   );
 }

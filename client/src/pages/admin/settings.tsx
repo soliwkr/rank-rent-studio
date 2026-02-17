@@ -1,135 +1,531 @@
-import { useQuery } from "@tanstack/react-query";
-import { useVenue } from "@/lib/venue-context";
-import { useToast } from "@/hooks/use-toast";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Save, Clock, Calendar, Users, LayoutGrid, Code, Phone, Brain, CreditCard, TrendingUp, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { Settings } from "lucide-react";
-
-interface AdminSetting {
-  id: number;
-  key: string;
-  value: unknown;
-  updatedAt: string | null;
-}
-
-const platformFormSchema = z.object({
-  platformName: z.string().min(1, "Platform name is required"),
-  supportEmail: z.string().email("Valid email required"),
-  timezone: z.string().min(1, "Timezone is required"),
-});
-
-type PlatformFormValues = z.infer<typeof platformFormSchema>;
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AdminLayout } from "@/components/admin-layout";
 
 export default function AdminSettings() {
-  useVenue();
-  const { toast } = useToast();
-
-  const { data: settings = [], isLoading } = useQuery<AdminSetting[]>({
-    queryKey: ["/api/admin-settings"],
-  });
-
-  const form = useForm<PlatformFormValues>({
-    resolver: zodResolver(platformFormSchema),
-    defaultValues: { platformName: "IndexFlow", supportEmail: "support@indexflow.com", timezone: "America/New_York" },
-  });
-
-  const handleSave = (data: PlatformFormValues) => {
-    toast({ title: "Settings saved", description: `Platform: ${data.platformName}, Email: ${data.supportEmail}` });
-  };
-
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center gap-2">
-        <Settings className="h-6 w-6" />
-        <h1 className="text-2xl font-semibold" data-testid="page-title-settings">Admin Settings</h1>
+    <AdminLayout>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-2xl font-bold">Settings</h1>
+          <p className="text-muted-foreground">Platform and client configuration</p>
+        </div>
+        <Button data-testid="button-save-settings">
+          <Save className="h-4 w-4 mr-2" />
+          Save Changes
+        </Button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Platform Settings</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSave)} className="space-y-4 max-w-md">
-              <FormField control={form.control} name="platformName" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Platform Name</FormLabel>
-                  <FormControl><Input {...field} data-testid="input-platform-name" /></FormControl>
-                  <FormMessage />
-                </FormItem>
-              )} />
-              <FormField control={form.control} name="supportEmail" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Support Email</FormLabel>
-                  <FormControl><Input {...field} type="email" data-testid="input-support-email" /></FormControl>
-                  <FormMessage />
-                </FormItem>
-              )} />
-              <FormField control={form.control} name="timezone" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Timezone</FormLabel>
-                  <FormControl><Input {...field} data-testid="input-timezone" /></FormControl>
-                  <FormMessage />
-                </FormItem>
-              )} />
-              <Button type="submit" data-testid="button-save-settings">
-                Save Settings
-              </Button>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
+      <Tabs defaultValue="general" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-6">
+          <TabsTrigger value="general" data-testid="tab-general">General</TabsTrigger>
+          <TabsTrigger value="venue" data-testid="tab-venue">Venue Settings</TabsTrigger>
+          <TabsTrigger value="api" data-testid="tab-api">API Keys</TabsTrigger>
+          <TabsTrigger value="seo" data-testid="tab-seo">SEO</TabsTrigger>
+          <TabsTrigger value="ai" data-testid="tab-ai">AI Providers</TabsTrigger>
+          <TabsTrigger value="notifications" data-testid="tab-notifications">Notifications</TabsTrigger>
+        </TabsList>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Current Settings</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <div className="space-y-3">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Skeleton key={i} className="h-10 w-full" />
-              ))}
-            </div>
-          ) : settings.length === 0 ? (
-            <p className="text-muted-foreground text-center py-8" data-testid="empty-state-settings">
-              No settings configured.
-            </p>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Key</TableHead>
-                  <TableHead>Value</TableHead>
-                  <TableHead>Updated</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {settings.map((setting) => (
-                  <TableRow key={setting.id} data-testid={`row-setting-${setting.id}`}>
-                    <TableCell className="font-medium font-mono text-sm">{setting.key}</TableCell>
-                    <TableCell className="text-muted-foreground max-w-md truncate">
-                      {typeof setting.value === "object"
-                        ? JSON.stringify(setting.value)
-                        : String(setting.value ?? "-")}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {setting.updatedAt ? new Date(setting.updatedAt).toLocaleDateString() : "-"}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+        <TabsContent value="general" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Platform Settings</CardTitle>
+              <CardDescription>Basic platform configuration</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-2">
+                <Label htmlFor="company-name">Company Name</Label>
+                <Input id="company-name" defaultValue="Resto.Restaurant" data-testid="input-company-name" />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="support-email">Support Email</Label>
+                <Input id="support-email" defaultValue="support@resto.restaurant" data-testid="input-support-email" />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="support-phone">Support Phone</Label>
+                <Input id="support-phone" defaultValue="+1 (555) 123-4567" data-testid="input-support-phone" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Default Pricing</CardTitle>
+              <CardDescription>Default pricing for new clients</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="complete-setup">Complete Solution - Setup Fee</Label>
+                  <Input id="complete-setup" defaultValue="$499" data-testid="input-complete-setup" />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="complete-monthly">Complete Solution - Monthly</Label>
+                  <Input id="complete-monthly" defaultValue="$299" data-testid="input-complete-monthly" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="widget-setup">Virtual Concierge - Setup Fee</Label>
+                  <Input id="widget-setup" defaultValue="$0" data-testid="input-widget-setup" />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="widget-monthly">Virtual Concierge - Monthly</Label>
+                  <Input id="widget-monthly" defaultValue="$149" data-testid="input-widget-monthly" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="venue" className="space-y-6">
+          <Card>
+            <CardHeader className="flex flex-row items-center gap-2">
+              <Clock className="h-5 w-5 text-muted-foreground" />
+              <div>
+                <CardTitle>Business Hours</CardTitle>
+                <CardDescription>Default business hours for new venues</CardDescription>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Use Default Hours Template</p>
+                  <p className="text-sm text-muted-foreground">Mon-Fri 11am-10pm, Sat-Sun 10am-11pm</p>
+                </div>
+                <Switch defaultChecked data-testid="switch-default-hours" />
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Allow Custom Hours Per Venue</p>
+                  <p className="text-sm text-muted-foreground">Clients can set their own business hours</p>
+                </div>
+                <Switch defaultChecked data-testid="switch-custom-hours" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center gap-2">
+              <Calendar className="h-5 w-5 text-muted-foreground" />
+              <div>
+                <CardTitle>Closures & Holidays</CardTitle>
+                <CardDescription>Default closure settings</CardDescription>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Auto-add Major Holidays</p>
+                  <p className="text-sm text-muted-foreground">Automatically add US holidays as closures</p>
+                </div>
+                <Switch defaultChecked data-testid="switch-auto-holidays" />
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Allow Client Closures</p>
+                  <p className="text-sm text-muted-foreground">Clients can add their own closure dates</p>
+                </div>
+                <Switch defaultChecked data-testid="switch-client-closures" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center gap-2">
+              <LayoutGrid className="h-5 w-5 text-muted-foreground" />
+              <div>
+                <CardTitle>Resources & Tables</CardTitle>
+                <CardDescription>Table and seating configuration</CardDescription>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="default-tables">Default Tables per Venue</Label>
+                  <Input id="default-tables" type="number" defaultValue="15" data-testid="input-default-tables" />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="max-party">Max Party Size</Label>
+                  <Input id="max-party" type="number" defaultValue="12" data-testid="input-max-party" />
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Allow Table Management</p>
+                  <p className="text-sm text-muted-foreground">Clients can configure their own tables/areas</p>
+                </div>
+                <Switch defaultChecked data-testid="switch-table-mgmt" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center gap-2">
+              <Users className="h-5 w-5 text-muted-foreground" />
+              <div>
+                <CardTitle>Team Management</CardTitle>
+                <CardDescription>Staff and team settings</CardDescription>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-2">
+                <Label htmlFor="max-team">Max Team Members per Venue</Label>
+                <Input id="max-team" type="number" defaultValue="10" data-testid="input-max-team" />
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Allow Team Invites</p>
+                  <p className="text-sm text-muted-foreground">Clients can invite their own team members</p>
+                </div>
+                <Switch defaultChecked data-testid="switch-team-invites" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center gap-2">
+              <Code className="h-5 w-5 text-muted-foreground" />
+              <div>
+                <CardTitle>Widget Code</CardTitle>
+                <CardDescription>Embed widget settings</CardDescription>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Allow Widget Customization</p>
+                  <p className="text-sm text-muted-foreground">Clients can customize widget appearance</p>
+                </div>
+                <Switch defaultChecked data-testid="switch-widget-custom" />
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Show "Powered By" Badge</p>
+                  <p className="text-sm text-muted-foreground">Display Resto.Restaurant branding on widget</p>
+                </div>
+                <Switch defaultChecked data-testid="switch-powered-by" />
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="api" className="space-y-6">
+          <Card>
+            <CardHeader className="flex flex-row items-center gap-2">
+              <CreditCard className="h-5 w-5 text-muted-foreground" />
+              <div>
+                <CardTitle>Stripe</CardTitle>
+                <CardDescription>Payment processing configuration</CardDescription>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-2">
+                <Label htmlFor="stripe-pk">Stripe Publishable Key</Label>
+                <Input id="stripe-pk" type="password" defaultValue="pk_live_xxxxx" data-testid="input-stripe-pk" />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="stripe-sk">Stripe Secret Key</Label>
+                <Input id="stripe-sk" type="password" defaultValue="sk_live_xxxxx" data-testid="input-stripe-sk" />
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Allow Client BYOK</p>
+                  <p className="text-sm text-muted-foreground">Clients can use their own Stripe keys</p>
+                </div>
+                <Switch data-testid="switch-stripe-byok" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center gap-2">
+              <Phone className="h-5 w-5 text-muted-foreground" />
+              <div>
+                <CardTitle>Twilio</CardTitle>
+                <CardDescription>Voice and SMS configuration</CardDescription>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-2">
+                <Label htmlFor="twilio-sid">Account SID</Label>
+                <Input id="twilio-sid" type="password" defaultValue="AC_xxxxx" data-testid="input-twilio-sid" />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="twilio-token">Auth Token</Label>
+                <Input id="twilio-token" type="password" defaultValue="xxxxx" data-testid="input-twilio-token" />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="twilio-phone">Default Phone Number</Label>
+                <Input id="twilio-phone" defaultValue="+1 (555) 000-0000" data-testid="input-twilio-phone" />
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Allow Client BYOK</p>
+                  <p className="text-sm text-muted-foreground">Clients can use their own Twilio credentials</p>
+                </div>
+                <Switch defaultChecked data-testid="switch-twilio-byok" />
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="seo" className="space-y-6">
+          <Card>
+            <CardHeader className="flex flex-row items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-muted-foreground" />
+              <div>
+                <CardTitle>DataForSEO</CardTitle>
+                <CardDescription>Rank Tracker API credentials (Resto-managed, shared across all clients)</CardDescription>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-2">
+                <Label htmlFor="dataforseo-login">DataForSEO Login</Label>
+                <Input id="dataforseo-login" type="password" defaultValue="configured" data-testid="input-dataforseo-login" />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="dataforseo-password">DataForSEO Password</Label>
+                <Input id="dataforseo-password" type="password" defaultValue="configured" data-testid="input-dataforseo-password" />
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Enable Rank Tracker for All Clients</p>
+                  <p className="text-sm text-muted-foreground">Allow clients to add keywords and check rankings</p>
+                </div>
+                <Switch defaultChecked data-testid="switch-rank-tracker" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="max-keywords">Max Keywords per Client</Label>
+                  <Input id="max-keywords" type="number" defaultValue="1000" data-testid="input-max-keywords" />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="check-frequency">Check Frequency</Label>
+                  <Input id="check-frequency" defaultValue="Weekly (free)" disabled data-testid="input-check-frequency" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="starter-credits">Free Starter Credits</Label>
+                  <Input id="starter-credits" type="number" defaultValue="5" data-testid="input-starter-credits" />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="credit-keyword-cap">Credit Keyword Cap</Label>
+                  <Input id="credit-keyword-cap" type="number" defaultValue="250" disabled data-testid="input-credit-keyword-cap" />
+                </div>
+              </div>
+              <div className="rounded-md border p-3 bg-muted/50">
+                <p className="text-sm text-muted-foreground">
+                  <span className="font-medium">Credit pricing:</span> $10/5 checks, $40/25 checks (250 keyword cap per credit scan). Free weekly scans cover all keywords up to 1,000. Each client gets 5 free starter credits.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center gap-2">
+              <Search className="h-5 w-5 text-muted-foreground" />
+              <div>
+                <CardTitle>Google Search Console</CardTitle>
+                <CardDescription>OAuth settings for client GSC integration</CardDescription>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Enable GSC for Clients</p>
+                  <p className="text-sm text-muted-foreground">Allow clients to connect their Google Search Console via OAuth</p>
+                </div>
+                <Switch defaultChecked data-testid="switch-gsc-enabled" />
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">AI Search Visibility Tracking</p>
+                  <p className="text-sm text-muted-foreground">Track client mentions in ChatGPT, Perplexity, Claude, and Google AI</p>
+                </div>
+                <Switch defaultChecked data-testid="switch-ai-visibility" />
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="ai" className="space-y-6">
+          <Card>
+            <CardHeader className="flex flex-row items-center gap-2">
+              <Brain className="h-5 w-5 text-muted-foreground" />
+              <div>
+                <CardTitle>OpenAI</CardTitle>
+                <CardDescription>Primary AI provider</CardDescription>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-2">
+                <Label htmlFor="openai-key">API Key</Label>
+                <Input id="openai-key" type="password" defaultValue="sk-xxxxx" data-testid="input-openai-key" />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="openai-model">Default Model</Label>
+                <Input id="openai-model" defaultValue="gpt-4o" data-testid="input-openai-model" />
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Allow Client BYOK</p>
+                  <p className="text-sm text-muted-foreground">Clients can use their own OpenAI keys</p>
+                </div>
+                <Switch defaultChecked data-testid="switch-openai-byok" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Anthropic (Claude)</CardTitle>
+              <CardDescription>Alternative AI provider</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-2">
+                <Label htmlFor="anthropic-key">API Key</Label>
+                <Input id="anthropic-key" type="password" placeholder="sk-ant-xxxxx" data-testid="input-anthropic-key" />
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Allow Client BYOK</p>
+                  <p className="text-sm text-muted-foreground">Clients can use their own Anthropic keys</p>
+                </div>
+                <Switch defaultChecked data-testid="switch-anthropic-byok" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Google AI (Gemini)</CardTitle>
+              <CardDescription>Google AI provider</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-2">
+                <Label htmlFor="google-key">API Key</Label>
+                <Input id="google-key" type="password" placeholder="AIza..." data-testid="input-google-key" />
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Allow Client BYOK</p>
+                  <p className="text-sm text-muted-foreground">Clients can use their own Google AI keys</p>
+                </div>
+                <Switch defaultChecked data-testid="switch-google-byok" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Other AI Providers</CardTitle>
+              <CardDescription>Grok, Mistral, Cohere, Perplexity</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="grok-key">Grok API Key</Label>
+                  <Input id="grok-key" type="password" placeholder="xai-xxxxx" data-testid="input-grok-key" />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="mistral-key">Mistral API Key</Label>
+                  <Input id="mistral-key" type="password" placeholder="xxxxx" data-testid="input-mistral-key" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="cohere-key">Cohere API Key</Label>
+                  <Input id="cohere-key" type="password" placeholder="xxxxx" data-testid="input-cohere-key" />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="perplexity-key">Perplexity API Key</Label>
+                  <Input id="perplexity-key" type="password" placeholder="pplx-xxxxx" data-testid="input-perplexity-key" />
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Allow Client BYOK for All Providers</p>
+                  <p className="text-sm text-muted-foreground">Clients can bring their own keys for any provider</p>
+                </div>
+                <Switch defaultChecked data-testid="switch-all-byok" />
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="notifications" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Admin Notifications</CardTitle>
+              <CardDescription>Configure which notifications you receive</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">New Client Signups</p>
+                  <p className="text-sm text-muted-foreground">Get notified when a new client signs up</p>
+                </div>
+                <Switch defaultChecked data-testid="switch-new-signups" />
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Payment Failures</p>
+                  <p className="text-sm text-muted-foreground">Get notified when a payment fails</p>
+                </div>
+                <Switch defaultChecked data-testid="switch-payment-failures" />
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">High Call Volume</p>
+                  <p className="text-sm text-muted-foreground">Get notified when a client has high call volume</p>
+                </div>
+                <Switch data-testid="switch-high-volume" />
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Website Deployments</p>
+                  <p className="text-sm text-muted-foreground">Get notified when a website is published</p>
+                </div>
+                <Switch defaultChecked data-testid="switch-deployments" />
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Client Support Requests</p>
+                  <p className="text-sm text-muted-foreground">Get notified when clients submit support tickets</p>
+                </div>
+                <Switch defaultChecked data-testid="switch-support" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Email Settings</CardTitle>
+              <CardDescription>Configure email notification delivery</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-2">
+                <Label htmlFor="notification-email">Notification Email</Label>
+                <Input id="notification-email" defaultValue="admin@resto.restaurant" data-testid="input-notification-email" />
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Daily Digest</p>
+                  <p className="text-sm text-muted-foreground">Receive a daily summary instead of individual emails</p>
+                </div>
+                <Switch data-testid="switch-daily-digest" />
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </AdminLayout>
   );
 }

@@ -1,102 +1,64 @@
-import { useState } from "react";
-import { useVenue } from "@/lib/venue-context";
-import { useToast } from "@/hooks/use-toast";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Bell, Check, AlertCircle, Info, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { Bell, Mail, MessageSquare, Globe } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { AdminLayout } from "@/components/admin-layout";
 
-interface NotificationSetting {
-  key: string;
-  label: string;
-  description: string;
-  enabled: boolean;
-}
+const notifications = [
+  { id: 1, type: "success", title: "New Client Signup", message: "Ocean View Bistro has signed up for Complete Solution", time: "2 hours ago", read: false },
+  { id: 2, type: "warning", title: "Payment Failed", message: "Café Parisien subscription payment failed", time: "5 hours ago", read: false },
+  { id: 3, type: "info", title: "Website Published", message: "Mountain Lodge Hotel website is now live", time: "1 day ago", read: true },
+  { id: 4, type: "success", title: "Setup Complete", message: "The Wine Cellar setup has been completed", time: "2 days ago", read: true },
+  { id: 5, type: "info", title: "High Call Volume", message: "La Bella Italia received 50+ AI calls today", time: "3 days ago", read: true },
+];
+
+const getIcon = (type: string) => {
+  switch (type) {
+    case "success": return <CheckCircle className="h-5 w-5 text-green-500" />;
+    case "warning": return <AlertCircle className="h-5 w-5 text-yellow-500" />;
+    default: return <Info className="h-5 w-5 text-blue-500" />;
+  }
+};
 
 export default function AdminNotifications() {
-  useVenue();
-  const { toast } = useToast();
+  return (
+    <AdminLayout>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-2xl font-bold">Notifications</h1>
+          <p className="text-muted-foreground">System alerts and updates</p>
+        </div>
+        <Button variant="outline" data-testid="button-mark-all-read">
+          <Check className="h-4 w-4 mr-2" />
+          Mark All Read
+        </Button>
+      </div>
 
-  const [emailSettings, setEmailSettings] = useState<NotificationSetting[]>([
-    { key: "new_reservation", label: "New Reservation", description: "Receive email when a new reservation is made", enabled: true },
-    { key: "cancelled_reservation", label: "Cancelled Reservation", description: "Receive email when a reservation is cancelled", enabled: true },
-    { key: "new_support_ticket", label: "New Support Ticket", description: "Receive email when a new support ticket is created", enabled: false },
-    { key: "contact_message", label: "Contact Message", description: "Receive email for new contact form submissions", enabled: true },
-  ]);
-
-  const [smsSettings, setSmsSettings] = useState<NotificationSetting[]>([
-    { key: "sms_reservation_confirm", label: "Reservation Confirmation", description: "Send SMS confirmation to guests", enabled: true },
-    { key: "sms_reservation_reminder", label: "Reservation Reminder", description: "Send SMS reminder before reservation", enabled: false },
-    { key: "sms_call_missed", label: "Missed Call Alert", description: "Send SMS alert for missed calls", enabled: false },
-  ]);
-
-  const [webhookSettings, setWebhookSettings] = useState<NotificationSetting[]>([
-    { key: "webhook_reservation", label: "Reservation Webhook", description: "POST to webhook URL on new reservations", enabled: false },
-    { key: "webhook_support", label: "Support Ticket Webhook", description: "POST to webhook URL on new tickets", enabled: false },
-  ]);
-
-  const toggleSetting = (
-    settings: NotificationSetting[],
-    setter: (s: NotificationSetting[]) => void,
-    key: string
-  ) => {
-    setter(settings.map((s) => s.key === key ? { ...s, enabled: !s.enabled } : s));
-  };
-
-  const handleSave = () => {
-    toast({ title: "Preferences saved", description: "Notification preferences updated successfully." });
-  };
-
-  const renderSection = (
-    title: string,
-    icon: typeof Mail,
-    settings: NotificationSetting[],
-    setter: (s: NotificationSetting[]) => void,
-    testIdPrefix: string
-  ) => {
-    const Icon = icon;
-    return (
       <Card>
         <CardHeader>
-          <div className="flex items-center gap-2">
-            <Icon className="h-5 w-5 text-muted-foreground" />
-            <CardTitle>{title}</CardTitle>
-          </div>
+          <CardTitle>Recent Notifications</CardTitle>
+          <CardDescription>Stay updated on platform activity</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {settings.map((setting) => (
-            <div key={setting.key} className="flex items-center justify-between gap-4">
-              <div className="space-y-0.5">
-                <p className="text-sm font-medium" data-testid={`text-${testIdPrefix}-${setting.key}`}>{setting.label}</p>
-                <p className="text-sm text-muted-foreground">{setting.description}</p>
+          {notifications.map((notif) => (
+            <div 
+              key={notif.id} 
+              className={`flex items-start gap-4 p-4 rounded-lg border ${!notif.read ? 'bg-muted/50' : ''}`}
+            >
+              {getIcon(notif.type)}
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <p className="font-medium">{notif.title}</p>
+                  <span className="text-xs text-muted-foreground">{notif.time}</span>
+                </div>
+                <p className="text-sm text-muted-foreground mt-1">{notif.message}</p>
               </div>
-              <Switch
-                checked={setting.enabled}
-                onCheckedChange={() => toggleSetting(settings, setter, setting.key)}
-                data-testid={`switch-${testIdPrefix}-${setting.key}`}
-              />
+              {!notif.read && (
+                <div className="h-2 w-2 rounded-full bg-primary mt-2" />
+              )}
             </div>
           ))}
         </CardContent>
       </Card>
-    );
-  };
-
-  return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between flex-wrap gap-2">
-        <div className="flex items-center gap-2">
-          <Bell className="h-6 w-6" />
-          <h1 className="text-2xl font-semibold" data-testid="page-title-notifications">Notifications</h1>
-        </div>
-        <Button onClick={handleSave} data-testid="button-save-notifications">
-          Save Preferences
-        </Button>
-      </div>
-
-      {renderSection("Email Notifications", Mail, emailSettings, setEmailSettings, "email")}
-      {renderSection("SMS Notifications", MessageSquare, smsSettings, setSmsSettings, "sms")}
-      {renderSection("Webhook Notifications", Globe, webhookSettings, setWebhookSettings, "webhook")}
-    </div>
+    </AdminLayout>
   );
 }

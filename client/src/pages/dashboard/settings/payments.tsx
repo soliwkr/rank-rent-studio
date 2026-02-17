@@ -1,129 +1,276 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useVenue } from "@/lib/venue-context";
+import { useParams } from "wouter";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DashboardLayout } from "@/components/dashboard-layout";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { Switch } from "@/components/ui/switch";
-import { CreditCard, Save } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CreditCard, CheckCircle, AlertCircle, DollarSign, Shield } from "lucide-react";
+import { SiStripe, SiPaypal } from "react-icons/si";
 
-const paymentFormSchema = z.object({
-  stripePublishableKey: z.string().optional(),
-  stripeSecretKey: z.string().optional(),
-  depositAmount: z.string().optional(),
-  depositEnabled: z.boolean(),
-});
-
-type PaymentFormValues = z.infer<typeof paymentFormSchema>;
+interface PaymentSettings {
+  id: number;
+  venueId: string;
+  stripePublishableKey: string | null;
+  stripeSecretKey: string | null;
+  stripeWebhookSecret: string | null;
+  stripeConnected: boolean;
+  paypalClientId: string | null;
+  paypalClientSecret: string | null;
+  paypalConnected: boolean;
+}
 
 export default function SettingsPayments() {
-  const { selectedVenue } = useVenue();
-  const venueId = selectedVenue?.id;
+  const { venueId } = useParams<{ venueId: string }>();
   const { toast } = useToast();
 
-  const form = useForm<PaymentFormValues>({
-    resolver: zodResolver(paymentFormSchema),
-    defaultValues: { stripePublishableKey: "", stripeSecretKey: "", depositAmount: "", depositEnabled: false },
-  });
+  const [stripePk, setStripePk] = useState("");
+  const [stripeSk, setStripeSk] = useState("");
+  const [stripeWebhook, setStripeWebhook] = useState("");
+  const [stripeConnected, setStripeConnected] = useState(false);
+  const [paypalClient, setPaypalClient] = useState("");
+  const [paypalSecret, setPaypalSecret] = useState("");
+  const [paypalConnected, setPaypalConnected] = useState(false);
 
-  const { data: settings, isLoading } = useQuery<any>({
-    queryKey: [`/api/payment-settings?venueId=${venueId}`],
-    enabled: !!venueId,
+  const { data: settings } = useQuery<PaymentSettings>({
+    queryKey: ["/api/venues", venueId, "payment-settings"],
   });
 
   useEffect(() => {
-    if (settings) {
-      form.reset({
-        stripePublishableKey: settings.stripePublishableKey || "",
-        stripeSecretKey: settings.stripeSecretKey || "",
-        depositAmount: settings.depositAmount ? String(settings.depositAmount) : "",
-        depositEnabled: !!settings.depositEnabled || !!settings.depositAmount,
-      });
-    }
-  }, [settings, form]);
+    document.title = "Payments - Settings | Resto Dashboard";
+  }, []);
 
-  const saveMutation = useMutation({
-    mutationFn: async (values: PaymentFormValues) => {
-      await apiRequest("PUT", "/api/payment-settings", {
-        venueId,
-        stripePublishableKey: values.stripePublishableKey || undefined,
-        stripeSecretKey: values.stripeSecretKey || undefined,
-        depositAmount: values.depositAmount || undefined,
-        depositEnabled: values.depositEnabled,
+  useEffect(() => {
+    if (settings) {
+      setStripePk(settings.stripePublishableKey || "");
+      setStripeSk(settings.stripeSecretKey || "");
+      setStripeWebhook(settings.stripeWebhookSecret || "");
+      setStripeConnected(settings.stripeConnected || false);
+      setPaypalClient(settings.paypalClientId || "");
+      setPaypalSecret(settings.paypalClientSecret || "");
+      setPaypalConnected(settings.paypalConnected || false);
+    }
+  }, [settings]);
+
+  const stripeMutation = useMutation({
+    mutationFn: async () => {
+      await apiRequest("PUT", `/api/venues/${venueId}/payment-settings`, {
+        stripePublishableKey: stripePk || null,
+        stripeSecretKey: stripeSk || null,
+        stripeWebhookSecret: stripeWebhook || null,
+        stripeConnected: !!(stripePk && stripeSk),
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/payment-settings?venueId=${venueId}`] });
-      toast({ title: "Payment settings saved" });
+      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "payment-settings"] });
+      toast({ title: "Stripe settings saved", description: "Your Stripe credentials have been updated." });
     },
-    onError: (err: Error) => {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
+    onError: (error: Error) => {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
     },
   });
 
-  if (!venueId) {
-    return <div className="p-6 text-muted-foreground" data-testid="no-venue-message">Please select a venue from the sidebar to manage payment settings.</div>;
-  }
-
-  if (isLoading) {
-    return (
-      <div className="p-6 space-y-6">
-        <h1 className="text-2xl font-semibold">Payment Settings</h1>
-        <Card><CardContent className="p-6"><Skeleton className="h-64 w-full" /></CardContent></Card>
-      </div>
-    );
-  }
+  const paypalMutation = useMutation({
+    mutationFn: async () => {
+      await apiRequest("PUT", `/api/venues/${venueId}/payment-settings`, {
+        paypalClientId: paypalClient || null,
+        paypalClientSecret: paypalSecret || null,
+        paypalConnected: !!(paypalClient && paypalSecret),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "payment-settings"] });
+      toast({ title: "PayPal settings saved", description: "Your PayPal credentials have been updated." });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    },
+  });
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-semibold" data-testid="page-title">Payment Settings</h1>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit((v) => saveMutation.mutate(v))} className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2"><CreditCard className="h-5 w-5" />Stripe Configuration</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <FormField control={form.control} name="stripePublishableKey" render={({ field }) => (
-                <FormItem><FormLabel>Publishable Key</FormLabel><FormControl><Input data-testid="input-stripe-publishable" placeholder="pk_..." {...field} /></FormControl><FormMessage /></FormItem>
-              )} />
-              <FormField control={form.control} name="stripeSecretKey" render={({ field }) => (
-                <FormItem><FormLabel>Secret Key</FormLabel><FormControl><Input data-testid="input-stripe-secret" type="password" placeholder="sk_..." {...field} /></FormControl><FormMessage /></FormItem>
-              )} />
-            </CardContent>
-          </Card>
+    <DashboardLayout>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold">Payment Integration</h1>
+          <p className="text-muted-foreground">Connect your payment provider for pre-paid reservations</p>
+        </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Deposit Settings</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <FormField control={form.control} name="depositEnabled" render={({ field }) => (
-                <FormItem className="flex items-center gap-2 space-y-0">
-                  <FormLabel>Enable Deposits</FormLabel>
-                  <FormControl>
-                    <Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-deposit-enabled" />
-                  </FormControl>
-                </FormItem>
-              )} />
-              <FormField control={form.control} name="depositAmount" render={({ field }) => (
-                <FormItem><FormLabel>Deposit Amount</FormLabel><FormControl><Input data-testid="input-deposit-amount" type="number" min="0" step="0.01" placeholder="0.00" {...field} /></FormControl><FormMessage /></FormItem>
-              )} />
-            </CardContent>
-          </Card>
+        <Tabs defaultValue="stripe" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="stripe" className="gap-2" data-testid="tab-stripe">
+              <SiStripe className="w-4 h-4" />
+              Stripe
+            </TabsTrigger>
+            <TabsTrigger value="paypal" className="gap-2" data-testid="tab-paypal">
+              <SiPaypal className="w-4 h-4" />
+              PayPal
+            </TabsTrigger>
+          </TabsList>
 
-          <Button type="submit" disabled={saveMutation.isPending} data-testid="button-save-payments">
-            <Save className="h-4 w-4 mr-2" />{saveMutation.isPending ? "Saving..." : "Save Settings"}
-          </Button>
-        </form>
-      </Form>
-    </div>
+          <TabsContent value="stripe" className="space-y-4 mt-4">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-purple-500/10 flex items-center justify-center">
+                    <SiStripe className="w-6 h-6 text-purple-500" />
+                  </div>
+                  <div>
+                    <CardTitle>Stripe API Credentials</CardTitle>
+                    <CardDescription>Connect your Stripe account for payment processing</CardDescription>
+                  </div>
+                  {stripeConnected ? (
+                    <Badge variant="outline" className="ml-auto" data-testid="status-stripe">
+                      <CheckCircle className="w-3 h-3 mr-1" />
+                      Connected
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="ml-auto" data-testid="status-stripe">
+                      <AlertCircle className="w-3 h-3 mr-1" />
+                      Not Connected
+                    </Badge>
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="stripe-pk">Publishable Key</Label>
+                  <Input
+                    id="stripe-pk"
+                    placeholder="pk_live_..."
+                    data-testid="input-stripe-pk"
+                    value={stripePk}
+                    onChange={(e) => setStripePk(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="stripe-sk">Secret Key</Label>
+                  <Input
+                    id="stripe-sk"
+                    type="password"
+                    placeholder="sk_live_..."
+                    data-testid="input-stripe-sk"
+                    value={stripeSk}
+                    onChange={(e) => setStripeSk(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="stripe-webhook">Webhook Secret</Label>
+                  <Input
+                    id="stripe-webhook"
+                    type="password"
+                    placeholder="whsec_..."
+                    data-testid="input-stripe-webhook"
+                    value={stripeWebhook}
+                    onChange={(e) => setStripeWebhook(e.target.value)}
+                  />
+                </div>
+                <Button
+                  className="w-full"
+                  data-testid="button-save-stripe"
+                  onClick={() => stripeMutation.mutate()}
+                  disabled={stripeMutation.isPending}
+                >
+                  {stripeMutation.isPending ? "Saving..." : "Connect Stripe Account"}
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="paypal" className="space-y-4 mt-4">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center">
+                    <SiPaypal className="w-6 h-6 text-blue-500" />
+                  </div>
+                  <div>
+                    <CardTitle>PayPal API Credentials</CardTitle>
+                    <CardDescription>Connect your PayPal account for payment processing</CardDescription>
+                  </div>
+                  {paypalConnected ? (
+                    <Badge variant="outline" className="ml-auto" data-testid="status-paypal">
+                      <CheckCircle className="w-3 h-3 mr-1" />
+                      Connected
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="ml-auto" data-testid="status-paypal">
+                      <AlertCircle className="w-3 h-3 mr-1" />
+                      Not Connected
+                    </Badge>
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="paypal-client">Client ID</Label>
+                  <Input
+                    id="paypal-client"
+                    placeholder="Your PayPal Client ID"
+                    data-testid="input-paypal-client"
+                    value={paypalClient}
+                    onChange={(e) => setPaypalClient(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="paypal-secret">Client Secret</Label>
+                  <Input
+                    id="paypal-secret"
+                    type="password"
+                    placeholder="Your PayPal Client Secret"
+                    data-testid="input-paypal-secret"
+                    value={paypalSecret}
+                    onChange={(e) => setPaypalSecret(e.target.value)}
+                  />
+                </div>
+                <Button
+                  className="w-full"
+                  data-testid="button-save-paypal"
+                  onClick={() => paypalMutation.mutate()}
+                  disabled={paypalMutation.isPending}
+                >
+                  {paypalMutation.isPending ? "Saving..." : "Connect PayPal Account"}
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>What Payment Integration Powers</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Pre-paid reservations</li>
+              <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Deposit collection for bookings</li>
+              <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> No-show protection</li>
+              <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Automatic refunds for cancellations</li>
+              <li className="flex items-center gap-2"><Shield className="w-4 h-4 text-green-500" /> PCI-compliant payment handling</li>
+              <li className="flex items-center gap-2"><DollarSign className="w-4 h-4 text-green-500" /> Direct deposits to your bank account</li>
+            </ul>
+          </CardContent>
+        </Card>
+
+        <Card className="border-yellow-500/50 bg-yellow-500/5">
+          <CardContent className="p-4">
+            <div className="flex items-start gap-3">
+              <CreditCard className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium text-sm">Banking Connection</p>
+                <p className="text-sm text-muted-foreground">
+                  Payments collected through Stripe or PayPal are deposited directly to your connected bank account. 
+                  Configure your banking details in your payment provider's dashboard.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </DashboardLayout>
   );
 }

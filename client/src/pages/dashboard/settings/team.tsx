@@ -1,154 +1,217 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useVenue } from "@/lib/venue-context";
-import { apiRequest, queryClient } from "@/lib/queryClient";
-import { useToast } from "@/hooks/use-toast";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+import { useParams } from "wouter";
+import { Users, Plus, Trash2, Mail, Shield } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Users } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { DashboardLayout } from "@/components/dashboard-layout";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 
-const teamMemberFormSchema = z.object({
-  name: z.string().optional(),
-  email: z.string().email("Valid email is required"),
-  role: z.string().min(1, "Role is required"),
-  phone: z.string().optional(),
-});
+interface TeamMember {
+  id: number;
+  venueId: string;
+  userId: string | null;
+  email: string;
+  role: string;
+  status: string;
+  invitedAt: string;
+  acceptedAt: string | null;
+}
 
-type TeamMemberFormValues = z.infer<typeof teamMemberFormSchema>;
+const roleColors: Record<string, string> = {
+  admin: "bg-purple-500/10 text-purple-600",
+  manager: "bg-blue-500/10 text-blue-600",
+  staff: "bg-green-500/10 text-green-600",
+};
+
+const statusColors: Record<string, string> = {
+  pending: "bg-yellow-500/10 text-yellow-600",
+  accepted: "bg-green-500/10 text-green-600",
+};
 
 export default function SettingsTeam() {
-  const { selectedVenue } = useVenue();
-  const venueId = selectedVenue?.id;
+  const { venueId } = useParams<{ venueId: string }>();
+  const [newEmail, setNewEmail] = useState("");
+  const [newRole, setNewRole] = useState<string>("staff");
   const { toast } = useToast();
-  const [dialogOpen, setDialogOpen] = useState(false);
 
-  const form = useForm<TeamMemberFormValues>({
-    resolver: zodResolver(teamMemberFormSchema),
-    defaultValues: { name: "", email: "", role: "staff", phone: "" },
+  useEffect(() => {
+    document.title = "Team - Resto Dashboard";
+  }, []);
+
+  const { data: team = [], isLoading } = useQuery<TeamMember[]>({
+    queryKey: ["/api/venues", venueId, "team"],
   });
 
-  const { data: members = [], isLoading } = useQuery<any[]>({
-    queryKey: [`/api/team-members?venueId=${venueId}`],
-    enabled: !!venueId,
-  });
-
-  const createMutation = useMutation({
-    mutationFn: async (values: TeamMemberFormValues) => {
-      await apiRequest("POST", "/api/team-members", {
-        venueId,
-        name: values.name || undefined,
-        email: values.email,
-        role: values.role,
-        phone: values.phone || undefined,
-      });
-    },
+  const inviteMutation = useMutation({
+    mutationFn: (data: { email: string; role: string }) =>
+      apiRequest("POST", `/api/venues/${venueId}/team`, { ...data, venueId }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/team-members?venueId=${venueId}`] });
-      setDialogOpen(false);
-      form.reset();
+      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "team"] });
+      setNewEmail("");
       toast({ title: "Team member added" });
     },
-    onError: (err: Error) => {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
+    onError: () => {
+      toast({ title: "Error", description: "Failed to add team member.", variant: "destructive" });
     },
   });
 
-  if (!venueId) {
-    return <div className="p-6 text-muted-foreground" data-testid="no-venue-message">Please select a venue from the sidebar to manage team members.</div>;
-  }
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => apiRequest("DELETE", `/api/team/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "team"] });
+      toast({ title: "Team member removed" });
+    },
+  });
 
-  if (isLoading) {
-    return (
-      <div className="p-6 space-y-6">
-        <h1 className="text-2xl font-semibold">Team Members</h1>
-        <Card><CardContent className="p-6"><Skeleton className="h-48 w-full" /></CardContent></Card>
-      </div>
-    );
-  }
+  const handleInvite = () => {
+    if (!newEmail) return;
+    inviteMutation.mutate({ email: newEmail, role: newRole });
+  };
+
+  const handleRemoveMember = (member: TeamMember) => {
+    deleteMutation.mutate(member.id);
+  };
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between gap-4 flex-wrap">
-        <h1 className="text-2xl font-semibold" data-testid="page-title">Team Members</h1>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button data-testid="button-add-member"><Plus className="h-4 w-4 mr-2" />Add Member</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader><DialogTitle>Add Team Member</DialogTitle></DialogHeader>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit((v) => createMutation.mutate(v))} className="space-y-4">
-                <FormField control={form.control} name="name" render={({ field }) => (
-                  <FormItem><FormLabel>Name</FormLabel><FormControl><Input data-testid="input-member-name" {...field} /></FormControl><FormMessage /></FormItem>
-                )} />
-                <FormField control={form.control} name="email" render={({ field }) => (
-                  <FormItem><FormLabel>Email</FormLabel><FormControl><Input data-testid="input-member-email" type="email" {...field} /></FormControl><FormMessage /></FormItem>
-                )} />
-                <FormField control={form.control} name="role" render={({ field }) => (
-                  <FormItem><FormLabel>Role</FormLabel><FormControl>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger data-testid="select-member-role"><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="staff">Staff</SelectItem>
-                        <SelectItem value="manager">Manager</SelectItem>
-                        <SelectItem value="admin">Admin</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </FormControl><FormMessage /></FormItem>
-                )} />
-                <FormField control={form.control} name="phone" render={({ field }) => (
-                  <FormItem><FormLabel>Phone</FormLabel><FormControl><Input data-testid="input-member-phone" {...field} /></FormControl><FormMessage /></FormItem>
-                )} />
-                <Button type="submit" className="w-full" disabled={createMutation.isPending} data-testid="button-submit-member">
-                  {createMutation.isPending ? "Adding..." : "Add Member"}
-                </Button>
-              </form>
-            </Form>
-          </DialogContent>
-        </Dialog>
-      </div>
+    <DashboardLayout>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold">Team</h1>
+          <p className="text-muted-foreground">Manage who has access to your dashboard</p>
+        </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2"><Users className="h-5 w-5" />Team</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {members.length === 0 ? (
-            <p className="text-muted-foreground" data-testid="empty-state">No team members yet.</p>
-          ) : (
-            <Table data-testid="team-table">
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Phone</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {members.map((m: any) => (
-                  <TableRow key={m.id} data-testid={`member-row-${m.id}`}>
-                    <TableCell>{m.name || "-"}</TableCell>
-                    <TableCell>{m.email}</TableCell>
-                    <TableCell className="capitalize">{m.role}</TableCell>
-                    <TableCell>{m.phone || "-"}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Plus className="w-5 h-5" />
+              Invite Team Member
+            </CardTitle>
+            <CardDescription>
+              Send an invitation to join your venue dashboard.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-4 items-end">
+              <div className="space-y-2 flex-1 min-w-48">
+                <Label>Email Address</Label>
+                <Input
+                  type="email"
+                  placeholder="colleague@restaurant.com"
+                  value={newEmail}
+                  onChange={(e) => setNewEmail(e.target.value)}
+                  data-testid="input-invite-email"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Role</Label>
+                <Select value={newRole} onValueChange={(v) => setNewRole(v)}>
+                  <SelectTrigger className="w-32" data-testid="select-role">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="admin">Admin</SelectItem>
+                    <SelectItem value="manager">Manager</SelectItem>
+                    <SelectItem value="staff">Staff</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button onClick={handleInvite} className="gap-2" disabled={inviteMutation.isPending} data-testid="button-invite">
+                <Mail className="w-4 h-4" />
+                Send Invite
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Users className="w-5 h-5" />
+              Team Members
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {isLoading ? (
+              <p className="text-muted-foreground text-center py-8">Loading...</p>
+            ) : team.length === 0 ? (
+              <p className="text-muted-foreground text-center py-8">No team members yet. Invite someone above.</p>
+            ) : (
+              <div className="space-y-3">
+                {team.map((member) => {
+                  const username = member.email.split("@")[0];
+                  const initials = username.slice(0, 2).toUpperCase();
+                  return (
+                    <div
+                      key={member.id}
+                      className="flex items-center justify-between p-3 sm:p-4 rounded-lg border gap-3"
+                      data-testid={`team-member-${member.id}`}
+                    >
+                      <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+                        <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm sm:text-base flex-shrink-0">
+                          {initials}
+                        </div>
+                        <div className="min-w-0">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <p className="font-medium text-sm sm:text-base truncate">{username}</p>
+                            <Badge className={`${roleColors[member.role] || roleColors.staff} text-xs`}>
+                              {member.role === "admin" && <Shield className="w-3 h-3 mr-1" />}
+                              {member.role.charAt(0).toUpperCase() + member.role.slice(1)}
+                            </Badge>
+                            <Badge className={`${statusColors[member.status] || statusColors.pending} text-xs`}>
+                              {member.status.charAt(0).toUpperCase() + member.status.slice(1)}
+                            </Badge>
+                          </div>
+                          <p className="text-xs sm:text-sm text-muted-foreground truncate">{member.email}</p>
+                        </div>
+                      </div>
+                      {member.role !== "admin" && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-destructive hover:text-destructive flex-shrink-0"
+                          onClick={() => handleRemoveMember(member)}
+                          disabled={deleteMutation.isPending}
+                          data-testid={`button-remove-${member.id}`}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Role Permissions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4 text-sm">
+              <div className="flex items-start gap-3">
+                <Badge className={roleColors.admin}>Admin</Badge>
+                <p className="text-muted-foreground">Full access to all settings, billing, and team management.</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <Badge className={roleColors.manager}>Manager</Badge>
+                <p className="text-muted-foreground">Can manage bookings, view analytics, and update hours/closures.</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <Badge className={roleColors.staff}>Staff</Badge>
+                <p className="text-muted-foreground">Can view and manage today's bookings only.</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </DashboardLayout>
   );
 }

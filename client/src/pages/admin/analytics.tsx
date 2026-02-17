@@ -1,67 +1,48 @@
-import { useQuery } from "@tanstack/react-query";
-import { useVenue } from "@/lib/venue-context";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Skeleton } from "@/components/ui/skeleton";
-import { BarChart3, CalendarCheck, PhoneCall, LifeBuoy } from "lucide-react";
-import type { Venue, Reservation, CallLog, SupportTicket } from "@shared/schema";
+import { BarChart3, TrendingUp, Users, Phone, MessageSquare, MessageCircle, PhoneCall, Globe, FileEdit } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { AdminLayout } from "@/components/admin-layout";
+
+const stats = [
+  { label: "Total Bookings", value: "2,847", change: "+12%", icon: BarChart3 },
+  { label: "AI Voice Calls", value: "1,293", change: "+8%", icon: PhoneCall },
+  { label: "SMS Sent", value: "3,847", change: "+15%", icon: MessageCircle },
+  { label: "Widget Chats", value: "5,621", change: "+23%", icon: MessageSquare },
+  { label: "Keywords Tracked", value: "342", change: "+18%", icon: TrendingUp },
+  { label: "Website Changes", value: "89", change: "+9%", icon: FileEdit },
+  { label: "Phone Bookings", value: "456", change: "+11%", icon: Phone },
+  { label: "Active Users", value: "156", change: "+5%", icon: Users },
+];
+
+const topClients = [
+  { name: "La Bella Italia", bookings: 342, calls: 156, sms: 423, widgets: 823, keywords: 28, changes: 12, twilioConnected: true, gscConnected: true },
+  { name: "Mountain Lodge Hotel", bookings: 289, calls: 134, sms: 398, widgets: 567, keywords: 35, changes: 8, twilioConnected: true, gscConnected: true },
+  { name: "The Golden Dragon", bookings: 234, calls: 98, sms: 287, widgets: 445, keywords: 18, changes: 5, twilioConnected: true, gscConnected: true },
+  { name: "Ocean View Bistro", bookings: 198, calls: 0, sms: 0, widgets: 389, keywords: 22, changes: 15, twilioConnected: false, gscConnected: false },
+  { name: "Sakura Sushi", bookings: 167, calls: 45, sms: 134, widgets: 312, keywords: 15, changes: 3, twilioConnected: true, gscConnected: true },
+  { name: "Caf\u00e9 Parisien", bookings: 156, calls: 67, sms: 189, widgets: 298, keywords: 10, changes: 6, twilioConnected: true, gscConnected: false },
+];
 
 export default function AdminAnalytics() {
-  useVenue();
-
-  const { data: venues = [], isLoading: venuesLoading } = useQuery<Venue[]>({
-    queryKey: ["/api/venues"],
-  });
-
-  const { data: reservations = [], isLoading: reservationsLoading } = useQuery<Reservation[]>({
-    queryKey: ["/api/admin/reservations"],
-  });
-
-  const { data: callLogs = [], isLoading: callsLoading } = useQuery<CallLog[]>({
-    queryKey: ["/api/admin/call-logs"],
-  });
-
-  const { data: tickets = [], isLoading: ticketsLoading } = useQuery<SupportTicket[]>({
-    queryKey: ["/api/admin/support-tickets"],
-  });
-
-  const isLoading = venuesLoading || reservationsLoading || callsLoading || ticketsLoading;
-
-  const stats = [
-    { title: "Total Reservations", value: reservations.length, icon: CalendarCheck, testId: "stat-total-reservations" },
-    { title: "Total Calls", value: callLogs.length, icon: PhoneCall, testId: "stat-total-calls" },
-    { title: "Total Tickets", value: tickets.length, icon: LifeBuoy, testId: "stat-total-tickets" },
-    { title: "Active Venues", value: venues.filter((v) => v.status === "active").length, icon: BarChart3, testId: "stat-active-venues" },
-  ];
-
-  const venueBreakdown = venues.map((v) => ({
-    id: v.id,
-    name: v.name,
-    reservations: reservations.filter((r) => r.venueId === v.id).length,
-    calls: callLogs.filter((c) => c.venueId === v.id).length,
-    tickets: tickets.filter((t) => t.venueId === v.id).length,
-  }));
-
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center gap-2">
-        <BarChart3 className="h-6 w-6" />
-        <h1 className="text-2xl font-semibold" data-testid="page-title-analytics">Analytics</h1>
+    <AdminLayout>
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold">Analytics</h1>
+        <p className="text-muted-foreground">Platform-wide performance metrics</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
         {stats.map((stat) => (
-          <Card key={stat.testId} data-testid={stat.testId}>
-            <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">{stat.title}</CardTitle>
+          <Card key={stat.label}>
+            <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                {stat.label}
+              </CardTitle>
               <stat.icon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              {isLoading ? (
-                <Skeleton className="h-8 w-20" />
-              ) : (
-                <div className="text-2xl font-bold" data-testid={`${stat.testId}-value`}>{stat.value}</div>
-              )}
+              <div className="text-2xl font-bold">{stat.value}</div>
+              <p className="text-xs text-green-600">{stat.change} from last month</p>
             </CardContent>
           </Card>
         ))}
@@ -69,43 +50,57 @@ export default function AdminAnalytics() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Breakdown by Venue</CardTitle>
+          <CardTitle>Top Performing Clients</CardTitle>
+          <CardDescription>Clients with highest engagement this month</CardDescription>
         </CardHeader>
         <CardContent>
-          {isLoading ? (
-            <div className="space-y-3">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Skeleton key={i} className="h-10 w-full" />
-              ))}
-            </div>
-          ) : venueBreakdown.length === 0 ? (
-            <p className="text-muted-foreground text-center py-8" data-testid="empty-state-analytics">
-              No data available.
-            </p>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Venue</TableHead>
-                  <TableHead>Reservations</TableHead>
-                  <TableHead>Calls</TableHead>
-                  <TableHead>Tickets</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {venueBreakdown.map((vb) => (
-                  <TableRow key={vb.id} data-testid={`row-analytics-${vb.id}`}>
-                    <TableCell className="font-medium">{vb.name}</TableCell>
-                    <TableCell data-testid={`text-reservations-${vb.id}`}>{vb.reservations}</TableCell>
-                    <TableCell data-testid={`text-calls-${vb.id}`}>{vb.calls}</TableCell>
-                    <TableCell data-testid={`text-tickets-${vb.id}`}>{vb.tickets}</TableCell>
-                  </TableRow>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b text-left">
+                  <th className="pb-3 font-medium text-muted-foreground">Client</th>
+                  <th className="pb-3 font-medium text-muted-foreground text-right">Bookings</th>
+                  <th className="pb-3 font-medium text-muted-foreground text-right">AI Calls</th>
+                  <th className="pb-3 font-medium text-muted-foreground text-right">SMS</th>
+                  <th className="pb-3 font-medium text-muted-foreground text-right">Widgets</th>
+                  <th className="pb-3 font-medium text-muted-foreground text-right">Keywords</th>
+                  <th className="pb-3 font-medium text-muted-foreground text-right">Changes</th>
+                  <th className="pb-3 font-medium text-muted-foreground">Twilio</th>
+                  <th className="pb-3 font-medium text-muted-foreground">GSC</th>
+                </tr>
+              </thead>
+              <tbody>
+                {topClients.map((client, index) => (
+                  <tr key={client.name} className="border-b last:border-0" data-testid={`row-analytics-${index}`}>
+                    <td className="py-4">
+                      <div className="flex items-center gap-3">
+                        <span className="text-muted-foreground">{index + 1}.</span>
+                        <span className="font-medium">{client.name}</span>
+                      </div>
+                    </td>
+                    <td className="py-4 text-right">{client.bookings}</td>
+                    <td className="py-4 text-right">{client.calls}</td>
+                    <td className="py-4 text-right">{client.sms}</td>
+                    <td className="py-4 text-right">{client.widgets}</td>
+                    <td className="py-4 text-right">{client.keywords}</td>
+                    <td className="py-4 text-right">{client.changes}</td>
+                    <td className="py-4">
+                      <Badge variant="outline" className={client.twilioConnected ? "text-green-600 dark:text-green-400 border-green-500/30 text-xs" : "text-muted-foreground text-xs"}>
+                        {client.twilioConnected ? "Connected" : "Not Set Up"}
+                      </Badge>
+                    </td>
+                    <td className="py-4">
+                      <Badge variant="outline" className={client.gscConnected ? "text-green-600 dark:text-green-400 border-green-500/30 text-xs" : "text-muted-foreground text-xs"}>
+                        {client.gscConnected ? "Connected" : "Not Set Up"}
+                      </Badge>
+                    </td>
+                  </tr>
                 ))}
-              </TableBody>
-            </Table>
-          )}
+              </tbody>
+            </table>
+          </div>
         </CardContent>
       </Card>
-    </div>
+    </AdminLayout>
   );
 }

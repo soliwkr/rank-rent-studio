@@ -1,101 +1,90 @@
-import { useQuery } from "@tanstack/react-query";
-import { useVenue } from "@/lib/venue-context";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { DollarSign, TrendingUp, CreditCard, Download } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { CreditCard } from "lucide-react";
-import type { Venue } from "@shared/schema";
+import { AdminLayout } from "@/components/admin-layout";
 
-interface PaymentSetting {
-  id: number;
-  venueId: string;
-  stripeSecretKey: string | null;
-  stripePublishableKey: string | null;
-  stripeConnected: boolean | null;
-  paypalConnected: boolean | null;
-  depositAmount: string | null;
-  depositType: string | null;
-}
+const stats = [
+  { label: "Monthly Revenue", value: "$12,857", change: "+12%", icon: DollarSign },
+  { label: "Active Subscriptions", value: "43", change: "+3", icon: CreditCard },
+  { label: "Avg. Revenue/Client", value: "$299", change: "+5%", icon: TrendingUp },
+];
+
+const recentTransactions = [
+  { id: 1, client: "La Bella Italia", amount: "$299.00", type: "Subscription", status: "Paid", date: "Jan 28, 2026" },
+  { id: 2, client: "The Golden Dragon", amount: "$149.00", type: "Subscription", status: "Paid", date: "Jan 28, 2026" },
+  { id: 3, client: "Ocean View Bistro", amount: "$499.00", type: "Setup Fee", status: "Paid", date: "Jan 24, 2026" },
+  { id: 4, client: "Mountain Lodge Hotel", amount: "$299.00", type: "Subscription", status: "Paid", date: "Jan 25, 2026" },
+  { id: 5, client: "Café Parisien", amount: "$149.00", type: "Subscription", status: "Failed", date: "Jan 27, 2026" },
+];
 
 export default function AdminBilling() {
-  useVenue();
-
-  const { data: venues = [], isLoading: venuesLoading } = useQuery<Venue[]>({
-    queryKey: ["/api/venues"],
-  });
-
-  const { data: allPaymentSettings = [], isLoading: paymentsLoading } = useQuery<PaymentSetting[]>({
-    queryKey: ["/api/admin/payment-settings"],
-  });
-
-  const isLoading = venuesLoading || paymentsLoading;
-  const venueMap = new Map(venues.map((v) => [v.id, v]));
-
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center gap-2">
-        <CreditCard className="h-6 w-6" />
-        <h1 className="text-2xl font-semibold" data-testid="page-title-billing">
-          Billing / Payment Settings
-        </h1>
+    <AdminLayout>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-2xl font-bold">Billing</h1>
+          <p className="text-muted-foreground">Revenue and payment management</p>
+        </div>
+        <Button variant="outline" data-testid="button-export">
+          <Download className="h-4 w-4 mr-2" />
+          Export Report
+        </Button>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-3 mb-6">
+        {stats.map((stat) => (
+          <Card key={stat.label}>
+            <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                {stat.label}
+              </CardTitle>
+              <stat.icon className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stat.value}</div>
+              <p className="text-xs text-green-600">{stat.change} from last month</p>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Payment Settings by Venue</CardTitle>
+          <CardTitle>Recent Transactions</CardTitle>
+          <CardDescription>Latest billing activity across all clients</CardDescription>
         </CardHeader>
         <CardContent>
-          {isLoading ? (
-            <div className="space-y-3">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Skeleton key={i} className="h-10 w-full" />
-              ))}
-            </div>
-          ) : allPaymentSettings.length === 0 ? (
-            <p className="text-muted-foreground text-center py-8" data-testid="empty-state-billing">
-              No payment settings configured.
-            </p>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Venue</TableHead>
-                  <TableHead>Stripe Key</TableHead>
-                  <TableHead>Stripe</TableHead>
-                  <TableHead>PayPal</TableHead>
-                  <TableHead>Deposit</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {allPaymentSettings.map((ps) => (
-                  <TableRow key={ps.id} data-testid={`row-payment-${ps.id}`}>
-                    <TableCell className="font-medium">
-                      {venueMap.get(ps.venueId)?.name || ps.venueId}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground font-mono text-sm">
-                      {ps.stripePublishableKey ? `${ps.stripePublishableKey.slice(0, 12)}...` : "-"}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={ps.stripeConnected ? "default" : "outline"}>
-                        {ps.stripeConnected ? "Connected" : "Not Connected"}
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b text-left">
+                  <th className="pb-3 font-medium text-muted-foreground">Client</th>
+                  <th className="pb-3 font-medium text-muted-foreground">Amount</th>
+                  <th className="pb-3 font-medium text-muted-foreground">Type</th>
+                  <th className="pb-3 font-medium text-muted-foreground">Status</th>
+                  <th className="pb-3 font-medium text-muted-foreground">Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentTransactions.map((tx) => (
+                  <tr key={tx.id} className="border-b last:border-0">
+                    <td className="py-4 font-medium">{tx.client}</td>
+                    <td className="py-4">{tx.amount}</td>
+                    <td className="py-4 text-muted-foreground">{tx.type}</td>
+                    <td className="py-4">
+                      <Badge variant={tx.status === "Paid" ? "default" : "destructive"}>
+                        {tx.status}
                       </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={ps.paypalConnected ? "default" : "outline"}>
-                        {ps.paypalConnected ? "Connected" : "Not Connected"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {ps.depositAmount ? `$${ps.depositAmount} (${ps.depositType || "fixed"})` : "-"}
-                    </TableCell>
-                  </TableRow>
+                    </td>
+                    <td className="py-4 text-muted-foreground">{tx.date}</td>
+                  </tr>
                 ))}
-              </TableBody>
-            </Table>
-          )}
+              </tbody>
+            </table>
+          </div>
         </CardContent>
       </Card>
-    </div>
+    </AdminLayout>
   );
 }

@@ -1,195 +1,518 @@
 import { useState } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useVenue } from "@/lib/venue-context";
-import { apiRequest, queryClient } from "@/lib/queryClient";
-import { useToast } from "@/hooks/use-toast";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+import {
+  Plus, Search, Users, Target, Presentation, CheckCircle2,
+  Building2, Phone, Mail, Calendar, DollarSign, ArrowRight,
+  MoreVertical, Clock, MessageSquare, ChevronDown
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Mail, Plus } from "lucide-react";
-import type { ContactMessage } from "@shared/schema";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { AdminLayout } from "@/components/admin-layout";
 
-const messageFormSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  email: z.string().email("Valid email is required"),
-  phone: z.string().optional(),
-  company: z.string().optional(),
-  venueType: z.string().optional(),
-  inquiryType: z.string().optional(),
-  message: z.string().min(1, "Message is required"),
-});
+type PipelineStage = "lead" | "demo" | "proposal" | "closed";
 
-type MessageFormValues = z.infer<typeof messageFormSchema>;
+interface Deal {
+  id: number;
+  businessName: string;
+  contactName: string;
+  contactEmail: string;
+  contactPhone: string;
+  businessType: string;
+  plan: string;
+  value: number;
+  stage: PipelineStage;
+  assignedTo: string;
+  lastActivity: string;
+  nextFollowUp: string;
+  notes: string;
+  source: string;
+  createdAt: string;
+}
 
-export default function AdminCRM() {
-  useVenue();
-  const { toast } = useToast();
-  const [open, setOpen] = useState(false);
+const stageConfig: Record<PipelineStage, { label: string; icon: typeof Users; color: string; bg: string; border: string }> = {
+  lead: { label: "Leads", icon: Users, color: "text-blue-500", bg: "bg-blue-500/10 dark:bg-blue-500/20", border: "border-blue-500/30" },
+  demo: { label: "Demo Scheduled", icon: Presentation, color: "text-violet-500", bg: "bg-violet-500/10 dark:bg-violet-500/20", border: "border-violet-500/30" },
+  proposal: { label: "Proposal Sent", icon: Target, color: "text-amber-500", bg: "bg-amber-500/10 dark:bg-amber-500/20", border: "border-amber-500/30" },
+  closed: { label: "Closed Won", icon: CheckCircle2, color: "text-emerald-500", bg: "bg-emerald-500/10 dark:bg-emerald-500/20", border: "border-emerald-500/30" },
+};
 
-  const { data: messages = [], isLoading } = useQuery<ContactMessage[]>({
-    queryKey: ["/api/contact-messages"],
+const stages: PipelineStage[] = ["lead", "demo", "proposal", "closed"];
+
+const initialDeals: Deal[] = [
+  { id: 1, businessName: "Sakura Sushi Bar", contactName: "Yuki Tanaka", contactEmail: "yuki@sakurasushi.com", contactPhone: "+1 (555) 234-5678", businessType: "Restaurant", plan: "Complete Solution", value: 299, stage: "lead", assignedTo: "Maria Garcia", lastActivity: "Called, left voicemail", nextFollowUp: "Feb 16, 2026", notes: "Interested in website + booking system", source: "Google Ads", createdAt: "Feb 12, 2026" },
+  { id: 2, businessName: "The Rustic Table", contactName: "Mike Johnson", contactEmail: "mike@rustictable.com", contactPhone: "+1 (555) 345-6789", businessType: "Restaurant", plan: "Complete Solution", value: 299, stage: "lead", assignedTo: "David Chen", lastActivity: "Email sent with info pack", nextFollowUp: "Feb 17, 2026", notes: "Found us through a referral", source: "Referral", createdAt: "Feb 13, 2026" },
+  { id: 3, businessName: "Beachside Bar & Grill", contactName: "Sarah Lopez", contactEmail: "sarah@beachsidebar.com", contactPhone: "+1 (555) 456-7890", businessType: "Bar", plan: "Widget Only", value: 149, stage: "lead", assignedTo: "Maria Garcia", lastActivity: "Initial contact form submitted", nextFollowUp: "Feb 15, 2026", notes: "Small bar, interested in widget only", source: "Website", createdAt: "Feb 14, 2026" },
+  { id: 4, businessName: "Grand Hotel Melbourne", contactName: "James Wright", contactEmail: "james@grandhotelmelb.com", contactPhone: "+1 (555) 567-8901", businessType: "Hotel", plan: "Complete Solution", value: 299, stage: "demo", assignedTo: "Maria Garcia", lastActivity: "Demo scheduled for Feb 18", nextFollowUp: "Feb 18, 2026", notes: "3 locations, interested in multi-location plan", source: "LinkedIn", createdAt: "Feb 8, 2026" },
+  { id: 5, businessName: "Café Noir", contactName: "Pierre Dubois", contactEmail: "pierre@cafenoir.com", contactPhone: "+1 (555) 678-9012", businessType: "Cafe", plan: "Complete Solution", value: 299, stage: "demo", assignedTo: "David Chen", lastActivity: "Demo completed, positive response", nextFollowUp: "Feb 16, 2026", notes: "Wants to see competitor comparison", source: "Google Ads", createdAt: "Feb 5, 2026" },
+  { id: 6, businessName: "Sunset Lounge", contactName: "Emma Davis", contactEmail: "emma@sunsetlounge.com", contactPhone: "+1 (555) 789-0123", businessType: "Bar", plan: "Widget Only", value: 149, stage: "demo", assignedTo: "David Chen", lastActivity: "Demo rescheduled to Feb 19", nextFollowUp: "Feb 19, 2026", notes: "Busy season, needs flexible scheduling", source: "Referral", createdAt: "Feb 3, 2026" },
+  { id: 7, businessName: "La Dolce Vita", contactName: "Marco Rossi", contactEmail: "marco@ladolcevita.com", contactPhone: "+1 (555) 890-1234", businessType: "Restaurant", plan: "Complete Solution", value: 299, stage: "proposal", assignedTo: "Maria Garcia", lastActivity: "Proposal sent, awaiting review", nextFollowUp: "Feb 17, 2026", notes: "Wants custom website design", source: "Website", createdAt: "Jan 28, 2026" },
+  { id: 8, businessName: "Skyline Rooftop", contactName: "Alex Turner", contactEmail: "alex@skylinerooftop.com", contactPhone: "+1 (555) 901-2345", businessType: "Bar", plan: "Complete Solution", value: 299, stage: "proposal", assignedTo: "David Chen", lastActivity: "Negotiating pricing, may need discount", nextFollowUp: "Feb 16, 2026", notes: "Budget conscious, considering competitors", source: "Google Ads", createdAt: "Jan 25, 2026" },
+  { id: 9, businessName: "Harbor View Hotel", contactName: "Lisa Chen", contactEmail: "lisa@harborview.com", contactPhone: "+1 (555) 012-3456", businessType: "Hotel", plan: "Complete Solution", value: 349, stage: "proposal", assignedTo: "Maria Garcia", lastActivity: "Custom proposal with multi-location pricing", nextFollowUp: "Feb 18, 2026", notes: "2 locations, wants bundled deal", source: "LinkedIn", createdAt: "Jan 20, 2026" },
+  { id: 10, businessName: "The Olive Garden Bistro", contactName: "Tony Moretti", contactEmail: "tony@olivegardenbistro.com", contactPhone: "+1 (555) 123-4567", businessType: "Restaurant", plan: "Complete Solution", value: 299, stage: "closed", assignedTo: "Maria Garcia", lastActivity: "Contract signed, onboarding started", nextFollowUp: "-", notes: "Happy with demo, quick close", source: "Referral", createdAt: "Jan 10, 2026" },
+  { id: 11, businessName: "Moonlight Café", contactName: "Anna Park", contactEmail: "anna@moonlightcafe.com", contactPhone: "+1 (555) 234-5679", businessType: "Cafe", plan: "Widget Only", value: 149, stage: "closed", assignedTo: "David Chen", lastActivity: "Widget installed, live on website", nextFollowUp: "-", notes: "Started with widget, may upgrade later", source: "Google Ads", createdAt: "Jan 8, 2026" },
+];
+
+export default function AdminCrm() {
+  const [deals, setDeals] = useState<Deal[]>(initialDeals);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterAssignee, setFilterAssignee] = useState("all");
+  const [filterSource, setFilterSource] = useState("all");
+  const [selectedDeal, setSelectedDeal] = useState<Deal | null>(null);
+  const [showAddDeal, setShowAddDeal] = useState(false);
+  const [viewMode, setViewMode] = useState<"board" | "list">("board");
+
+  const [newDeal, setNewDeal] = useState({
+    businessName: "",
+    contactName: "",
+    contactEmail: "",
+    contactPhone: "",
+    businessType: "Restaurant",
+    plan: "Complete Solution",
+    source: "Website",
+    notes: "",
   });
 
-  const form = useForm<MessageFormValues>({
-    resolver: zodResolver(messageFormSchema),
-    defaultValues: { name: "", email: "", phone: "", company: "", venueType: "", inquiryType: "", message: "" },
+  const filteredDeals = deals.filter(d => {
+    const matchesSearch = !searchQuery ||
+      d.businessName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      d.contactName.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesAssignee = filterAssignee === "all" || d.assignedTo === filterAssignee;
+    const matchesSource = filterSource === "all" || d.source === filterSource;
+    return matchesSearch && matchesAssignee && matchesSource;
   });
 
-  const createMutation = useMutation({
-    mutationFn: async (data: MessageFormValues) => {
-      const res = await apiRequest("POST", "/api/contact-messages", data);
-      return res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/contact-messages"] });
-      setOpen(false);
-      form.reset();
-      toast({ title: "Contact message added" });
-    },
-    onError: (err: Error) => {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
-    },
-  });
+  const getStageDeals = (stage: PipelineStage) => filteredDeals.filter(d => d.stage === stage);
+  const getStageValue = (stage: PipelineStage) => getStageDeals(stage).reduce((sum, d) => sum + d.value, 0);
+
+  const moveDeal = (dealId: number, newStage: PipelineStage) => {
+    setDeals(prev => prev.map(d => d.id === dealId ? { ...d, stage: newStage } : d));
+    setSelectedDeal(null);
+  };
+
+  const handleAddDeal = () => {
+    const deal: Deal = {
+      id: deals.length + 1,
+      ...newDeal,
+      value: newDeal.plan === "Complete Solution" ? 299 : 149,
+      stage: "lead",
+      assignedTo: "Maria Garcia",
+      lastActivity: "Just created",
+      nextFollowUp: "TBD",
+      createdAt: "Feb 15, 2026",
+    };
+    setDeals(prev => [...prev, deal]);
+    setShowAddDeal(false);
+    setNewDeal({ businessName: "", contactName: "", contactEmail: "", contactPhone: "", businessType: "Restaurant", plan: "Complete Solution", source: "Website", notes: "" });
+  };
+
+  const totalPipelineValue = filteredDeals.reduce((sum, d) => sum + d.value, 0);
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between flex-wrap gap-2">
-        <div className="flex items-center gap-2">
-          <Mail className="h-6 w-6" />
-          <h1 className="text-2xl font-semibold" data-testid="page-title-crm">CRM - Contact Messages</h1>
-        </div>
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button data-testid="button-add-message">
+    <AdminLayout>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div>
+            <h1 className="text-2xl font-bold" data-testid="text-crm-title">Sales CRM</h1>
+            <p className="text-muted-foreground">Manage your sales pipeline and track deals</p>
+          </div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex border rounded-md">
+              <Button
+                variant={viewMode === "board" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setViewMode("board")}
+                data-testid="button-view-board"
+              >
+                Board
+              </Button>
+              <Button
+                variant={viewMode === "list" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setViewMode("list")}
+                data-testid="button-view-list"
+              >
+                List
+              </Button>
+            </div>
+            <Button onClick={() => setShowAddDeal(true)} data-testid="button-add-deal">
               <Plus className="h-4 w-4 mr-2" />
-              Add Message
+              Add Deal
             </Button>
-          </DialogTrigger>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-4 gap-4">
+          {stages.map(stage => {
+            const config = stageConfig[stage];
+            const stageDeals = getStageDeals(stage);
+            const value = getStageValue(stage);
+            const Icon = config.icon;
+            return (
+              <div key={stage} className="border rounded-md p-4 space-y-1" data-testid={`stat-stage-${stage}`}>
+                <div className="flex items-center gap-2">
+                  <div className={`p-1.5 rounded-md ${config.bg}`}>
+                    <Icon className={`w-4 h-4 ${config.color}`} />
+                  </div>
+                  <span className="text-sm text-muted-foreground">{config.label}</span>
+                </div>
+                <p className="text-2xl font-semibold">{stageDeals.length}</p>
+                <p className="text-xs text-muted-foreground">${value}/mo pipeline</p>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="relative flex-1 min-w-[200px]">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search deals..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9"
+              data-testid="input-search-deals"
+            />
+          </div>
+          <Select value={filterAssignee} onValueChange={setFilterAssignee}>
+            <SelectTrigger className="w-[180px]" data-testid="select-filter-assignee">
+              <SelectValue placeholder="All Reps" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Reps</SelectItem>
+              <SelectItem value="Maria Garcia">Maria Garcia</SelectItem>
+              <SelectItem value="David Chen">David Chen</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={filterSource} onValueChange={setFilterSource}>
+            <SelectTrigger className="w-[180px]" data-testid="select-filter-source">
+              <SelectValue placeholder="All Sources" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Sources</SelectItem>
+              <SelectItem value="Website">Website</SelectItem>
+              <SelectItem value="Google Ads">Google Ads</SelectItem>
+              <SelectItem value="LinkedIn">LinkedIn</SelectItem>
+              <SelectItem value="Referral">Referral</SelectItem>
+            </SelectContent>
+          </Select>
+          <div className="text-sm text-muted-foreground">
+            Total pipeline: <span className="font-medium text-foreground">${totalPipelineValue}/mo</span>
+          </div>
+        </div>
+
+        {viewMode === "board" ? (
+          <div className="grid grid-cols-4 gap-4" data-testid="pipeline-board">
+            {stages.map(stage => {
+              const config = stageConfig[stage];
+              const stageDeals = getStageDeals(stage);
+              const Icon = config.icon;
+              return (
+                <div key={stage} className="space-y-3">
+                  <div className={`flex items-center gap-2 p-2 rounded-md ${config.bg}`}>
+                    <Icon className={`w-4 h-4 ${config.color}`} />
+                    <span className="text-sm font-medium">{config.label}</span>
+                    <Badge variant="secondary" className="ml-auto text-xs">{stageDeals.length}</Badge>
+                  </div>
+                  <div className="space-y-2">
+                    {stageDeals.map(deal => (
+                      <Card
+                        key={deal.id}
+                        className="cursor-pointer hover-elevate"
+                        onClick={() => setSelectedDeal(deal)}
+                        data-testid={`card-deal-${deal.id}`}
+                      >
+                        <CardContent className="p-3 space-y-2">
+                          <div className="flex items-start justify-between gap-2">
+                            <p className="font-medium text-sm">{deal.businessName}</p>
+                            <Badge variant="outline" className="text-[10px] shrink-0">{deal.businessType}</Badge>
+                          </div>
+                          <p className="text-xs text-muted-foreground">{deal.contactName}</p>
+                          <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
+                            <span>${deal.value}/mo</span>
+                            <span>{deal.plan}</span>
+                          </div>
+                          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                            <Clock className="w-3 h-3" />
+                            <span>{deal.lastActivity}</span>
+                          </div>
+                          <div className="flex items-center gap-1 text-xs">
+                            <Calendar className="w-3 h-3 text-muted-foreground" />
+                            <span className="text-muted-foreground">Follow up: {deal.nextFollowUp}</span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                    {stageDeals.length === 0 && (
+                      <div className="border border-dashed rounded-md p-6 text-center text-xs text-muted-foreground">
+                        No deals in this stage
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <Card data-testid="pipeline-list">
+            <CardContent className="p-0">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b text-left">
+                      <th className="p-3 font-medium text-muted-foreground">Business</th>
+                      <th className="p-3 font-medium text-muted-foreground">Contact</th>
+                      <th className="p-3 font-medium text-muted-foreground">Stage</th>
+                      <th className="p-3 font-medium text-muted-foreground">Plan</th>
+                      <th className="p-3 font-medium text-muted-foreground">Value</th>
+                      <th className="p-3 font-medium text-muted-foreground">Assigned</th>
+                      <th className="p-3 font-medium text-muted-foreground">Follow Up</th>
+                      <th className="p-3 font-medium text-muted-foreground">Source</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredDeals.map(deal => {
+                      const config = stageConfig[deal.stage];
+                      return (
+                        <tr
+                          key={deal.id}
+                          className="border-b last:border-0 cursor-pointer hover-elevate"
+                          onClick={() => setSelectedDeal(deal)}
+                          data-testid={`row-deal-${deal.id}`}
+                        >
+                          <td className="p-3">
+                            <div>
+                              <p className="font-medium text-sm">{deal.businessName}</p>
+                              <p className="text-xs text-muted-foreground">{deal.businessType}</p>
+                            </div>
+                          </td>
+                          <td className="p-3">
+                            <div>
+                              <p className="text-sm">{deal.contactName}</p>
+                              <p className="text-xs text-muted-foreground">{deal.contactEmail}</p>
+                            </div>
+                          </td>
+                          <td className="p-3">
+                            <Badge variant="outline" className={`text-xs ${config.color} ${config.border}`}>
+                              {config.label}
+                            </Badge>
+                          </td>
+                          <td className="p-3 text-sm">{deal.plan}</td>
+                          <td className="p-3 text-sm">${deal.value}/mo</td>
+                          <td className="p-3 text-sm text-muted-foreground">{deal.assignedTo}</td>
+                          <td className="p-3 text-sm text-muted-foreground whitespace-nowrap">{deal.nextFollowUp}</td>
+                          <td className="p-3">
+                            <Badge variant="secondary" className="text-xs">{deal.source}</Badge>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        <Dialog open={!!selectedDeal} onOpenChange={(open) => !open && setSelectedDeal(null)}>
+          <DialogContent className="max-w-lg">
+            <DialogHeader>
+              <DialogTitle>{selectedDeal?.businessName}</DialogTitle>
+              <DialogDescription>{selectedDeal?.businessType} - {selectedDeal?.plan}</DialogDescription>
+            </DialogHeader>
+            {selectedDeal && (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground">Contact</p>
+                    <p className="text-sm font-medium">{selectedDeal.contactName}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground">Value</p>
+                    <p className="text-sm font-medium">${selectedDeal.value}/mo</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground">Email</p>
+                    <p className="text-sm">{selectedDeal.contactEmail}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground">Phone</p>
+                    <p className="text-sm">{selectedDeal.contactPhone}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground">Source</p>
+                    <Badge variant="secondary" className="text-xs">{selectedDeal.source}</Badge>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground">Assigned To</p>
+                    <p className="text-sm">{selectedDeal.assignedTo}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground">Created</p>
+                    <p className="text-sm">{selectedDeal.createdAt}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground">Next Follow Up</p>
+                    <p className="text-sm">{selectedDeal.nextFollowUp}</p>
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Last Activity</p>
+                  <p className="text-sm">{selectedDeal.lastActivity}</p>
+                </div>
+
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Notes</p>
+                  <p className="text-sm">{selectedDeal.notes}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <p className="text-xs text-muted-foreground">Move to Stage</p>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {stages.filter(s => s !== selectedDeal.stage).map(stage => {
+                      const config = stageConfig[stage];
+                      const Icon = config.icon;
+                      return (
+                        <Button
+                          key={stage}
+                          variant="outline"
+                          size="sm"
+                          onClick={() => moveDeal(selectedDeal.id, stage)}
+                          data-testid={`button-move-${stage}`}
+                        >
+                          <Icon className={`w-3.5 h-3.5 mr-1.5 ${config.color}`} />
+                          {config.label}
+                        </Button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={showAddDeal} onOpenChange={setShowAddDeal}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add Contact Message</DialogTitle>
+              <DialogTitle>Add New Deal</DialogTitle>
+              <DialogDescription>Add a new prospect to your sales pipeline</DialogDescription>
             </DialogHeader>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit((data) => createMutation.mutate(data))} className="space-y-4">
-                <FormField control={form.control} name="name" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <FormControl><Input {...field} data-testid="input-message-name" /></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-                <FormField control={form.control} name="email" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl><Input {...field} type="email" data-testid="input-message-email" /></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-                <FormField control={form.control} name="phone" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone</FormLabel>
-                    <FormControl><Input {...field} data-testid="input-message-phone" /></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-                <FormField control={form.control} name="company" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Company</FormLabel>
-                    <FormControl><Input {...field} data-testid="input-message-company" /></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-                <FormField control={form.control} name="inquiryType" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Inquiry Type</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl><SelectTrigger data-testid="select-inquiry-type"><SelectValue placeholder="Select type" /></SelectTrigger></FormControl>
-                      <SelectContent>
-                        <SelectItem value="general">General</SelectItem>
-                        <SelectItem value="demo">Demo Request</SelectItem>
-                        <SelectItem value="pricing">Pricing</SelectItem>
-                        <SelectItem value="support">Support</SelectItem>
-                        <SelectItem value="partnership">Partnership</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-                <FormField control={form.control} name="message" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Message</FormLabel>
-                    <FormControl><Textarea {...field} data-testid="input-message-body" /></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-                <Button type="submit" className="w-full" disabled={createMutation.isPending} data-testid="button-submit-message">
-                  {createMutation.isPending ? "Adding..." : "Add Message"}
-                </Button>
-              </form>
-            </Form>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Business Name</Label>
+                  <Input
+                    value={newDeal.businessName}
+                    onChange={(e) => setNewDeal(prev => ({ ...prev, businessName: e.target.value }))}
+                    placeholder="e.g. The Blue Lagoon"
+                    data-testid="input-deal-business"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Business Type</Label>
+                  <Select value={newDeal.businessType} onValueChange={(v) => setNewDeal(prev => ({ ...prev, businessType: v }))}>
+                    <SelectTrigger data-testid="select-deal-type">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Restaurant">Restaurant</SelectItem>
+                      <SelectItem value="Cafe">Cafe</SelectItem>
+                      <SelectItem value="Bar">Bar</SelectItem>
+                      <SelectItem value="Hotel">Hotel</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Contact Name</Label>
+                  <Input
+                    value={newDeal.contactName}
+                    onChange={(e) => setNewDeal(prev => ({ ...prev, contactName: e.target.value }))}
+                    placeholder="Full name"
+                    data-testid="input-deal-contact"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Contact Email</Label>
+                  <Input
+                    value={newDeal.contactEmail}
+                    onChange={(e) => setNewDeal(prev => ({ ...prev, contactEmail: e.target.value }))}
+                    placeholder="email@example.com"
+                    data-testid="input-deal-email"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Contact Phone</Label>
+                  <Input
+                    value={newDeal.contactPhone}
+                    onChange={(e) => setNewDeal(prev => ({ ...prev, contactPhone: e.target.value }))}
+                    placeholder="+1 (555) 000-0000"
+                    data-testid="input-deal-phone"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Plan</Label>
+                  <Select value={newDeal.plan} onValueChange={(v) => setNewDeal(prev => ({ ...prev, plan: v }))}>
+                    <SelectTrigger data-testid="select-deal-plan">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Complete Solution">Complete Solution - $299/mo</SelectItem>
+                      <SelectItem value="Widget Only">Widget Only - $149/mo</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Lead Source</Label>
+                <Select value={newDeal.source} onValueChange={(v) => setNewDeal(prev => ({ ...prev, source: v }))}>
+                  <SelectTrigger data-testid="select-deal-source">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Website">Website</SelectItem>
+                    <SelectItem value="Google Ads">Google Ads</SelectItem>
+                    <SelectItem value="LinkedIn">LinkedIn</SelectItem>
+                    <SelectItem value="Referral">Referral</SelectItem>
+                    <SelectItem value="Cold Call">Cold Call</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Notes</Label>
+                <Textarea
+                  value={newDeal.notes}
+                  onChange={(e) => setNewDeal(prev => ({ ...prev, notes: e.target.value }))}
+                  placeholder="Any initial notes about this prospect..."
+                  data-testid="input-deal-notes"
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowAddDeal(false)} data-testid="button-cancel-deal">
+                Cancel
+              </Button>
+              <Button
+                onClick={handleAddDeal}
+                disabled={!newDeal.businessName || !newDeal.contactName}
+                data-testid="button-save-deal"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add to Pipeline
+              </Button>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>All Contact Messages</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <div className="space-y-3">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Skeleton key={i} className="h-10 w-full" />
-              ))}
-            </div>
-          ) : messages.length === 0 ? (
-            <p className="text-muted-foreground text-center py-8" data-testid="empty-state-crm">
-              No contact messages found.
-            </p>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Phone</TableHead>
-                  <TableHead>Company</TableHead>
-                  <TableHead>Inquiry</TableHead>
-                  <TableHead>Message</TableHead>
-                  <TableHead>Date</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {messages.map((msg) => (
-                  <TableRow key={msg.id} data-testid={`row-message-${msg.id}`}>
-                    <TableCell className="font-medium">{msg.name}</TableCell>
-                    <TableCell>{msg.email}</TableCell>
-                    <TableCell className="text-muted-foreground">{msg.phone || "-"}</TableCell>
-                    <TableCell className="text-muted-foreground">{msg.company || "-"}</TableCell>
-                    <TableCell>
-                      {msg.inquiryType ? <Badge variant="secondary">{msg.inquiryType}</Badge> : "-"}
-                    </TableCell>
-                    <TableCell className="max-w-xs truncate text-muted-foreground">{msg.message}</TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {msg.createdAt ? new Date(msg.createdAt).toLocaleDateString() : "-"}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+    </AdminLayout>
   );
 }
