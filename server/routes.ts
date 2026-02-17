@@ -919,6 +919,303 @@ export async function registerRoutes(
     }
   });
 
+  // Admin aggregate endpoints (used by admin dashboard pages)
+  app.get("/api/admin/venues", async (req, res) => {
+    try {
+      const venues = await storage.getVenues();
+      res.json(venues);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch venues" });
+    }
+  });
+
+  app.get("/api/admin/call-logs", async (req, res) => {
+    try {
+      const venues = await storage.getVenues();
+      const allLogs: any[] = [];
+      for (const venue of venues) {
+        const logs = await storage.getCallLogs(venue.id);
+        allLogs.push(...logs);
+      }
+      allLogs.sort((a, b) => {
+        const da = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const db = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return db - da;
+      });
+      res.json(allLogs);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch call logs" });
+    }
+  });
+
+  app.get("/api/admin/widget-settings", async (req, res) => {
+    try {
+      const venues = await storage.getVenues();
+      const allSettings: any[] = [];
+      for (const venue of venues) {
+        const settings = await storage.getWidgetSettings(venue.id);
+        if (settings) allSettings.push(settings);
+      }
+      res.json(allSettings);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch widget settings" });
+    }
+  });
+
+  app.get("/api/admin/blog/posts", async (req, res) => {
+    try {
+      const venueId = req.query.venueId as string;
+      if (!venueId) return res.json([]);
+      const posts = await storage.getVenueBlogPosts(venueId);
+      res.json(posts);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch blog posts" });
+    }
+  });
+
+  app.post("/api/admin/blog/posts", async (req, res) => {
+    try {
+      const post = await storage.createVenueBlogPost(req.body);
+      res.json(post);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to create blog post" });
+    }
+  });
+
+  app.put("/api/admin/blog/posts/:id", async (req, res) => {
+    try {
+      const post = await storage.updateVenueBlogPost(req.params.id, req.body);
+      res.json(post);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update blog post" });
+    }
+  });
+
+  app.delete("/api/admin/blog/posts/:id", async (req, res) => {
+    try {
+      await storage.deleteVenueBlogPost(req.params.id);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete blog post" });
+    }
+  });
+
+  app.post("/api/admin/blog/posts/:id/publish-now", async (req, res) => {
+    try {
+      const post = await storage.updateVenueBlogPost(req.params.id, { status: "published", publishedAt: new Date() });
+      res.json(post);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to publish post" });
+    }
+  });
+
+  app.post("/api/admin/blog/posts/:id/schedule", async (req, res) => {
+    try {
+      const post = await storage.updateVenueBlogPost(req.params.id, { status: "scheduled", publishAt: new Date(req.body.publishAt) });
+      res.json(post);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to schedule post" });
+    }
+  });
+
+  app.get("/api/admin/blog/posts/campaign/:venueId/:campaignId", async (req, res) => {
+    try {
+      const posts = await storage.getVenueBlogPostsByCampaign(req.params.venueId, req.params.campaignId);
+      res.json(posts);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch campaign posts" });
+    }
+  });
+
+  app.get("/api/admin/blog/domains", async (req, res) => {
+    try {
+      const venueId = req.query.venueId as string;
+      if (!venueId) return res.json([]);
+      const domains = await storage.getVenueDomains(venueId);
+      res.json(domains);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch domains" });
+    }
+  });
+
+  app.post("/api/admin/blog/domains", async (req, res) => {
+    try {
+      const domain = await storage.createVenueDomain(req.body);
+      res.json(domain);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to create domain" });
+    }
+  });
+
+  app.delete("/api/admin/blog/domains/:id", async (req, res) => {
+    try {
+      await storage.deleteVenueDomain(req.params.id);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete domain" });
+    }
+  });
+
+  app.patch("/api/admin/blog/domains/:id", async (req, res) => {
+    try {
+      const domain = await storage.updateVenueDomain(req.params.id, req.body);
+      res.json(domain);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update domain" });
+    }
+  });
+
+  app.get("/api/admin/blog/campaigns/:venueId", async (req, res) => {
+    try {
+      const campaigns = await storage.getVenueCampaigns(req.params.venueId);
+      res.json(campaigns);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch campaigns" });
+    }
+  });
+
+  app.get("/api/admin/assets/search", async (req, res) => {
+    try {
+      res.json([]);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to search assets" });
+    }
+  });
+
+  app.post("/api/admin/assets/save", async (req, res) => {
+    try {
+      res.json({ id: Date.now(), ...req.body });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to save asset" });
+    }
+  });
+
+  app.post("/api/admin/blog/posts/bulk/create", async (req, res) => {
+    try {
+      const posts = req.body.posts || [];
+      const created = [];
+      for (const post of posts) {
+        const result = await storage.createVenueBlogPost(post);
+        created.push(result);
+      }
+      res.json(created);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to create bulk posts" });
+    }
+  });
+
+  app.post("/api/admin/blog/posts/bulk/generate", async (req, res) => {
+    try {
+      res.json({ message: "Content generation is not available in this environment" });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to generate content" });
+    }
+  });
+
+  app.post("/api/admin/content/preview", async (req, res) => {
+    try {
+      res.json({ html: req.body.content || "" });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to preview content" });
+    }
+  });
+
+  // Old-style rank-keywords / grid-keywords endpoints (used by admin SEO pages)
+  app.get("/api/rank-keywords", async (req, res) => {
+    try {
+      const venueId = req.query.venueId as string;
+      if (!venueId) return res.json([]);
+      const keywords = await storage.getRankTrackerKeywords(venueId);
+      res.json(keywords);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch rank keywords" });
+    }
+  });
+
+  app.post("/api/rank-keywords", async (req, res) => {
+    try {
+      const { venueId, keyword } = req.body;
+      const kws = await storage.addRankTrackerKeywords([{ venueId, keyword }]);
+      res.json(kws[0]);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to add rank keyword" });
+    }
+  });
+
+  app.delete("/api/rank-keywords/:id", async (req, res) => {
+    try {
+      await storage.deleteRankTrackerKeyword(parseInt(req.params.id));
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete rank keyword" });
+    }
+  });
+
+  app.get("/api/rank-results", async (req, res) => {
+    try {
+      const venueId = req.query.venueId as string;
+      if (!venueId) return res.json([]);
+      const results = await storage.getRankTrackerResults(venueId);
+      res.json(results);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch rank results" });
+    }
+  });
+
+  app.get("/api/grid-keywords", async (req, res) => {
+    try {
+      const venueId = req.query.venueId as string;
+      if (!venueId) return res.json([]);
+      const keywords = await storage.getGridKeywords(venueId);
+      res.json(keywords);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch grid keywords" });
+    }
+  });
+
+  app.post("/api/grid-keywords", async (req, res) => {
+    try {
+      const { venueId, keyword } = req.body;
+      const kws = await storage.addGridKeywords([{ venueId, keyword }]);
+      res.json(kws[0]);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to add grid keyword" });
+    }
+  });
+
+  app.delete("/api/grid-keywords/:id", async (req, res) => {
+    try {
+      await storage.deleteGridKeyword(parseInt(req.params.id));
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete grid keyword" });
+    }
+  });
+
+  app.get("/api/grid-scan-results", async (req, res) => {
+    try {
+      const venueId = req.query.venueId as string;
+      if (!venueId) return res.json([]);
+      const keywords = await storage.getGridKeywords(venueId);
+      if (keywords.length === 0) return res.json([]);
+      const results = await storage.getLatestGridScanResults(venueId, keywords[0].keyword);
+      res.json(results);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch grid scan results" });
+    }
+  });
+
+  app.get("/api/knowledge-base", async (req, res) => {
+    try {
+      const venueId = req.query.venueId as string;
+      if (!venueId) return res.json([]);
+      const items = await storage.getKnowledgeBaseItems(venueId);
+      res.json(items);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch knowledge base" });
+    }
+  });
+
   // Room Types
   app.get("/api/venues/:venueId/room-types", async (req, res) => {
     try {
