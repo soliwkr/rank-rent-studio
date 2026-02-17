@@ -76,6 +76,10 @@ All prefixed with `/api/`:
 - POST `/api/ai/generate-content` - SSE streaming content generation
 - POST `/api/ai/generate-meta` - Meta title/description generation
 
+## Testing Policy
+- Do NOT run Playwright e2e tests (run_test). The user has disabled e2e testing permanently.
+- Verify changes via curl, logs, and manual inspection only.
+
 ## Recent Changes (Feb 2026)
 - Migrated from IndexFlow workspace-based architecture to Resto venue-based architecture
 - Imported complete PostgreSQL dump (37 tables, 7 venues, 4 users)
