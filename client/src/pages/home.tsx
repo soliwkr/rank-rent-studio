@@ -230,22 +230,22 @@ export default function Home() {
         <div className="absolute inset-0 bg-black/15 z-[1]" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32 text-center">
           <div className="inline-block backdrop-blur-sm bg-black/15 rounded-2xl px-4 py-6 sm:px-8 sm:py-10 lg:px-12 lg:py-14 mx-2">
-            <div className="inline-flex items-center gap-2 mb-6 px-3 py-2 sm:px-4 rounded-full bg-gradient-to-r from-primary via-blue-500 to-purple-500 text-white shadow-lg text-sm sm:text-base">
-              <span className="relative flex items-center justify-center w-5 h-5 rounded-full bg-white">
-                <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-              </span>
-              <span className="font-semibold whitespace-nowrap text-[13px] sm:text-sm">Done-for-you</span> <span className="font-light whitespace-nowrap text-[13px] sm:text-sm">automated reservations</span>
-            </div>
             <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold leading-tight mb-6 text-white">
-              Stop Missing Bookings!<br className="hidden sm:block" />
+              One SEO tool to<br className="hidden sm:block" />
               <span className="sm:hidden"> </span>
-              <span className="bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">Start Growing Revenue.</span>
+              <span className="bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">rule them all.</span>
             </h1>
-            <p className="text-[15px] sm:text-lg lg:text-xl max-w-3xl mx-auto mb-8">
-              <span className="font-semibold text-white drop-shadow-lg whitespace-nowrap">Managed Booking Infrastructure <em className="text-primary">&</em></span><br />
-              <span className="font-semibold text-white drop-shadow-lg">Custom Websites for Hospitality</span><br />
-              <span className="inline-block mt-2 font-bold text-[17px] sm:text-xl lg:text-2xl bg-gradient-to-r from-yellow-300 via-orange-400 to-pink-500 bg-clip-text text-transparent drop-shadow-lg animate-[pulse_5s_ease-in-out_infinite] whitespace-nowrap">Restaurants · Cafes · Bars · Hotels</span><br />
-              <span className="inline-block mt-2 text-[15px] sm:text-lg font-medium text-white drop-shadow-lg">We Boss the tech, you focus on Biz!</span>
+            <p className="text-[15px] sm:text-lg lg:text-xl max-w-3xl mx-auto mb-4 font-semibold text-white drop-shadow-lg">
+              Why juggle 10 different platforms<br />
+              when one does it all?
+            </p>
+            <p className="text-[15px] sm:text-lg lg:text-xl max-w-3xl mx-auto mb-4">
+              <span className="text-white/90 drop-shadow-lg">Create content. Track rankings. Generate leads.</span><br />
+              <span className="text-white/90 drop-shadow-lg">Push to any LLM or CMS. Resell to your clients.</span><br />
+              <span className="text-white/90 drop-shadow-lg">All from one AI-powered platform.</span>
+            </p>
+            <p className="inline-block mb-8 font-bold text-[17px] sm:text-xl lg:text-2xl bg-gradient-to-r from-yellow-300 via-orange-400 to-pink-500 bg-clip-text text-transparent drop-shadow-lg animate-[pulse_5s_ease-in-out_infinite]">
+              Agencies · SaaS · Ecommerce · Local Business
             </p>
             <div className="flex items-center justify-center gap-2 sm:gap-4">
               <Link href="/contact">
@@ -255,7 +255,7 @@ export default function Home() {
               </Link>
               <Link href="/templates">
                 <Button size="default" variant="outline" className="bg-white/10 border-white/30 text-white hover:bg-white/20 sm:text-base text-sm sm:px-4 px-3" data-testid="button-hero-templates">
-                  <span className="italic">from</span> <span className="font-bold">$149</span> p/mo
+                  <span className="italic">from</span> <span className="font-bold">$99</span> p/mo
                 </Button>
               </Link>
             </div>
