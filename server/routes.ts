@@ -1231,10 +1231,17 @@ export async function registerRoutes(
   app.get("/api/contact-messages", async (req, res) => {
     try {
       const venueId = req.query.venueId as string;
-      const messages = await storage.getContactMessages();
       if (venueId) {
+        if (!(await authorizeVenueAccess(req, venueId))) {
+          return res.status(403).json({ error: "Forbidden" });
+        }
+        const messages = await storage.getContactMessages();
         return res.json(messages.filter((m: any) => m.venueId === venueId));
       }
+      if (process.env.NODE_ENV === "production") {
+        return res.status(403).json({ error: "Forbidden" });
+      }
+      const messages = await storage.getContactMessages();
       res.json(messages);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch contact messages" });
@@ -1245,6 +1252,9 @@ export async function registerRoutes(
     try {
       const venueId = req.query.venueId as string;
       if (!venueId) return res.json([]);
+      if (!(await authorizeVenueAccess(req, venueId))) {
+        return res.status(403).json({ error: "Forbidden" });
+      }
       const date = req.query.date as string;
       if (date) {
         const reservations = await storage.getReservationsByDate(venueId, date);
@@ -1261,6 +1271,9 @@ export async function registerRoutes(
     try {
       const venueId = req.query.venueId as string;
       if (!venueId) return res.json([]);
+      if (!(await authorizeVenueAccess(req, venueId))) {
+        return res.status(403).json({ error: "Forbidden" });
+      }
       const calls = await storage.getCallLogs(venueId);
       res.json(calls);
     } catch (error) {
