@@ -23,6 +23,7 @@ import {
   AreaChart,
   Area,
 } from "recharts";
+import { useWorkspace } from "@/lib/workspace-context";
 import type { Workspace, BlogPost, RankTrackerKeyword, Lead } from "@shared/schema";
 
 const chartData = [
@@ -94,42 +95,57 @@ function MetricCard({
 }
 
 export default function DashboardOverview() {
-  const { data: workspaces, isLoading: workspacesLoading } = useQuery<Workspace[]>({
-    queryKey: ["/api/workspaces"],
-  });
+  const { selectedWorkspace, workspaces: allWorkspaces } = useWorkspace();
 
-  const { data: posts, isLoading: postsLoading } = useQuery<BlogPost[]>({
+  const { data: allPosts, isLoading: postsLoading } = useQuery<BlogPost[]>({
     queryKey: ["/api/blog-posts"],
   });
 
-  const { data: keywords, isLoading: keywordsLoading } = useQuery<RankTrackerKeyword[]>({
+  const { data: allKeywords, isLoading: keywordsLoading } = useQuery<RankTrackerKeyword[]>({
     queryKey: ["/api/rank-keywords"],
   });
 
-  const { data: leads, isLoading: leadsLoading } = useQuery<Lead[]>({
+  const { data: allLeads, isLoading: leadsLoading } = useQuery<Lead[]>({
     queryKey: ["/api/leads"],
   });
 
-  const loading = workspacesLoading || postsLoading || keywordsLoading || leadsLoading;
+  const loading = postsLoading || keywordsLoading || leadsLoading;
 
-  const totalPosts = posts?.length || 0;
-  const totalKeywords = keywords?.length || 0;
-  const totalLeads = leads?.length || 0;
-  const activeWorkspaces = workspaces?.filter((w) => w.status === "active").length || 0;
+  const posts = selectedWorkspace
+    ? (allPosts || []).filter((p) => p.workspaceId === selectedWorkspace.id)
+    : allPosts || [];
+  const keywords = selectedWorkspace
+    ? (allKeywords || []).filter((k) => k.workspaceId === selectedWorkspace.id)
+    : allKeywords || [];
+  const leads = selectedWorkspace
+    ? (allLeads || []).filter((l) => l.workspaceId === selectedWorkspace.id)
+    : allLeads || [];
+
+  const totalPosts = posts.length;
+  const totalKeywords = keywords.length;
+  const totalLeads = leads.length;
+  const activeWorkspaces = allWorkspaces.filter((w) => w.status === "active").length;
 
   const recentPosts = posts
-    ?.filter((p) => p.status === "published")
-    .slice(0, 5) || [];
+    .filter((p) => p.status === "published")
+    .slice(0, 5);
 
-  const topKeywords = keywords
-    ?.sort((a, b) => (a.currentPosition || 100) - (b.currentPosition || 100))
-    .slice(0, 5) || [];
+  const topKeywords = [...keywords]
+    .sort((a, b) => (a.currentPosition || 100) - (b.currentPosition || 100))
+    .slice(0, 5);
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold" data-testid="text-page-title">Dashboard</h1>
-        <p className="text-muted-foreground mt-1">Overview of your SEO operations</p>
+        <p className="text-muted-foreground mt-1">
+          Overview of your SEO operations
+          {selectedWorkspace && (
+            <span className="ml-1">
+              for <span className="font-medium text-foreground">{selectedWorkspace.name}</span>
+            </span>
+          )}
+        </p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

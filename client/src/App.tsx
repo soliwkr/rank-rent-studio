@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/lib/theme";
+import { WorkspaceProvider } from "@/lib/workspace-context";
 import { DashboardLayout } from "@/components/dashboard-layout";
 import NotFound from "@/pages/not-found";
 import LandingPage from "@/pages/landing";
@@ -17,18 +18,20 @@ import SettingsPage from "@/pages/dashboard/settings";
 
 function DashboardRoutes() {
   return (
-    <DashboardLayout>
-      <Switch>
-        <Route path="/dashboard" component={DashboardOverview} />
-        <Route path="/dashboard/content" component={ContentEngine} />
-        <Route path="/dashboard/keywords" component={RankTracker} />
-        <Route path="/dashboard/grid" component={LocalGrid} />
-        <Route path="/dashboard/gsc" component={GscAnalytics} />
-        <Route path="/dashboard/leads" component={LeadsCRM} />
-        <Route path="/dashboard/settings" component={SettingsPage} />
-        <Route component={NotFound} />
-      </Switch>
-    </DashboardLayout>
+    <WorkspaceProvider>
+      <DashboardLayout>
+        <Switch>
+          <Route path="/dashboard" component={DashboardOverview} />
+          <Route path="/dashboard/content" component={ContentEngine} />
+          <Route path="/dashboard/keywords" component={RankTracker} />
+          <Route path="/dashboard/grid" component={LocalGrid} />
+          <Route path="/dashboard/gsc" component={GscAnalytics} />
+          <Route path="/dashboard/leads" component={LeadsCRM} />
+          <Route path="/dashboard/settings" component={SettingsPage} />
+          <Route component={NotFound} />
+        </Switch>
+      </DashboardLayout>
+    </WorkspaceProvider>
   );
 }
 

@@ -12,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Users, UserPlus, CalendarCheck, Phone, Mail, Plus } from "lucide-react";
+import { useWorkspace } from "@/lib/workspace-context";
 import type { Lead } from "@shared/schema";
 
 function LeadStatusBadge({ status }: { status: string }) {
@@ -26,13 +27,18 @@ function SourceBadge({ source }: { source: string }) {
 }
 
 export default function LeadsCRM() {
-  const { data: leads, isLoading } = useQuery<Lead[]>({
+  const { selectedWorkspace } = useWorkspace();
+  const { data: allLeads, isLoading } = useQuery<Lead[]>({
     queryKey: ["/api/leads"],
   });
 
-  const totalLeads = leads?.length || 0;
-  const newLeads = leads?.filter((l) => l.status === "new").length || 0;
-  const booked = leads?.filter((l) => l.status === "booked").length || 0;
+  const leads = selectedWorkspace
+    ? (allLeads || []).filter((l) => l.workspaceId === selectedWorkspace.id)
+    : allLeads || [];
+
+  const totalLeads = leads.length;
+  const newLeads = leads.filter((l) => l.status === "new").length;
+  const booked = leads.filter((l) => l.status === "booked").length;
   const conversionRate = totalLeads > 0 ? ((booked / totalLeads) * 100).toFixed(0) : "0";
 
   return (
@@ -87,14 +93,14 @@ export default function LeadsCRM() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {leads?.length === 0 ? (
+              {leads.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                     No leads yet. Leads will appear here as they come in.
                   </TableCell>
                 </TableRow>
               ) : (
-                leads?.map((lead) => (
+                leads.map((lead) => (
                   <TableRow key={lead.id} data-testid={`row-lead-${lead.id}`}>
                     <TableCell className="font-medium text-sm">{lead.name}</TableCell>
                     <TableCell>

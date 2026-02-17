@@ -12,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Plus, ArrowUp, ArrowDown, Minus, TrendingUp, Target, Hash } from "lucide-react";
+import { useWorkspace } from "@/lib/workspace-context";
 import type { RankTrackerKeyword } from "@shared/schema";
 
 function TrendIndicator({ current, previous }: { current?: number | null; previous?: number | null }) {
@@ -49,24 +50,32 @@ function DifficultyBar({ value }: { value?: number | null }) {
 }
 
 export default function RankTracker() {
-  const { data: keywords, isLoading } = useQuery<RankTrackerKeyword[]>({
+  const { selectedWorkspace } = useWorkspace();
+  const { data: allKeywords, isLoading } = useQuery<RankTrackerKeyword[]>({
     queryKey: ["/api/rank-keywords"],
   });
 
-  const avgPosition = keywords?.length
+  const keywords = selectedWorkspace
+    ? (allKeywords || []).filter((k) => k.workspaceId === selectedWorkspace.id)
+    : allKeywords || [];
+
+  const avgPosition = keywords.length
     ? (keywords.reduce((sum, k) => sum + (k.currentPosition || 0), 0) / keywords.length).toFixed(1)
     : "\u2014";
 
-  const top3 = keywords?.filter((k) => k.currentPosition && k.currentPosition <= 3).length || 0;
-  const top10 = keywords?.filter((k) => k.currentPosition && k.currentPosition <= 10).length || 0;
-  const improving = keywords?.filter((k) => k.trend === "up").length || 0;
+  const top3 = keywords.filter((k) => k.currentPosition && k.currentPosition <= 3).length;
+  const top10 = keywords.filter((k) => k.currentPosition && k.currentPosition <= 10).length;
+  const improving = keywords.filter((k) => k.trend === "up").length;
 
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
           <h1 className="text-2xl font-bold" data-testid="text-page-title">Rank Tracker</h1>
-          <p className="text-muted-foreground mt-1">Monitor keyword positions across all workspaces</p>
+          <p className="text-muted-foreground mt-1">
+            Monitor keyword positions
+            {selectedWorkspace && <span> for <span className="font-medium text-foreground">{selectedWorkspace.name}</span></span>}
+          </p>
         </div>
         <Button data-testid="button-add-keyword">
           <Plus className="w-4 h-4 mr-2" />
@@ -113,14 +122,14 @@ export default function RankTracker() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {keywords?.length === 0 ? (
+              {keywords.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                     No keywords tracked yet. Add keywords to start monitoring.
                   </TableCell>
                 </TableRow>
               ) : (
-                keywords?.map((kw) => (
+                keywords.map((kw) => (
                   <TableRow key={kw.id} data-testid={`row-keyword-${kw.id}`}>
                     <TableCell>
                       <span className="font-medium text-sm">{kw.keyword}</span>

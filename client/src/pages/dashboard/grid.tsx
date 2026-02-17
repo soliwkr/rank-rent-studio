@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Grid3X3, MapPin, TrendingUp, Eye } from "lucide-react";
+import { useWorkspace } from "@/lib/workspace-context";
 
 interface GridScanWithKeyword {
   id: string;
@@ -40,11 +41,14 @@ function SearchGrid({ gridData }: { gridData: number[][] }) {
 }
 
 export default function LocalGrid() {
+  const { selectedWorkspace } = useWorkspace();
   const { data: results, isLoading } = useQuery<GridScanWithKeyword[]>({
     queryKey: ["/api/grid-scan-results-with-keywords"],
   });
 
-  const displayResults = results || [];
+  const displayResults = selectedWorkspace
+    ? (results || []).filter((r) => r.workspaceId === selectedWorkspace.id)
+    : results || [];
 
   const avgVisibility = displayResults.length
     ? (displayResults.reduce((sum, g) => sum + (g.visibility || 0), 0) / displayResults.length).toFixed(0)

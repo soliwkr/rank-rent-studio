@@ -170,9 +170,19 @@ export async function registerRoutes(
     res.status(201).json(usage);
   });
 
-  app.get("/api/campaigns/:workspaceId", async (req, res) => {
-    const cmpns = await storage.getCampaigns(req.params.workspaceId);
-    res.json(cmpns);
+  app.get("/api/campaigns", async (req, res) => {
+    const workspaceId = req.query.workspaceId as string | undefined;
+    if (workspaceId) {
+      const cmpns = await storage.getCampaigns(workspaceId);
+      return res.json(cmpns);
+    }
+    const wsList = await storage.getWorkspaces();
+    const all = [];
+    for (const ws of wsList) {
+      const cmpns = await storage.getCampaigns(ws.id);
+      all.push(...cmpns);
+    }
+    res.json(all);
   });
 
   app.post("/api/campaigns", async (req, res) => {
@@ -289,6 +299,15 @@ export async function registerRoutes(
     if (!parsed.success) return res.status(400).json({ error: fromError(parsed.error).toString() });
     const data = await storage.createGscData(parsed.data);
     res.status(201).json(data);
+  });
+
+  app.get("/api/seo-settings", async (req, res) => {
+    const workspaceId = req.query.workspaceId as string | undefined;
+    if (workspaceId) {
+      const settings = await storage.getSeoSettings(workspaceId);
+      return res.json(settings ? [settings] : []);
+    }
+    res.json([]);
   });
 
   app.get("/api/seo-settings/:workspaceId", async (req, res) => {

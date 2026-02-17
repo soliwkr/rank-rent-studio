@@ -20,22 +20,28 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { useWorkspace } from "@/lib/workspace-context";
 import type { GscData } from "@shared/schema";
 
 export default function GscAnalytics() {
-  const { data: gscData, isLoading } = useQuery<GscData[]>({
+  const { selectedWorkspace } = useWorkspace();
+  const { data: allGscData, isLoading } = useQuery<GscData[]>({
     queryKey: ["/api/gsc-data"],
   });
 
-  const totalClicks = gscData?.reduce((sum, d) => sum + (d.clicks || 0), 0) || 0;
-  const totalImpressions = gscData?.reduce((sum, d) => sum + (d.impressions || 0), 0) || 0;
+  const gscData = selectedWorkspace
+    ? (allGscData || []).filter((d) => d.workspaceId === selectedWorkspace.id)
+    : allGscData || [];
+
+  const totalClicks = gscData.reduce((sum, d) => sum + (d.clicks || 0), 0);
+  const totalImpressions = gscData.reduce((sum, d) => sum + (d.impressions || 0), 0);
   const avgCtr = totalImpressions > 0 ? ((totalClicks / totalImpressions) * 100).toFixed(1) : "0";
-  const avgPos = gscData?.length
+  const avgPos = gscData.length
     ? (gscData.reduce((sum, d) => sum + (d.position || 0), 0) / gscData.length).toFixed(1)
     : "\u2014";
 
   const dateMap = new Map<string, { clicks: number; impressions: number }>();
-  gscData?.forEach((d) => {
+  gscData.forEach((d) => {
     const existing = dateMap.get(d.date) || { clicks: 0, impressions: 0 };
     dateMap.set(d.date, {
       clicks: existing.clicks + (d.clicks || 0),
@@ -46,9 +52,9 @@ export default function GscAnalytics() {
     .sort((a, b) => a[0].localeCompare(b[0]))
     .map(([date, data]) => ({ date, ...data }));
 
-  const topQueries = gscData
-    ?.sort((a, b) => (b.clicks || 0) - (a.clicks || 0))
-    .slice(0, 10) || [];
+  const topQueries = [...gscData]
+    .sort((a, b) => (b.clicks || 0) - (a.clicks || 0))
+    .slice(0, 10);
 
   return (
     <div className="space-y-6">

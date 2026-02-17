@@ -7,6 +7,8 @@ import {
   BarChart3,
   Users,
   Settings,
+  ChevronsUpDown,
+  Building2,
 } from "lucide-react";
 import {
   Sidebar,
@@ -20,6 +22,13 @@ import {
   SidebarHeader,
   SidebarFooter,
 } from "@/components/ui/sidebar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useWorkspace } from "@/lib/workspace-context";
 import logoPath from "@assets/image_1771294424707.png";
 
 const menuItems = [
@@ -37,13 +46,44 @@ const bottomItems = [
 
 export function AppSidebar() {
   const [location] = useLocation();
+  const { workspaces, selectedWorkspace, selectWorkspace } = useWorkspace();
 
   return (
     <Sidebar>
-      <SidebarHeader className="p-4">
+      <SidebarHeader className="p-4 space-y-3">
         <Link href="/">
           <img src={logoPath} alt="IndexFlow" className="w-full max-h-full object-contain" data-testid="img-sidebar-logo" />
         </Link>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              className="flex items-center gap-2 w-full rounded-md border px-3 py-2 text-sm hover-elevate"
+              data-testid="button-workspace-selector"
+            >
+              <Building2 className="w-4 h-4 text-muted-foreground shrink-0" />
+              <span className="truncate flex-1 text-left">
+                {selectedWorkspace?.name || "Select workspace"}
+              </span>
+              <ChevronsUpDown className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="w-[--radix-dropdown-menu-trigger-width]">
+            {workspaces.map((ws) => (
+              <DropdownMenuItem
+                key={ws.id}
+                onClick={() => selectWorkspace(ws)}
+                data-testid={`menu-workspace-${ws.slug}`}
+              >
+                <div className="flex flex-col gap-0.5">
+                  <span className="font-medium text-sm">{ws.name}</span>
+                  {ws.industry && (
+                    <span className="text-xs text-muted-foreground">{ws.industry}</span>
+                  )}
+                </div>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
