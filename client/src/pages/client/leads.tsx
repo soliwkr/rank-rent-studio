@@ -18,22 +18,17 @@ export default function ClientMessages() {
   const { selectedVenue } = useVenue();
 
   const { data: allMessages = [], isLoading } = useQuery<ContactMessage[]>({
-    queryKey: [`/api/contact-messages?venueId=${selectedVenue?.id}`],
+    queryKey: ["/api/contact-messages"],
   });
 
-  const messages = selectedVenue
-    ? allMessages.filter((m) => (m as ContactMessage & { venueId?: string }).venueId === selectedVenue.id)
-    : allMessages;
-
-  const totalMessages = messages.length;
+  const totalMessages = allMessages.length;
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold" data-testid="text-page-title">My Messages</h1>
+        <h1 className="text-2xl font-bold" data-testid="text-page-title">Messages</h1>
         <p className="text-muted-foreground mt-1">
           View incoming inquiries and contact messages
-          {selectedVenue && <span> for <span className="font-medium text-foreground">{selectedVenue.name}</span></span>}
         </p>
       </div>
 
@@ -69,14 +64,14 @@ export default function ClientMessages() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {messages.length === 0 ? (
+              {allMessages.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                     No messages yet. Messages will appear here as they come in.
                   </TableCell>
                 </TableRow>
               ) : (
-                messages.map((msg) => (
+                allMessages.map((msg) => (
                   <TableRow key={msg.id} data-testid={`row-client-message-${msg.id}`}>
                     <TableCell className="font-medium text-sm" data-testid={`text-client-msg-name-${msg.id}`}>
                       {msg.name}

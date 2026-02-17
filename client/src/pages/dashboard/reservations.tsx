@@ -78,7 +78,7 @@ function AddReservationDialog({ venueId }: { venueId: string }) {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/reservations"] });
+      queryClient.invalidateQueries({ predicate: (q) => q.queryKey[0]?.toString().startsWith("/api/reservations") });
       toast({ title: "Reservation created" });
       setOpen(false);
       setGuestName("");

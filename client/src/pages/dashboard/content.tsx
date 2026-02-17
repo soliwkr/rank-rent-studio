@@ -105,7 +105,7 @@ function CreatePostDialog({ venueId, campaigns }: { venueId: string; campaigns: 
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/blog-posts"] });
+      queryClient.invalidateQueries({ predicate: (q) => q.queryKey[0]?.toString().startsWith("/api/blog-posts") });
       toast({ title: "Post created", description: "Your new post is ready for editing." });
       setOpen(false);
       setTitle("");
@@ -248,7 +248,7 @@ function PostEditor({ post, onClose }: { post: BlogPost; onClose: () => void }) 
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/blog-posts"] });
+      queryClient.invalidateQueries({ predicate: (q) => q.queryKey[0]?.toString().startsWith("/api/blog-posts") });
       toast({ title: "Saved", description: "Post content updated." });
     },
     onError: (err: Error) => {
@@ -261,7 +261,7 @@ function PostEditor({ post, onClose }: { post: BlogPost; onClose: () => void }) 
       return apiRequest("POST", `/api/blog-posts/${post.id}/publish-now`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/blog-posts"] });
+      queryClient.invalidateQueries({ predicate: (q) => q.queryKey[0]?.toString().startsWith("/api/blog-posts") });
       toast({ title: "Published", description: "Post is now live." });
       onClose();
     },
@@ -381,20 +381,21 @@ export default function ContentEngine() {
   const { toast } = useToast();
 
   const { data: allPosts, isLoading } = useQuery<BlogPost[]>({
-    queryKey: ["/api/blog-posts"],
+    queryKey: [`/api/blog-posts?venueId=${selectedVenue?.id}`],
+    enabled: !!selectedVenue,
   });
 
   const { data: campaigns = [] } = useQuery<Campaign[]>({
-    queryKey: ["/api/campaigns"],
+    queryKey: [`/api/campaigns?venueId=${selectedVenue?.id}`],
+    enabled: !!selectedVenue,
   });
 
   const posts = (allPosts || []).filter((p) => {
-    if (selectedVenue && p.venueId !== selectedVenue.id) return false;
     if (statusFilter !== "all" && p.status !== statusFilter) return false;
     return true;
   });
 
-  const venueCampaigns = campaigns.filter((c) => !selectedVenue || c.venueId === selectedVenue.id);
+  const venueCampaigns = campaigns;
 
   const sortedPosts = [...posts].sort((a, b) => {
     if (sortField === "createdAt") {
@@ -411,7 +412,7 @@ export default function ContentEngine() {
       return apiRequest("DELETE", `/api/blog-posts/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/blog-posts"] });
+      queryClient.invalidateQueries({ predicate: (q) => q.queryKey[0]?.toString().startsWith("/api/blog-posts") });
       toast({ title: "Deleted", description: "Post removed." });
     },
     onError: (err: Error) => {
@@ -424,7 +425,7 @@ export default function ContentEngine() {
       return apiRequest("POST", `/api/blog-posts/${id}/publish-now`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/blog-posts"] });
+      queryClient.invalidateQueries({ predicate: (q) => q.queryKey[0]?.toString().startsWith("/api/blog-posts") });
       toast({ title: "Published" });
     },
   });

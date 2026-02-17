@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -5,14 +6,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {
   FileText,
   Search,
-  ArrowUp,
-  ArrowDown,
   Globe,
   BarChart3,
+  CalendarCheck,
+  MessageSquare,
 } from "lucide-react";
 import {
-  AreaChart,
-  Area,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -20,27 +21,18 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { useVenue } from "@/lib/venue-context";
-import type { Venue, BlogPost, RankKeyword } from "@shared/schema";
-
-const chartData = [
-  { name: "Jan", posts: 4, keywords: 12 },
-  { name: "Feb", posts: 7, keywords: 18 },
-  { name: "Mar", posts: 11, keywords: 24 },
-  { name: "Apr", posts: 15, keywords: 30 },
-  { name: "May", posts: 22, keywords: 38 },
-  { name: "Jun", posts: 28, keywords: 45 },
-];
+import type { BlogPost, RankKeyword, Reservation, ContactMessage } from "@shared/schema";
 
 function MetricCard({
   title,
   value,
-  change,
+  subtitle,
   icon: Icon,
   loading,
 }: {
   title: string;
   value: string | number;
-  change?: { value: string; positive: boolean };
+  subtitle?: string;
   icon: typeof FileText;
   loading?: boolean;
 }) {
@@ -64,22 +56,8 @@ function MetricCard({
         <div>
           <p className="text-sm text-muted-foreground">{title}</p>
           <p className="text-2xl font-bold mt-1" data-testid={`text-metric-${title.replace(/\s+/g, '-').toLowerCase()}`}>{value}</p>
-          {change && (
-            <div className="flex items-center gap-1 mt-2">
-              {change.positive ? (
-                <ArrowUp className="w-3 h-3 text-green-600 dark:text-green-400" />
-              ) : (
-                <ArrowDown className="w-3 h-3 text-red-500" />
-              )}
-              <span
-                className={`text-xs font-medium ${
-                  change.positive ? "text-green-600 dark:text-green-400" : "text-red-500"
-                }`}
-              >
-                {change.value}
-              </span>
-              <span className="text-xs text-muted-foreground">vs last month</span>
-            </div>
+          {subtitle && (
+            <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>
           )}
         </div>
         <div className="w-10 h-10 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
@@ -103,22 +81,44 @@ export default function DashboardOverview() {
     enabled: !!selectedVenue,
   });
 
-  const loading = postsLoading || keywordsLoading;
+  const { data: allReservations, isLoading: reservationsLoading } = useQuery<Reservation[]>({
+    queryKey: [`/api/reservations?venueId=${selectedVenue?.id}`],
+    enabled: !!selectedVenue,
+  });
 
-  const posts = selectedVenue
-    ? (allPosts || []).filter((p) => p.venueId === selectedVenue.id)
-    : allPosts || [];
-  const keywords = selectedVenue
-    ? (allKeywords || []).filter((k) => k.venueId === selectedVenue.id)
-    : allKeywords || [];
+  const { data: allMessages, isLoading: messagesLoading } = useQuery<ContactMessage[]>({
+    queryKey: ["/api/contact-messages"],
+  });
+
+  const loading = postsLoading || keywordsLoading || reservationsLoading || messagesLoading;
+
+  const posts = allPosts || [];
+  const keywords = allKeywords || [];
+  const reservationsList = allReservations || [];
+  const messages = allMessages || [];
 
   const totalPosts = posts.length;
   const totalKeywords = keywords.length;
+  const totalReservations = reservationsList.length;
+  const totalMessages = messages.length;
   const activeVenues = venues.filter((v) => v.status === "active").length;
 
-  const recentPosts = posts
-    .filter((p) => p.status === "published")
-    .slice(0, 5);
+  const publishedPosts = posts.filter((p) => p.status === "published");
+  const draftPosts = posts.filter((p) => p.status === "draft");
+
+  const statusChartData = useMemo(() => {
+    const statusCounts: Record<string, number> = {};
+    posts.forEach((p) => {
+      const s = p.status || "draft";
+      statusCounts[s] = (statusCounts[s] || 0) + 1;
+    });
+    return Object.entries(statusCounts).map(([status, count]) => ({
+      status: status.charAt(0).toUpperCase() + status.slice(1),
+      count,
+    }));
+  }, [posts]);
+
+  const recentPosts = posts.slice(0, 5);
 
   return (
     <div className="space-y-6">
@@ -138,22 +138,34 @@ export default function DashboardOverview() {
         <MetricCard
           title="Active Venues"
           value={activeVenues}
-          change={{ value: "+2", positive: true }}
+          subtitle={`${venues.length} total`}
           icon={Globe}
           loading={loading}
         />
         <MetricCard
           title="Blog Posts"
           value={totalPosts}
-          change={{ value: "+18%", positive: true }}
+          subtitle={`${publishedPosts.length} published, ${draftPosts.length} drafts`}
           icon={FileText}
           loading={loading}
         />
         <MetricCard
           title="Keywords Tracked"
           value={totalKeywords}
-          change={{ value: "+24", positive: true }}
           icon={Search}
+          loading={loading}
+        />
+        <MetricCard
+          title="Reservations"
+          value={totalReservations}
+          subtitle={`${reservationsList.filter((r) => r.status === "confirmed").length} confirmed`}
+          icon={CalendarCheck}
+          loading={loading}
+        />
+        <MetricCard
+          title="Contact Messages"
+          value={totalMessages}
+          icon={MessageSquare}
           loading={loading}
         />
       </div>
@@ -161,49 +173,36 @@ export default function DashboardOverview() {
       <div className="grid lg:grid-cols-2 gap-6">
         <Card className="p-5">
           <div className="flex items-center justify-between gap-4 mb-4">
-            <h3 className="font-semibold">Content & Keywords Growth</h3>
-            <Badge variant="secondary">Last 6 months</Badge>
+            <h3 className="font-semibold">Posts by Status</h3>
+            <Badge variant="secondary">{totalPosts} total</Badge>
           </div>
           <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartData}>
-                <defs>
-                  <linearGradient id="postsGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(197, 90%, 50%)" stopOpacity={0.15} />
-                    <stop offset="95%" stopColor="hsl(197, 90%, 50%)" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="keywordsGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(160, 70%, 40%)" stopOpacity={0.15} />
-                    <stop offset="95%" stopColor="hsl(160, 70%, 40%)" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                <XAxis dataKey="name" className="text-xs" tick={{ fill: "hsl(var(--muted-foreground))" }} />
-                <YAxis className="text-xs" tick={{ fill: "hsl(var(--muted-foreground))" }} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--card))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "6px",
-                    fontSize: "12px",
-                  }}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="posts"
-                  stroke="hsl(197, 90%, 50%)"
-                  strokeWidth={2}
-                  fill="url(#postsGrad)"
-                />
-                <Area
-                  type="monotone"
-                  dataKey="keywords"
-                  stroke="hsl(160, 70%, 40%)"
-                  strokeWidth={2}
-                  fill="url(#keywordsGrad)"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+            {statusChartData.length === 0 ? (
+              <div className="flex items-center justify-center h-full text-sm text-muted-foreground">
+                No posts yet for this venue.
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={statusChartData}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                  <XAxis dataKey="status" className="text-xs" tick={{ fill: "hsl(var(--muted-foreground))" }} />
+                  <YAxis className="text-xs" tick={{ fill: "hsl(var(--muted-foreground))" }} allowDecimals={false} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "hsl(var(--card))",
+                      border: "1px solid hsl(var(--border))",
+                      borderRadius: "6px",
+                      fontSize: "12px",
+                    }}
+                  />
+                  <Bar
+                    dataKey="count"
+                    fill="hsl(197, 90%, 50%)"
+                    radius={[4, 4, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </div>
         </Card>
 
@@ -221,7 +220,7 @@ export default function DashboardOverview() {
               ))}
             </div>
           ) : recentPosts.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-4">No published posts yet.</p>
+            <p className="text-sm text-muted-foreground py-4">No posts yet for this venue.</p>
           ) : (
             <div className="space-y-3">
               {recentPosts.map((post) => (

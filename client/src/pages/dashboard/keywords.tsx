@@ -49,7 +49,7 @@ export default function RankTracker() {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/rank-keywords"] });
+      queryClient.invalidateQueries({ predicate: (q) => q.queryKey[0]?.toString().startsWith("/api/rank-keywords") });
       toast({ title: "Keyword added" });
       setAddOpen(false);
       setNewKeyword("");
@@ -64,7 +64,7 @@ export default function RankTracker() {
       return apiRequest("DELETE", `/api/rank-keywords/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/rank-keywords"] });
+      queryClient.invalidateQueries({ predicate: (q) => q.queryKey[0]?.toString().startsWith("/api/rank-keywords") });
       toast({ title: "Keyword removed" });
     },
     onError: (err: Error) => {
