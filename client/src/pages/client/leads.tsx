@@ -18,7 +18,7 @@ export default function ClientMessages() {
   const { selectedVenue } = useVenue();
 
   const { data: allMessages = [], isLoading } = useQuery<ContactMessage[]>({
-    queryKey: ["/api/contact-messages", selectedVenue?.id],
+    queryKey: [`/api/contact-messages?venueId=${selectedVenue?.id}`],
   });
 
   const messages = selectedVenue

@@ -8,6 +8,8 @@ import {
   Users,
   Settings,
   Building2,
+  Gauge,
+  Shield,
 } from "lucide-react";
 import {
   Sidebar,
@@ -84,6 +86,29 @@ export function ClientSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
+        <SidebarGroup>
+          <SidebarGroupLabel>Switch View</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/dashboard" data-testid="link-client-switch-dashboard">
+                    <Gauge className="w-4 h-4" />
+                    <span>Main Dashboard</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/admin" data-testid="link-client-switch-admin">
+                    <Shield className="w-4 h-4" />
+                    <span>Admin Panel</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>

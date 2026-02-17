@@ -176,11 +176,14 @@ export default function LandingPage() {
             </div>
             <div className="flex items-center gap-2">
               <ThemeToggle />
-              <Link href="/dashboard">
-                <Button variant="ghost" data-testid="button-login">Log In</Button>
+              <Link href="/client">
+                <Button variant="ghost" data-testid="button-client-portal">Client Portal</Button>
+              </Link>
+              <Link href="/admin">
+                <Button variant="ghost" data-testid="button-admin-login">Admin</Button>
               </Link>
               <Link href="/dashboard">
-                <Button data-testid="button-get-started">Get Started</Button>
+                <Button data-testid="button-get-started">Dashboard</Button>
               </Link>
             </div>
           </div>

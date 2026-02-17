@@ -217,7 +217,7 @@ export default function ReservationsPage() {
   const { selectedVenue } = useVenue();
 
   const { data: allReservations, isLoading } = useQuery<Reservation[]>({
-    queryKey: ["/api/reservations", selectedVenue?.id],
+    queryKey: [`/api/reservations?venueId=${selectedVenue?.id}`],
     enabled: !!selectedVenue,
   });
 

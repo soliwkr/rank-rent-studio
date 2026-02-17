@@ -9,6 +9,8 @@ import {
   ChevronsUpDown,
   Building2,
   CalendarDays,
+  Shield,
+  User,
 } from "lucide-react";
 import {
   Sidebar,
@@ -110,6 +112,29 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
+        <SidebarGroup>
+          <SidebarGroupLabel>Switch View</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/admin" data-testid="link-sidebar-switch-admin">
+                    <Shield className="w-4 h-4" />
+                    <span>Admin Panel</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/client" data-testid="link-sidebar-switch-client">
+                    <User className="w-4 h-4" />
+                    <span>Client Portal</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>

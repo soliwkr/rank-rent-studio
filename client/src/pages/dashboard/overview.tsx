@@ -94,12 +94,12 @@ export default function DashboardOverview() {
   const { selectedVenue, venues } = useVenue();
 
   const { data: allPosts, isLoading: postsLoading } = useQuery<BlogPost[]>({
-    queryKey: ["/api/blog-posts", { venueId: selectedVenue?.id }],
+    queryKey: [`/api/blog-posts?venueId=${selectedVenue?.id}`],
     enabled: !!selectedVenue,
   });
 
   const { data: allKeywords, isLoading: keywordsLoading } = useQuery<RankKeyword[]>({
-    queryKey: ["/api/rank-keywords", selectedVenue?.id],
+    queryKey: [`/api/rank-keywords?venueId=${selectedVenue?.id}`],
     enabled: !!selectedVenue,
   });
 

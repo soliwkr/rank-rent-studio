@@ -41,7 +41,7 @@ function SearchGrid({ cells, gridSize }: { cells: GridScanResult[]; gridSize: nu
 export default function LocalGrid() {
   const { selectedVenue } = useVenue();
   const { data: results, isLoading } = useQuery<GridScanResult[]>({
-    queryKey: ["/api/grid-scan-results", selectedVenue?.id],
+    queryKey: [`/api/grid-scan-results?venueId=${selectedVenue?.id}`],
     enabled: !!selectedVenue,
   });
 

@@ -9,6 +9,8 @@ import {
   Settings,
   ChevronsUpDown,
   Building2,
+  Gauge,
+  User,
 } from "lucide-react";
 import {
   Sidebar,
@@ -113,6 +115,29 @@ export function AdminSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
+        <SidebarGroup>
+          <SidebarGroupLabel>Switch View</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/dashboard" data-testid="link-admin-switch-dashboard">
+                    <Gauge className="w-4 h-4" />
+                    <span>Main Dashboard</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/client" data-testid="link-admin-switch-client">
+                    <User className="w-4 h-4" />
+                    <span>Client Portal</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>

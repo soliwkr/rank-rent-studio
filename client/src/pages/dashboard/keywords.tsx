@@ -33,7 +33,7 @@ export default function RankTracker() {
   const { toast } = useToast();
 
   const { data: allKeywords, isLoading } = useQuery<RankKeyword[]>({
-    queryKey: ["/api/rank-keywords", selectedVenue?.id],
+    queryKey: [`/api/rank-keywords?venueId=${selectedVenue?.id}`],
     enabled: !!selectedVenue,
   });
 
