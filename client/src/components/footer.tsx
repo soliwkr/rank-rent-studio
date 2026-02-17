@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { Mail, Utensils, Hotel, Coffee, Wine, Building, Layout, Code, Shield, Globe, Search, TrendingUp, BarChart3, BookOpen, Bot, Phone, MessageSquare, Calendar, Globe2, FileText, HelpCircle, DollarSign, MapPin } from "lucide-react";
 import { SiLinkedin, SiX, SiFacebook, SiInstagram } from "react-icons/si";
 import { Button } from "@/components/ui/button";
-import restoLogo from "@/assets/images/resto-logo.webp";
+import indexFlowLogo from "@assets/image_1771351451425.png";
 
 const discoverLinks = [
   { href: "/how-it-works", label: "How It Works" },
@@ -119,8 +119,8 @@ export function Footer() {
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
               <Link href="/" className="shrink-0" data-testid="link-footer-logo">
                 <img
-                  src={restoLogo}
-                  alt="Resto.Restaurant - Restaurant Booking Software & AI Virtual Concierge"
+                  src={indexFlowLogo}
+                  alt="indexFlow - Restaurant Booking Software & AI Virtual Concierge"
                   className="h-8 w-auto"
                 />
               </Link>

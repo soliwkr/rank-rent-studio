@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Home, ArrowRight, Phone, Calendar, HelpCircle } from "lucide-react";
 import { Layout } from "@/components/layout";
 import { SEO } from "@/components/seo";
-import restoLogo from "@/assets/images/resto-logo.webp";
+import indexFlowLogo from "@assets/image_1771351451425.png";
 
 const quickLinks = [
   { href: "/", label: "Home", icon: Home, description: "Back to homepage" },
@@ -25,8 +25,8 @@ export default function NotFound() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="mb-8">
             <img 
-              src={restoLogo} 
-              alt="Resto.Restaurant" 
+              src={indexFlowLogo} 
+              alt="indexFlow" 
               className="h-16 mx-auto mb-6"
             />
             <h1 className="text-6xl lg:text-8xl font-bold text-primary mb-4">404</h1>

@@ -11,7 +11,7 @@ import {
   Home, ChevronRight, Menu, Bot, Code, Key, MessageSquare
 } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
-import restoLogo from "@/assets/images/resto-logo.webp";
+import indexFlowLogo from "@assets/image_1771351451425.png";
 import { useState } from "react";
 
 const navSections = [
@@ -91,7 +91,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
     <div className="flex h-screen w-full" data-testid="dashboard-layout">
       <aside className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:relative z-40 w-64 h-full bg-sidebar border-r flex flex-col transition-transform`}>
         <div className="p-4 border-b flex items-center gap-2">
-          <img src={restoLogo} alt="indexFlow" className="h-8 w-8" />
+          <img src={indexFlowLogo} alt="indexFlow" className="h-8 w-8" />
           <span className="font-bold text-lg">indexFlow</span>
         </div>
         <div className="p-3 border-b">

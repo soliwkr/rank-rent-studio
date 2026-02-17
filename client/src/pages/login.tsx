@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import restoLogo from "@/assets/images/resto-logo.webp";
+import indexFlowLogo from "@assets/image_1771351451425.png";
 
 export default function Login() {
   const { toast } = useToast();
@@ -38,7 +38,7 @@ export default function Login() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-            <img src={restoLogo} alt="Resto Restaurant Booking Dashboard Login" className="h-16" />
+            <img src={indexFlowLogo} alt="indexFlow Restaurant Booking Dashboard Login" className="h-16" />
           </div>
           <CardTitle className="text-2xl">Client Login</CardTitle>
           <CardDescription>

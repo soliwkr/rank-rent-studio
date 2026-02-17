@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import restoLogo from "@/assets/images/resto-logo.webp";
+import indexFlowLogo from "@assets/image_1771351451425.png";
 
 interface Venue {
   id: string;
@@ -79,7 +79,7 @@ export default function SelectVenue() {
     <div className="min-h-screen bg-muted/30 p-4">
       <div className="w-full max-w-2xl mx-auto pt-8">
         <div className="text-center mb-8">
-          <img src={restoLogo} alt="Resto Venue Management Dashboard" className="h-16 mx-auto mb-4" />
+          <img src={indexFlowLogo} alt="indexFlow Venue Management Dashboard" className="h-16 mx-auto mb-4" />
           <h1 className="text-2xl font-bold" data-testid="text-locations-title">My Locations</h1>
           <p className="text-muted-foreground">
             {venues.length === 0

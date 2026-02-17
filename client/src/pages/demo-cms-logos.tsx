@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { SiWordpress, SiWix, SiShopify, SiGhost, SiSquarespace, SiWebflow, SiDrupal, SiJoomla, SiMagento, SiBigcommerce } from "react-icons/si";
-import restoLogo from "@/assets/images/resto-logo.webp";
+import indexFlowLogo from "@assets/image_1771351451425.png";
 
 const cmsPartners = [
   { name: "WordPress", icon: SiWordpress, color: "#21759B" },
@@ -23,7 +23,7 @@ export default function DemoCMSLogos() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col">
       <div className="bg-primary p-6 flex items-center justify-center gap-4">
-        <img src={restoLogo} alt="Resto" className="h-16" />
+        <img src={indexFlowLogo} alt="indexFlow" className="h-16" />
         <div className="text-center">
           <p className="text-primary-foreground font-bold text-2xl">Works With Your Existing Website</p>
           <p className="text-primary-foreground/70 text-lg">Seamless integration with all major platforms</p>

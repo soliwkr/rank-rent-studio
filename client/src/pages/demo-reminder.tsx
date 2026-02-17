@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Bell, Calendar, Clock, Users, MapPin, CheckCircle2 } from "lucide-react";
-import restoLogo from "@/assets/images/resto-logo.webp";
+import indexFlowLogo from "@assets/image_1771351451425.png";
 
 export default function DemoReminder() {
   useEffect(() => {
@@ -12,7 +12,7 @@ export default function DemoReminder() {
       <div className="max-w-md w-full">
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="bg-primary p-5 flex items-center gap-4">
-            <img src={restoLogo} alt="Resto" className="h-12" />
+            <img src={indexFlowLogo} alt="indexFlow" className="h-12" />
             <div>
               <p className="text-primary-foreground font-semibold text-lg">Booking Reminder</p>
               <p className="text-primary-foreground/70 text-sm">Automated reminder notification</p>

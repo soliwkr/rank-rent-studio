@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge";
 import { Layout } from "@/components/layout";
 import { PageSubNav } from "@/components/page-sub-nav";
-import restoLogo from "@/assets/images/resto-logo.webp";
+import indexFlowLogo from "@assets/image_1771351451425.png";
 import { SEO, seoData } from "@/components/seo";
 
 const pricingSections = [
@@ -123,7 +123,7 @@ export default function Pricing() {
                 </Badge>
               </div>
               <CardHeader className="text-center pt-8">
-                <img src={restoLogo} alt="Resto Restaurant Booking Platform" className="h-8 mx-auto mb-2" />
+                <img src={indexFlowLogo} alt="indexFlow Restaurant Booking Platform" className="h-8 mx-auto mb-2" />
                 <CardTitle className="text-2xl" data-testid="text-plan-name-full">Complete Solution</CardTitle>
                 <CardDescription className="text-xs" data-testid="text-payment-note">$499 one-time setup</CardDescription>
               </CardHeader>
@@ -184,7 +184,7 @@ export default function Pricing() {
                 </Badge>
               </div>
               <CardHeader className="text-center pt-8">
-                <img src={restoLogo} alt="Resto Restaurant Booking Platform" className="h-8 mx-auto mb-2" />
+                <img src={indexFlowLogo} alt="indexFlow Restaurant Booking Platform" className="h-8 mx-auto mb-2" />
                 <CardTitle className="text-2xl" data-testid="text-plan-name-widget">Widget Only</CardTitle>
                 <CardDescription className="text-xs" data-testid="text-widget-note">No setup fee required</CardDescription>
               </CardHeader>

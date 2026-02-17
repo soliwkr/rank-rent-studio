@@ -18,7 +18,7 @@ const languages = [
   { code: "de", label: "Deutsch" },
   { code: "it", label: "Italiano" },
 ];
-import restoLogo from "@/assets/images/resto-logo.webp";
+import indexFlowLogo from "@assets/image_1771351451425.png";
 
 const solutions = [
   { href: "/solutions/restaurants", label: "Restaurants", icon: Utensils, desc: "Table management & online reservations" },
@@ -435,8 +435,8 @@ export function Header() {
           <div className="flex items-center justify-between h-14 lg:h-16">
             <Link href="/" className="flex items-center flex-shrink-0" data-testid="link-home-logo">
               <img
-                src={restoLogo}
-                alt="Resto.Restaurant - AI Booking Software for Restaurants, Cafes, Bars & Hotels"
+                src={indexFlowLogo}
+                alt="indexFlow - AI Booking Software for Restaurants, Cafes, Bars & Hotels"
                 className="h-10 lg:h-12 w-auto"
               />
             </Link>

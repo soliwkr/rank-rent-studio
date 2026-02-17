@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { MessageCircle, X, Mic, MicOff, Send, Bot, User, Calendar, Paperclip, Volume2, VolumeX, Loader2, UtensilsCrossed } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import restoLogo from "@/assets/images/resto-logo.webp";
+import indexFlowLogo from "@assets/image_1771351451425.png";
 
 interface Message {
   id: number;
@@ -398,8 +398,8 @@ export function AIWidget({ venueId, logoUrl }: AIWidgetProps = {}) {
                   />
                 ) : (
                   <img 
-                    src={restoLogo} 
-                    alt="Resto AI Virtual Concierge for Restaurant Bookings" 
+                    src={indexFlowLogo} 
+                    alt="indexFlow AI Virtual Concierge for Restaurant Bookings" 
                     className="h-10 w-auto"
                   />
                 )}
