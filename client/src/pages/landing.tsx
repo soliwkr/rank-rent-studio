@@ -23,7 +23,7 @@ import {
   Lock,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import logoPath from "@assets/indexFlow_LOGO_1771286575902.png";
+import logoPath from "@assets/image_1771294424707.png";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },

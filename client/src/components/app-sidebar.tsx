@@ -20,7 +20,7 @@ import {
   SidebarHeader,
   SidebarFooter,
 } from "@/components/ui/sidebar";
-import logoPath from "@assets/indexFlow_LOGO_1771286575902.png";
+import logoPath from "@assets/image_1771294424707.png";
 
 const menuItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
