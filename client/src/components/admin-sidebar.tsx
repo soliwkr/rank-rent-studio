@@ -1,4 +1,5 @@
 import { Link, useLocation } from "wouter";
+import logoImage from "@assets/image_1771330330596.png";
 import {
   LayoutDashboard,
   Building2,
@@ -91,9 +92,9 @@ export function AdminSidebar() {
     <Sidebar>
       <SidebarHeader>
         <div className="flex items-center gap-2 px-2 py-1">
-          <LayoutDashboard className="h-5 w-5 text-primary" />
+          <img src={logoImage} alt="indexFlow" className="h-6" />
           <span className="text-base font-semibold" data-testid="text-admin-title">
-            Resto Admin
+            Admin
           </span>
         </div>
         <Select
@@ -202,7 +203,7 @@ export function AdminSidebar() {
 
       <SidebarFooter>
         <div className="px-2 py-1 text-xs text-muted-foreground" data-testid="text-admin-footer">
-          Resto Platform
+          indexFlow Platform
         </div>
       </SidebarFooter>
     </Sidebar>

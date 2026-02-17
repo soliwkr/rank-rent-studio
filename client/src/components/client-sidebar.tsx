@@ -1,4 +1,5 @@
 import { Link, useLocation } from "wouter";
+import logoImage from "@assets/image_1771330330596.png";
 import {
   CalendarCheck,
   Calendar,
@@ -93,9 +94,9 @@ export function ClientSidebar() {
     <Sidebar>
       <SidebarHeader>
         <div className="flex items-center gap-2 px-2 py-1">
-          <CalendarCheck className="h-5 w-5 text-primary" />
+          <img src={logoImage} alt="indexFlow" className="h-6" />
           <span className="text-base font-semibold" data-testid="text-client-title">
-            {selectedVenue?.name ?? "Resto"}
+            {selectedVenue?.name ?? "indexFlow"}
           </span>
         </div>
         <Select
@@ -292,7 +293,7 @@ export function ClientSidebar() {
 
       <SidebarFooter>
         <div className="px-2 py-1 text-xs text-muted-foreground" data-testid="text-client-footer">
-          Resto Platform
+          indexFlow Platform
         </div>
       </SidebarFooter>
     </Sidebar>

@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import logoImage from "@assets/image_1771330330596.png";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -171,8 +172,8 @@ export default function LandingPage() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between gap-4 h-16">
-            <Link href="/" data-testid="link-logo">
-              <span className="text-xl font-bold tracking-tight">Resto</span>
+            <Link href="/" data-testid="link-logo" className="flex items-center gap-2">
+              <img src={logoImage} alt="indexFlow" className="h-8" />
             </Link>
 
             <div className="hidden lg:flex items-center gap-6 flex-wrap">
@@ -519,7 +520,7 @@ export default function LandingPage() {
             Ready to Transform Your Venue?
           </h2>
           <p className="mt-6 text-lg text-slate-300 max-w-2xl mx-auto">
-            Get in touch to learn how Resto can fill your tables, rooms, and
+            Get in touch to learn how indexFlow can fill your tables, rooms, and
             seats with AI-powered booking technology.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-6 flex-wrap">
@@ -557,7 +558,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div>
-              <span className="text-lg font-bold text-white">Resto</span>
+              <img src={logoImage} alt="indexFlow" className="h-6" />
               <p className="mt-3 text-sm">
                 The all-in-one hospitality booking platform powered by AI.
               </p>
@@ -619,7 +620,7 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="mt-12 pt-8 border-t border-slate-800 text-center text-sm">
-            <p data-testid="text-copyright">2026 Resto.Restaurant. All rights reserved.</p>
+            <p data-testid="text-copyright">2026 indexFlow. All rights reserved.</p>
           </div>
         </div>
       </footer>
