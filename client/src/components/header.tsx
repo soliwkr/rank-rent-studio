@@ -381,7 +381,7 @@ export function Header() {
                 <Moon className="w-4 h-4 dark:hidden" />
                 <Sun className="w-4 h-4 hidden dark:block" />
               </button>
-              <Link href="/client-login">
+              <Link href="/select-workspace">
                 <span className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer flex items-center gap-1.5" data-testid="link-login">
                   <LogIn className="w-4 h-4" />
                   Log In
@@ -480,7 +480,7 @@ export function Header() {
               <div className="border-t border-border/30 my-2" />
 
               <div className="flex flex-col gap-2 px-3 py-2">
-                <Link href="/client-login">
+                <Link href="/select-workspace">
                   <Button
                     variant="ghost"
                     className="w-full justify-center gap-2"
