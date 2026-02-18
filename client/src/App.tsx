@@ -228,12 +228,14 @@ function hasAdminPermission(role: AdminRole, permission: string): boolean {
   return perms.includes(permission);
 }
 
-const ClientLayout = lazy(() => import("@/components/client-layout").then(m => ({ default: m.ClientLayout })));
+import { ClientLayout } from "@/components/client-layout";
 
 function ClientRoute({ component: Component }: { component: ComponentType }) {
   return (
     <ClientLayout>
-      <Component />
+      <Suspense fallback={<div className="flex items-center justify-center min-h-[60vh]"><div className="h-8 w-8 animate-spin rounded-full border-4 border-muted border-t-primary" /></div>}>
+        <Component />
+      </Suspense>
     </ClientLayout>
   );
 }
