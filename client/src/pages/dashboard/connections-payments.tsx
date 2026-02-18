@@ -1,96 +1,63 @@
-import { ClientLayout } from "@/components/client-layout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CreditCard, DollarSign, ShieldCheck } from "lucide-react";
-
-const paymentProviders = [
-  { id: "stripe", name: "Stripe", status: "connected", processed: "$12,450.00", transactions: 89, mode: "Live" },
-  { id: "paypal", name: "PayPal", status: "disconnected", processed: "$0.00", transactions: 0, mode: "-" },
-];
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function ConnectionsPayments() {
   return (
-    <ClientLayout>
-      <div className="p-6">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold" data-testid="text-page-title">Payment Connections</h1>
-          <p className="text-muted-foreground">Manage payment gateway integrations</p>
-        </div>
-        <div className="grid gap-4 md:grid-cols-3 mb-6">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <CreditCard className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <p className="text-2xl font-bold" data-testid="text-gateways">2</p>
-                  <p className="text-xs text-muted-foreground">Payment Gateways</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <DollarSign className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <p className="text-2xl font-bold" data-testid="text-processed">$12,450</p>
-                  <p className="text-xs text-muted-foreground">Total Processed</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <ShieldCheck className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <p className="text-2xl font-bold" data-testid="text-transactions">89</p>
-                  <p className="text-xs text-muted-foreground">Transactions</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-        <Card>
-          <CardHeader>
-            <CardTitle>Payment Gateways</CardTitle>
-            <CardDescription>Connect Stripe or PayPal to accept payments</CardDescription>
+    <div className="p-6 space-y-6">
+      <h1 className="text-2xl font-bold" data-testid="text-page-title">Payment Connections</h1>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card data-testid="card-payment-stripe">
+          <CardHeader className="flex flex-row items-center justify-between gap-2">
+            <CardTitle className="text-base">Stripe</CardTitle>
+            <Badge data-testid="badge-stripe-status">Connected</Badge>
           </CardHeader>
-          <CardContent>
-            <div className="grid gap-4 md:grid-cols-2">
-              {paymentProviders.map((provider) => (
-                <Card key={provider.id} data-testid={`card-payment-${provider.id}`}>
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between gap-4 mb-3 flex-wrap">
-                      <div className="flex items-center gap-2">
-                        <CreditCard className="w-4 h-4 text-muted-foreground" />
-                        <h3 className="font-semibold">{provider.name}</h3>
-                      </div>
-                      <Badge variant={provider.status === "connected" ? "default" : "secondary"} className="text-xs">
-                        {provider.status}
-                      </Badge>
-                    </div>
-                    <div className="space-y-1 text-sm text-muted-foreground mb-3">
-                      <p>Processed: {provider.processed}</p>
-                      <p>Transactions: {provider.transactions}</p>
-                      {provider.mode !== "-" && <p>Mode: {provider.mode}</p>}
-                    </div>
-                    <Button
-                      variant={provider.status === "connected" ? "outline" : "default"}
-                      size="sm"
-                      className="w-full"
-                      data-testid={`button-payment-${provider.id}`}
-                    >
-                      {provider.status === "connected" ? "Manage" : "Connect"}
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label>API Key</Label>
+              <Input type="password" defaultValue="sk_live_••••••••••••" data-testid="input-stripe-api-key" />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Webhook URL</Label>
+              <div className="p-2 rounded-md bg-muted/50 text-sm font-mono text-muted-foreground" data-testid="text-stripe-webhook">
+                https://api.indexflow.cloud/webhooks/stripe/ws_abc123
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 flex-wrap">
+              <Button size="sm" data-testid="button-save-stripe">Save</Button>
+              <Button variant="outline" size="sm" data-testid="button-test-stripe">Test Connection</Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card data-testid="card-payment-paypal">
+          <CardHeader className="flex flex-row items-center justify-between gap-2">
+            <CardTitle className="text-base">PayPal</CardTitle>
+            <Badge variant="secondary" data-testid="badge-paypal-status">Not Connected</Badge>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label>Client ID</Label>
+              <Input placeholder="Enter PayPal Client ID" data-testid="input-paypal-client-id" />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Secret</Label>
+              <Input type="password" placeholder="Enter PayPal Secret" data-testid="input-paypal-secret" />
+            </div>
+
+            <div className="flex items-center gap-2 flex-wrap">
+              <Button size="sm" data-testid="button-save-paypal">Save</Button>
+              <Button variant="outline" size="sm" data-testid="button-test-paypal">Test Connection</Button>
             </div>
           </CardContent>
         </Card>
       </div>
-    </ClientLayout>
+    </div>
   );
 }

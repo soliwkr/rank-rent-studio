@@ -1,22 +1,17 @@
 import { AdminLayout } from "@/components/admin-layout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Megaphone, Target, TrendingUp, Calendar } from "lucide-react";
-
-const stats = [
-  { label: "Total Campaigns", value: "86", icon: Megaphone },
-  { label: "Active Now", value: "23", icon: Target },
-  { label: "Avg. Engagement", value: "4.2%", icon: TrendingUp },
-  { label: "Scheduled", value: "12", icon: Calendar },
-];
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 const campaigns = [
-  { name: "Spring SEO Campaign", agency: "Digital Growth NYC", type: "Email + Social", status: "Active", startDate: "Mar 1, 2026", engagement: "5.1%" },
-  { name: "Content Marketing Blitz", agency: "Coastal Marketing Co.", type: "Email", status: "Completed", startDate: "Feb 1, 2026", engagement: "6.8%" },
-  { name: "Link Building Outreach", agency: "Alpine Digital Ltd.", type: "Social + SMS", status: "Active", startDate: "Feb 10, 2026", engagement: "3.9%" },
-  { name: "Year-End SEO Review", agency: "Metro Creative Group", type: "Email + Social", status: "Completed", startDate: "Dec 15, 2025", engagement: "7.2%" },
-  { name: "Client Onboarding Push", agency: "Pacific Media Inc.", type: "Email", status: "Scheduled", startDate: "Mar 15, 2026", engagement: "--" },
+  { name: "Spring Content Blitz", agency: "Blue Digital Agency", workspace: "Marketing Hub", postCount: 24, status: "Active", created: "Feb 10, 2026" },
+  { name: "SEO Landing Pages Q1", agency: "Northstar Media", workspace: "SEO Portal", postCount: 18, status: "Active", created: "Feb 5, 2026" },
+  { name: "Product Launch Series", agency: "Cascade Creative", workspace: "Launch Pad", postCount: 12, status: "Draft", created: "Feb 1, 2026" },
+  { name: "Year-End Review", agency: "Vertex Solutions", workspace: "Content Studio", postCount: 8, status: "Completed", created: "Dec 15, 2025" },
+  { name: "Brand Awareness Push", agency: "Lunar Labs", workspace: "Growth Engine", postCount: 32, status: "Paused", created: "Jan 20, 2026" },
 ];
 
 export default function AdminContentCampaigns() {
@@ -24,44 +19,74 @@ export default function AdminContentCampaigns() {
     <AdminLayout>
       <div className="mb-6">
         <h1 className="text-2xl font-bold" data-testid="text-page-title">All Campaigns</h1>
-        <p className="text-muted-foreground">Marketing campaigns across all agencies</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
-        {stats.map((stat) => (
-          <Card key={stat.label}>
-            <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">{stat.label}</CardTitle>
-              <stat.icon className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
-            </CardContent>
-          </Card>
-        ))}
+      <div className="flex items-center gap-3 flex-wrap mb-6">
+        <Select data-testid="select-agency-filter">
+          <SelectTrigger className="w-48" data-testid="filter-agency">
+            <SelectValue placeholder="All Agencies" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Agencies</SelectItem>
+            <SelectItem value="blue-digital">Blue Digital Agency</SelectItem>
+            <SelectItem value="northstar">Northstar Media</SelectItem>
+            <SelectItem value="cascade">Cascade Creative</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select>
+          <SelectTrigger className="w-40" data-testid="filter-status">
+            <SelectValue placeholder="All Statuses" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Statuses</SelectItem>
+            <SelectItem value="active">Active</SelectItem>
+            <SelectItem value="draft">Draft</SelectItem>
+            <SelectItem value="completed">Completed</SelectItem>
+            <SelectItem value="paused">Paused</SelectItem>
+          </SelectContent>
+        </Select>
+        <Input type="date" className="w-40" data-testid="filter-date-start" />
+        <Input type="date" className="w-40" data-testid="filter-date-end" />
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Campaign Directory</CardTitle>
-          <CardDescription>All marketing campaigns and their performance</CardDescription>
+          <CardTitle>Campaigns</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {campaigns.map((campaign) => (
-              <div key={campaign.name} className="flex items-center justify-between gap-4 flex-wrap" data-testid={`row-campaign-${campaign.name.toLowerCase().replace(/\s+/g, "-")}`}>
-                <div className="min-w-0">
-                  <p className="font-medium">{campaign.name}</p>
-                  <p className="text-sm text-muted-foreground">{campaign.agency} &middot; {campaign.type} &middot; Started {campaign.startDate}</p>
-                </div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-sm text-muted-foreground">{campaign.engagement} eng.</span>
-                  <Badge variant={campaign.status === "Active" ? "default" : campaign.status === "Completed" ? "secondary" : "outline"}>{campaign.status}</Badge>
-                  <Button variant="outline" size="sm" data-testid={`button-view-campaign-${campaign.name.toLowerCase().replace(/\s+/g, "-")}`}>View</Button>
-                </div>
-              </div>
-            ))}
-          </div>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Campaign Name</TableHead>
+                <TableHead>Agency</TableHead>
+                <TableHead>Workspace</TableHead>
+                <TableHead>Post Count</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Created</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {campaigns.map((c) => (
+                <TableRow key={c.name} data-testid={`row-campaign-${c.name.toLowerCase().replace(/\s+/g, "-")}`}>
+                  <TableCell className="font-medium">{c.name}</TableCell>
+                  <TableCell>{c.agency}</TableCell>
+                  <TableCell className="text-muted-foreground">{c.workspace}</TableCell>
+                  <TableCell>{c.postCount}</TableCell>
+                  <TableCell>
+                    <Badge variant={c.status === "Active" ? "default" : c.status === "Completed" ? "secondary" : "outline"}>{c.status}</Badge>
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">{c.created}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Button variant="outline" size="sm" data-testid={`button-view-campaign-${c.name.toLowerCase().replace(/\s+/g, "-")}`}>View</Button>
+                      <Button variant="destructive" size="sm" data-testid={`button-delete-campaign-${c.name.toLowerCase().replace(/\s+/g, "-")}`}>Delete</Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
     </AdminLayout>

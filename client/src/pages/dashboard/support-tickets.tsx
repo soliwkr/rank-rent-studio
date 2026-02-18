@@ -1,113 +1,85 @@
-import { ClientLayout } from "@/components/client-layout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { LifeBuoy, Plus, Clock, CheckCircle, AlertCircle } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Plus, Eye, MessageSquare } from "lucide-react";
 
-const mockTickets = [
-  { id: "TKT-1024", subject: "Widget not loading on Safari", priority: "high", status: "open", created: "2026-02-18", updated: "2026-02-18" },
-  { id: "TKT-1023", subject: "API rate limit exceeded", priority: "medium", status: "in-progress", created: "2026-02-17", updated: "2026-02-18" },
-  { id: "TKT-1022", subject: "Custom domain SSL certificate issue", priority: "high", status: "in-progress", created: "2026-02-16", updated: "2026-02-17" },
-  { id: "TKT-1021", subject: "How to export analytics data?", priority: "low", status: "resolved", created: "2026-02-15", updated: "2026-02-16" },
-  { id: "TKT-1020", subject: "Twilio webhook not triggering", priority: "medium", status: "resolved", created: "2026-02-14", updated: "2026-02-15" },
+const tickets = [
+  { id: "TKT-1024", subject: "Widget not loading on mobile Safari", priority: "High", status: "Open", created: "2026-02-18", lastReply: "2026-02-18" },
+  { id: "TKT-1023", subject: "API rate limit exceeded during bulk import", priority: "Medium", status: "In Progress", created: "2026-02-17", lastReply: "2026-02-18" },
+  { id: "TKT-1022", subject: "Custom domain SSL certificate renewal", priority: "High", status: "Open", created: "2026-02-16", lastReply: "2026-02-17" },
+  { id: "TKT-1021", subject: "How to configure webhook endpoints", priority: "Low", status: "Resolved", created: "2026-02-15", lastReply: "2026-02-16" },
+  { id: "TKT-1020", subject: "Rank tracker data not updating", priority: "Medium", status: "Resolved", created: "2026-02-14", lastReply: "2026-02-15" },
 ];
+
+function priorityVariant(priority: string): "default" | "secondary" | "destructive" {
+  if (priority === "High") return "destructive";
+  if (priority === "Medium") return "secondary";
+  return "secondary";
+}
+
+function statusVariant(status: string): "default" | "secondary" {
+  if (status === "Open") return "default";
+  return "secondary";
+}
 
 export default function SupportTickets() {
   return (
-    <ClientLayout>
-      <div className="p-6">
-        <div className="mb-6 flex items-center justify-between gap-4 flex-wrap">
-          <div>
-            <h1 className="text-2xl font-bold" data-testid="text-page-title">Support Tickets</h1>
-            <p className="text-muted-foreground">Submit and track support requests</p>
-          </div>
-          <Button data-testid="button-new-ticket">
-            <Plus className="w-4 h-4 mr-2" />
-            New Ticket
-          </Button>
-        </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <LifeBuoy className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <p className="text-2xl font-bold" data-testid="text-total-tickets">5</p>
-                  <p className="text-xs text-muted-foreground">Total Tickets</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <AlertCircle className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <p className="text-2xl font-bold" data-testid="text-open-tickets">1</p>
-                  <p className="text-xs text-muted-foreground">Open</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <Clock className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <p className="text-2xl font-bold" data-testid="text-in-progress">2</p>
-                  <p className="text-xs text-muted-foreground">In Progress</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <CheckCircle className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <p className="text-2xl font-bold" data-testid="text-resolved-tickets">2</p>
-                  <p className="text-xs text-muted-foreground">Resolved</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-        <Card>
-          <CardHeader>
-            <CardTitle>All Tickets</CardTitle>
-            <CardDescription>View and manage your support requests</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {mockTickets.map((ticket) => (
-                <div key={ticket.id} className="flex items-center justify-between gap-4 p-3 rounded-lg border hover-elevate cursor-pointer flex-wrap" data-testid={`row-ticket-${ticket.id}`}>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <p className="font-mono text-xs text-muted-foreground">{ticket.id}</p>
-                      <p className="font-medium text-sm">{ticket.subject}</p>
-                    </div>
-                    <p className="text-xs text-muted-foreground">Created {ticket.created} - Updated {ticket.updated}</p>
-                  </div>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <Badge
-                      variant={ticket.priority === "high" ? "destructive" : "secondary"}
-                      className="text-xs"
-                    >
-                      {ticket.priority}
-                    </Badge>
-                    <Badge
-                      variant={ticket.status === "resolved" ? "default" : "secondary"}
-                      className="text-xs"
-                    >
-                      {ticket.status}
-                    </Badge>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+    <div className="p-6 space-y-6">
+      <div className="flex items-center justify-between gap-4 flex-wrap">
+        <h1 className="text-2xl font-bold" data-testid="text-page-title">Support</h1>
+        <Button data-testid="button-new-ticket">
+          <Plus className="w-4 h-4 mr-2" />
+          New Ticket
+        </Button>
       </div>
-    </ClientLayout>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>All Tickets</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>#</TableHead>
+                <TableHead>Subject</TableHead>
+                <TableHead>Priority</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Created</TableHead>
+                <TableHead>Last Reply</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {tickets.map((t) => (
+                <TableRow key={t.id} data-testid={`row-ticket-${t.id}`}>
+                  <TableCell className="font-mono text-muted-foreground" data-testid={`text-ticket-id-${t.id}`}>{t.id}</TableCell>
+                  <TableCell className="font-medium" data-testid={`text-ticket-subject-${t.id}`}>{t.subject}</TableCell>
+                  <TableCell>
+                    <Badge variant={priorityVariant(t.priority)} data-testid={`badge-priority-${t.id}`}>{t.priority}</Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={statusVariant(t.status)} data-testid={`badge-ticket-status-${t.id}`}>{t.status}</Badge>
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">{t.created}</TableCell>
+                  <TableCell className="text-muted-foreground">{t.lastReply}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-1 flex-wrap">
+                      <Button variant="ghost" size="icon" data-testid={`button-view-ticket-${t.id}`}>
+                        <Eye className="w-4 h-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" data-testid={`button-reply-ticket-${t.id}`}>
+                        <MessageSquare className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

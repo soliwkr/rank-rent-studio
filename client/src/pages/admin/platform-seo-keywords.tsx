@@ -1,23 +1,34 @@
 import { AdminLayout } from "@/components/admin-layout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Search, TrendingUp, BarChart3, Target } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Search, Building2, TrendingUp } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 const stats = [
-  { label: "Keywords Tracked", value: "4,821", icon: Search },
-  { label: "Avg. Position", value: "14.3", icon: Target },
-  { label: "Top 10 Rankings", value: "892", icon: TrendingUp },
-  { label: "Agencies Using SEO", value: "18", icon: BarChart3 },
+  { label: "Total Keywords Tracked", value: "1,234", icon: Search },
+  { label: "Active Agencies Using SEO", value: "38", icon: Building2 },
+  { label: "Keywords Added This Month", value: "156", icon: TrendingUp },
 ];
 
-const keywords = [
-  { keyword: "best seo agency near me", volume: "22,200", avgPos: "8.4", agencies: 12, trend: "up" },
-  { keyword: "digital marketing services", volume: "14,800", avgPos: "11.2", agencies: 6, trend: "up" },
-  { keyword: "content marketing strategy", volume: "9,900", avgPos: "6.1", agencies: 15, trend: "stable" },
-  { keyword: "local seo services NYC", volume: "8,100", avgPos: "4.7", agencies: 3, trend: "up" },
-  { keyword: "technical seo audit", volume: "6,600", avgPos: "15.8", agencies: 8, trend: "down" },
-  { keyword: "link building services", volume: "5,400", avgPos: "19.3", agencies: 4, trend: "stable" },
-  { keyword: "keyword research tools", volume: "4,400", avgPos: "7.9", agencies: 9, trend: "up" },
+const chartData = [
+  { agency: "Blue Digital", keywords: 89 },
+  { agency: "Northstar", keywords: 76 },
+  { agency: "Cascade", keywords: 68 },
+  { agency: "Vertex", keywords: 62 },
+  { agency: "Lunar Labs", keywords: 55 },
+  { agency: "Spark Digital", keywords: 48 },
+  { agency: "Summit Co.", keywords: 42 },
+  { agency: "Peak Media", keywords: 38 },
+  { agency: "Nova Group", keywords: 34 },
+  { agency: "Atlas SEO", keywords: 29 },
+];
+
+const keywordTable = [
+  { agency: "Blue Digital Agency", workspace: "Marketing Hub", keywords: 89, lastRefresh: "2 hours ago", credits: 450 },
+  { agency: "Northstar Media", workspace: "SEO Portal", keywords: 76, lastRefresh: "4 hours ago", credits: 320 },
+  { agency: "Cascade Creative", workspace: "Content Studio", keywords: 68, lastRefresh: "1 day ago", credits: 280 },
+  { agency: "Vertex Solutions", workspace: "Growth Engine", keywords: 62, lastRefresh: "6 hours ago", credits: 200 },
+  { agency: "Lunar Labs", workspace: "Rank Tracker", keywords: 55, lastRefresh: "12 hours ago", credits: 150 },
 ];
 
 export default function AdminPlatformSeoKeywords() {
@@ -25,45 +36,68 @@ export default function AdminPlatformSeoKeywords() {
     <AdminLayout>
       <div className="mb-6">
         <h1 className="text-2xl font-bold" data-testid="text-page-title">Platform Keyword Usage</h1>
-        <p className="text-muted-foreground">Keyword tracking and SEO performance across all agencies</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
+      <div className="grid gap-4 md:grid-cols-3 mb-6">
         {stats.map((stat) => (
-          <Card key={stat.label}>
+          <Card key={stat.label} data-testid={`stat-card-${stat.label.toLowerCase().replace(/\s+/g, "-")}`}>
             <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">{stat.label}</CardTitle>
               <stat.icon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
+              <div className="text-2xl font-bold" data-testid={`stat-value-${stat.label.toLowerCase().replace(/\s+/g, "-")}`}>{stat.value}</div>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      <Card>
+      <Card className="mb-6">
         <CardHeader>
-          <CardTitle>Top Keywords</CardTitle>
-          <CardDescription>Most tracked keywords and their aggregate performance</CardDescription>
+          <CardTitle>Keywords Per Agency (Top 10)</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {keywords.map((kw) => (
-              <div key={kw.keyword} className="flex items-center justify-between gap-4 flex-wrap" data-testid={`row-keyword-${kw.keyword.replace(/\s+/g, "-")}`}>
-                <div className="min-w-0">
-                  <p className="font-medium">{kw.keyword}</p>
-                  <p className="text-sm text-muted-foreground">Volume: {kw.volume}/mo &middot; {kw.agencies} agencies tracking</p>
-                </div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-sm font-medium">Pos. {kw.avgPos}</span>
-                  <Badge variant={kw.trend === "up" ? "default" : kw.trend === "down" ? "destructive" : "secondary"}>
-                    {kw.trend === "up" ? "Improving" : kw.trend === "down" ? "Declining" : "Stable"}
-                  </Badge>
-                </div>
-              </div>
-            ))}
+          <div className="h-80" data-testid="chart-keywords-per-agency">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                <XAxis dataKey="agency" className="text-xs fill-muted-foreground" />
+                <YAxis className="text-xs fill-muted-foreground" />
+                <Tooltip />
+                <Bar dataKey="keywords" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Keyword Usage by Agency</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Agency</TableHead>
+                <TableHead>Workspace</TableHead>
+                <TableHead>Keywords Tracked</TableHead>
+                <TableHead>Last Refresh</TableHead>
+                <TableHead>Credits Remaining</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {keywordTable.map((row) => (
+                <TableRow key={row.agency} data-testid={`row-keyword-${row.agency.toLowerCase().replace(/\s+/g, "-")}`}>
+                  <TableCell className="font-medium">{row.agency}</TableCell>
+                  <TableCell>{row.workspace}</TableCell>
+                  <TableCell>{row.keywords}</TableCell>
+                  <TableCell className="text-muted-foreground">{row.lastRefresh}</TableCell>
+                  <TableCell>{row.credits}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
     </AdminLayout>

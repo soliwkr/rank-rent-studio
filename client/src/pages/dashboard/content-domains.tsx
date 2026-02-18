@@ -1,93 +1,75 @@
-import { ClientLayout } from "@/components/client-layout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Globe, Plus, Shield, AlertTriangle } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Plus, CheckCircle, Pencil, Trash2 } from "lucide-react";
 
-const mockDomains = [
-  { id: 1, domain: "myagency.com", status: "active", ssl: true, primary: true, expires: "2027-03-15" },
-  { id: 2, domain: "www.myagency.com", status: "active", ssl: true, primary: false, expires: "2027-03-15" },
-  { id: 3, domain: "blog.myagency.com", status: "pending", ssl: false, primary: false, expires: "2027-03-15" },
+const sampleDomains = [
+  { id: 1, domain: "example.com", status: "Verified", postsPublished: 42, added: "2025-09-10" },
+  { id: 2, domain: "blog.example.com", status: "Pending", postsPublished: 0, added: "2026-02-05" },
+  { id: 3, domain: "shop.example.com", status: "Failed", postsPublished: 0, added: "2026-01-20" },
 ];
+
+function statusVariant(status: string): "default" | "secondary" | "destructive" {
+  if (status === "Verified") return "default";
+  if (status === "Pending") return "secondary";
+  return "destructive";
+}
 
 export default function ContentDomains() {
   return (
-    <ClientLayout>
-      <div className="p-6">
-        <div className="mb-6 flex items-center justify-between gap-4 flex-wrap">
-          <div>
-            <h1 className="text-2xl font-bold" data-testid="text-page-title">Domains</h1>
-            <p className="text-muted-foreground">Manage custom domains for your workspace</p>
-          </div>
-          <Button data-testid="button-add-domain">
-            <Plus className="w-4 h-4 mr-2" />
-            Add Domain
-          </Button>
-        </div>
-        <div className="grid gap-4 md:grid-cols-3 mb-6">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <Globe className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <p className="text-2xl font-bold" data-testid="text-total-domains">3</p>
-                  <p className="text-xs text-muted-foreground">Total Domains</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <Shield className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <p className="text-2xl font-bold" data-testid="text-ssl-active">2</p>
-                  <p className="text-xs text-muted-foreground">SSL Active</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <AlertTriangle className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <p className="text-2xl font-bold" data-testid="text-pending-domains">1</p>
-                  <p className="text-xs text-muted-foreground">Pending Setup</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-        <Card>
-          <CardHeader>
-            <CardTitle>All Domains</CardTitle>
-            <CardDescription>Configure DNS and SSL for your custom domains</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {mockDomains.map((d) => (
-                <div key={d.id} className="flex items-center justify-between gap-4 p-3 rounded-lg border flex-wrap" data-testid={`row-domain-${d.id}`}>
-                  <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <Globe className="w-4 h-4 text-muted-foreground shrink-0" />
-                    <div className="min-w-0">
-                      <p className="font-medium truncate">{d.domain}</p>
-                      <p className="text-xs text-muted-foreground">Expires {d.expires}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3 flex-wrap">
-                    {d.primary && <Badge className="text-xs">Primary</Badge>}
-                    {d.ssl && <Badge variant="secondary" className="text-xs">SSL</Badge>}
-                    <Badge variant={d.status === "active" ? "default" : "secondary"} className="text-xs">
-                      {d.status}
-                    </Badge>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+    <div className="p-6 space-y-6">
+      <div className="flex items-center justify-between gap-4 flex-wrap">
+        <h1 className="text-2xl font-bold" data-testid="text-page-title">Domains</h1>
+        <Button data-testid="button-add-domain">
+          <Plus className="w-4 h-4 mr-2" />
+          Add Domain
+        </Button>
       </div>
-    </ClientLayout>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>All Domains</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Domain</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Posts Published</TableHead>
+                <TableHead>Added</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {sampleDomains.map((d) => (
+                <TableRow key={d.id} data-testid={`row-domain-${d.id}`}>
+                  <TableCell className="font-medium" data-testid={`text-domain-${d.id}`}>{d.domain}</TableCell>
+                  <TableCell>
+                    <Badge variant={statusVariant(d.status)} data-testid={`badge-domain-status-${d.id}`}>{d.status}</Badge>
+                  </TableCell>
+                  <TableCell data-testid={`text-posts-published-${d.id}`}>{d.postsPublished}</TableCell>
+                  <TableCell className="text-muted-foreground">{d.added}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-1 flex-wrap">
+                      <Button variant="ghost" size="icon" data-testid={`button-verify-domain-${d.id}`}>
+                        <CheckCircle className="w-4 h-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" data-testid={`button-edit-domain-${d.id}`}>
+                        <Pencil className="w-4 h-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" data-testid={`button-remove-domain-${d.id}`}>
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

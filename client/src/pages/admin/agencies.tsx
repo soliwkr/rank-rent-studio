@@ -1,72 +1,158 @@
+import { useState } from "react";
 import { AdminLayout } from "@/components/admin-layout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Building2, Users, Globe, TrendingUp } from "lucide-react";
-
-const stats = [
-  { label: "Total Agencies", value: "24", icon: Building2 },
-  { label: "Active Agencies", value: "21", icon: TrendingUp },
-  { label: "Total Users", value: "187", icon: Users },
-  { label: "Total Workspaces", value: "312", icon: Globe },
-];
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Plus, MoreHorizontal, Search } from "lucide-react";
 
 const agencies = [
-  { name: "Digital Growth NYC", owner: "Sarah Chen", workspaces: 14, users: 23, plan: "Enterprise", status: "Active" },
-  { name: "Coastal Marketing Co.", owner: "Mark Rivera", workspaces: 8, users: 12, plan: "Professional", status: "Active" },
-  { name: "Alpine Digital Ltd.", owner: "Julia Weber", workspaces: 22, users: 34, plan: "Enterprise", status: "Active" },
-  { name: "Metro Creative Group", owner: "David Kim", workspaces: 5, users: 8, plan: "Starter", status: "Active" },
-  { name: "Pacific Media Inc.", owner: "Lisa Tanaka", workspaces: 11, users: 18, plan: "Professional", status: "Suspended" },
-  { name: "Urban Content Network", owner: "Carlos Mendez", workspaces: 3, users: 5, plan: "Starter", status: "Pending" },
+  { id: 1, name: "Blue Digital Agency", ownerEmail: "jessica@bluedigital.com", plan: "Enterprise", workspaces: 18, posts: 342, users: 27, status: "Active" },
+  { id: 2, name: "Peak SEO Group", ownerEmail: "martin@peakseo.com", plan: "Pro", workspaces: 9, posts: 186, users: 14, status: "Active" },
+  { id: 3, name: "Horizon Marketing Co", ownerEmail: "rachel@horizonmktg.com", plan: "White Label", workspaces: 24, posts: 512, users: 38, status: "Active" },
+  { id: 4, name: "Spark Content Studio", ownerEmail: "alex@sparkcontent.io", plan: "Solo", workspaces: 2, posts: 45, users: 3, status: "Suspended" },
+  { id: 5, name: "Evergreen Digital", ownerEmail: "nina@evergreendigital.com", plan: "Pro", workspaces: 6, posts: 98, users: 9, status: "Pending" },
 ];
 
+const statusVariant = (status: string) => {
+  if (status === "Active") return "default" as const;
+  if (status === "Suspended") return "destructive" as const;
+  return "secondary" as const;
+};
+
 export default function AdminAgencies() {
+  const [search, setSearch] = useState("");
+  const [planFilter, setPlanFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
+
+  const filtered = agencies.filter((a) => {
+    const matchSearch = a.name.toLowerCase().includes(search.toLowerCase()) || a.ownerEmail.toLowerCase().includes(search.toLowerCase());
+    const matchPlan = planFilter === "all" || a.plan === planFilter;
+    const matchStatus = statusFilter === "all" || a.status === statusFilter;
+    return matchSearch && matchPlan && matchStatus;
+  });
+
   return (
     <AdminLayout>
-      <div className="mb-6">
+    <div className="space-y-6">
+      <div className="flex items-center justify-between gap-4 flex-wrap">
         <h1 className="text-2xl font-bold" data-testid="text-page-title">All Agencies</h1>
-        <p className="text-muted-foreground">Manage all agencies on the platform</p>
+        <Button data-testid="button-add-agency">
+          <Plus className="mr-2 h-4 w-4" />
+          Add Agency
+        </Button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
-        {stats.map((stat) => (
-          <Card key={stat.label}>
-            <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">{stat.label}</CardTitle>
-              <stat.icon className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold" data-testid={`text-stat-${stat.label.toLowerCase().replace(/\s+/g, "-")}`}>{stat.value}</div>
-            </CardContent>
-          </Card>
-        ))}
+      <div className="flex items-center gap-3 flex-wrap">
+        <div className="relative flex-1 min-w-[200px]">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search agencies..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9"
+            data-testid="input-search-agencies"
+          />
+        </div>
+        <Select value={planFilter} onValueChange={setPlanFilter}>
+          <SelectTrigger className="w-[160px]" data-testid="select-plan-filter">
+            <SelectValue placeholder="Plan" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Plans</SelectItem>
+            <SelectItem value="Solo">Solo</SelectItem>
+            <SelectItem value="Pro">Pro</SelectItem>
+            <SelectItem value="White Label">White Label</SelectItem>
+            <SelectItem value="Enterprise">Enterprise</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <SelectTrigger className="w-[160px]" data-testid="select-status-filter">
+            <SelectValue placeholder="Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Status</SelectItem>
+            <SelectItem value="Active">Active</SelectItem>
+            <SelectItem value="Suspended">Suspended</SelectItem>
+            <SelectItem value="Pending">Pending</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Agency Directory</CardTitle>
-          <CardDescription>All registered agencies and their current status</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {agencies.map((agency) => (
-              <div key={agency.name} className="flex items-center justify-between gap-4 flex-wrap" data-testid={`row-agency-${agency.name.toLowerCase().replace(/\s+/g, "-")}`}>
-                <div className="min-w-0">
-                  <p className="font-medium">{agency.name}</p>
-                  <p className="text-sm text-muted-foreground">Owner: {agency.owner} &middot; {agency.workspaces} workspaces &middot; {agency.users} users</p>
-                </div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <Badge variant="outline">{agency.plan}</Badge>
-                  <Badge variant={agency.status === "Active" ? "default" : agency.status === "Suspended" ? "destructive" : "secondary"}>
-                    {agency.status}
-                  </Badge>
-                  <Button variant="outline" size="sm" data-testid={`button-view-agency-${agency.name.toLowerCase().replace(/\s+/g, "-")}`}>View</Button>
-                </div>
-              </div>
-            ))}
-          </div>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Agency Name</TableHead>
+                <TableHead>Owner Email</TableHead>
+                <TableHead>Plan</TableHead>
+                <TableHead className="text-right">Workspaces</TableHead>
+                <TableHead className="text-right">Posts</TableHead>
+                <TableHead className="text-right">Users</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filtered.map((agency) => (
+                <TableRow key={agency.id} data-testid={`row-agency-${agency.id}`}>
+                  <TableCell className="font-medium">{agency.name}</TableCell>
+                  <TableCell className="text-muted-foreground">{agency.ownerEmail}</TableCell>
+                  <TableCell>
+                    <Badge variant="outline" data-testid={`badge-plan-${agency.id}`}>{agency.plan}</Badge>
+                  </TableCell>
+                  <TableCell className="text-right">{agency.workspaces}</TableCell>
+                  <TableCell className="text-right">{agency.posts}</TableCell>
+                  <TableCell className="text-right">{agency.users}</TableCell>
+                  <TableCell>
+                    <Badge variant={statusVariant(agency.status)} data-testid={`badge-status-${agency.id}`}>
+                      {agency.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" data-testid={`button-actions-agency-${agency.id}`}>
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem data-testid={`action-view-agency-${agency.id}`}>View</DropdownMenuItem>
+                        <DropdownMenuItem data-testid={`action-edit-agency-${agency.id}`}>Edit</DropdownMenuItem>
+                        <DropdownMenuItem data-testid={`action-suspend-agency-${agency.id}`}>Suspend</DropdownMenuItem>
+                        <DropdownMenuItem className="text-destructive" data-testid={`action-delete-agency-${agency.id}`}>Delete</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
+    </div>
     </AdminLayout>
   );
 }

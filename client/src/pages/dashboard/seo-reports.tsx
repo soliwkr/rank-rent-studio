@@ -1,97 +1,136 @@
-import { ClientLayout } from "@/components/client-layout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { useWorkspace } from "@/lib/workspace-context";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BarChart3, Download, Calendar, TrendingUp } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Save, FileText, CheckCircle, Type, Image, Search, Target, TrendingUp, DollarSign, Clock, AlertTriangle } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
-const mockReports = [
-  { id: 1, name: "Monthly SEO Report - February 2026", date: "2026-02-01", type: "Monthly", status: "ready" },
-  { id: 2, name: "Monthly SEO Report - January 2026", date: "2026-01-01", type: "Monthly", status: "ready" },
-  { id: 3, name: "Keyword Rankings Q4 2025", date: "2025-12-31", type: "Quarterly", status: "ready" },
-  { id: 4, name: "Competitor Analysis - Feb 2026", date: "2026-02-10", type: "Custom", status: "generating" },
-  { id: 5, name: "Backlink Audit Report", date: "2026-02-15", type: "Custom", status: "ready" },
+const categoryData = [
+  { name: "SEO", posts: 34 },
+  { name: "Technical", posts: 22 },
+  { name: "Content", posts: 28 },
+  { name: "Link Building", posts: 18 },
+  { name: "Local SEO", posts: 15 },
+  { name: "Analytics", posts: 10 },
 ];
 
-export default function SeoReports() {
+const monthlyData = [
+  { name: "Sep", posts: 8 },
+  { name: "Oct", posts: 12 },
+  { name: "Nov", posts: 15 },
+  { name: "Dec", posts: 10 },
+  { name: "Jan", posts: 18 },
+  { name: "Feb", posts: 14 },
+];
+
+interface StatCardProps {
+  icon: typeof FileText;
+  label: string;
+  value: string;
+  testId: string;
+}
+
+function StatCard({ icon: Icon, label, value, testId }: StatCardProps) {
   return (
-    <ClientLayout>
-      <div className="p-6">
-        <div className="mb-6 flex items-center justify-between gap-4 flex-wrap">
+    <Card>
+      <CardContent className="p-4">
+        <div className="flex items-center gap-3">
+          <Icon className="w-5 h-5 text-muted-foreground" />
           <div>
-            <h1 className="text-2xl font-bold" data-testid="text-page-title">SEO Reports</h1>
-            <p className="text-muted-foreground">View and download SEO performance reports</p>
+            <p className="text-xs text-muted-foreground">{label}</p>
+            <p className="text-2xl font-bold" data-testid={testId}>{value}</p>
           </div>
-          <Button data-testid="button-generate-report">
-            <BarChart3 className="w-4 h-4 mr-2" />
-            Generate Report
-          </Button>
         </div>
-        <div className="grid gap-4 md:grid-cols-3 mb-6">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <BarChart3 className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <p className="text-2xl font-bold" data-testid="text-total-reports">5</p>
-                  <p className="text-xs text-muted-foreground">Total Reports</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <TrendingUp className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <p className="text-2xl font-bold" data-testid="text-avg-score">78</p>
-                  <p className="text-xs text-muted-foreground">Avg. SEO Score</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <Calendar className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <p className="text-sm font-bold" data-testid="text-last-report">Feb 15, 2026</p>
-                  <p className="text-xs text-muted-foreground">Last Report</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-        <Card>
-          <CardHeader>
-            <CardTitle>Report History</CardTitle>
-            <CardDescription>Access and download past SEO reports</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {mockReports.map((report) => (
-                <div key={report.id} className="flex items-center justify-between gap-4 p-3 rounded-lg border flex-wrap" data-testid={`row-report-${report.id}`}>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium text-sm">{report.name}</p>
-                    <p className="text-xs text-muted-foreground">{report.date}</p>
-                  </div>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <Badge variant="secondary" className="text-xs">{report.type}</Badge>
-                    <Badge variant={report.status === "ready" ? "default" : "secondary"} className="text-xs">
-                      {report.status}
-                    </Badge>
-                    {report.status === "ready" && (
-                      <Button variant="outline" size="sm" data-testid={`button-download-report-${report.id}`}>
-                        <Download className="w-3 h-3 mr-1" />
-                        Download
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+      </CardContent>
+    </Card>
+  );
+}
+
+export default function SeoReports() {
+  const { selectedWorkspace } = useWorkspace();
+
+  return (
+    <div className="p-6 space-y-6">
+      <div className="flex items-center justify-between gap-4 flex-wrap">
+        <h1 className="text-2xl font-bold" data-testid="text-page-title">Reports</h1>
+        <Button variant="outline" data-testid="button-save-report">
+          <Save className="w-4 h-4 mr-2" />
+          Save Report
+        </Button>
       </div>
-    </ClientLayout>
+
+      <Tabs defaultValue="content" data-testid="tabs-reports">
+        <TabsList>
+          <TabsTrigger value="content" data-testid="tab-content">Content</TabsTrigger>
+          <TabsTrigger value="seo" data-testid="tab-seo">SEO</TabsTrigger>
+          <TabsTrigger value="revenue" data-testid="tab-revenue">Revenue</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="content" className="space-y-6 mt-6">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <StatCard icon={FileText} label="Total Posts" value="127" testId="text-stat-total-posts" />
+            <StatCard icon={CheckCircle} label="Published" value="89" testId="text-stat-published" />
+            <StatCard icon={Type} label="Avg Word Count" value="2,150" testId="text-stat-avg-words" />
+            <StatCard icon={Image} label="Image Coverage" value="87%" testId="text-stat-image-coverage" />
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Posts by Category</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[300px]" data-testid="chart-posts-by-category">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={categoryData}>
+                      <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                      <XAxis dataKey="name" className="text-xs" tick={{ fontSize: 12 }} />
+                      <YAxis className="text-xs" tick={{ fontSize: 12 }} />
+                      <Tooltip />
+                      <Bar dataKey="posts" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Posts by Month</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[300px]" data-testid="chart-posts-by-month">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={monthlyData}>
+                      <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                      <XAxis dataKey="name" className="text-xs" tick={{ fontSize: 12 }} />
+                      <YAxis className="text-xs" tick={{ fontSize: 12 }} />
+                      <Tooltip />
+                      <Bar dataKey="posts" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="seo" className="space-y-6 mt-6">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <StatCard icon={Search} label="Pages Audited" value="45" testId="text-stat-pages-audited" />
+            <StatCard icon={Target} label="Avg SEO Score" value="78" testId="text-stat-avg-seo-score" />
+            <StatCard icon={TrendingUp} label="Keywords Tracked" value="45" testId="text-stat-keywords-tracked" />
+            <StatCard icon={TrendingUp} label="Avg Position" value="8.3" testId="text-stat-avg-position" />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="revenue" className="space-y-6 mt-6">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <StatCard icon={DollarSign} label="Total Invoiced" value="$87,800" testId="text-stat-total-invoiced" />
+            <StatCard icon={CheckCircle} label="Paid" value="$67,800" testId="text-stat-paid" />
+            <StatCard icon={Clock} label="Outstanding" value="$16,800" testId="text-stat-outstanding" />
+            <StatCard icon={AlertTriangle} label="Overdue" value="$3,200" testId="text-stat-overdue" />
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 }

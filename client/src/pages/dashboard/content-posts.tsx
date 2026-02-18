@@ -1,105 +1,259 @@
-import { ClientLayout } from "@/components/client-layout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState } from "react";
+import { useWorkspace } from "@/lib/workspace-context";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { FileText, Plus, Eye, Clock, CheckCircle } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Plus, Layers, Search, MoreHorizontal, Pencil, Eye, Copy, FileDown, Trash2 } from "lucide-react";
 
-const mockPosts = [
-  { id: 1, title: "10 Tips for Better Customer Experience", status: "published", views: 1243, date: "2026-02-15" },
-  { id: 2, title: "How to Optimize Your Content Strategy", status: "published", views: 892, date: "2026-02-12" },
-  { id: 3, title: "SEO Trends to Watch in Spring 2026", status: "draft", views: 0, date: "2026-02-10" },
-  { id: 4, title: "Why Local SEO Matters for Agencies", status: "published", views: 2104, date: "2026-02-08" },
-  { id: 5, title: "Team Collaboration Best Practices", status: "scheduled", views: 0, date: "2026-02-20" },
+const samplePosts = [
+  {
+    id: 1,
+    title: "How to Improve Your Local SEO Rankings in 2026",
+    category: "SEO",
+    status: "Published",
+    words: 2450,
+    images: 6,
+    schema: "Article",
+    publishedDate: "2026-02-10",
+  },
+  {
+    id: 2,
+    title: "Complete Guide to Technical SEO Audits for Agencies",
+    category: "Technical SEO",
+    status: "Draft",
+    words: 3120,
+    images: 8,
+    schema: "HowTo",
+    publishedDate: null,
+  },
+  {
+    id: 3,
+    title: "10 Link Building Strategies That Still Work",
+    category: "Link Building",
+    status: "Review",
+    words: 1890,
+    images: 4,
+    schema: "Article",
+    publishedDate: null,
+  },
+  {
+    id: 4,
+    title: "Why Content Marketing Drives Organic Growth",
+    category: "Content",
+    status: "Published",
+    words: 2780,
+    images: 5,
+    schema: "BlogPosting",
+    publishedDate: "2026-01-28",
+  },
+  {
+    id: 5,
+    title: "Schema Markup Best Practices for E-Commerce Sites",
+    category: "Technical SEO",
+    status: "Scheduled",
+    words: 2100,
+    images: 3,
+    schema: "FAQPage",
+    publishedDate: "2026-02-20",
+  },
 ];
 
+const statusVariant = (status: string) => {
+  switch (status) {
+    case "Published":
+      return "default" as const;
+    case "Draft":
+      return "secondary" as const;
+    case "Review":
+      return "outline" as const;
+    case "Scheduled":
+      return "secondary" as const;
+    default:
+      return "secondary" as const;
+  }
+};
+
 export default function ContentPosts() {
+  const { selectedWorkspace } = useWorkspace();
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [schemaFilter, setSchemaFilter] = useState("all");
+
+  const filtered = samplePosts.filter((p) => {
+    if (search && !p.title.toLowerCase().includes(search.toLowerCase())) return false;
+    if (statusFilter !== "all" && p.status !== statusFilter) return false;
+    if (categoryFilter !== "all" && p.category !== categoryFilter) return false;
+    if (schemaFilter !== "all" && p.schema !== schemaFilter) return false;
+    return true;
+  });
+
+  const categories = Array.from(new Set(samplePosts.map((p) => p.category)));
+  const schemas = Array.from(new Set(samplePosts.map((p) => p.schema)));
+
   return (
-    <ClientLayout>
-      <div className="p-6">
-        <div className="mb-6 flex items-center justify-between gap-4 flex-wrap">
-          <div>
-            <h1 className="text-2xl font-bold" data-testid="text-page-title">Posts</h1>
-            <p className="text-muted-foreground">Manage blog posts for your workspace</p>
-          </div>
-          <Button data-testid="button-create-post">
+    <div className="p-6 space-y-6">
+      <div className="flex items-center justify-between gap-4 flex-wrap">
+        <h1 className="text-2xl font-bold" data-testid="text-page-title">Posts</h1>
+        <div className="flex items-center gap-2 flex-wrap">
+          <Button data-testid="button-new-post">
             <Plus className="w-4 h-4 mr-2" />
             New Post
           </Button>
+          <Button variant="outline" data-testid="button-bulk-generate">
+            <Layers className="w-4 h-4 mr-2" />
+            Bulk Generate
+          </Button>
         </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <FileText className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <p className="text-2xl font-bold" data-testid="text-total-posts">5</p>
-                  <p className="text-xs text-muted-foreground">Total Posts</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <CheckCircle className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <p className="text-2xl font-bold" data-testid="text-published-posts">3</p>
-                  <p className="text-xs text-muted-foreground">Published</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <Clock className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <p className="text-2xl font-bold" data-testid="text-draft-posts">1</p>
-                  <p className="text-xs text-muted-foreground">Drafts</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <Eye className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <p className="text-2xl font-bold" data-testid="text-total-views">4,239</p>
-                  <p className="text-xs text-muted-foreground">Total Views</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+      </div>
+
+      <div className="flex items-center gap-3 flex-wrap">
+        <div className="relative flex-1 min-w-[200px]">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input
+            placeholder="Search posts..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9"
+            data-testid="input-search-posts"
+          />
         </div>
-        <Card>
-          <CardHeader>
-            <CardTitle>All Posts</CardTitle>
-            <CardDescription>View and manage your blog content</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {mockPosts.map((post) => (
-                <div key={post.id} className="flex items-center justify-between gap-4 p-3 rounded-lg border flex-wrap" data-testid={`row-post-${post.id}`}>
-                  <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
-                    <div className="min-w-0">
-                      <p className="font-medium truncate">{post.title}</p>
-                      <p className="text-xs text-muted-foreground">{post.date}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3 flex-wrap">
-                    <Badge variant={post.status === "published" ? "default" : "secondary"} className="text-xs">
+        <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <SelectTrigger className="w-[150px]" data-testid="select-status-filter">
+            <SelectValue placeholder="Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Status</SelectItem>
+            <SelectItem value="Draft">Draft</SelectItem>
+            <SelectItem value="Review">Review</SelectItem>
+            <SelectItem value="Published">Published</SelectItem>
+            <SelectItem value="Scheduled">Scheduled</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+          <SelectTrigger className="w-[150px]" data-testid="select-category-filter">
+            <SelectValue placeholder="Category" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Categories</SelectItem>
+            {categories.map((c) => (
+              <SelectItem key={c} value={c}>{c}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={schemaFilter} onValueChange={setSchemaFilter}>
+          <SelectTrigger className="w-[150px]" data-testid="select-schema-filter">
+            <SelectValue placeholder="Schema Type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Schemas</SelectItem>
+            {schemas.map((s) => (
+              <SelectItem key={s} value={s}>{s}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <Card>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Title</TableHead>
+                <TableHead>Category</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Words</TableHead>
+                <TableHead className="text-right">Images</TableHead>
+                <TableHead>Schema</TableHead>
+                <TableHead>Published Date</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filtered.map((post) => (
+                <TableRow key={post.id} data-testid={`row-post-${post.id}`}>
+                  <TableCell className="font-medium max-w-[300px] truncate" data-testid={`text-post-title-${post.id}`}>
+                    {post.title}
+                  </TableCell>
+                  <TableCell data-testid={`text-post-category-${post.id}`}>{post.category}</TableCell>
+                  <TableCell>
+                    <Badge variant={statusVariant(post.status)} data-testid={`badge-post-status-${post.id}`}>
                       {post.status}
                     </Badge>
-                    <span className="text-sm text-muted-foreground">{post.views} views</span>
-                  </div>
-                </div>
+                  </TableCell>
+                  <TableCell className="text-right" data-testid={`text-post-words-${post.id}`}>
+                    {post.words.toLocaleString()}
+                  </TableCell>
+                  <TableCell className="text-right" data-testid={`text-post-images-${post.id}`}>
+                    {post.images}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline" data-testid={`badge-post-schema-${post.id}`}>
+                      {post.schema}
+                    </Badge>
+                  </TableCell>
+                  <TableCell data-testid={`text-post-date-${post.id}`}>
+                    {post.publishedDate || "-"}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" data-testid={`button-post-actions-${post.id}`}>
+                          <MoreHorizontal className="w-4 h-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem data-testid={`action-edit-${post.id}`}>
+                          <Pencil className="w-4 h-4 mr-2" />
+                          Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem data-testid={`action-preview-${post.id}`}>
+                          <Eye className="w-4 h-4 mr-2" />
+                          Preview
+                        </DropdownMenuItem>
+                        <DropdownMenuItem data-testid={`action-duplicate-${post.id}`}>
+                          <Copy className="w-4 h-4 mr-2" />
+                          Duplicate
+                        </DropdownMenuItem>
+                        <DropdownMenuItem data-testid={`action-export-${post.id}`}>
+                          <FileDown className="w-4 h-4 mr-2" />
+                          Export MDX
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="text-destructive" data-testid={`action-delete-${post.id}`}>
+                          <Trash2 className="w-4 h-4 mr-2" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
               ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </ClientLayout>
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

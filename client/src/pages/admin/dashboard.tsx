@@ -1,163 +1,348 @@
-import { Link } from "wouter";
-import { 
-  Building2, 
-  CreditCard, 
-  BarChart3, 
-  ChevronRight,
-  Globe,
-  MessageSquare,
-  Phone,
-  Headset,
-  Download,
-  Volume2,
-  TrendingUp,
-  FileEdit,
-  Search,
+import {
+  Building2,
+  Layers,
+  DollarSign,
+  Users,
+  Activity,
+  ArrowUpRight,
+  Clock,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
 import { AdminLayout } from "@/components/admin-layout";
 
-const stats = [
-  { label: "Total Clients", value: "47", change: "+3 this month", icon: Building2 },
-  { label: "Active Subscriptions", value: "43", change: "$12,857/mo", icon: CreditCard },
-  { label: "Total Leads", value: "2,847", change: "+234 this week", icon: BarChart3 },
-  { label: "Active Projects", value: "156", change: "+18 this week", icon: BarChart3 },
-  { label: "AI Calls Handled", value: "1,293", change: "This month", icon: Phone },
-  { label: "SMS Sent", value: "3,847", change: "+312 this week", icon: MessageSquare },
-  { label: "Widget Voice", value: "179", change: "+47 this week", icon: Volume2 },
-  { label: "Keywords Tracked", value: "342", change: "Across 38 clients", icon: TrendingUp },
-  { label: "Website Changes", value: "23", change: "8 pending review", icon: FileEdit },
-  { label: "Support Tickets", value: "12", change: "3 open", icon: Headset },
+const COLORS = {
+  primary: "hsl(221, 83%, 53%)",
+  green: "hsl(160, 60%, 45%)",
+  orange: "hsl(35, 85%, 55%)",
+  purple: "hsl(280, 60%, 55%)",
+};
+
+const mrrData = [
+  { month: "Jan", mrr: 8200 },
+  { month: "Feb", mrr: 8900 },
+  { month: "Mar", mrr: 9400 },
+  { month: "Apr", mrr: 10100 },
+  { month: "May", mrr: 10800 },
+  { month: "Jun", mrr: 11200 },
+  { month: "Jul", mrr: 11900 },
+  { month: "Aug", mrr: 12400 },
+  { month: "Sep", mrr: 13000 },
+  { month: "Oct", mrr: 13500 },
+  { month: "Nov", mrr: 14100 },
+  { month: "Dec", mrr: 14750 },
 ];
 
-const recentClients = [
-  { name: "Acme Digital", plan: "Complete Solution", status: "Active", date: "Jan 28, 2026" },
-  { name: "Dragon Media", plan: "Professional", status: "Active", date: "Jan 25, 2026" },
-  { name: "Coastal SEO", plan: "Complete Solution", status: "Pending Setup", date: "Jan 24, 2026" },
-  { name: "Summit Marketing", plan: "Complete Solution", status: "Active", date: "Jan 20, 2026" },
+const newAgenciesData = [
+  { month: "Jan", agencies: 3 },
+  { month: "Feb", agencies: 5 },
+  { month: "Mar", agencies: 4 },
+  { month: "Apr", agencies: 6 },
+  { month: "May", agencies: 5 },
+  { month: "Jun", agencies: 7 },
+  { month: "Jul", agencies: 4 },
+  { month: "Aug", agencies: 6 },
+  { month: "Sep", agencies: 5 },
+  { month: "Oct", agencies: 3 },
+  { month: "Nov", agencies: 4 },
+  { month: "Dec", agencies: 5 },
 ];
+
+const planDistribution = [
+  { name: "Solo", value: 22 },
+  { name: "Pro", value: 15 },
+  { name: "White Label", value: 7 },
+  { name: "Enterprise", value: 3 },
+];
+
+const planColors = [COLORS.primary, COLORS.green, COLORS.orange, COLORS.purple];
+
+const recentActivity = [
+  { description: "New agency registered: Acme Digital", time: "2 minutes ago", icon: Building2 },
+  { description: "Content published: SEO Guide 2026", time: "15 minutes ago", icon: Layers },
+  { description: "Plan upgraded: Solo to Pro", time: "1 hour ago", icon: ArrowUpRight },
+  { description: "New workspace created: Coastal Media", time: "3 hours ago", icon: Layers },
+  { description: "New agency registered: Summit Marketing", time: "5 hours ago", icon: Building2 },
+];
+
+const recentAgencies = [
+  { name: "Acme Digital", plan: "Pro", owner: "John Smith", workspaces: 4, created: "Feb 15, 2026", status: "Active" },
+  { name: "Dragon Media", plan: "Enterprise", owner: "Sarah Chen", workspaces: 12, created: "Feb 12, 2026", status: "Active" },
+  { name: "Coastal SEO", plan: "White Label", owner: "Mike Johnson", workspaces: 8, created: "Feb 10, 2026", status: "Active" },
+  { name: "Summit Marketing", plan: "Solo", owner: "Lisa Park", workspaces: 1, created: "Feb 8, 2026", status: "Pending" },
+  { name: "Riverside Agency", plan: "Pro", owner: "Tom Davis", workspaces: 3, created: "Feb 5, 2026", status: "Active" },
+];
+
+function getPlanVariant(plan: string) {
+  switch (plan) {
+    case "Enterprise": return "default";
+    case "Pro": return "secondary";
+    case "White Label": return "outline";
+    default: return "secondary";
+  }
+}
+
+function formatMrr(value: number) {
+  return `$${(value / 1000).toFixed(1)}K`;
+}
 
 export default function AdminDashboard() {
   return (
     <AdminLayout>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground">Platform overview and management</p>
-      </div>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold" data-testid="text-page-title">Platform Overview</h1>
+        </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5 mb-6">
-        {stats.map((stat) => (
-          <Card key={stat.label}>
+        <div className="grid gap-4 grid-cols-2 lg:grid-cols-5">
+          <Card data-testid="card-total-agencies">
             <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                {stat.label}
-              </CardTitle>
-              <stat.icon className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium text-muted-foreground">Total Agencies</CardTitle>
+              <Building2 className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
-              <p className="text-xs text-muted-foreground">{stat.change}</p>
+              <div className="text-2xl font-bold" data-testid="text-total-agencies">47</div>
+              <p className="text-xs flex items-center gap-1" style={{ color: COLORS.green }}>
+                <ArrowUpRight className="h-3 w-3" />
+                +12%
+              </p>
             </CardContent>
           </Card>
-        ))}
-      </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
+          <Card data-testid="card-total-workspaces">
+            <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">Total Workspaces</CardTitle>
+              <Layers className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold" data-testid="text-total-workspaces">183</div>
+              <p className="text-xs flex items-center gap-1" style={{ color: COLORS.green }}>
+                <ArrowUpRight className="h-3 w-3" />
+                +8%
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card data-testid="card-mrr">
+            <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">MRR</CardTitle>
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold" data-testid="text-mrr">$14,750</div>
+              <p className="text-xs flex items-center gap-1" style={{ color: COLORS.green }}>
+                <ArrowUpRight className="h-3 w-3" />
+                +15.3%
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card data-testid="card-active-users">
+            <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">Active Users</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold" data-testid="text-active-users">312</div>
+              <p className="text-xs flex items-center gap-1" style={{ color: COLORS.green }}>
+                <ArrowUpRight className="h-3 w-3" />
+                +5%
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card data-testid="card-system-health">
+            <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">System Health</CardTitle>
+              <Activity className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center gap-2">
+                <span
+                  className="inline-block h-3 w-3 rounded-full"
+                  style={{ backgroundColor: COLORS.green }}
+                  data-testid="indicator-system-health"
+                />
+                <span className="text-2xl font-bold" data-testid="text-system-health">Healthy</span>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+          <Card data-testid="card-mrr-growth">
+            <CardHeader>
+              <CardTitle>MRR Growth</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={mrrData}>
+                    <defs>
+                      <linearGradient id="mrrGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor={COLORS.primary} stopOpacity={0.3} />
+                        <stop offset="95%" stopColor={COLORS.primary} stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                    <XAxis dataKey="month" className="text-xs" tick={{ fill: "hsl(var(--muted-foreground))" }} />
+                    <YAxis className="text-xs" tickFormatter={formatMrr} tick={{ fill: "hsl(var(--muted-foreground))" }} />
+                    <Tooltip
+                      formatter={(value: number) => [`$${value.toLocaleString()}`, "MRR"]}
+                      contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "6px" }}
+                      labelStyle={{ color: "hsl(var(--foreground))" }}
+                    />
+                    <Area type="monotone" dataKey="mrr" stroke={COLORS.primary} fill="url(#mrrGradient)" strokeWidth={2} />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card data-testid="card-new-agencies-chart">
+            <CardHeader>
+              <CardTitle>New Agencies</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={newAgenciesData}>
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                    <XAxis dataKey="month" className="text-xs" tick={{ fill: "hsl(var(--muted-foreground))" }} />
+                    <YAxis className="text-xs" tick={{ fill: "hsl(var(--muted-foreground))" }} />
+                    <Tooltip
+                      contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "6px" }}
+                      labelStyle={{ color: "hsl(var(--foreground))" }}
+                    />
+                    <Bar dataKey="agencies" fill={COLORS.primary} radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+          <Card data-testid="card-recent-activity">
+            <CardHeader>
+              <CardTitle>Recent Activity</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {recentActivity.map((item, index) => (
+                  <div key={index} className="flex items-start gap-3" data-testid={`activity-item-${index}`}>
+                    <div className="mt-0.5 rounded-md p-1.5 bg-muted">
+                      <item.icon className="h-4 w-4 text-muted-foreground" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium">{item.description}</p>
+                      <p className="text-xs text-muted-foreground flex items-center gap-1">
+                        <Clock className="h-3 w-3" />
+                        {item.time}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card data-testid="card-plan-distribution">
+            <CardHeader>
+              <CardTitle>Plan Distribution</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={planDistribution}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={100}
+                      paddingAngle={4}
+                      dataKey="value"
+                    >
+                      {planDistribution.map((_, index) => (
+                        <Cell key={`cell-${index}`} fill={planColors[index]} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "6px" }}
+                      labelStyle={{ color: "hsl(var(--foreground))" }}
+                    />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <Card data-testid="card-recent-agencies-table">
           <CardHeader>
-            <CardTitle>Recent Clients</CardTitle>
-            <CardDescription>Latest signups and their status</CardDescription>
+            <CardTitle>Recent Agencies</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {recentClients.map((client) => (
-                <div key={client.name} className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">{client.name}</p>
-                    <p className="text-sm text-muted-foreground">{client.plan}</p>
-                  </div>
-                  <div className="text-right">
-                    <span className={`text-xs px-2 py-1 rounded-full ${
-                      client.status === "Active" 
-                        ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300" 
-                        : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300"
-                    }`}>
-                      {client.status}
-                    </span>
-                    <p className="text-xs text-muted-foreground mt-1">{client.date}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <Link href="/admin/clients">
-              <Button variant="ghost" className="w-full mt-4" data-testid="button-view-all-clients">
-                View All Clients <ChevronRight className="h-4 w-4 ml-1" />
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>Common administrative tasks</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <Link href="/admin/clients">
-              <Button variant="outline" className="w-full justify-start" data-testid="button-add-client">
-                <Building2 className="h-4 w-4 mr-2" />
-                Add New Client
-              </Button>
-            </Link>
-            <Link href="/admin/websites">
-              <Button variant="outline" className="w-full justify-start" data-testid="button-create-website">
-                <Globe className="h-4 w-4 mr-2" />
-                Create Website
-              </Button>
-            </Link>
-            <Link href="/admin/website-changes">
-              <Button variant="outline" className="w-full justify-start" data-testid="button-review-changes">
-                <FileEdit className="h-4 w-4 mr-2" />
-                Review Website Changes
-              </Button>
-            </Link>
-            <Link href="/admin/widgets">
-              <Button variant="outline" className="w-full justify-start" data-testid="button-configure-widget">
-                <MessageSquare className="h-4 w-4 mr-2" />
-                Configure Widget
-              </Button>
-            </Link>
-            <Link href="/admin/seo">
-              <Button variant="outline" className="w-full justify-start" data-testid="button-seo-rankings">
-                <TrendingUp className="h-4 w-4 mr-2" />
-                SEO & Rankings
-              </Button>
-            </Link>
-            <Link href="/admin/billing">
-              <Button variant="outline" className="w-full justify-start" data-testid="button-view-billing">
-                <CreditCard className="h-4 w-4 mr-2" />
-                View Billing Reports
-              </Button>
-            </Link>
-            <Link href="/admin/twilio">
-              <Button variant="outline" className="w-full justify-start" data-testid="button-manage-twilio">
-                <Phone className="h-4 w-4 mr-2" />
-                Twilio Management
-              </Button>
-            </Link>
-            <Link href="/admin/support">
-              <Button variant="outline" className="w-full justify-start" data-testid="button-view-support">
-                <Headset className="h-4 w-4 mr-2" />
-                Support Tickets
-              </Button>
-            </Link>
-            <Link href="/admin/export-data">
-              <Button variant="outline" className="w-full justify-start" data-testid="button-export-data">
-                <Download className="h-4 w-4 mr-2" />
-                Export Data
-              </Button>
-            </Link>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Agency Name</TableHead>
+                  <TableHead>Plan</TableHead>
+                  <TableHead>Owner</TableHead>
+                  <TableHead>Workspaces</TableHead>
+                  <TableHead>Created</TableHead>
+                  <TableHead>Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {recentAgencies.map((agency, index) => (
+                  <TableRow key={agency.name} data-testid={`row-agency-${index}`}>
+                    <TableCell className="font-medium" data-testid={`text-agency-name-${index}`}>{agency.name}</TableCell>
+                    <TableCell>
+                      <Badge variant={getPlanVariant(agency.plan)} data-testid={`badge-plan-${index}`}>
+                        {agency.plan}
+                      </Badge>
+                    </TableCell>
+                    <TableCell data-testid={`text-agency-owner-${index}`}>{agency.owner}</TableCell>
+                    <TableCell data-testid={`text-agency-workspaces-${index}`}>{agency.workspaces}</TableCell>
+                    <TableCell data-testid={`text-agency-created-${index}`}>{agency.created}</TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={agency.status === "Active" ? "default" : "secondary"}
+                        data-testid={`badge-status-${index}`}
+                      >
+                        {agency.status}
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
       </div>

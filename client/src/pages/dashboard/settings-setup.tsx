@@ -1,103 +1,69 @@
-import { ClientLayout } from "@/components/client-layout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { CheckCircle, Circle, ArrowRight, Rocket } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { CheckCircle, Circle } from "lucide-react";
 
-const setupSteps = [
-  { id: 1, title: "Create your workspace", description: "Set up your first workspace with business details", completed: true },
-  { id: 2, title: "Configure business hours", description: "Set your operating hours and special closures", completed: true },
-  { id: 3, title: "Add team members", description: "Invite your team to collaborate on the dashboard", completed: true },
-  { id: 4, title: "Connect payment gateway", description: "Set up Stripe or PayPal for online payments", completed: false },
-  { id: 5, title: "Train AI assistant", description: "Upload documents and configure your AI knowledge base", completed: false },
-  { id: 6, title: "Install chat widget", description: "Add the chat widget to your website", completed: false },
-  { id: 7, title: "Set up Twilio", description: "Connect your Twilio account for voice and SMS", completed: false },
-  { id: 8, title: "Customize branding", description: "Upload logo and set brand colors", completed: false },
+const steps = [
+  { id: 1, title: "Create account", description: "Sign up and verify your email address", completed: true, link: null },
+  { id: 2, title: "Add your first workspace", description: "Set up a workspace for your project", completed: true, link: null },
+  { id: 3, title: "Connect AI provider", description: "Add your API key or use platform defaults", completed: true, link: null },
+  { id: 4, title: "Add your first domain", description: "Connect a domain to publish content", completed: false, link: "domains" },
+  { id: 5, title: "Create your first content campaign", description: "Start generating content with AI", completed: false, link: "campaigns" },
+  { id: 6, title: "Set up rank tracking keywords", description: "Monitor your search engine positions", completed: false, link: "rank-tracker" },
+  { id: 7, title: "Configure your widget", description: "Add the AI chat widget to your site", completed: false, link: "widget" },
+  { id: 8, title: "Invite team members", description: "Collaborate with your team", completed: false, link: "team" },
 ];
 
-export default function SettingsSetup() {
-  const completedCount = setupSteps.filter(s => s.completed).length;
-  const progress = Math.round((completedCount / setupSteps.length) * 100);
+const completedCount = steps.filter((s) => s.completed).length;
 
+export default function SettingsSetup() {
   return (
-    <ClientLayout>
-      <div className="p-6">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold" data-testid="text-page-title">Setup Guide</h1>
-          <p className="text-muted-foreground">Complete these steps to get the most out of your dashboard</p>
-        </div>
-        <div className="grid gap-4 md:grid-cols-3 mb-6">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <Rocket className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <p className="text-2xl font-bold" data-testid="text-progress">{progress}%</p>
-                  <p className="text-xs text-muted-foreground">Complete</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <CheckCircle className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <p className="text-2xl font-bold" data-testid="text-completed-steps">{completedCount}</p>
-                  <p className="text-xs text-muted-foreground">Steps Completed</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <Circle className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <p className="text-2xl font-bold" data-testid="text-remaining-steps">{setupSteps.length - completedCount}</p>
-                  <p className="text-xs text-muted-foreground">Remaining</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-        <Card>
-          <CardHeader>
-            <CardTitle>Setup Steps</CardTitle>
-            <CardDescription>Follow these steps to configure your workspace</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {setupSteps.map((step) => (
-                <div key={step.id} className="flex items-center justify-between gap-4 p-4 rounded-lg border flex-wrap" data-testid={`row-step-${step.id}`}>
-                  <div className="flex items-center gap-3 min-w-0 flex-1">
-                    {step.completed ? (
-                      <CheckCircle className="w-5 h-5 text-green-500 shrink-0" />
-                    ) : (
-                      <Circle className="w-5 h-5 text-muted-foreground shrink-0" />
-                    )}
-                    <div className="min-w-0">
-                      <p className={`font-medium text-sm ${step.completed ? "line-through text-muted-foreground" : ""}`}>
-                        {step.title}
-                      </p>
-                      <p className="text-xs text-muted-foreground">{step.description}</p>
-                    </div>
-                  </div>
-                  {!step.completed && (
-                    <Button variant="outline" size="sm" data-testid={`button-start-step-${step.id}`}>
-                      Start
-                      <ArrowRight className="w-3 h-3 ml-1" />
-                    </Button>
+    <div className="p-6 space-y-6">
+      <h1 className="text-2xl font-bold" data-testid="text-page-title">Setup Guide</h1>
+
+      <Card>
+        <CardContent className="p-4 space-y-2">
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <span className="text-sm font-medium" data-testid="text-progress-label">{completedCount} of {steps.length} complete</span>
+            <span className="text-sm text-muted-foreground">{Math.round((completedCount / steps.length) * 100)}%</span>
+          </div>
+          <Progress value={(completedCount / steps.length) * 100} data-testid="progress-setup" />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Checklist</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-1">
+            {steps.map((step, i) => (
+              <div key={step.id} className="flex items-start gap-4 p-3" data-testid={`row-step-${step.id}`}>
+                <div className="flex flex-col items-center gap-1 shrink-0">
+                  {step.completed ? (
+                    <CheckCircle className="w-5 h-5 text-green-500" />
+                  ) : (
+                    <Circle className="w-5 h-5 text-muted-foreground" />
                   )}
-                  {step.completed && (
-                    <Badge variant="secondary" className="text-xs">Done</Badge>
+                  {i < steps.length - 1 && (
+                    <div className="w-px h-8 bg-border" />
                   )}
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </ClientLayout>
+                <div className="min-w-0 flex-1">
+                  <p className={`font-medium text-sm ${step.completed ? "line-through text-muted-foreground" : ""}`}>
+                    {step.title}
+                  </p>
+                  <p className="text-xs text-muted-foreground">{step.description}</p>
+                  {step.link && !step.completed && (
+                    <a href="#" className="text-xs text-primary mt-1 inline-block" data-testid={`link-step-${step.id}`}>
+                      Get started
+                    </a>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

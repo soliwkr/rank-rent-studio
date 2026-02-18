@@ -1,23 +1,17 @@
 import { AdminLayout } from "@/components/admin-layout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Phone, PhoneIncoming, PhoneOutgoing, Clock } from "lucide-react";
-
-const stats = [
-  { label: "Total Calls (Month)", value: "1,293", icon: Phone },
-  { label: "Inbound", value: "987", icon: PhoneIncoming },
-  { label: "Outbound", value: "306", icon: PhoneOutgoing },
-  { label: "Avg Duration", value: "3m 24s", icon: Clock },
-];
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 const callLogs = [
-  { id: "CALL-8934", from: "+1 (917) 555-0123", to: "Acme Digital", agency: "Digital Growth NYC", duration: "4:12", type: "Inbound", status: "Completed", time: "10 min ago" },
-  { id: "CALL-8933", from: "+1 (212) 555-0456", to: "Coastal SEO", agency: "Coastal Marketing Co.", duration: "2:45", type: "Inbound", status: "Completed", time: "25 min ago" },
-  { id: "CALL-8932", from: "System", to: "+1 (646) 555-0789", agency: "Metro Creative Group", duration: "1:30", type: "Outbound", status: "Completed", time: "1 hr ago" },
-  { id: "CALL-8931", from: "+41 79 555 0234", to: "Summit Marketing", agency: "Alpine Digital Ltd.", duration: "5:18", type: "Inbound", status: "Completed", time: "2 hrs ago" },
-  { id: "CALL-8930", from: "+1 (310) 555-0567", to: "Pinnacle Digital", agency: "Pacific Media Inc.", duration: "0:00", type: "Inbound", status: "Missed", time: "3 hrs ago" },
-  { id: "CALL-8929", from: "System", to: "+1 (917) 555-0890", agency: "Digital Growth NYC", duration: "0:45", type: "Outbound", status: "Voicemail", time: "4 hrs ago" },
+  { dateTime: "Feb 18, 2026 14:32", agency: "Blue Digital Agency", phone: "+1 (212) 555-0142", direction: "Inbound", duration: "4:12", status: "Completed", recording: "rec_001.mp3" },
+  { dateTime: "Feb 18, 2026 13:15", agency: "Northstar Media", phone: "+1 (415) 555-0198", direction: "Outbound", duration: "2:45", status: "Completed", recording: "rec_002.mp3" },
+  { dateTime: "Feb 18, 2026 11:42", agency: "Cascade Creative", phone: "+1 (646) 555-0234", direction: "Inbound", duration: "0:00", status: "Missed", recording: "-" },
+  { dateTime: "Feb 17, 2026 16:08", agency: "Vertex Solutions", phone: "+1 (310) 555-0167", direction: "Inbound", duration: "5:18", status: "Completed", recording: "rec_003.mp3" },
+  { dateTime: "Feb 17, 2026 10:22", agency: "Lunar Labs", phone: "+1 (503) 555-0189", direction: "Outbound", duration: "0:45", status: "Voicemail", recording: "rec_004.mp3" },
 ];
 
 export default function AdminSupportCallLogs() {
@@ -25,44 +19,84 @@ export default function AdminSupportCallLogs() {
     <AdminLayout>
       <div className="mb-6">
         <h1 className="text-2xl font-bold" data-testid="text-page-title">Platform Call Logs</h1>
-        <p className="text-muted-foreground">Voice call history across all agencies</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
-        {stats.map((stat) => (
-          <Card key={stat.label}>
-            <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">{stat.label}</CardTitle>
-              <stat.icon className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
-            </CardContent>
-          </Card>
-        ))}
+      <div className="flex items-center gap-3 flex-wrap mb-6">
+        <Select>
+          <SelectTrigger className="w-48" data-testid="filter-agency">
+            <SelectValue placeholder="All Agencies" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Agencies</SelectItem>
+            <SelectItem value="blue-digital">Blue Digital Agency</SelectItem>
+            <SelectItem value="northstar">Northstar Media</SelectItem>
+          </SelectContent>
+        </Select>
+        <Input type="date" className="w-40" data-testid="filter-date-start" />
+        <Input type="date" className="w-40" data-testid="filter-date-end" />
+        <Select>
+          <SelectTrigger className="w-40" data-testid="filter-direction">
+            <SelectValue placeholder="All Directions" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Directions</SelectItem>
+            <SelectItem value="inbound">Inbound</SelectItem>
+            <SelectItem value="outbound">Outbound</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select>
+          <SelectTrigger className="w-40" data-testid="filter-status">
+            <SelectValue placeholder="All Statuses" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Statuses</SelectItem>
+            <SelectItem value="completed">Completed</SelectItem>
+            <SelectItem value="missed">Missed</SelectItem>
+            <SelectItem value="voicemail">Voicemail</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Recent Calls</CardTitle>
-          <CardDescription>Latest call activity across the platform</CardDescription>
+          <CardTitle>Call Logs</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {callLogs.map((call) => (
-              <div key={call.id} className="flex items-center justify-between gap-4 flex-wrap" data-testid={`row-call-${call.id}`}>
-                <div className="min-w-0">
-                  <p className="font-medium">{call.from} {call.type === "Inbound" ? "to" : "called"} {call.to}</p>
-                  <p className="text-sm text-muted-foreground">{call.id} &middot; {call.agency} &middot; {call.duration} &middot; {call.time}</p>
-                </div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <Badge variant="outline">{call.type}</Badge>
-                  <Badge variant={call.status === "Completed" ? "default" : call.status === "Missed" ? "destructive" : "secondary"}>{call.status}</Badge>
-                  <Button variant="outline" size="sm" data-testid={`button-view-call-${call.id}`}>Details</Button>
-                </div>
-              </div>
-            ))}
-          </div>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Date/Time</TableHead>
+                <TableHead>Agency</TableHead>
+                <TableHead>Phone Number</TableHead>
+                <TableHead>Direction</TableHead>
+                <TableHead>Duration</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Recording</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {callLogs.map((call, i) => (
+                <TableRow key={i} data-testid={`row-call-${i}`}>
+                  <TableCell className="text-muted-foreground">{call.dateTime}</TableCell>
+                  <TableCell className="font-medium">{call.agency}</TableCell>
+                  <TableCell className="text-muted-foreground">{call.phone}</TableCell>
+                  <TableCell>
+                    <Badge variant={call.direction === "Inbound" ? "default" : "outline"}>{call.direction}</Badge>
+                  </TableCell>
+                  <TableCell>{call.duration}</TableCell>
+                  <TableCell className="text-muted-foreground">{call.status}</TableCell>
+                  <TableCell className="text-muted-foreground">{call.recording}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Button variant="outline" size="sm" data-testid={`button-play-${i}`}>Play</Button>
+                      <Button variant="outline" size="sm" data-testid={`button-view-details-${i}`}>View Details</Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
     </AdminLayout>

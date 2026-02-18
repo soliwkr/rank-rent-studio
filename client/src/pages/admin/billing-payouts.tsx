@@ -1,41 +1,39 @@
 import { AdminLayout } from "@/components/admin-layout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Wallet, ArrowUpRight, Clock, CheckCircle } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Clock, DollarSign } from "lucide-react";
 
 const stats = [
-  { label: "Total Payouts", value: "$48,230", icon: Wallet },
-  { label: "This Month", value: "$8,420", icon: ArrowUpRight },
-  { label: "Pending", value: "$2,180", icon: Clock },
-  { label: "Completed", value: "142", icon: CheckCircle },
+  { label: "Pending Payouts", value: "$8,500", icon: Clock },
+  { label: "Paid This Month", value: "$23,400", icon: DollarSign },
 ];
 
 const payouts = [
-  { id: "PAY-0089", recipient: "Stripe Connect - Platform", amount: "$4,210.00", date: "Feb 15, 2026", status: "Completed" },
-  { id: "PAY-0088", recipient: "Infrastructure Costs", amount: "$1,840.00", date: "Feb 10, 2026", status: "Completed" },
-  { id: "PAY-0087", recipient: "DataForSEO API", amount: "$284.50", date: "Feb 8, 2026", status: "Completed" },
-  { id: "PAY-0086", recipient: "Twilio Services", amount: "$412.30", date: "Feb 5, 2026", status: "Completed" },
-  { id: "PAY-0085", recipient: "OpenAI API Usage", amount: "$1,673.20", date: "Feb 3, 2026", status: "Pending" },
+  { agency: "Blue Digital Agency", amount: "$2,400.00", period: "Jan 2026", status: "Paid", requested: "Feb 1, 2026", paid: "Feb 5, 2026" },
+  { agency: "Northstar Media", amount: "$3,100.00", period: "Jan 2026", status: "Paid", requested: "Feb 1, 2026", paid: "Feb 4, 2026" },
+  { agency: "Cascade Creative", amount: "$1,800.00", period: "Jan 2026", status: "Pending", requested: "Feb 10, 2026", paid: "-" },
+  { agency: "Vertex Solutions", amount: "$4,200.00", period: "Jan 2026", status: "Pending", requested: "Feb 12, 2026", paid: "-" },
+  { agency: "Lunar Labs", amount: "$2,500.00", period: "Jan 2026", status: "Rejected", requested: "Feb 8, 2026", paid: "-" },
 ];
 
 export default function AdminBillingPayouts() {
   return (
     <AdminLayout>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold" data-testid="text-page-title">Payouts</h1>
-        <p className="text-muted-foreground">Platform payout history and pending disbursements</p>
+        <h1 className="text-2xl font-bold" data-testid="text-page-title">White Label Payouts</h1>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
+      <div className="grid gap-4 md:grid-cols-2 mb-6">
         {stats.map((stat) => (
-          <Card key={stat.label}>
+          <Card key={stat.label} data-testid={`stat-card-${stat.label.toLowerCase().replace(/\s+/g, "-")}`}>
             <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">{stat.label}</CardTitle>
               <stat.icon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
+              <div className="text-2xl font-bold" data-testid={`stat-value-${stat.label.toLowerCase().replace(/\s+/g, "-")}`}>{stat.value}</div>
             </CardContent>
           </Card>
         ))}
@@ -43,25 +41,43 @@ export default function AdminBillingPayouts() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Payout History</CardTitle>
-          <CardDescription>Recent platform payouts and disbursements</CardDescription>
+          <CardTitle>Payout Requests</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {payouts.map((payout) => (
-              <div key={payout.id} className="flex items-center justify-between gap-4 flex-wrap" data-testid={`row-payout-${payout.id}`}>
-                <div className="min-w-0">
-                  <p className="font-medium">{payout.recipient}</p>
-                  <p className="text-sm text-muted-foreground">{payout.id} &middot; {payout.date}</p>
-                </div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-medium">{payout.amount}</span>
-                  <Badge variant={payout.status === "Completed" ? "default" : "secondary"}>{payout.status}</Badge>
-                  <Button variant="outline" size="sm" data-testid={`button-view-payout-${payout.id}`}>Details</Button>
-                </div>
-              </div>
-            ))}
-          </div>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Agency</TableHead>
+                <TableHead>Amount</TableHead>
+                <TableHead>Period</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Requested</TableHead>
+                <TableHead>Paid</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {payouts.map((p, i) => (
+                <TableRow key={i} data-testid={`row-payout-${i}`}>
+                  <TableCell className="font-medium">{p.agency}</TableCell>
+                  <TableCell>{p.amount}</TableCell>
+                  <TableCell className="text-muted-foreground">{p.period}</TableCell>
+                  <TableCell>
+                    <Badge variant={p.status === "Paid" ? "default" : p.status === "Pending" ? "outline" : "destructive"}>{p.status}</Badge>
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">{p.requested}</TableCell>
+                  <TableCell className="text-muted-foreground">{p.paid}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Button size="sm" data-testid={`button-approve-payout-${i}`}>Approve</Button>
+                      <Button variant="destructive" size="sm" data-testid={`button-reject-payout-${i}`}>Reject</Button>
+                      <Button variant="outline" size="sm" data-testid={`button-view-payout-${i}`}>View Details</Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
     </AdminLayout>

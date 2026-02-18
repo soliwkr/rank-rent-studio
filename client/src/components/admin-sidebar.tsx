@@ -1,15 +1,34 @@
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import {
   LayoutDashboard,
   Building2,
-  PenTool,
-  Search,
-  CreditCard,
+  ClipboardCheck,
+  FileText,
+  Megaphone,
+  ShieldAlert,
+  TrendingUp,
+  Activity,
+  RefreshCw,
+  DollarSign,
+  Receipt,
+  Banknote,
+  Key,
+  Phone,
+  Mail,
   Server,
   Users,
+  UserCog,
   LifeBuoy,
+  PhoneCall,
+  Bell,
   Settings,
+  Palette,
   ChevronDown,
+  Zap,
+  Sun,
+  Moon,
+  LogOut,
 } from "lucide-react";
 import {
   Sidebar,
@@ -22,229 +41,212 @@ import {
   SidebarMenuButton,
   SidebarHeader,
   SidebarFooter,
-  SidebarMenuSub,
-  SidebarMenuSubItem,
-  SidebarMenuSubButton,
 } from "@/components/ui/sidebar";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { useWorkspace } from "@/lib/workspace-context";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
-interface CollapsibleSection {
+interface NavItem {
   title: string;
   icon: React.ComponentType<any>;
   path: string;
-  items: Array<{
-    title: string;
-    path: string;
-  }>;
 }
 
-const collapsibleSections: CollapsibleSection[] = [
+interface NavGroup {
+  label: string;
+  items: NavItem[];
+}
+
+const navGroups: NavGroup[] = [
   {
-    title: "Agencies",
-    icon: Building2,
-    path: "/admin/agencies",
+    label: "Dashboard",
     items: [
-      { title: "All Agencies", path: "/admin/agencies" },
-      { title: "Agency Detail", path: "/admin/agencies/detail" },
-      { title: "Pending Approvals", path: "/admin/agencies/pending" },
+      { title: "Dashboard", icon: LayoutDashboard, path: "/admin" },
     ],
   },
   {
-    title: "Content",
-    icon: PenTool,
-    path: "/admin/content",
+    label: "Agencies",
     items: [
-      { title: "All Posts", path: "/admin/content/posts" },
-      { title: "All Campaigns", path: "/admin/content/campaigns" },
-      { title: "Content Moderation", path: "/admin/content/moderation" },
+      { title: "All Agencies", icon: Building2, path: "/admin/agencies" },
+      { title: "Pending Approvals", icon: ClipboardCheck, path: "/admin/agencies/pending" },
     ],
   },
   {
-    title: "Platform SEO",
-    icon: Search,
-    path: "/admin/platform-seo",
+    label: "Content",
     items: [
-      { title: "Keyword Usage", path: "/admin/platform-seo/keywords" },
-      { title: "API Usage", path: "/admin/platform-seo/api-usage" },
+      { title: "All Posts", icon: FileText, path: "/admin/content/posts" },
+      { title: "All Campaigns", icon: Megaphone, path: "/admin/content/campaigns" },
+      { title: "Content Moderation", icon: ShieldAlert, path: "/admin/content/moderation" },
     ],
   },
   {
-    title: "Billing",
-    icon: CreditCard,
-    path: "/admin/billing",
+    label: "Platform SEO",
     items: [
-      { title: "Subscriptions", path: "/admin/billing/subscriptions" },
-      { title: "Revenue", path: "/admin/billing/revenue" },
-      { title: "Invoices", path: "/admin/billing/invoices" },
-      { title: "Payouts", path: "/admin/billing/payouts" },
+      { title: "Keyword Usage", icon: TrendingUp, path: "/admin/platform-seo/keywords" },
+      { title: "API Usage", icon: Activity, path: "/admin/platform-seo/api-usage" },
     ],
   },
   {
-    title: "System",
-    icon: Server,
-    path: "/admin/system",
+    label: "Billing",
     items: [
-      { title: "API Keys", path: "/admin/system/api-keys" },
-      { title: "Twilio", path: "/admin/system/twilio" },
-      { title: "Email", path: "/admin/system/email" },
-      { title: "Infrastructure", path: "/admin/system/infrastructure" },
+      { title: "Subscriptions", icon: RefreshCw, path: "/admin/billing/subscriptions" },
+      { title: "Revenue", icon: DollarSign, path: "/admin/billing/revenue" },
+      { title: "Invoices", icon: Receipt, path: "/admin/billing/invoices" },
+      { title: "Payouts", icon: Banknote, path: "/admin/billing/payouts" },
     ],
   },
   {
-    title: "Users",
-    icon: Users,
-    path: "/admin/users",
+    label: "System",
     items: [
-      { title: "All Users", path: "/admin/users/all" },
-      { title: "Admin Users", path: "/admin/users/admins" },
+      { title: "API Keys", icon: Key, path: "/admin/system/api-keys" },
+      { title: "Twilio", icon: Phone, path: "/admin/system/twilio" },
+      { title: "Email", icon: Mail, path: "/admin/system/email" },
+      { title: "Infrastructure", icon: Server, path: "/admin/system/infrastructure" },
     ],
   },
   {
-    title: "Support",
-    icon: LifeBuoy,
-    path: "/admin/support",
+    label: "Users",
     items: [
-      { title: "All Tickets", path: "/admin/support/tickets" },
-      { title: "Call Logs", path: "/admin/support/call-logs" },
-      { title: "System Announcements", path: "/admin/support/announcements" },
+      { title: "All Users", icon: Users, path: "/admin/users/all" },
+      { title: "Admin Users", icon: UserCog, path: "/admin/users/admins" },
     ],
   },
   {
-    title: "Settings",
-    icon: Settings,
-    path: "/admin/settings",
+    label: "Support",
     items: [
-      { title: "Platform Config", path: "/admin/settings/config" },
-      { title: "Branding", path: "/admin/settings/branding" },
+      { title: "All Tickets", icon: LifeBuoy, path: "/admin/support/tickets" },
+      { title: "Call Logs", icon: PhoneCall, path: "/admin/support/call-logs" },
+      { title: "Announcements", icon: Bell, path: "/admin/support/announcements" },
+    ],
+  },
+  {
+    label: "Settings",
+    items: [
+      { title: "Platform Config", icon: Settings, path: "/admin/settings/config" },
+      { title: "Branding", icon: Palette, path: "/admin/settings/branding" },
     ],
   },
 ];
 
 export function AdminSidebar() {
   const [location] = useLocation();
-  const { workspaces, selectedWorkspace, selectWorkspace } = useWorkspace();
+  const [isDark, setIsDark] = useState(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("indexflow_theme");
+      if (saved) return saved === "dark";
+      return document.documentElement.classList.contains("dark");
+    }
+    return false;
+  });
 
-  const isActive = (path: string) => {
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+    localStorage.setItem("indexflow_theme", isDark ? "dark" : "light");
+  }, [isDark]);
+
+  const isItemActive = (path: string) => {
     if (path === "/admin") return location === "/admin";
-    return location.startsWith(path);
+    return location === path || location.startsWith(path + "/");
   };
 
-  const isSectionActive = (path: string) => {
-    return location.startsWith(path);
+  const isGroupActive = (group: NavGroup) => {
+    return group.items.some((item) => isItemActive(item.path));
   };
 
   return (
     <Sidebar>
       <SidebarHeader>
-        <div className="flex items-center gap-2 px-2 py-1">
-          <span className="text-sm font-semibold" data-testid="text-admin-title">
-            indexFlow
+        <div className="flex items-center gap-2 px-2 py-2">
+          <Zap className="h-5 w-5 text-sidebar-primary" />
+          <span className="text-base font-bold tracking-tight" data-testid="text-admin-title">
+            IndexFlow
           </span>
-          <span className="text-xs text-muted-foreground">Super Admin</span>
         </div>
-        <Select
-          value={selectedWorkspace?.id ?? ""}
-          onValueChange={(val) => {
-            const workspace = workspaces.find((w) => w.id === val) ?? null;
-            selectWorkspace(workspace);
-          }}
-        >
-          <SelectTrigger data-testid="select-workspace" className="w-full bg-sidebar border-sidebar-border text-sidebar-foreground text-xs h-8">
-            <SelectValue placeholder="Select workspace" />
-          </SelectTrigger>
-          <SelectContent className="max-h-64">
-            {workspaces.map((workspace) => (
-              <SelectItem
-                key={workspace.id}
-                value={workspace.id}
-                data-testid={`select-workspace-option-${workspace.id}`}
-              >
-                {workspace.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
       </SidebarHeader>
 
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {/* Dashboard - Top level item */}
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  isActive={isActive("/admin")}
-                  tooltip="Dashboard"
-                  data-testid="link-admin"
+        {navGroups.map((group) => (
+          <SidebarGroup key={group.label} className="py-0">
+            <Collapsible
+              defaultOpen={isGroupActive(group) || group.label === "Dashboard"}
+              className="group/collapsible"
+            >
+              <SidebarGroupLabel asChild>
+                <CollapsibleTrigger
+                  className="flex w-full items-center gap-1 cursor-pointer"
+                  data-testid={`trigger-${group.label.toLowerCase().replace(/\s+/g, "-")}`}
                 >
-                  <Link href="/admin">
-                    <LayoutDashboard />
-                    <span>Dashboard</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-
-              {/* Collapsible sections */}
-              {collapsibleSections.map((section) => (
-                <Collapsible
-                  key={section.path}
-                  defaultOpen={isSectionActive(section.path)}
-                  className="group/collapsible"
-                >
-                  <SidebarMenuItem>
-                    <CollapsibleTrigger asChild>
-                      <SidebarMenuButton
-                        isActive={isSectionActive(section.path)}
-                        tooltip={section.title}
-                        data-testid={`link-${section.path.replace(/\//g, "-").slice(1)}`}
-                      >
-                        <section.icon />
-                        <span>{section.title}</span>
-                        <ChevronDown className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                      </SidebarMenuButton>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <SidebarMenuSub>
-                        {section.items.map((item) => (
-                          <SidebarMenuSubItem key={item.path}>
-                            <SidebarMenuSubButton
-                              asChild
-                              isActive={location === item.path}
-                              data-testid={`link-${item.path.replace(/\//g, "-").slice(1)}`}
-                            >
-                              <Link href={item.path}>
-                                <span>{item.title}</span>
-                              </Link>
-                            </SidebarMenuSubButton>
-                          </SidebarMenuSubItem>
-                        ))}
-                      </SidebarMenuSub>
-                    </CollapsibleContent>
-                  </SidebarMenuItem>
-                </Collapsible>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+                  {group.label}
+                  <ChevronDown className="ml-auto h-3.5 w-3.5 transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                </CollapsibleTrigger>
+              </SidebarGroupLabel>
+              <CollapsibleContent>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {group.items.map((item) => (
+                      <SidebarMenuItem key={item.path}>
+                        <SidebarMenuButton
+                          asChild
+                          isActive={isItemActive(item.path)}
+                          tooltip={item.title}
+                          data-testid={`link-${item.path.replace(/\//g, "-").slice(1)}`}
+                        >
+                          <Link href={item.path}>
+                            <item.icon />
+                            <span>{item.title}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </CollapsibleContent>
+            </Collapsible>
+          </SidebarGroup>
+        ))}
       </SidebarContent>
 
       <SidebarFooter>
-        <div className="px-2 py-1 text-xs text-muted-foreground" data-testid="text-admin-footer">
-          indexFlow Platform
+        <div className="flex items-center gap-2 px-2 py-1">
+          <Avatar className="h-7 w-7">
+            <AvatarFallback className="text-xs bg-sidebar-accent text-sidebar-accent-foreground">
+              SA
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col min-w-0 flex-1">
+            <span className="text-sm font-medium truncate" data-testid="text-admin-user">
+              Super Admin
+            </span>
+            <Badge variant="secondary" className="w-fit text-[10px] px-1.5 py-0">
+              Admin
+            </Badge>
+          </div>
+        </div>
+        <div className="flex items-center gap-1 px-2">
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={() => setIsDark(!isDark)}
+            data-testid="button-theme-toggle"
+          >
+            {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </Button>
+          <Button
+            size="icon"
+            variant="ghost"
+            data-testid="button-logout"
+          >
+            <LogOut className="h-4 w-4" />
+          </Button>
         </div>
       </SidebarFooter>
     </Sidebar>

@@ -1,98 +1,223 @@
+import { useState } from "react";
 import { AdminLayout } from "@/components/admin-layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Settings, ToggleRight, Gauge, Shield } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Pencil, AlertTriangle } from "lucide-react";
 
-const stats = [
-  { label: "Feature Flags", value: "18", icon: ToggleRight },
-  { label: "Active Flags", value: "14", icon: Settings },
-  { label: "Rate Limits", value: "8", icon: Gauge },
-  { label: "Security Rules", value: "12", icon: Shield },
+const plans = [
+  { id: 1, name: "Solo", price: "$49/mo", workspaces: 2, posts: 20, keywords: 50, users: 3 },
+  { id: 2, name: "Pro", price: "$199/mo", workspaces: 10, posts: 100, keywords: 250, users: 15 },
+  { id: 3, name: "White Label", price: "$299/mo", workspaces: 25, posts: 300, keywords: 500, users: 30 },
+  { id: 4, name: "Enterprise", price: "$499/mo", workspaces: -1, posts: -1, keywords: 1000, users: -1 },
 ];
 
 const featureFlags = [
-  { name: "ai_voice_leads", label: "AI Voice Leads", description: "Enable AI-powered voice lead capture for agencies", enabled: true },
-  { name: "seo_local_grid", label: "Local SEO Grid", description: "Local search grid tracking feature", enabled: true },
-  { name: "content_ai_writer", label: "AI Content Writer", description: "AI-powered blog and content generation", enabled: true },
-  { name: "multi_language", label: "Multi-Language Support", description: "Multi-language website content", enabled: true },
-  { name: "project_tracking", label: "Project Tracking", description: "Client project management system", enabled: true },
-  { name: "advanced_analytics", label: "Advanced Analytics", description: "Detailed analytics with custom reports", enabled: false },
-  { name: "api_v2", label: "API v2 Access", description: "Next-gen API endpoints for integrations", enabled: false },
-  { name: "white_label", label: "White Label Mode", description: "Full white-label branding for agencies", enabled: false },
+  { id: "white_label", name: "White Label", description: "Allow agencies to fully rebrand the platform with their own logo and domain", enabled: true },
+  { id: "crm", name: "CRM", description: "Built-in customer relationship management for agency clients", enabled: true },
+  { id: "widget", name: "Widget", description: "Embeddable AI chat widget for agency client websites", enabled: true },
+  { id: "twilio", name: "Twilio", description: "Voice and SMS integration via Twilio for lead capture", enabled: false },
+  { id: "cms_sync", name: "CMS Sync", description: "Automatic content sync with WordPress, Webflow, and other CMS platforms", enabled: true },
+  { id: "schema_detection", name: "Schema Detection", description: "Auto-detect and suggest structured data markup for published content", enabled: true },
+  { id: "link_builder", name: "Link Builder", description: "Automated internal and external link suggestion engine", enabled: false },
 ];
 
-const limits = [
-  { name: "Max Workspaces per Agency", starter: "5", professional: "15", enterprise: "Unlimited" },
-  { name: "Max Users per Agency", starter: "10", professional: "25", enterprise: "Unlimited" },
-  { name: "AI Calls per Month", starter: "100", professional: "500", enterprise: "2,000" },
-  { name: "Keywords Tracked", starter: "50", professional: "200", enterprise: "1,000" },
+const qualityDefaults = [
+  { id: "min_words", label: "Min Words", value: "800" },
+  { id: "max_words", label: "Max Words", value: "3000" },
+  { id: "min_headings", label: "Min Headings", value: "4" },
+  { id: "min_images", label: "Min Images", value: "2" },
+];
+
+const creditDefaults = [
+  { plan: "Solo", credits: 100 },
+  { plan: "Pro", credits: 500 },
+  { plan: "White Label", credits: 1200 },
+  { plan: "Enterprise", credits: 5000 },
 ];
 
 export default function AdminSettingsConfig() {
+  const [flags, setFlags] = useState(featureFlags.map((f) => ({ ...f })));
+  const [maintenanceMode, setMaintenanceMode] = useState(false);
+
+  const toggleFlag = (id: string) => {
+    setFlags((prev) => prev.map((f) => (f.id === id ? { ...f, enabled: !f.enabled } : f)));
+  };
+
   return (
     <AdminLayout>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold" data-testid="text-page-title">Platform Configuration</h1>
-        <p className="text-muted-foreground">Feature flags, rate limits, and platform settings</p>
-      </div>
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold" data-testid="text-page-title">Platform Configuration</h1>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
-        {stats.map((stat) => (
-          <Card key={stat.label}>
-            <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">{stat.label}</CardTitle>
-              <stat.icon className="h-4 w-4 text-muted-foreground" />
+      <Tabs defaultValue="plans" className="space-y-6">
+        <TabsList data-testid="tabs-config">
+          <TabsTrigger value="plans" data-testid="tab-plans">Plans & Limits</TabsTrigger>
+          <TabsTrigger value="flags" data-testid="tab-flags">Feature Flags</TabsTrigger>
+          <TabsTrigger value="defaults" data-testid="tab-defaults">Defaults</TabsTrigger>
+          <TabsTrigger value="danger" data-testid="tab-danger">Danger Zone</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="plans">
+          <Card>
+            <CardHeader>
+              <CardTitle>Plans & Limits</CardTitle>
+              <CardDescription>Configure subscription plans and their resource limits</CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Plan</TableHead>
+                    <TableHead>Price</TableHead>
+                    <TableHead className="text-right">Workspaces</TableHead>
+                    <TableHead className="text-right">Posts/mo</TableHead>
+                    <TableHead className="text-right">Keywords</TableHead>
+                    <TableHead className="text-right">Users</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {plans.map((plan) => (
+                    <TableRow key={plan.id} data-testid={`row-plan-${plan.id}`}>
+                      <TableCell className="font-medium">
+                        <Badge variant="outline">{plan.name}</Badge>
+                      </TableCell>
+                      <TableCell>{plan.price}</TableCell>
+                      <TableCell className="text-right">{plan.workspaces === -1 ? "Unlimited" : plan.workspaces}</TableCell>
+                      <TableCell className="text-right">{plan.posts === -1 ? "Unlimited" : plan.posts}</TableCell>
+                      <TableCell className="text-right">{plan.keywords.toLocaleString()}</TableCell>
+                      <TableCell className="text-right">{plan.users === -1 ? "Unlimited" : plan.users}</TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="ghost" size="icon" data-testid={`button-edit-plan-${plan.id}`}>
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
-        ))}
-      </div>
+        </TabsContent>
 
-      <div className="grid gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Feature Flags</CardTitle>
-            <CardDescription>Toggle platform features on and off</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {featureFlags.map((flag) => (
-                <div key={flag.name} className="flex items-center justify-between gap-4 flex-wrap" data-testid={`row-flag-${flag.name}`}>
-                  <div className="min-w-0">
-                    <p className="font-medium">{flag.label}</p>
-                    <p className="text-sm text-muted-foreground">{flag.description}</p>
+        <TabsContent value="flags">
+          <Card>
+            <CardHeader>
+              <CardTitle>Feature Flags</CardTitle>
+              <CardDescription>Toggle platform features on and off for all agencies</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                {flags.map((flag) => (
+                  <div key={flag.id} className="flex items-center justify-between gap-4" data-testid={`row-flag-${flag.id}`}>
+                    <div className="space-y-0.5">
+                      <Label className="text-base font-medium">{flag.name}</Label>
+                      <p className="text-sm text-muted-foreground">{flag.description}</p>
+                    </div>
+                    <Switch
+                      checked={flag.enabled}
+                      onCheckedChange={() => toggleFlag(flag.id)}
+                      data-testid={`switch-flag-${flag.id}`}
+                    />
                   </div>
-                  <Badge variant={flag.enabled ? "default" : "secondary"}>{flag.enabled ? "Enabled" : "Disabled"}</Badge>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Plan Limits</CardTitle>
-            <CardDescription>Resource limits by subscription tier</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {limits.map((limit) => (
-                <div key={limit.name} className="flex items-center justify-between gap-4 flex-wrap" data-testid={`row-limit-${limit.name.toLowerCase().replace(/\s+/g, "-")}`}>
-                  <p className="font-medium">{limit.name}</p>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <Badge variant="secondary">Starter: {limit.starter}</Badge>
-                    <Badge variant="outline">Pro: {limit.professional}</Badge>
-                    <Badge variant="default">Enterprise: {limit.enterprise}</Badge>
-                  </div>
+        <TabsContent value="defaults">
+          <div className="grid gap-6 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Quality Gate</CardTitle>
+                <CardDescription>Minimum content quality requirements before publishing</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {qualityDefaults.map((qd) => (
+                    <div key={qd.id} className="flex items-center justify-between gap-4">
+                      <Label htmlFor={qd.id}>{qd.label}</Label>
+                      <Input
+                        id={qd.id}
+                        defaultValue={qd.value}
+                        className="w-[100px] text-right"
+                        data-testid={`input-quality-${qd.id}`}
+                      />
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Credit Defaults</CardTitle>
+                <CardDescription>Monthly AI credit allocation per plan</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {creditDefaults.map((cd) => (
+                    <div key={cd.plan} className="flex items-center justify-between gap-4">
+                      <Label>{cd.plan}</Label>
+                      <Input
+                        defaultValue={cd.credits}
+                        className="w-[100px] text-right"
+                        data-testid={`input-credits-${cd.plan.toLowerCase().replace(/\s+/g, "-")}`}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="danger">
+          <Card className="border-destructive/50">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="h-5 w-5 text-destructive" />
+                <CardTitle className="text-destructive">Danger Zone</CardTitle>
+              </div>
+              <CardDescription>Irreversible and destructive actions. Proceed with caution.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="flex items-center justify-between gap-4 flex-wrap">
+                <div>
+                  <p className="font-medium">Purge Old Data</p>
+                  <p className="text-sm text-muted-foreground">Remove all data older than 12 months including logs, analytics, and archived posts</p>
+                </div>
+                <Button variant="destructive" data-testid="button-purge-data">Purge Old Data</Button>
+              </div>
+              <div className="flex items-center justify-between gap-4 flex-wrap">
+                <div>
+                  <p className="font-medium">Maintenance Mode</p>
+                  <p className="text-sm text-muted-foreground">Take the platform offline for all agencies while performing updates</p>
+                </div>
+                <Switch
+                  checked={maintenanceMode}
+                  onCheckedChange={setMaintenanceMode}
+                  data-testid="switch-maintenance-mode"
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
     </AdminLayout>
   );
 }

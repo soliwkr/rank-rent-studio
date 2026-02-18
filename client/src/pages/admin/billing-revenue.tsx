@@ -1,21 +1,46 @@
 import { AdminLayout } from "@/components/admin-layout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, TrendingUp, ArrowUpRight, BarChart3 } from "lucide-react";
+import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
 const stats = [
-  { label: "Monthly Revenue", value: "$12,857", icon: DollarSign },
-  { label: "Annual Run Rate", value: "$154,284", icon: TrendingUp },
-  { label: "Growth (MoM)", value: "+8.3%", icon: ArrowUpRight },
-  { label: "Avg. Revenue/Agency", value: "$536", icon: BarChart3 },
+  { label: "Total Revenue", value: "$177,000", icon: DollarSign },
+  { label: "This Month", value: "$14,750", icon: TrendingUp },
+  { label: "Growth", value: "+15.3%", icon: ArrowUpRight },
+  { label: "Avg Revenue Per Agency", value: "$3,765", icon: BarChart3 },
 ];
 
-const monthlyData = [
-  { month: "Sep 2025", revenue: "$9,420", agencies: 18, newMrr: "$1,230" },
-  { month: "Oct 2025", revenue: "$10,180", agencies: 19, newMrr: "$760" },
-  { month: "Nov 2025", revenue: "$10,890", agencies: 20, newMrr: "$710" },
-  { month: "Dec 2025", revenue: "$11,340", agencies: 21, newMrr: "$450" },
-  { month: "Jan 2026", revenue: "$11,870", agencies: 22, newMrr: "$530" },
-  { month: "Feb 2026", revenue: "$12,857", agencies: 24, newMrr: "$987" },
+const monthlyRevenue = [
+  { month: "Mar", revenue: 10200 },
+  { month: "Apr", revenue: 11400 },
+  { month: "May", revenue: 12100 },
+  { month: "Jun", revenue: 11800 },
+  { month: "Jul", revenue: 13200 },
+  { month: "Aug", revenue: 13900 },
+  { month: "Sep", revenue: 14100 },
+  { month: "Oct", revenue: 14800 },
+  { month: "Nov", revenue: 13600 },
+  { month: "Dec", revenue: 15200 },
+  { month: "Jan", revenue: 14500 },
+  { month: "Feb", revenue: 14750 },
+];
+
+const planRevenue = [
+  { month: "Sep", starter: 2800, professional: 6200, enterprise: 5100 },
+  { month: "Oct", starter: 3000, professional: 6500, enterprise: 5300 },
+  { month: "Nov", starter: 2600, professional: 5800, enterprise: 5200 },
+  { month: "Dec", starter: 3200, professional: 6800, enterprise: 5200 },
+  { month: "Jan", starter: 2900, professional: 6400, enterprise: 5200 },
+  { month: "Feb", starter: 3100, professional: 6500, enterprise: 5150 },
+];
+
+const churnData = [
+  { month: "Sep", newRevenue: 2100, churnedRevenue: -800 },
+  { month: "Oct", newRevenue: 1800, churnedRevenue: -600 },
+  { month: "Nov", newRevenue: 1500, churnedRevenue: -1200 },
+  { month: "Dec", newRevenue: 2400, churnedRevenue: -700 },
+  { month: "Jan", newRevenue: 1900, churnedRevenue: -900 },
+  { month: "Feb", newRevenue: 2200, churnedRevenue: -500 },
 ];
 
 export default function AdminBillingRevenue() {
@@ -23,47 +48,85 @@ export default function AdminBillingRevenue() {
     <AdminLayout>
       <div className="mb-6">
         <h1 className="text-2xl font-bold" data-testid="text-page-title">Revenue</h1>
-        <p className="text-muted-foreground">Platform revenue metrics and growth trends</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
         {stats.map((stat) => (
-          <Card key={stat.label}>
+          <Card key={stat.label} data-testid={`stat-card-${stat.label.toLowerCase().replace(/\s+/g, "-")}`}>
             <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">{stat.label}</CardTitle>
               <stat.icon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
+              <div className="text-2xl font-bold" data-testid={`stat-value-${stat.label.toLowerCase().replace(/\s+/g, "-")}`}>{stat.value}</div>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      <Card>
+      <Card className="mb-6">
         <CardHeader>
-          <CardTitle>Monthly Revenue Breakdown</CardTitle>
-          <CardDescription>Revenue trend over the last 6 months</CardDescription>
+          <CardTitle>Monthly Revenue (Last 12 Months)</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {monthlyData.map((row) => (
-              <div key={row.month} className="flex items-center justify-between gap-4 flex-wrap" data-testid={`row-revenue-${row.month.toLowerCase().replace(/\s+/g, "-")}`}>
-                <div className="min-w-0">
-                  <p className="font-medium">{row.month}</p>
-                  <p className="text-sm text-muted-foreground">{row.agencies} agencies</p>
-                </div>
-                <div className="flex items-center gap-4 flex-wrap">
-                  <div className="text-right">
-                    <p className="font-medium">{row.revenue}</p>
-                    <p className="text-sm text-muted-foreground">+{row.newMrr} new</p>
-                  </div>
-                </div>
-              </div>
-            ))}
+          <div className="h-80" data-testid="chart-monthly-revenue">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={monthlyRevenue}>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                <XAxis dataKey="month" className="text-xs fill-muted-foreground" />
+                <YAxis className="text-xs fill-muted-foreground" />
+                <Tooltip formatter={(value: number) => [`$${value.toLocaleString()}`, "Revenue"]} />
+                <Area type="monotone" dataKey="revenue" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.2} strokeWidth={2} />
+              </AreaChart>
+            </ResponsiveContainer>
           </div>
         </CardContent>
       </Card>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Revenue by Plan Tier</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-64" data-testid="chart-plan-revenue">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={planRevenue}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                  <XAxis dataKey="month" className="text-xs fill-muted-foreground" />
+                  <YAxis className="text-xs fill-muted-foreground" />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="starter" stackId="a" fill="hsl(var(--muted-foreground))" name="Starter" />
+                  <Bar dataKey="professional" stackId="a" fill="hsl(var(--primary))" name="Professional" />
+                  <Bar dataKey="enterprise" stackId="a" fill="hsl(var(--chart-3, 150 60% 40%))" name="Enterprise" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>New vs Churned Revenue</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-64" data-testid="chart-churn-revenue">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={churnData}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                  <XAxis dataKey="month" className="text-xs fill-muted-foreground" />
+                  <YAxis className="text-xs fill-muted-foreground" />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="newRevenue" fill="hsl(var(--primary))" name="New Revenue" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="churnedRevenue" fill="hsl(var(--destructive))" name="Churned Revenue" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </AdminLayout>
   );
 }

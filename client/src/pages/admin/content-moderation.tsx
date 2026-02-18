@@ -1,70 +1,121 @@
 import { AdminLayout } from "@/components/admin-layout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, ShieldAlert, CheckCircle, Flag } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
-const stats = [
-  { label: "Flagged Content", value: "8", icon: Flag },
-  { label: "Pending Review", value: "5", icon: AlertTriangle },
-  { label: "Resolved Today", value: "3", icon: CheckCircle },
-  { label: "Auto-Blocked", value: "12", icon: ShieldAlert },
+const flaggedContent = [
+  { title: "10 Ways to Boost Rankings Fast", agency: "Northstar Media", reason: "Misleading claims", flaggedBy: "Auto-filter", date: "Feb 17, 2026" },
+  { title: "Guaranteed #1 Rankings", agency: "Cascade Creative", reason: "Spam content", flaggedBy: "User report", date: "Feb 16, 2026" },
+  { title: "Buy Backlinks Cheap", agency: "Vertex Solutions", reason: "Policy violation", flaggedBy: "Auto-filter", date: "Feb 15, 2026" },
+  { title: "Duplicate Product Page", agency: "Blue Digital Agency", reason: "Duplicate content", flaggedBy: "Auto-filter", date: "Feb 14, 2026" },
+  { title: "Hidden Keyword Stuffing", agency: "Lunar Labs", reason: "SEO manipulation", flaggedBy: "Admin review", date: "Feb 13, 2026" },
 ];
 
-const flaggedItems = [
-  { content: "Blog post contains promotional spam links", agency: "Urban Content Network", workspace: "Content Hub", type: "Blog Post", severity: "High", date: "Feb 17, 2026" },
-  { content: "Service description with inappropriate language", agency: "Pacific Media Inc.", workspace: "Pinnacle Digital", type: "Service Page", severity: "Medium", date: "Feb 16, 2026" },
-  { content: "Fake review detected by AI filter", agency: "Digital Growth NYC", workspace: "Acme Digital", type: "Review", severity: "High", date: "Feb 16, 2026" },
-  { content: "Image violates brand guidelines", agency: "Coastal Marketing Co.", workspace: "Coastal SEO", type: "Image", severity: "Low", date: "Feb 15, 2026" },
-  { content: "Duplicate content across workspaces", agency: "Alpine Digital Ltd.", workspace: "Summit Marketing", type: "Page Content", severity: "Medium", date: "Feb 14, 2026" },
+const abuseReports = [
+  { id: "RPT-001", agency: "Cascade Creative", reporter: "admin@northstar.io", description: "Copied our content without attribution", status: "Open", date: "Feb 17, 2026" },
+  { id: "RPT-002", agency: "Vertex Solutions", reporter: "legal@bluedigital.com", description: "Using trademarked brand names", status: "Under Review", date: "Feb 15, 2026" },
+  { id: "RPT-003", agency: "Lunar Labs", reporter: "support@cascadecreative.com", description: "Automated spam submissions", status: "Resolved", date: "Feb 12, 2026" },
+  { id: "RPT-004", agency: "Northstar Media", reporter: "ops@vertexsolutions.co", description: "Scraping competitor data", status: "Open", date: "Feb 10, 2026" },
+  { id: "RPT-005", agency: "Blue Digital Agency", reporter: "info@lunarlabs.dev", description: "Fake review generation", status: "Dismissed", date: "Feb 8, 2026" },
 ];
 
 export default function AdminContentModeration() {
   return (
     <AdminLayout>
-      <div className="mb-6">
+      <div className="flex items-center gap-3 flex-wrap mb-6">
         <h1 className="text-2xl font-bold" data-testid="text-page-title">Content Moderation</h1>
-        <p className="text-muted-foreground">Review and manage flagged content across the platform</p>
+        <Badge variant="destructive" data-testid="badge-flagged-count">12 flagged</Badge>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
-        {stats.map((stat) => (
-          <Card key={stat.label}>
-            <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">{stat.label}</CardTitle>
-              <stat.icon className="h-4 w-4 text-muted-foreground" />
+      <Tabs defaultValue="flagged">
+        <TabsList data-testid="tabs-moderation">
+          <TabsTrigger value="flagged" data-testid="tab-flagged">Flagged Content</TabsTrigger>
+          <TabsTrigger value="abuse" data-testid="tab-abuse">Abuse Reports</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="flagged" className="mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Flagged Content</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Post Title</TableHead>
+                    <TableHead>Agency</TableHead>
+                    <TableHead>Reason</TableHead>
+                    <TableHead>Flagged By</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {flaggedContent.map((item, i) => (
+                    <TableRow key={i} data-testid={`row-flagged-${i}`}>
+                      <TableCell className="font-medium">{item.title}</TableCell>
+                      <TableCell>{item.agency}</TableCell>
+                      <TableCell className="text-muted-foreground">{item.reason}</TableCell>
+                      <TableCell className="text-muted-foreground">{item.flaggedBy}</TableCell>
+                      <TableCell className="text-muted-foreground">{item.date}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <Button size="sm" data-testid={`button-review-${i}`}>Review</Button>
+                          <Button variant="outline" size="sm" data-testid={`button-dismiss-${i}`}>Dismiss</Button>
+                          <Button variant="destructive" size="sm" data-testid={`button-remove-${i}`}>Remove</Button>
+                          <Button variant="outline" size="sm" data-testid={`button-suspend-${i}`}>Suspend</Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
-        ))}
-      </div>
+        </TabsContent>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Flagged Content</CardTitle>
-          <CardDescription>Content items requiring moderation review</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {flaggedItems.map((item, i) => (
-              <div key={i} className="flex items-center justify-between gap-4 flex-wrap" data-testid={`row-flagged-${i}`}>
-                <div className="min-w-0">
-                  <p className="font-medium">{item.content}</p>
-                  <p className="text-sm text-muted-foreground">{item.agency} &middot; {item.workspace} &middot; {item.date}</p>
-                </div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <Badge variant="outline">{item.type}</Badge>
-                  <Badge variant={item.severity === "High" ? "destructive" : item.severity === "Medium" ? "default" : "secondary"}>{item.severity}</Badge>
-                  <Button size="sm" data-testid={`button-review-${i}`}>Review</Button>
-                  <Button variant="outline" size="sm" data-testid={`button-dismiss-${i}`}>Dismiss</Button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+        <TabsContent value="abuse" className="mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Abuse Reports</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Report #</TableHead>
+                    <TableHead>Agency</TableHead>
+                    <TableHead>Reporter</TableHead>
+                    <TableHead>Description</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {abuseReports.map((report) => (
+                    <TableRow key={report.id} data-testid={`row-abuse-${report.id}`}>
+                      <TableCell className="font-medium">{report.id}</TableCell>
+                      <TableCell>{report.agency}</TableCell>
+                      <TableCell className="text-muted-foreground">{report.reporter}</TableCell>
+                      <TableCell className="text-muted-foreground">{report.description}</TableCell>
+                      <TableCell>
+                        <Badge variant={report.status === "Open" ? "destructive" : report.status === "Under Review" ? "default" : report.status === "Resolved" ? "secondary" : "outline"}>{report.status}</Badge>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">{report.date}</TableCell>
+                      <TableCell>
+                        <Button variant="outline" size="sm" data-testid={`button-view-report-${report.id}`}>View</Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </AdminLayout>
   );
 }

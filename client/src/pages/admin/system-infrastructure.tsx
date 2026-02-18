@@ -1,63 +1,133 @@
 import { AdminLayout } from "@/components/admin-layout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Server, Cpu, HardDrive, Activity } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Server, Database, ListOrdered, AlertTriangle } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 const stats = [
-  { label: "Uptime", value: "99.97%", icon: Activity },
-  { label: "CPU Usage", value: "34%", icon: Cpu },
-  { label: "Memory Usage", value: "62%", icon: Server },
-  { label: "Storage Used", value: "48 GB", icon: HardDrive },
+  { label: "Server Status", value: "Operational", icon: Server, dot: true },
+  { label: "DB Connections", value: "24", icon: Database },
+  { label: "Queue Length", value: "3", icon: ListOrdered },
+  { label: "Error Rate", value: "0.02%", icon: AlertTriangle },
 ];
 
-const services = [
-  { name: "Web Server (Primary)", region: "US-East", uptime: "99.99%", cpu: "28%", memory: "4.2 GB / 8 GB", status: "Healthy" },
-  { name: "Database (PostgreSQL)", region: "US-East", uptime: "99.98%", cpu: "42%", memory: "12.8 GB / 16 GB", status: "Healthy" },
-  { name: "Redis Cache", region: "US-East", uptime: "99.99%", cpu: "8%", memory: "1.2 GB / 4 GB", status: "Healthy" },
-  { name: "CDN Edge Nodes", region: "Global", uptime: "99.95%", cpu: "N/A", memory: "N/A", status: "Healthy" },
-  { name: "Background Workers", region: "US-East", uptime: "99.90%", cpu: "56%", memory: "3.8 GB / 8 GB", status: "Warning" },
-  { name: "File Storage (S3)", region: "US-East", uptime: "99.99%", cpu: "N/A", memory: "48 GB used", status: "Healthy" },
+const responseTimeData = Array.from({ length: 24 }, (_, i) => ({
+  hour: `${i}:00`,
+  ms: Math.floor(80 + Math.random() * 120),
+}));
+
+const errorRateData = Array.from({ length: 24 }, (_, i) => ({
+  hour: `${i}:00`,
+  rate: parseFloat((Math.random() * 0.05).toFixed(3)),
+}));
+
+const recentErrors = [
+  { timestamp: "Feb 18, 2026 14:32", endpoint: "/api/keywords/refresh", statusCode: 500, message: "Timeout connecting to DataForSEO", agency: "Blue Digital Agency" },
+  { timestamp: "Feb 18, 2026 13:15", endpoint: "/api/posts/publish", statusCode: 503, message: "Service temporarily unavailable", agency: "Northstar Media" },
+  { timestamp: "Feb 18, 2026 11:42", endpoint: "/api/analytics/report", statusCode: 502, message: "Bad gateway from upstream", agency: "Cascade Creative" },
+  { timestamp: "Feb 18, 2026 09:08", endpoint: "/api/images/generate", statusCode: 429, message: "Rate limit exceeded for OpenAI", agency: "Vertex Solutions" },
+  { timestamp: "Feb 17, 2026 22:55", endpoint: "/api/seo/audit", statusCode: 500, message: "Unexpected null in response", agency: "Lunar Labs" },
 ];
 
 export default function AdminSystemInfrastructure() {
   return (
     <AdminLayout>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold" data-testid="text-page-title">Infrastructure</h1>
-        <p className="text-muted-foreground">Server health, performance metrics, and service status</p>
+        <h1 className="text-2xl font-bold" data-testid="text-page-title">Infrastructure Health</h1>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
         {stats.map((stat) => (
-          <Card key={stat.label}>
+          <Card key={stat.label} data-testid={`stat-card-${stat.label.toLowerCase().replace(/\s+/g, "-")}`}>
             <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">{stat.label}</CardTitle>
               <stat.icon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
+              <div className="flex items-center gap-2">
+                {"dot" in stat && stat.dot && <span className="h-2.5 w-2.5 rounded-full bg-green-500 shrink-0" data-testid="indicator-server-status" />}
+                <span className="text-2xl font-bold" data-testid={`stat-value-${stat.label.toLowerCase().replace(/\s+/g, "-")}`}>{stat.value}</span>
+              </div>
             </CardContent>
           </Card>
         ))}
       </div>
 
+      <div className="grid gap-6 md:grid-cols-2 mb-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Response Time (Last 24h)</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-64" data-testid="chart-response-time">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={responseTimeData}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                  <XAxis dataKey="hour" className="text-xs fill-muted-foreground" />
+                  <YAxis className="text-xs fill-muted-foreground" />
+                  <Tooltip />
+                  <Line type="monotone" dataKey="ms" stroke="hsl(var(--primary))" strokeWidth={2} dot={false} name="Response (ms)" />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Error Rate (Last 24h)</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-64" data-testid="chart-error-rate">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={errorRateData}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                  <XAxis dataKey="hour" className="text-xs fill-muted-foreground" />
+                  <YAxis className="text-xs fill-muted-foreground" />
+                  <Tooltip />
+                  <Line type="monotone" dataKey="rate" stroke="hsl(var(--destructive))" strokeWidth={2} dot={false} name="Error Rate (%)" />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       <Card>
         <CardHeader>
-          <CardTitle>Service Status</CardTitle>
-          <CardDescription>Current health of all platform infrastructure services</CardDescription>
+          <CardTitle>Recent Errors</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {services.map((svc) => (
-              <div key={svc.name} className="flex items-center justify-between gap-4 flex-wrap" data-testid={`row-service-${svc.name.toLowerCase().replace(/[\s()]/g, "-")}`}>
-                <div className="min-w-0">
-                  <p className="font-medium">{svc.name}</p>
-                  <p className="text-sm text-muted-foreground">{svc.region} &middot; CPU: {svc.cpu} &middot; Mem: {svc.memory} &middot; Uptime: {svc.uptime}</p>
-                </div>
-                <Badge variant={svc.status === "Healthy" ? "default" : "destructive"}>{svc.status}</Badge>
-              </div>
-            ))}
-          </div>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Timestamp</TableHead>
+                <TableHead>Endpoint</TableHead>
+                <TableHead>Status Code</TableHead>
+                <TableHead>Message</TableHead>
+                <TableHead>Agency</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {recentErrors.map((err, i) => (
+                <TableRow key={i} data-testid={`row-error-${i}`}>
+                  <TableCell className="text-muted-foreground">{err.timestamp}</TableCell>
+                  <TableCell className="font-medium font-mono text-sm">{err.endpoint}</TableCell>
+                  <TableCell>
+                    <Badge variant={err.statusCode >= 500 ? "destructive" : "outline"}>{err.statusCode}</Badge>
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">{err.message}</TableCell>
+                  <TableCell>{err.agency}</TableCell>
+                  <TableCell>
+                    <Button variant="outline" size="sm" data-testid={`button-view-stack-${i}`}>View Stack Trace</Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
     </AdminLayout>

@@ -1,31 +1,53 @@
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import {
   LayoutDashboard,
   FileText,
-  Search,
-  Phone,
-  MessageSquare,
-  Kanban,
+  File,
+  Megaphone,
+  Globe,
+  Link as LinkIcon,
+  HeartPulse,
+  RefreshCw,
   BarChart3,
-  Plug,
+  Receipt,
+  TrendingUp,
+  MapPin,
+  Monitor,
+  PhoneCall,
+  Mic,
+  MessageSquare,
+  Activity,
+  Code,
+  Kanban,
+  Contact,
+  Download,
   Brain,
-  Settings,
+  ImageIcon,
+  CreditCard,
+  Phone,
+  BookOpen,
+  Radio,
+  Users,
+  Palette,
+  Compass,
   LifeBuoy,
   ChevronDown,
+  Sun,
+  Moon,
+  LogOut,
 } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarHeader,
   SidebarFooter,
-  SidebarMenuSub,
-  SidebarMenuSubItem,
-  SidebarMenuSubButton,
 } from "@/components/ui/sidebar";
 import {
   Select,
@@ -39,7 +61,125 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { useWorkspace } from "@/lib/workspace-context";
+import type { LucideIcon } from "lucide-react";
+
+interface NavItem {
+  title: string;
+  path: string;
+  icon: LucideIcon;
+}
+
+interface NavGroup {
+  label: string;
+  prefix: string;
+  items: NavItem[];
+}
+
+const navGroups: NavGroup[] = [
+  {
+    label: "Content Engine",
+    prefix: "/content",
+    items: [
+      { title: "Posts", path: "/content/posts", icon: FileText },
+      { title: "Pages", path: "/content/pages", icon: File },
+      { title: "Campaigns", path: "/content/campaigns", icon: Megaphone },
+      { title: "Domains", path: "/content/domains", icon: Globe },
+    ],
+  },
+  {
+    label: "SEO",
+    prefix: "/seo",
+    items: [
+      { title: "Links", path: "/seo/links", icon: LinkIcon },
+      { title: "Health", path: "/seo/health", icon: HeartPulse },
+      { title: "CMS", path: "/seo/cms", icon: RefreshCw },
+      { title: "Reports", path: "/seo/reports", icon: BarChart3 },
+      { title: "Invoices", path: "/seo/invoices", icon: Receipt },
+    ],
+  },
+  {
+    label: "Rank Tracker",
+    prefix: "/rank-tracker",
+    items: [
+      { title: "Track Keywords", path: "/rank-tracker/track-keywords", icon: TrendingUp },
+      { title: "Local Search Grid", path: "/rank-tracker/local-search-grid", icon: MapPin },
+      { title: "Google Search Console", path: "/rank-tracker/google-search-console", icon: Monitor },
+    ],
+  },
+  {
+    label: "Twilio",
+    prefix: "/twilio",
+    items: [
+      { title: "Call Logs", path: "/twilio/call-logs", icon: PhoneCall },
+      { title: "Voice Settings", path: "/twilio/voice", icon: Mic },
+      { title: "SMS Settings", path: "/twilio/sms", icon: MessageSquare },
+    ],
+  },
+  {
+    label: "Widget",
+    prefix: "/widget",
+    items: [
+      { title: "Monitoring", path: "/widget/monitoring", icon: Activity },
+      { title: "Widget Code", path: "/widget/code", icon: Code },
+    ],
+  },
+  {
+    label: "CRM",
+    prefix: "/crm",
+    items: [
+      { title: "Pipeline", path: "/crm/pipeline", icon: Kanban },
+      { title: "Contacts", path: "/crm/contacts", icon: Contact },
+    ],
+  },
+  {
+    label: "Analytics",
+    prefix: "/analytics",
+    items: [
+      { title: "Overview", path: "/analytics/overview", icon: BarChart3 },
+      { title: "Export Data", path: "/analytics/export", icon: Download },
+    ],
+  },
+  {
+    label: "Connections",
+    prefix: "/connections",
+    items: [
+      { title: "AI Providers", path: "/connections/ai-providers", icon: Brain },
+      { title: "Image Banks", path: "/connections/image-banks", icon: ImageIcon },
+      { title: "Payments", path: "/connections/payments", icon: CreditCard },
+      { title: "Twilio Account", path: "/connections/twilio", icon: Phone },
+    ],
+  },
+  {
+    label: "AI Training",
+    prefix: "/ai-training",
+    items: [
+      { title: "Knowledge Base", path: "/ai-training/knowledge-base", icon: BookOpen },
+      { title: "Channels", path: "/ai-training/channels", icon: Radio },
+    ],
+  },
+  {
+    label: "Settings",
+    prefix: "/settings",
+    items: [
+      { title: "Team & Invites", path: "/settings/team", icon: Users },
+      { title: "White Label", path: "/settings/white-label", icon: Palette },
+      { title: "Billing & Usage", path: "/settings/billing", icon: CreditCard },
+      { title: "Setup Guide", path: "/settings/setup-guide", icon: Compass },
+    ],
+  },
+  {
+    label: "Support",
+    prefix: "/support",
+    items: [
+      { title: "Documentation", path: "/support/documentation", icon: BookOpen },
+      { title: "Support Tickets", path: "/support/tickets", icon: LifeBuoy },
+    ],
+  },
+];
 
 export function ClientSidebar() {
   const [location] = useLocation();
@@ -53,100 +193,30 @@ export function ClientSidebar() {
     return location.startsWith(fullPath);
   };
 
-  // Dashboard section
-  const dashboardItems = [
-    { title: "Overview", path: "/today", icon: LayoutDashboard },
-  ];
+  const isGroupActive = (prefix: string) => {
+    return location.startsWith(`${base}${prefix}`);
+  };
 
-  // Content Engine
-  const contentEngineItems = [
-    { title: "Posts", path: "/content/posts" },
-    { title: "Pages", path: "/content/pages" },
-    { title: "Campaigns", path: "/content/campaigns" },
-    { title: "Domains", path: "/content/domains" },
-  ];
+  const [isDark, setIsDark] = useState(() => {
+    try {
+      const saved = localStorage.getItem("indexflow_theme");
+      if (saved) return saved === "dark";
+      return document.documentElement.classList.contains("dark");
+    } catch {
+      return false;
+    }
+  });
 
-  // SEO
-  const seoItems = [
-    { title: "Links", path: "/seo/links" },
-    { title: "Health", path: "/seo/health" },
-    { title: "CMS", path: "/seo/cms" },
-    { title: "Reports", path: "/seo/reports" },
-    { title: "Invoices", path: "/seo/invoices" },
-  ];
-
-  // Rank Tracker nested items
-  const rankTrackerItems = [
-    { title: "Track Keywords", path: "/rank-tracker/track-keywords" },
-    { title: "Local Search Grid", path: "/rank-tracker/local-search-grid" },
-    { title: "Google Search Console", path: "/rank-tracker/google-search-console" },
-  ];
-
-  // Twilio
-  const twilioItems = [
-    { title: "Call Logs", path: "/twilio/call-logs" },
-    { title: "Voice Settings", path: "/twilio/voice" },
-    { title: "SMS Settings", path: "/twilio/sms" },
-  ];
-
-  // Widget
-  const widgetItems = [
-    { title: "Monitoring", path: "/widget/monitoring" },
-    { title: "Widget Code", path: "/widget/code" },
-  ];
-
-  // CRM
-  const crmItems = [
-    { title: "Pipeline", path: "/crm/pipeline" },
-    { title: "Contacts", path: "/crm/contacts" },
-  ];
-
-  // Analytics
-  const analyticsItems = [
-    { title: "Overview", path: "/analytics/overview" },
-    { title: "Export Data", path: "/analytics/export" },
-  ];
-
-  // Connections
-  const connectionsItems = [
-    { title: "AI Providers", path: "/connections/ai-providers" },
-    { title: "Image Banks", path: "/connections/image-banks" },
-    { title: "Payments", path: "/connections/payments" },
-    { title: "Twilio Account", path: "/connections/twilio" },
-  ];
-
-  // AI Training
-  const aiTrainingItems = [
-    { title: "Knowledge Base", path: "/ai-training/knowledge-base" },
-    { title: "Channels", path: "/ai-training/channels" },
-  ];
-
-  // Settings
-  const settingsItems = [
-    { title: "Team & Invites", path: "/settings/team" },
-    { title: "White Label", path: "/settings/white-label" },
-    { title: "Billing & Usage", path: "/settings/billing" },
-    { title: "Setup Guide", path: "/settings/setup-guide" },
-  ];
-
-  // Support
-  const supportItems = [
-    { title: "Documentation", path: "/support/documentation" },
-    { title: "Support Tickets", path: "/support/tickets" },
-  ];
-
-  // Determine which sections are active
-  const isSeoActive = location.startsWith(`${base}/seo`) || location.startsWith(`${base}/rank-tracker`);
-  const isRankTrackerActive = location.startsWith(`${base}/rank-tracker`);
-  const isContentEngineActive = location.startsWith(`${base}/content`);
-  const isTwilioActive = location.startsWith(`${base}/twilio`);
-  const isWidgetActive = location.startsWith(`${base}/widget`);
-  const isCrmActive = location.startsWith(`${base}/crm`);
-  const isAnalyticsActive = location.startsWith(`${base}/analytics`);
-  const isConnectionsActive = location.startsWith(`${base}/connections`);
-  const isAiTrainingActive = location.startsWith(`${base}/ai-training`);
-  const isSettingsActive = location.startsWith(`${base}/settings`);
-  const isSupportActive = location.startsWith(`${base}/support`);
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+    try {
+      localStorage.setItem("indexflow_theme", isDark ? "dark" : "light");
+    } catch {}
+  }, [isDark]);
 
   return (
     <Sidebar>
@@ -181,424 +251,97 @@ export function ClientSidebar() {
       </SidebarHeader>
 
       <SidebarContent>
-        {/* Dashboard */}
         <SidebarGroup>
+          <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {dashboardItems.map((item) => (
-                <SidebarMenuItem key={item.path}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={isActive(item.path)}
-                    tooltip={item.title}
-                    data-testid={`link-dashboard-${item.title.toLowerCase()}`}
-                  >
-                    <Link href={`${base}${item.path}`}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={isActive("/today")}
+                  tooltip="Dashboard"
+                  data-testid="link-dashboard"
+                >
+                  <Link href={`${base}/today`}>
+                    <LayoutDashboard />
+                    <span>Dashboard</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Content Engine */}
-        <SidebarGroup>
-          <Collapsible defaultOpen={isContentEngineActive} className="group/collapsible">
-            <SidebarMenuItem>
+        {navGroups.map((group) => (
+          <SidebarGroup key={group.label}>
+            <Collapsible defaultOpen={isGroupActive(group.prefix)} className="group/collapsible">
               <CollapsibleTrigger asChild>
-                <SidebarMenuButton
-                  isActive={isContentEngineActive}
-                  tooltip="Content Engine"
-                  data-testid="link-content-engine"
-                >
-                  <FileText />
-                  <span>Content Engine</span>
+                <SidebarGroupLabel className="cursor-pointer" data-testid={`group-${group.label.toLowerCase().replace(/\s+/g, "-")}`}>
+                  {group.label}
                   <ChevronDown className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                </SidebarMenuButton>
+                </SidebarGroupLabel>
               </CollapsibleTrigger>
               <CollapsibleContent>
-                <SidebarMenuSub>
-                  {contentEngineItems.map((item) => (
-                    <SidebarMenuSubItem key={item.path}>
-                      <SidebarMenuSubButton
-                        asChild
-                        isActive={isActive(item.path)}
-                        data-testid={`link-content-${item.title.toLowerCase().replace(/\s+/g, "-")}`}
-                      >
-                        <Link href={`${base}${item.path}`}>
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  ))}
-                </SidebarMenuSub>
-              </CollapsibleContent>
-            </SidebarMenuItem>
-          </Collapsible>
-        </SidebarGroup>
-
-        {/* SEO */}
-        <SidebarGroup>
-          <Collapsible defaultOpen={isSeoActive} className="group/collapsible">
-            <SidebarMenuItem>
-              <CollapsibleTrigger asChild>
-                <SidebarMenuButton
-                  isActive={isSeoActive}
-                  tooltip="SEO"
-                  data-testid="link-seo"
-                >
-                  <Search />
-                  <span>SEO</span>
-                  <ChevronDown className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                </SidebarMenuButton>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <SidebarMenuSub>
-                  {seoItems.map((item) => (
-                    <SidebarMenuSubItem key={item.path}>
-                      <SidebarMenuSubButton
-                        asChild
-                        isActive={isActive(item.path)}
-                        data-testid={`link-seo-${item.title.toLowerCase()}`}
-                      >
-                        <Link href={`${base}${item.path}`}>
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  ))}
-                  {/* Rank Tracker nested */}
-                  <SidebarMenuSubItem>
-                    <Collapsible defaultOpen={isRankTrackerActive} className="group/rank-collapsible w-full">
-                      <CollapsibleTrigger asChild>
-                        <SidebarMenuSubButton
-                          isActive={isRankTrackerActive}
-                          data-testid="link-seo-rank-tracker"
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {group.items.map((item) => (
+                      <SidebarMenuItem key={item.path}>
+                        <SidebarMenuButton
+                          asChild
+                          isActive={isActive(item.path)}
+                          tooltip={item.title}
+                          data-testid={`link-${item.path.split("/").filter(Boolean).join("-")}`}
                         >
-                          <span>Rank Tracker</span>
-                          <ChevronDown className="ml-auto h-3 w-3 transition-transform group-data-[state=open]/rank-collapsible:rotate-180" />
-                        </SidebarMenuSubButton>
-                      </CollapsibleTrigger>
-                      <CollapsibleContent>
-                        <SidebarMenuSub className="ml-0 border-l-0 pl-4">
-                          {rankTrackerItems.map((item) => (
-                            <SidebarMenuSubItem key={item.path}>
-                              <SidebarMenuSubButton
-                                asChild
-                                isActive={isActive(item.path)}
-                                data-testid={`link-rank-tracker-${item.title.toLowerCase().replace(/\s+/g, "-")}`}
-                              >
-                                <Link href={`${base}${item.path}`}>
-                                  <span>{item.title}</span>
-                                </Link>
-                              </SidebarMenuSubButton>
-                            </SidebarMenuSubItem>
-                          ))}
-                        </SidebarMenuSub>
-                      </CollapsibleContent>
-                    </Collapsible>
-                  </SidebarMenuSubItem>
-                </SidebarMenuSub>
+                          <Link href={`${base}${item.path}`}>
+                            <item.icon />
+                            <span>{item.title}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
+                  </SidebarMenu>
+                </SidebarGroupContent>
               </CollapsibleContent>
-            </SidebarMenuItem>
-          </Collapsible>
-        </SidebarGroup>
-
-        {/* Twilio */}
-        <SidebarGroup>
-          <Collapsible defaultOpen={isTwilioActive} className="group/collapsible">
-            <SidebarMenuItem>
-              <CollapsibleTrigger asChild>
-                <SidebarMenuButton
-                  isActive={isTwilioActive}
-                  tooltip="Twilio"
-                  data-testid="link-twilio"
-                >
-                  <Phone />
-                  <span>Twilio</span>
-                  <ChevronDown className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                </SidebarMenuButton>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <SidebarMenuSub>
-                  {twilioItems.map((item) => (
-                    <SidebarMenuSubItem key={item.path}>
-                      <SidebarMenuSubButton
-                        asChild
-                        isActive={isActive(item.path)}
-                        data-testid={`link-twilio-${item.title.toLowerCase().replace(/\s+/g, "-")}`}
-                      >
-                        <Link href={`${base}${item.path}`}>
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  ))}
-                </SidebarMenuSub>
-              </CollapsibleContent>
-            </SidebarMenuItem>
-          </Collapsible>
-        </SidebarGroup>
-
-        {/* Widget */}
-        <SidebarGroup>
-          <Collapsible defaultOpen={isWidgetActive} className="group/collapsible">
-            <SidebarMenuItem>
-              <CollapsibleTrigger asChild>
-                <SidebarMenuButton
-                  isActive={isWidgetActive}
-                  tooltip="Widget"
-                  data-testid="link-widget"
-                >
-                  <MessageSquare />
-                  <span>Widget</span>
-                  <ChevronDown className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                </SidebarMenuButton>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <SidebarMenuSub>
-                  {widgetItems.map((item) => (
-                    <SidebarMenuSubItem key={item.path}>
-                      <SidebarMenuSubButton
-                        asChild
-                        isActive={isActive(item.path)}
-                        data-testid={`link-widget-${item.title.toLowerCase().replace(/\s+/g, "-")}`}
-                      >
-                        <Link href={`${base}${item.path}`}>
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  ))}
-                </SidebarMenuSub>
-              </CollapsibleContent>
-            </SidebarMenuItem>
-          </Collapsible>
-        </SidebarGroup>
-
-        {/* CRM */}
-        <SidebarGroup>
-          <Collapsible defaultOpen={isCrmActive} className="group/collapsible">
-            <SidebarMenuItem>
-              <CollapsibleTrigger asChild>
-                <SidebarMenuButton
-                  isActive={isCrmActive}
-                  tooltip="CRM"
-                  data-testid="link-crm"
-                >
-                  <Kanban />
-                  <span>CRM</span>
-                  <ChevronDown className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                </SidebarMenuButton>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <SidebarMenuSub>
-                  {crmItems.map((item) => (
-                    <SidebarMenuSubItem key={item.path}>
-                      <SidebarMenuSubButton
-                        asChild
-                        isActive={isActive(item.path)}
-                        data-testid={`link-crm-${item.title.toLowerCase()}`}
-                      >
-                        <Link href={`${base}${item.path}`}>
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  ))}
-                </SidebarMenuSub>
-              </CollapsibleContent>
-            </SidebarMenuItem>
-          </Collapsible>
-        </SidebarGroup>
-
-        {/* Analytics */}
-        <SidebarGroup>
-          <Collapsible defaultOpen={isAnalyticsActive} className="group/collapsible">
-            <SidebarMenuItem>
-              <CollapsibleTrigger asChild>
-                <SidebarMenuButton
-                  isActive={isAnalyticsActive}
-                  tooltip="Analytics"
-                  data-testid="link-analytics"
-                >
-                  <BarChart3 />
-                  <span>Analytics</span>
-                  <ChevronDown className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                </SidebarMenuButton>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <SidebarMenuSub>
-                  {analyticsItems.map((item) => (
-                    <SidebarMenuSubItem key={item.path}>
-                      <SidebarMenuSubButton
-                        asChild
-                        isActive={isActive(item.path)}
-                        data-testid={`link-analytics-${item.title.toLowerCase().replace(/\s+/g, "-")}`}
-                      >
-                        <Link href={`${base}${item.path}`}>
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  ))}
-                </SidebarMenuSub>
-              </CollapsibleContent>
-            </SidebarMenuItem>
-          </Collapsible>
-        </SidebarGroup>
-
-        {/* Connections */}
-        <SidebarGroup>
-          <Collapsible defaultOpen={isConnectionsActive} className="group/collapsible">
-            <SidebarMenuItem>
-              <CollapsibleTrigger asChild>
-                <SidebarMenuButton
-                  isActive={isConnectionsActive}
-                  tooltip="Connections"
-                  data-testid="link-connections"
-                >
-                  <Plug />
-                  <span>Connections</span>
-                  <ChevronDown className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                </SidebarMenuButton>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <SidebarMenuSub>
-                  {connectionsItems.map((item) => (
-                    <SidebarMenuSubItem key={item.path}>
-                      <SidebarMenuSubButton
-                        asChild
-                        isActive={isActive(item.path)}
-                        data-testid={`link-connections-${item.title.toLowerCase().replace(/\s+/g, "-")}`}
-                      >
-                        <Link href={`${base}${item.path}`}>
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  ))}
-                </SidebarMenuSub>
-              </CollapsibleContent>
-            </SidebarMenuItem>
-          </Collapsible>
-        </SidebarGroup>
-
-        {/* AI Training */}
-        <SidebarGroup>
-          <Collapsible defaultOpen={isAiTrainingActive} className="group/collapsible">
-            <SidebarMenuItem>
-              <CollapsibleTrigger asChild>
-                <SidebarMenuButton
-                  isActive={isAiTrainingActive}
-                  tooltip="AI Training"
-                  data-testid="link-ai-training"
-                >
-                  <Brain />
-                  <span>AI Training</span>
-                  <ChevronDown className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                </SidebarMenuButton>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <SidebarMenuSub>
-                  {aiTrainingItems.map((item) => (
-                    <SidebarMenuSubItem key={item.path}>
-                      <SidebarMenuSubButton
-                        asChild
-                        isActive={isActive(item.path)}
-                        data-testid={`link-ai-training-${item.title.toLowerCase().replace(/\s+/g, "-")}`}
-                      >
-                        <Link href={`${base}${item.path}`}>
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  ))}
-                </SidebarMenuSub>
-              </CollapsibleContent>
-            </SidebarMenuItem>
-          </Collapsible>
-        </SidebarGroup>
-
-        {/* Settings */}
-        <SidebarGroup>
-          <Collapsible defaultOpen={isSettingsActive} className="group/collapsible">
-            <SidebarMenuItem>
-              <CollapsibleTrigger asChild>
-                <SidebarMenuButton
-                  isActive={isSettingsActive}
-                  tooltip="Settings"
-                  data-testid="link-settings"
-                >
-                  <Settings />
-                  <span>Settings</span>
-                  <ChevronDown className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                </SidebarMenuButton>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <SidebarMenuSub>
-                  {settingsItems.map((item) => (
-                    <SidebarMenuSubItem key={item.path}>
-                      <SidebarMenuSubButton
-                        asChild
-                        isActive={isActive(item.path)}
-                        data-testid={`link-settings-${item.title.toLowerCase().replace(/\s+/g, "-")}`}
-                      >
-                        <Link href={`${base}${item.path}`}>
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  ))}
-                </SidebarMenuSub>
-              </CollapsibleContent>
-            </SidebarMenuItem>
-          </Collapsible>
-        </SidebarGroup>
-
-        {/* Support */}
-        <SidebarGroup>
-          <Collapsible defaultOpen={isSupportActive} className="group/collapsible">
-            <SidebarMenuItem>
-              <CollapsibleTrigger asChild>
-                <SidebarMenuButton
-                  isActive={isSupportActive}
-                  tooltip="Support"
-                  data-testid="link-support"
-                >
-                  <LifeBuoy />
-                  <span>Support</span>
-                  <ChevronDown className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                </SidebarMenuButton>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <SidebarMenuSub>
-                  {supportItems.map((item) => (
-                    <SidebarMenuSubItem key={item.path}>
-                      <SidebarMenuSubButton
-                        asChild
-                        isActive={isActive(item.path)}
-                        data-testid={`link-support-${item.title.toLowerCase().replace(/\s+/g, "-")}`}
-                      >
-                        <Link href={`${base}${item.path}`}>
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  ))}
-                </SidebarMenuSub>
-              </CollapsibleContent>
-            </SidebarMenuItem>
-          </Collapsible>
-        </SidebarGroup>
+            </Collapsible>
+          </SidebarGroup>
+        ))}
       </SidebarContent>
 
       <SidebarFooter>
-        <div className="px-2 py-1 text-xs text-muted-foreground" data-testid="text-client-footer">
-          indexFlow Platform
+        <Separator className="bg-sidebar-border" />
+        <div className="flex items-center gap-2 px-1 py-1">
+          <Avatar className="h-8 w-8">
+            <AvatarFallback className="bg-sidebar-accent text-sidebar-accent-foreground text-xs">
+              {selectedWorkspace?.name?.charAt(0)?.toUpperCase() ?? "W"}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col min-w-0 flex-1">
+            <span className="text-xs font-medium truncate text-sidebar-foreground" data-testid="text-footer-workspace">
+              {selectedWorkspace?.name ?? "Workspace"}
+            </span>
+            <span className="text-[10px] text-sidebar-foreground/60" data-testid="text-footer-role">
+              Owner
+            </span>
+          </div>
+        </div>
+        <div className="flex items-center gap-1 justify-between flex-wrap">
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={() => setIsDark(!isDark)}
+            className="text-sidebar-foreground"
+            data-testid="button-theme-toggle"
+          >
+            {isDark ? <Sun /> : <Moon />}
+          </Button>
+          <Button
+            size="icon"
+            variant="ghost"
+            className="text-sidebar-foreground"
+            data-testid="button-logout"
+          >
+            <LogOut />
+          </Button>
         </div>
       </SidebarFooter>
     </Sidebar>

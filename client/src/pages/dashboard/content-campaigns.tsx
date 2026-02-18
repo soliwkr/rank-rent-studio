@@ -1,102 +1,79 @@
-import { ClientLayout } from "@/components/client-layout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Megaphone, Plus, TrendingUp, Mail, MousePointer } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Plus, Eye, Play, Trash2 } from "lucide-react";
 
-const mockCampaigns = [
-  { id: 1, name: "Spring Launch 2026", type: "Email", status: "active", sent: 2400, opened: 1680, clicks: 312 },
-  { id: 2, name: "Valentine's Day Special", type: "Email", status: "completed", sent: 1800, opened: 1260, clicks: 245 },
-  { id: 3, name: "Weekend Brunch Promo", type: "Social", status: "active", sent: 0, opened: 0, clicks: 890 },
-  { id: 4, name: "New Menu Announcement", type: "Email", status: "draft", sent: 0, opened: 0, clicks: 0 },
+const sampleCampaigns = [
+  { id: 1, name: "Spring Product Launch", postCount: 12, completed: 8, status: "Active", created: "2026-01-15" },
+  { id: 2, name: "SEO Content Series", postCount: 20, completed: 20, status: "Completed", created: "2025-11-01" },
+  { id: 3, name: "Weekly Blog Updates", postCount: 8, completed: 5, status: "Active", created: "2026-02-01" },
+  { id: 4, name: "Social Media Blitz", postCount: 15, completed: 0, status: "Paused", created: "2026-01-20" },
+  { id: 5, name: "Customer Success Stories", postCount: 6, completed: 3, status: "Active", created: "2026-02-10" },
 ];
+
+function statusVariant(status: string) {
+  if (status === "Active") return "default";
+  if (status === "Completed") return "secondary";
+  return "secondary";
+}
 
 export default function ContentCampaigns() {
   return (
-    <ClientLayout>
-      <div className="p-6">
-        <div className="mb-6 flex items-center justify-between gap-4 flex-wrap">
-          <div>
-            <h1 className="text-2xl font-bold" data-testid="text-page-title">Campaigns</h1>
-            <p className="text-muted-foreground">Create and manage marketing campaigns</p>
-          </div>
-          <Button data-testid="button-create-campaign">
-            <Plus className="w-4 h-4 mr-2" />
-            New Campaign
-          </Button>
-        </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <Megaphone className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <p className="text-2xl font-bold" data-testid="text-total-campaigns">4</p>
-                  <p className="text-xs text-muted-foreground">Total Campaigns</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <TrendingUp className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <p className="text-2xl font-bold" data-testid="text-active-campaigns">2</p>
-                  <p className="text-xs text-muted-foreground">Active</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <p className="text-2xl font-bold" data-testid="text-emails-sent">4,200</p>
-                  <p className="text-xs text-muted-foreground">Emails Sent</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <MousePointer className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <p className="text-2xl font-bold" data-testid="text-total-clicks">1,447</p>
-                  <p className="text-xs text-muted-foreground">Total Clicks</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-        <Card>
-          <CardHeader>
-            <CardTitle>All Campaigns</CardTitle>
-            <CardDescription>Track and manage your marketing efforts</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {mockCampaigns.map((campaign) => (
-                <div key={campaign.id} className="flex items-center justify-between gap-4 p-3 rounded-lg border flex-wrap" data-testid={`row-campaign-${campaign.id}`}>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium">{campaign.name}</p>
-                    <p className="text-xs text-muted-foreground">{campaign.type}</p>
-                  </div>
-                  <div className="flex items-center gap-4 flex-wrap">
-                    {campaign.sent > 0 && <span className="text-sm text-muted-foreground">{campaign.sent} sent</span>}
-                    {campaign.clicks > 0 && <span className="text-sm text-muted-foreground">{campaign.clicks} clicks</span>}
-                    <Badge variant={campaign.status === "active" ? "default" : "secondary"} className="text-xs">
-                      {campaign.status}
-                    </Badge>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+    <div className="p-6 space-y-6">
+      <div className="flex items-center justify-between gap-4 flex-wrap">
+        <h1 className="text-2xl font-bold" data-testid="text-page-title">Campaigns</h1>
+        <Button data-testid="button-new-campaign">
+          <Plus className="w-4 h-4 mr-2" />
+          New Campaign
+        </Button>
       </div>
-    </ClientLayout>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>All Campaigns</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Campaign Name</TableHead>
+                <TableHead>Post Count</TableHead>
+                <TableHead>Completed</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Created</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {sampleCampaigns.map((c) => (
+                <TableRow key={c.id} data-testid={`row-campaign-${c.id}`}>
+                  <TableCell className="font-medium" data-testid={`text-campaign-name-${c.id}`}>{c.name}</TableCell>
+                  <TableCell data-testid={`text-post-count-${c.id}`}>{c.postCount}</TableCell>
+                  <TableCell data-testid={`text-completed-${c.id}`}>{c.completed}</TableCell>
+                  <TableCell>
+                    <Badge variant={statusVariant(c.status)} data-testid={`badge-status-${c.id}`}>{c.status}</Badge>
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">{c.created}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-1 flex-wrap">
+                      <Button variant="ghost" size="icon" data-testid={`button-view-posts-${c.id}`}>
+                        <Eye className="w-4 h-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" data-testid={`button-resume-${c.id}`}>
+                        <Play className="w-4 h-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" data-testid={`button-delete-campaign-${c.id}`}>
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

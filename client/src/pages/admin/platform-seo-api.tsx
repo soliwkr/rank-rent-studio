@@ -1,63 +1,101 @@
 import { AdminLayout } from "@/components/admin-layout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Activity, Zap, DollarSign, Clock } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Activity, Percent, Cpu, Image } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 const stats = [
-  { label: "API Calls Today", value: "3,241", icon: Activity },
-  { label: "Monthly Usage", value: "87,432", icon: Zap },
-  { label: "Monthly Cost", value: "$284.50", icon: DollarSign },
-  { label: "Avg Response Time", value: "1.2s", icon: Clock },
+  { label: "DataForSEO Calls Today", value: "847", icon: Activity },
+  { label: "Monthly Quota Used", value: "34%", icon: Percent },
+  { label: "OpenAI Tokens Used", value: "2.3M", icon: Cpu },
+  { label: "Image API Calls", value: "1,256", icon: Image },
 ];
 
-const apiUsage = [
-  { endpoint: "SERP Rankings", calls: "34,210", cost: "$102.63", lastCall: "2 min ago", status: "Healthy" },
-  { endpoint: "Keyword Research", calls: "18,442", cost: "$55.33", lastCall: "5 min ago", status: "Healthy" },
-  { endpoint: "Competitor Analysis", calls: "12,890", cost: "$51.56", lastCall: "12 min ago", status: "Healthy" },
-  { endpoint: "Local Grid Checks", calls: "15,320", cost: "$45.96", lastCall: "1 min ago", status: "Healthy" },
-  { endpoint: "Backlink Analysis", calls: "4,280", cost: "$17.12", lastCall: "32 min ago", status: "Degraded" },
-  { endpoint: "On-Page Audit", calls: "2,290", cost: "$11.90", lastCall: "1 hr ago", status: "Healthy" },
+const chartData = Array.from({ length: 30 }, (_, i) => ({
+  day: `Day ${i + 1}`,
+  calls: Math.floor(600 + Math.random() * 500),
+}));
+
+const services = [
+  { service: "DataForSEO", callsToday: 847, callsMonth: 18420, quota: "50,000", status: "Healthy", cost: "$284.50" },
+  { service: "OpenAI", callsToday: 312, callsMonth: 8940, quota: "25,000", status: "Healthy", cost: "$156.20" },
+  { service: "Pexels", callsToday: 56, callsMonth: 1230, quota: "10,000", status: "Healthy", cost: "Free" },
+  { service: "Pixabay", callsToday: 23, callsMonth: 890, quota: "5,000", status: "Healthy", cost: "Free" },
+  { service: "Unsplash", callsToday: 18, callsMonth: 620, quota: "5,000", status: "Warning", cost: "Free" },
 ];
 
 export default function AdminPlatformSeoApi() {
   return (
     <AdminLayout>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold" data-testid="text-page-title">API Usage</h1>
-        <p className="text-muted-foreground">DataForSEO API consumption and cost tracking</p>
+        <h1 className="text-2xl font-bold" data-testid="text-page-title">API Usage & Quotas</h1>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
         {stats.map((stat) => (
-          <Card key={stat.label}>
+          <Card key={stat.label} data-testid={`stat-card-${stat.label.toLowerCase().replace(/\s+/g, "-")}`}>
             <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">{stat.label}</CardTitle>
               <stat.icon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
+              <div className="text-2xl font-bold" data-testid={`stat-value-${stat.label.toLowerCase().replace(/\s+/g, "-")}`}>{stat.value}</div>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      <Card>
+      <Card className="mb-6">
         <CardHeader>
-          <CardTitle>API Endpoints</CardTitle>
-          <CardDescription>Usage breakdown by DataForSEO endpoint this month</CardDescription>
+          <CardTitle>API Calls Per Day (Last 30 Days)</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {apiUsage.map((api) => (
-              <div key={api.endpoint} className="flex items-center justify-between gap-4 flex-wrap" data-testid={`row-api-${api.endpoint.toLowerCase().replace(/\s+/g, "-")}`}>
-                <div className="min-w-0">
-                  <p className="font-medium">{api.endpoint}</p>
-                  <p className="text-sm text-muted-foreground">{api.calls} calls &middot; {api.cost} &middot; Last call: {api.lastCall}</p>
-                </div>
-                <Badge variant={api.status === "Healthy" ? "default" : "destructive"}>{api.status}</Badge>
-              </div>
-            ))}
+          <div className="h-80" data-testid="chart-api-calls">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                <XAxis dataKey="day" className="text-xs fill-muted-foreground" />
+                <YAxis className="text-xs fill-muted-foreground" />
+                <Tooltip />
+                <Line type="monotone" dataKey="calls" stroke="hsl(var(--primary))" strokeWidth={2} dot={false} />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Service Breakdown</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Service</TableHead>
+                <TableHead>Calls Today</TableHead>
+                <TableHead>Calls This Month</TableHead>
+                <TableHead>Quota</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Cost</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {services.map((svc) => (
+                <TableRow key={svc.service} data-testid={`row-service-${svc.service.toLowerCase()}`}>
+                  <TableCell className="font-medium">{svc.service}</TableCell>
+                  <TableCell>{svc.callsToday}</TableCell>
+                  <TableCell>{svc.callsMonth.toLocaleString()}</TableCell>
+                  <TableCell className="text-muted-foreground">{svc.quota}</TableCell>
+                  <TableCell>
+                    <Badge variant={svc.status === "Healthy" ? "default" : "destructive"}>{svc.status}</Badge>
+                  </TableCell>
+                  <TableCell>{svc.cost}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
     </AdminLayout>
