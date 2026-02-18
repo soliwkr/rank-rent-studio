@@ -70,7 +70,7 @@ const fullServiceFeatures = [
   { icon: Globe, text: "Custom-designed website" },
   { icon: Calendar, text: "Website & Twilio RSVP" },
   { icon: Calendar, text: "Automated booking system" },
-  { icon: Bot, text: <>Virtual Concierge 24/7</> },
+  { icon: Bot, text: <>AI Assistant 24/7</> },
   { icon: Phone, text: <>Twilio integration <span className="text-sm italic text-muted-foreground">(customer service #)</span></> },
   { icon: Clock, text: "Real-time availability sync" },
   { icon: Users, text: "Client dashboard access" },
@@ -84,7 +84,7 @@ const fullServiceFeatures = [
 const widgetFeatures = [
   { icon: Calendar, text: "Website Reservation Widget" },
   { icon: Calendar, text: "Automated booking system" },
-  { icon: Bot, text: "Virtual Concierge" },
+  { icon: Bot, text: "AI Assistant" },
   { icon: Clock, text: "Real-time availability sync" },
   { icon: Users, text: "Client dashboard access" },
   { icon: Calendar, text: "Pre-paid Reservations" },
@@ -179,8 +179,8 @@ export default function Pricing() {
 
             <Card className="relative overflow-visible" data-testid="card-pricing-widget">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                <Badge className="bg-blue-500 text-white border-0 shadow-[0_0_20px_rgba(59,130,246,0.5)]" data-testid="badge-virtual-concierge">
-                  Virtual Concierge
+                <Badge className="bg-blue-500 text-white border-0 shadow-[0_0_20px_rgba(59,130,246,0.5)]" data-testid="badge-ai-assistant">
+                  AI Assistant
                 </Badge>
               </div>
               <CardHeader className="text-center pt-8">

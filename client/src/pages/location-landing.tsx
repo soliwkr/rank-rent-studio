@@ -113,11 +113,11 @@ function LocationLandingContent({ location, service }: LocationLandingProps) {
 
   const pageTitle = service 
     ? `${displayService.headline} in ${location.city}`
-    : `Restaurant & Hospitality Booking Software in ${location.city}`;
+    : `SEO & Marketing Platform Software in ${location.city}`;
   
   const pageDescription = service
     ? `${displayService.subheadline}. Serving ${location.restaurantCount} venues in ${location.city}, ${location.country}.`
-    : `AI-powered booking software for restaurants, cafes, bars, and hotels in ${location.city}. ${location.description}`;
+    : `AI-powered content management platform for businesses in ${location.city}. ${location.description}`;
 
   const canonicalUrl = service 
     ? `/locations/${location.slug}/${service.slug}`
@@ -125,7 +125,7 @@ function LocationLandingContent({ location, service }: LocationLandingProps) {
 
   const seoKeywords = service
     ? `${displayService.name.toLowerCase()} booking software ${location.city}, ${displayService.name.toLowerCase()} reservation system ${location.city}, AI booking ${location.city}, booking software ${location.country}`
-    : `restaurant booking software ${location.city}, reservation system ${location.city}, AI concierge ${location.city}, booking software ${location.country}`;
+    : `SEO platform ${location.city}, marketing automation ${location.city}, AI assistant ${location.city}, content management ${location.country}`;
 
   return (
     <Layout>
@@ -228,17 +228,17 @@ function LocationLandingContent({ location, service }: LocationLandingProps) {
                 <span className="relative flex items-center justify-center w-5 h-5 rounded-full bg-white">
                   <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
                 </span>
-                <span className="font-semibold">Done-for-you</span> <span className="font-light">automated reservations</span>
+                <span className="font-semibold">Done-for-you</span> <span className="font-light">content automation</span>
               </div>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-6 text-white">
-                Stop Missing Bookings!<br className="hidden sm:block" />
+                Dominate Your Market!<br className="hidden sm:block" />
                 <span className="sm:hidden"> </span>
                 <span className="bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">Start Growing Revenue.</span>
               </h2>
               <p className="text-lg lg:text-xl max-w-3xl mx-auto mb-8">
-                <span className="font-semibold text-white drop-shadow-lg">Managed Booking Infrastructure</span> <em className="text-primary">&</em><br />
+                <span className="font-semibold text-white drop-shadow-lg">AI-Powered Marketing Platform</span> <em className="text-primary">&</em><br />
                 <span className="font-semibold text-white drop-shadow-lg">Custom Websites for {location.city} {displayService.namePlural}</span><br />
-                <span className="inline-block mt-2 font-bold text-xl lg:text-2xl bg-gradient-to-r from-yellow-300 via-orange-400 to-pink-500 bg-clip-text text-transparent drop-shadow-lg animate-[pulse_5s_ease-in-out_infinite]">Restaurants · Cafes · Bars · Hotels</span><br />
+                <span className="inline-block mt-2 font-bold text-xl lg:text-2xl bg-gradient-to-r from-yellow-300 via-orange-400 to-pink-500 bg-clip-text text-transparent drop-shadow-lg animate-[pulse_5s_ease-in-out_infinite]">Agencies · SaaS · Ecommerce · Local Business</span><br />
                 <span className="inline-block mt-2 text-lg font-medium text-white drop-shadow-lg">We Boss the tech, you focus on Biz!</span>
               </p>
               <div className="flex items-center justify-center gap-2 sm:gap-4">
@@ -321,7 +321,7 @@ function LocationLandingContent({ location, service }: LocationLandingProps) {
                 Explore {location.city}
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Discover the best places to visit and things to do in {location.city}. Perfect for venues looking to attract tourists and locals alike.
+                Discover the best places to visit and things to do in {location.city}. Perfect for businesses looking to attract customers.
               </p>
             </div>
 
@@ -394,7 +394,7 @@ function LocationLandingContent({ location, service }: LocationLandingProps) {
               <Card className="hover-elevate">
                 <CardContent className="p-6">
                   <div className="text-center mb-6">
-                    <h3 className="font-semibold text-lg mb-2">Virtual Concierge</h3>
+                    <h3 className="font-semibold text-lg mb-2">AI Assistant Widget</h3>
                     <p className="text-sm text-muted-foreground mb-4">AI widget for your website</p>
                     <div className="text-4xl font-bold text-primary">$149</div>
                     <p className="text-sm text-muted-foreground">/month</p>
@@ -437,7 +437,7 @@ function LocationLandingContent({ location, service }: LocationLandingProps) {
                   <ul className="space-y-3 mb-6">
                     <li className="flex items-start gap-2">
                       <CheckCircle className="h-4 w-4 text-primary mt-1 flex-shrink-0" />
-                      <span className="text-sm">Everything in Virtual Concierge</span>
+                      <span className="text-sm">Everything in AI Assistant Widget</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <CheckCircle className="h-4 w-4 text-primary mt-1 flex-shrink-0" />

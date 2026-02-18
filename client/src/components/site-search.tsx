@@ -17,7 +17,7 @@ const searchablePages = [
   { title: "Hotels", path: "/solutions/hotels", keywords: "hotel digital marketing" },
   { title: "Cafes", path: "/solutions/cafes", keywords: "cafe coffee" },
   { title: "Bars", path: "/solutions/bars", keywords: "bar lounge nightlife" },
-  { title: "AI Concierge", path: "/platform/ai-concierge", keywords: "ai chatbot widget" },
+  { title: "AI Assistant", path: "/platform/ai-concierge", keywords: "ai chatbot widget" },
   { title: "SEO Tools", path: "/platform/seo-tools", keywords: "seo search optimization" },
   { title: "Rank Tracking", path: "/platform/rank-tracking", keywords: "rank tracking keywords" },
   { title: "Templates", path: "/templates", keywords: "templates designs themes" },

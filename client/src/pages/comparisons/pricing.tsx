@@ -7,20 +7,20 @@ import { Layout } from "@/components/layout";
 import { SEO, seoData } from "@/components/seo";
 
 const pricingRows = [
-  { feature: "Monthly Fee", resto: "$299", opentable: "$249 - $899", resy: "Contact sales", sevenrooms: "Contact sales" },
-  { feature: "Per-Cover Fee", resto: "None", opentable: "$1 - $7.50", resy: "Varies", sevenrooms: "Varies" },
-  { feature: "Setup Fee", resto: "$499 one-time", opentable: "Varies", resy: "Contact sales", sevenrooms: "Contact sales" },
-  { feature: "Custom Website", resto: "Included", opentable: "Not available", resy: "Not available", sevenrooms: "Not available" },
-  { feature: "AI Features", resto: "Included", opentable: "Not available", resy: "Not available", sevenrooms: "Limited" },
-  { feature: "SMS Confirmations", resto: "Included", opentable: "Add-on cost", resy: "Limited", sevenrooms: "Included" },
-  { feature: "Hidden Fees", resto: "None", opentable: "Network fees", resy: "Unclear", sevenrooms: "Unclear" },
+  { feature: "Monthly Fee", indexflow: "$299", opentable: "$249 - $899", resy: "Contact sales", sevenrooms: "Contact sales" },
+  { feature: "Per-Lead Fee", indexflow: "None", opentable: "$1 - $7.50", resy: "Varies", sevenrooms: "Varies" },
+  { feature: "Setup Fee", indexflow: "$499 one-time", opentable: "Varies", resy: "Contact sales", sevenrooms: "Contact sales" },
+  { feature: "Custom Website", indexflow: "Included", opentable: "Not available", resy: "Not available", sevenrooms: "Not available" },
+  { feature: "AI Features", indexflow: "Included", opentable: "Not available", resy: "Not available", sevenrooms: "Limited" },
+  { feature: "SMS Confirmations", indexflow: "Included", opentable: "Add-on cost", resy: "Limited", sevenrooms: "Included" },
+  { feature: "Hidden Fees", indexflow: "None", opentable: "Network fees", resy: "Unclear", sevenrooms: "Unclear" },
 ];
 
 const highlights = [
   {
     stat: "$0",
-    label: "Per-Cover Fees",
-    description: "No matter how many covers you do, your monthly rate stays the same.",
+    label: "Per-Lead Fees",
+    description: "No matter how many clients you serve, your monthly rate stays the same.",
   },
   {
     stat: "$299",
@@ -52,7 +52,7 @@ export default function PricingComparison() {
               </span>
             </h1>
             <p className="text-lg text-muted-foreground mb-8">
-              See how indexFlow compares on price. No per-cover fees, no hidden costs,
+              See how indexFlow compares on price. No per-lead fees, no hidden costs,
               no surprises on your monthly bill.
             </p>
             <div className="flex items-center justify-center gap-4 flex-wrap">
@@ -96,7 +96,7 @@ export default function PricingComparison() {
                     {pricingRows.map((row, index) => (
                       <tr key={row.feature} className={index % 2 === 0 ? "bg-accent/30" : ""}>
                         <td className="p-4 font-medium">{row.feature}</td>
-                        <td className="p-4 text-center font-medium text-green-600 dark:text-green-400">{row.resto}</td>
+                        <td className="p-4 text-center font-medium text-green-600 dark:text-green-400">{row.indexflow}</td>
                         <td className="p-4 text-center text-muted-foreground">{row.opentable}</td>
                         <td className="p-4 text-center text-muted-foreground">{row.resy}</td>
                         <td className="p-4 text-center text-muted-foreground">{row.sevenrooms}</td>
@@ -133,7 +133,7 @@ export default function PricingComparison() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold mb-4">See Our Full Pricing</h2>
           <p className="text-muted-foreground mb-8">
-            No per-cover fees. No hidden costs. Just one transparent monthly price.
+            No per-lead fees. No hidden costs. Just one transparent monthly price.
           </p>
           <Link href="/pricing">
             <Button size="lg" className="gap-2" data-testid="button-pricing-comparison-bottom-cta">

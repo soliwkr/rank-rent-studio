@@ -103,7 +103,7 @@ export default function ByokPerplexity() {
           </CardHeader>
           <CardContent>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Perplexity-powered concierge</li>
+              <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Perplexity-powered assistant</li>
               <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Web-enhanced responses</li>
               <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Real-time information access</li>
             </ul>

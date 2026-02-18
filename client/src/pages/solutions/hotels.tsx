@@ -56,15 +56,15 @@ const features = [
   },
   {
     icon: Bot,
-    title: "AI Concierge",
-    description: "24/7 guest support for bookings, amenities, local recommendations, and more.",
+    title: "AI Assistant",
+    description: "24/7 client support for inquiries, amenities, local recommendations, and more.",
     color: "text-purple-500",
     bgColor: "bg-purple-500/10",
   },
   {
     icon: Sparkles,
     title: "Upsell Automation",
-    description: "Promote room upgrades, spa packages, and dining reservations automatically.",
+    description: "Promote room upgrades, spa packages, and service appointments automatically.",
     color: "text-amber-500",
     bgColor: "bg-amber-500/10",
   },
@@ -82,7 +82,7 @@ const benefits = [
   "Multi-room type and rate management",
   "Pre-paid deposits and cancellation policies",
   "Restaurant and spa booking integration",
-  "Multi-language support for international guests",
+  "Multi-language support for international clients",
   "Channel manager compatibility",
 ];
 
@@ -105,7 +105,7 @@ export default function HotelsSolution() {
             </h1>
             <p className="text-lg text-muted-foreground mb-8">
               From boutique hotels to vacation rentals, reduce OTA dependency with 
-              a stunning direct booking experience. Our AI concierge handles guest 
+              a stunning direct booking experience. Our AI assistant handles client 
               inquiries while you focus on your business.
             </p>
             <div className="flex items-center justify-center gap-4">
@@ -172,7 +172,7 @@ export default function HotelsSolution() {
               </Card>
               <Card className="p-6 text-center">
                 <div className="text-4xl font-bold text-primary mb-2">24/7</div>
-                <p className="text-sm text-muted-foreground">Guest Support</p>
+                <p className="text-sm text-muted-foreground">Client Support</p>
               </Card>
               <Card className="p-6 text-center">
                 <div className="text-4xl font-bold text-primary mb-2">100%</div>

@@ -10,52 +10,52 @@ const features = [
   {
     icon: ListOrdered,
     title: "Real-Time Queue Position",
-    description: "Guests see their live position in the queue and estimated wait from their phone.",
+    description: "Prospects see their live position in the queue and estimated wait from their device.",
     color: "text-teal-500",
     bgColor: "bg-teal-500/10",
   },
   {
     icon: MessageSquare,
-    title: "SMS Table-Ready Alerts",
-    description: "Automatically notify guests via SMS the moment their table is ready and waiting.",
+    title: "SMS Slot-Ready Alerts",
+    description: "Automatically notify leads via SMS the moment a slot is available and ready for them.",
     color: "text-cyan-500",
     bgColor: "bg-cyan-500/10",
   },
   {
     icon: Clock,
     title: "Estimated Wait Times",
-    description: "AI-powered wait time predictions based on current turn rates and party sizes.",
+    description: "AI-powered wait time predictions based on current pipeline velocity and capacity.",
     color: "text-emerald-500",
     bgColor: "bg-emerald-500/10",
   },
   {
     icon: Gauge,
     title: "Capacity Management",
-    description: "Monitor real-time occupancy and manage seating capacity across all zones and floors.",
+    description: "Monitor real-time workload and manage service capacity across all teams and departments.",
     color: "text-green-500",
     bgColor: "bg-green-500/10",
   },
   {
     icon: Star,
-    title: "Priority Guests",
-    description: "Flag VIPs, regulars, and special occasions for priority seating and personalized service.",
+    title: "Priority Leads",
+    description: "Flag VIP clients, enterprise prospects, and high-value leads for priority service and personalized attention.",
     color: "text-teal-600",
     bgColor: "bg-teal-600/10",
   },
   {
     icon: Footprints,
-    title: "Walk-In Tracking",
-    description: "Log and manage walk-in guests alongside reservations for a complete view of your floor.",
+    title: "Inbound Lead Tracking",
+    description: "Log and manage inbound leads alongside scheduled appointments for a complete view of your pipeline.",
     color: "text-cyan-600",
     bgColor: "bg-cyan-600/10",
   },
 ];
 
 const benefits = [
-  "Fill cancellation gaps quickly by notifying waitlisted guests",
-  "Improve the walk-in experience with transparent wait times",
-  "Maximize table turns and overall seating efficiency",
-  "Keep guests engaged while they wait with real-time updates",
+  "Fill cancellation gaps quickly by notifying waitlisted prospects",
+  "Improve the onboarding experience with transparent wait times",
+  "Maximize team throughput and overall service efficiency",
+  "Keep leads engaged while they wait with real-time updates",
 ];
 
 export default function WaitlistFeature() {
@@ -67,7 +67,7 @@ export default function WaitlistFeature() {
           <div className="text-center max-w-3xl mx-auto">
             <Badge variant="outline" className="mb-4">
               <ListOrdered className="w-3 h-3 mr-1" />
-              Waitlist Management
+              Client Waitlist
             </Badge>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
               Smart Queue &{" "}
@@ -76,8 +76,8 @@ export default function WaitlistFeature() {
               </span>
             </h1>
             <p className="text-lg text-muted-foreground mb-8">
-              Manage walk-ins and waitlists seamlessly. Give guests real-time updates,
-              optimize table turns, and never lose a walk-in to long wait times.
+              Manage inbound leads and client waitlists seamlessly. Give prospects real-time updates,
+              optimize team throughput, and never lose a lead to long wait times.
             </p>
             <div className="flex items-center justify-center gap-4 flex-wrap">
               <Link href="/contact">
@@ -100,7 +100,7 @@ export default function WaitlistFeature() {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">Effortless Queue Management</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              From walk-in to seated, every step is tracked and communicated automatically.
+              From initial inquiry to active client, every step is tracked and communicated automatically.
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -125,7 +125,7 @@ export default function WaitlistFeature() {
             <div>
               <Badge variant="outline" className="mb-4">What's Included</Badge>
               <h2 className="text-3xl font-bold mb-6">
-                Maximize Every Seat, Every Night
+                Maximize Every Slot, Every Day
               </h2>
               <ul className="space-y-4">
                 {benefits.map((benefit, index) => (
@@ -143,11 +143,11 @@ export default function WaitlistFeature() {
               </Card>
               <Card className="p-6 text-center">
                 <div className="text-4xl font-bold text-primary mb-2">SMS</div>
-                <p className="text-sm text-muted-foreground">Table-Ready Alerts</p>
+                <p className="text-sm text-muted-foreground">Slot-Ready Alerts</p>
               </Card>
               <Card className="p-6 text-center">
                 <div className="text-4xl font-bold text-primary mb-2">VIP</div>
-                <p className="text-sm text-muted-foreground">Priority Seating</p>
+                <p className="text-sm text-muted-foreground">Priority Service</p>
               </Card>
               <Card className="p-6 text-center">
                 <div className="text-4xl font-bold text-primary mb-2">AI</div>
@@ -160,9 +160,9 @@ export default function WaitlistFeature() {
 
       <section className="py-16 lg:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Optimize Your Waitlist?</h2>
+          <h2 className="text-3xl font-bold mb-4">Ready to Optimize Your Client Waitlist?</h2>
           <p className="text-muted-foreground mb-8">
-            Turn walk-ins into loyal guests with a seamless, modern waitlist experience.
+            Turn prospects into loyal clients with a seamless, modern waitlist experience.
           </p>
           <Link href="/contact">
             <Button size="lg" className="gap-2" data-testid="button-waitlist-bottom-cta">

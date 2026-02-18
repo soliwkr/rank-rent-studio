@@ -9,7 +9,7 @@ import { SEO, seoData } from "@/components/seo";
 const features = [
   {
     icon: MessageSquare,
-    title: "Instant Booking Confirmation",
+    title: "Instant Appointment Confirmation",
     description: "Clients receive an SMS confirmation within seconds of completing their appointment.",
     color: "text-orange-500",
     bgColor: "bg-orange-500/10",
@@ -38,14 +38,14 @@ const features = [
   {
     icon: PenLine,
     title: "Modification Alerts",
-    description: "Keep everyone informed when guests change their party size, time, or special requests.",
+    description: "Keep everyone informed when clients change their service details, time, or special requests.",
     color: "text-orange-600",
     bgColor: "bg-orange-600/10",
   },
   {
     icon: MessageCircle,
     title: "Two-Way SMS Keywords",
-    description: "Guests can reply CONFIRM or CANCEL to manage their reservation directly via text message.",
+    description: "Clients can reply CONFIRM or CANCEL to manage their appointment directly via text message.",
     color: "text-amber-600",
     bgColor: "bg-amber-600/10",
   },
@@ -54,7 +54,7 @@ const features = [
 const benefits = [
   "Reduce no-shows with timely automated reminders",
   "Save staff time by eliminating manual confirmation calls",
-  "Improve guest experience with professional, instant communication",
+  "Improve client experience with professional, instant communication",
   "Powered by Twilio for reliable global SMS delivery",
 ];
 
@@ -70,13 +70,13 @@ export default function SmsConfirmationsFeature() {
               SMS Confirmations
             </Badge>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
-              Automated Booking{" "}
+              Automated Appointment{" "}
               <span className="bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent">
                 Confirmations & Reminders
               </span>
             </h1>
             <p className="text-lg text-muted-foreground mb-8">
-              Keep guests informed at every step via SMS. From instant confirmations to
+              Keep clients informed at every step via SMS. From instant confirmations to
               last-minute reminders, your communication runs on autopilot.
             </p>
             <div className="flex items-center justify-center gap-4 flex-wrap">
@@ -100,7 +100,7 @@ export default function SmsConfirmationsFeature() {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">Every Message, Perfectly Timed</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Automated SMS at every stage of the reservation lifecycle keeps guests engaged and committed.
+              Automated SMS at every stage of the appointment lifecycle keeps clients engaged and committed.
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -160,7 +160,7 @@ export default function SmsConfirmationsFeature() {
 
       <section className="py-16 lg:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Automate Your Guest Communication?</h2>
+          <h2 className="text-3xl font-bold mb-4">Ready to Automate Your Client Communication?</h2>
           <p className="text-muted-foreground mb-8">
             Let SMS do the work so your staff can focus on your business, not phone calls.
           </p>

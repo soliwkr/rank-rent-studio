@@ -95,7 +95,7 @@ const benefits = [
 const pricing = [
   { label: "One-Time Setup", value: "$499", note: "Website, booking, AI configuration", icon: Zap, color: "text-primary", bgColor: "bg-primary/10", shadow: "shadow-[0_0_20px_rgba(234,179,8,0.4)]" },
   { label: "Monthly Subscription", value: "$299", valueSuffix: "/mo", note: "Hosting, support, maintenance", icon: Calendar, color: "text-blue-500", bgColor: "bg-blue-500/10", shadow: "shadow-[0_0_20px_rgba(59,130,246,0.4)]" },
-  { label: "Virtual Concierge", value: "$149", valueSuffix: "/mo", note: "For clients with existing websites", icon: Bot, color: "text-purple-500", bgColor: "bg-purple-500/10", shadow: "shadow-[0_0_20px_rgba(168,85,247,0.4)]" },
+  { label: "AI Assistant Widget", value: "$149", valueSuffix: "/mo", note: "For clients with existing websites", icon: Bot, color: "text-purple-500", bgColor: "bg-purple-500/10", shadow: "shadow-[0_0_20px_rgba(168,85,247,0.4)]" },
   { label: "Optional SEO", value: "$499", note: "Boost your search visibility", icon: Globe, color: "text-green-500", bgColor: "bg-green-500/10", shadow: "shadow-[0_0_20px_rgba(34,197,94,0.4)]" },
 ];
 
@@ -136,10 +136,10 @@ export default function About() {
                       <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                         <Bot className="w-5 h-5 text-primary" />
                       </div>
-                      <h3 className="text-xl font-bold">Your AI Concierge, Always On 24/7</h3>
+                      <h3 className="text-xl font-bold">Your AI Assistant, Always On 24/7</h3>
                     </div>
                     <p className="text-muted-foreground leading-relaxed text-justify">
-                      The AI concierge handles live chat inquiries on your website, and it also receives phone calls via your Twilio customer service number.
+                      The AI assistant handles live chat inquiries on your website, and it also receives phone calls via your Twilio customer service number.
                     </p>
                     <p className="text-muted-foreground leading-relaxed text-justify">
                       It answers, replies and books pre-paid reservations; your guests receive instant SMS confirmations + email reminders.
@@ -159,7 +159,7 @@ export default function About() {
                         <Bot className="w-16 h-16 mx-auto text-primary relative animate-[bounce_4s_ease-in-out_infinite]" />
                       </div>
                       <p className="text-lg lg:text-xl font-bold leading-snug animate-[pulse_5s_ease-in-out_infinite]">
-                        <span className="bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">AI Concierge never sleeps,</span><br />
+                        <span className="bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">AI Assistant never sleeps,</span><br />
                         <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-primary bg-clip-text text-transparent">never gets tired &</span><br />
                         <span className="bg-gradient-to-r from-purple-500 via-primary to-blue-500 bg-clip-text text-transparent">never misses a booking!</span>
                       </p>

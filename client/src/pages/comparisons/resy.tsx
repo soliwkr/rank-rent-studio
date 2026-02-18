@@ -7,13 +7,13 @@ import { Layout } from "@/components/layout";
 import { SEO, seoData } from "@/components/seo";
 
 const comparisonRows = [
-  { feature: "AI Phone Assistant", resto: "Yes", resy: "No", restoWins: true },
-  { feature: "Custom Website", resto: "Included", resy: "No", restoWins: true },
-  { feature: "SMS Automation", resto: "Included", resy: "Limited", restoWins: true },
-  { feature: "BYOK AI", resto: "Yes", resy: "No", restoWins: true },
-  { feature: "Rank Tracking", resto: "Yes", resy: "No", restoWins: true },
-  { feature: "Pricing", resto: "Transparent", resy: "Contact sales", restoWins: true },
-  { feature: "Setup", resto: "Done for you", resy: "Self-service", restoWins: true },
+  { feature: "AI Phone Assistant", indexflow: "Yes", competitor: "No", indexflowWins: true },
+  { feature: "Custom Website", indexflow: "Included", competitor: "No", indexflowWins: true },
+  { feature: "SMS Automation", indexflow: "Included", competitor: "Limited", indexflowWins: true },
+  { feature: "BYOK AI", indexflow: "Yes", competitor: "No", indexflowWins: true },
+  { feature: "Rank Tracking", indexflow: "Yes", competitor: "No", indexflowWins: true },
+  { feature: "Pricing", indexflow: "Transparent", competitor: "Contact sales", indexflowWins: true },
+  { feature: "Setup", indexflow: "Done for you", competitor: "Self-service", indexflowWins: true },
 ];
 
 const advantages = [
@@ -23,7 +23,7 @@ const advantages = [
   },
   {
     title: "Built-In Rank Tracking",
-    description: "Monitor up to 1,000 keywords and integrate Google Search Console. Resy offers no SEO tools whatsoever.",
+    description: "Monitor up to 1,000 keywords and integrate Google Search Console. Premium SEO platforms offer no comparable tools.",
   },
   {
     title: "Transparent Pricing",
@@ -31,7 +31,7 @@ const advantages = [
   },
   {
     title: "Fully Managed Service",
-    description: "We build your website, configure your AI, and handle ongoing optimization. Resy leaves setup to you.",
+    description: "We build your website, configure your AI, and handle ongoing optimization. Premium SEO platforms leave setup to you.",
   },
 ];
 
@@ -77,7 +77,7 @@ export default function ResyComparison() {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">Feature Comparison</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              See how indexFlow stacks up against Resy across key capabilities.
+              See how indexFlow stacks up against premium SEO platforms across key capabilities.
             </p>
           </div>
           <Card>
@@ -88,7 +88,7 @@ export default function ResyComparison() {
                     <tr className="border-b">
                       <th className="text-left p-4 font-semibold">Feature</th>
                       <th className="text-center p-4 font-semibold text-primary">indexFlow</th>
-                      <th className="text-center p-4 font-semibold text-muted-foreground">Resy</th>
+                      <th className="text-center p-4 font-semibold text-muted-foreground">Premium SEO Platforms</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -97,10 +97,10 @@ export default function ResyComparison() {
                         <td className="p-4 font-medium">{row.feature}</td>
                         <td className="p-4 text-center">
                           <span className="inline-flex items-center gap-1 text-green-600 dark:text-green-400 font-medium">
-                            <Check className="w-4 h-4" /> {row.resto}
+                            <Check className="w-4 h-4" /> {row.indexflow}
                           </span>
                         </td>
-                        <td className="p-4 text-center text-muted-foreground">{row.resy}</td>
+                        <td className="p-4 text-center text-muted-foreground">{row.competitor}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -133,7 +133,7 @@ export default function ResyComparison() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold mb-4">Ready for More Features at a Better Price?</h2>
           <p className="text-muted-foreground mb-8">
-            Move from Resy to indexFlow and get AI, SEO tools, and a custom website included.
+            Move from premium SEO platforms to indexFlow and get AI, SEO tools, and a custom website included.
           </p>
           <Link href="/contact">
             <Button size="lg" className="gap-2" data-testid="button-resy-bottom-cta">

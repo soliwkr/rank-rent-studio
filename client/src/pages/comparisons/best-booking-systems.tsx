@@ -12,27 +12,27 @@ const platforms = [
     tagline: "Best Value with AI + Managed Service",
     highlight: true,
     pros: [
-      "AI phone answering & live chat concierge",
+      "AI phone answering & live chat assistant",
       "Custom website included with every plan",
-      "Flat $299/month with no per-cover fees",
+      "Flat $299/month with no per-lead fees",
       "Done-for-you setup and ongoing management",
       "Built-in rank tracking and SEO tools",
     ],
     cons: [
-      "Newer platform, growing restaurant network",
+      "Newer platform, growing marketing network",
     ],
   },
   {
     name: "OpenTable",
-    tagline: "Largest Diner Network",
+    tagline: "Largest Client Network",
     highlight: false,
     pros: [
       "Massive consumer-facing marketplace",
       "Well-known brand with broad reach",
-      "Integrates with many POS systems",
+      "Integrates with many business systems",
     ],
     cons: [
-      "Per-cover fees of $1 to $7.50 per diner",
+      "Per-lead fees of $1 to $7.50 per client",
       "No AI phone answering or chat",
       "No custom website included",
       "Self-service setup",
@@ -40,11 +40,11 @@ const platforms = [
   },
   {
     name: "Resy",
-    tagline: "Popular with Upscale Venues",
+    tagline: "Popular with Premium Businesses",
     highlight: false,
     pros: [
       "Clean, modern client-facing experience",
-      "Good brand recognition with diners",
+      "Good brand recognition with clients",
       "CRM and client profiles",
     ],
     cons: [
@@ -60,24 +60,24 @@ const platforms = [
     highlight: false,
     pros: [
       "Strong CRM and marketing automation",
-      "Good for hotel restaurant groups",
-      "Guest data ownership emphasis",
+      "Good for multi-location businesses",
+      "Client data ownership emphasis",
     ],
     cons: [
-      "High price point for small venues",
+      "High price point for small businesses",
       "Complex onboarding process",
       "No AI phone answering",
       "No included website",
     ],
   },
   {
-    name: "Yelp Reservations",
-    tagline: "Yelp-Integrated Booking",
+    name: "Yelp Business",
+    tagline: "Yelp-Integrated Marketing",
     highlight: false,
     pros: [
       "Leverages Yelp's massive user base",
       "Simple setup for existing Yelp pages",
-      "No per-cover fees on basic plan",
+      "No per-lead fees on basic plan",
     ],
     cons: [
       "Limited features compared to full platforms",
@@ -92,7 +92,7 @@ const platforms = [
     highlight: false,
     pros: [
       "Strong presence in European markets",
-      "Diner promotions and offers system",
+      "Client promotions and offers system",
       "Part of the Tripadvisor network",
     ],
     cons: [
@@ -116,9 +116,9 @@ export default function BestBookingSystems() {
               2026 Guide
             </Badge>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
-              2026 Restaurant Booking{" "}
+              2026 SEO & Marketing{" "}
               <span className="bg-gradient-to-r from-amber-500 to-yellow-500 bg-clip-text text-transparent">
-                Software Guide
+                Platform Guide
               </span>
             </h1>
             <p className="text-lg text-muted-foreground mb-8">
@@ -144,7 +144,7 @@ export default function BestBookingSystems() {
       <section className="py-16 lg:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Top Booking Platforms Compared</h2>
+            <h2 className="text-3xl font-bold mb-4">Top Marketing Platforms Compared</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               An honest look at each platform's strengths and weaknesses.
             </p>
@@ -201,7 +201,7 @@ export default function BestBookingSystems() {
           <h2 className="text-3xl font-bold mb-4">Ready to Choose the Best Platform?</h2>
           <p className="text-muted-foreground mb-8">
             indexFlow combines AI automation, a custom website, and flat-rate pricing.
-            Book a demo and see why restaurants are switching.
+            Book a demo and see why businesses are switching.
           </p>
           <Link href="/contact">
             <Button size="lg" className="gap-2" data-testid="button-best-booking-bottom-cta">

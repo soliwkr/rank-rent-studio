@@ -68,7 +68,7 @@ export default function Docs() {
       <table className="w-full border-collapse my-4">
         <thead><tr className="bg-gray-100"><th className="border p-2 text-left">Page</th><th className="border p-2 text-left">Route</th></tr></thead>
         <tbody>
-          <tr><td className="border p-2">AI Concierge</td><td className="border p-2 font-mono text-sm">/platform/ai-concierge</td></tr>
+          <tr><td className="border p-2">AI Assistant</td><td className="border p-2 font-mono text-sm">/platform/ai-concierge</td></tr>
           <tr><td className="border p-2">BYOK (Bring Your Own Key)</td><td className="border p-2 font-mono text-sm">/platform/byok</td></tr>
           <tr><td className="border p-2">Content Marketing</td><td className="border p-2 font-mono text-sm">/platform/content-marketing</td></tr>
           <tr><td className="border p-2">Dashboard Overview</td><td className="border p-2 font-mono text-sm">/platform/dashboard</td></tr>
@@ -136,7 +136,7 @@ export default function Docs() {
       <table className="w-full border-collapse my-4">
         <thead><tr className="bg-gray-100"><th className="border p-2 text-left">Plan</th><th className="border p-2 text-left">Price</th><th className="border p-2 text-left">Includes</th></tr></thead>
         <tbody>
-          <tr><td className="border p-2 font-semibold">Complete Solution</td><td className="border p-2">$299/month</td><td className="border p-2">Full website, booking system, AI concierge, voice/SMS, SEO tools, analytics</td></tr>
+          <tr><td className="border p-2 font-semibold">Complete Solution</td><td className="border p-2">$299/month</td><td className="border p-2">Full website, scheduling system, AI assistant, voice/SMS, SEO tools, analytics</td></tr>
           <tr><td className="border p-2 font-semibold">Widget Only</td><td className="border p-2">$149/month</td><td className="border p-2">AI booking widget for existing website, voice/SMS, analytics</td></tr>
           <tr><td className="border p-2 font-semibold">Additional Locations</td><td className="border p-2">$25/month each</td><td className="border p-2">Multi-location support per extra workspace</td></tr>
         </tbody>

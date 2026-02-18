@@ -103,7 +103,7 @@ export default function ByokCohere() {
           </CardHeader>
           <CardContent>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Cohere-powered concierge</li>
+              <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Cohere-powered assistant</li>
               <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Enterprise-grade AI</li>
               <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Multilingual support</li>
             </ul>

@@ -10,28 +10,28 @@ const features = [
   {
     icon: Phone,
     title: "24/7 AI Phone Answering",
-    description: "Your AI assistant answers every call, day or night, ensuring no booking opportunity is ever missed.",
+    description: "Your AI assistant answers every call, day or night, ensuring no client opportunity is ever missed.",
     color: "text-indigo-500",
     bgColor: "bg-indigo-500/10",
   },
   {
     icon: Bot,
     title: "Natural Conversation",
-    description: "Advanced AI engages callers in natural, human-like conversation to gather booking details effortlessly.",
+    description: "Advanced AI engages callers in natural, human-like conversation to gather appointment details effortlessly.",
     color: "text-blue-500",
     bgColor: "bg-blue-500/10",
   },
   {
     icon: Calendar,
-    title: "Automatic Reservation Creation",
-    description: "Reservations are created in real-time during the call and synced to your booking calendar instantly.",
+    title: "Automatic Appointment Creation",
+    description: "Appointments are created in real-time during the call and synced to your calendar instantly.",
     color: "text-violet-500",
     bgColor: "bg-violet-500/10",
   },
   {
     icon: UserCheck,
     title: "Caller ID Matching",
-    description: "Recognize returning guests by their phone number and personalize the booking experience.",
+    description: "Recognize returning clients by their phone number and personalize the consultation experience.",
     color: "text-sky-500",
     bgColor: "bg-sky-500/10",
   },
@@ -52,7 +52,7 @@ const features = [
 ];
 
 const benefits = [
-  "Capture after-hours bookings that would otherwise be lost",
+  "Capture after-hours appointments that would otherwise be lost",
   "Reduce staff interruptions during busy service periods",
   "Maintain a professional phone presence around the clock",
   "BYOK: Bring your own AI provider (OpenAI, Anthropic, and more)",
@@ -67,16 +67,16 @@ export default function VoiceBookingFeature() {
           <div className="text-center max-w-3xl mx-auto">
             <Badge variant="outline" className="mb-4">
               <Phone className="w-3 h-3 mr-1" />
-              Voice Booking (AI)
+              AI Voice Assistant
             </Badge>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
-              AI-Powered Hospitality{" "}
+              AI-Powered Voice{" "}
               <span className="bg-gradient-to-r from-indigo-500 to-blue-500 bg-clip-text text-transparent">
                 Phone Service
               </span>
             </h1>
             <p className="text-lg text-muted-foreground mb-8">
-              Never miss another booking call. Your AI phone assistant answers 24/7, takes reservations
+              Never miss another client call. Your AI phone assistant answers 24/7, schedules appointments
               naturally, and syncs everything to your calendar - powered by Twilio.
             </p>
             <div className="flex items-center justify-center gap-4 flex-wrap">
@@ -98,9 +98,9 @@ export default function VoiceBookingFeature() {
       <section className="py-16 lg:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Your AI Phone Concierge</h2>
+            <h2 className="text-3xl font-bold mb-4">Your AI Phone Assistant</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              From greeting to confirmed reservation, your AI handles it all with natural conversation.
+              From greeting to confirmed appointment, your AI handles it all with natural conversation.
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -125,7 +125,7 @@ export default function VoiceBookingFeature() {
             <div>
               <Badge variant="outline" className="mb-4">What's Included</Badge>
               <h2 className="text-3xl font-bold mb-6">
-                Never Miss a Booking Call Again
+                Never Miss a Client Call Again
               </h2>
               <ul className="space-y-4">
                 {benefits.map((benefit, index) => (
@@ -162,7 +162,7 @@ export default function VoiceBookingFeature() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold mb-4">Ready to Let AI Answer Your Phones?</h2>
           <p className="text-muted-foreground mb-8">
-            See how AI voice booking can capture more reservations and free your staff from the phone.
+            See how AI voice assistance can capture more clients and free your staff from the phone.
           </p>
           <Link href="/contact">
             <Button size="lg" className="gap-2" data-testid="button-voice-bottom-cta">

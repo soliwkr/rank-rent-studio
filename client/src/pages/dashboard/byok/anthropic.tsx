@@ -103,8 +103,8 @@ export default function ByokAnthropic() {
           </CardHeader>
           <CardContent>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Claude-powered concierge</li>
-              <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Advanced reasoning for bookings</li>
+              <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Claude-powered assistant</li>
+              <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Advanced reasoning for conversations</li>
               <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Natural conversation handling</li>
             </ul>
           </CardContent>

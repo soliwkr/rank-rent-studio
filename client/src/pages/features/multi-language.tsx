@@ -10,21 +10,21 @@ const features = [
   {
     icon: Globe,
     title: "Auto-Detect Browser Language",
-    description: "The booking widget automatically detects and displays in your guest's preferred language.",
+    description: "The chat widget automatically detects and displays in your client's preferred language.",
     color: "text-green-500",
     bgColor: "bg-green-500/10",
   },
   {
     icon: Languages,
-    title: "Translated Booking Forms",
-    description: "Every field, label, and instruction is professionally translated for a seamless booking experience.",
+    title: "Translated Forms",
+    description: "Every field, label, and instruction is professionally translated for a seamless client experience.",
     color: "text-teal-500",
     bgColor: "bg-teal-500/10",
   },
   {
     icon: MessageSquare,
     title: "Multilingual SMS Confirmations",
-    description: "Booking confirmations and reminders are sent in the guest's language automatically.",
+    description: "Appointment confirmations and reminders are sent in the client's language automatically.",
     color: "text-emerald-500",
     bgColor: "bg-emerald-500/10",
   },
@@ -38,7 +38,7 @@ const features = [
   {
     icon: LayoutIcon,
     title: "Translated Website Widget",
-    description: "Your embedded booking widget adapts to your website's language settings and visitor preferences.",
+    description: "Your embedded chat widget adapts to your website's language settings and visitor preferences.",
     color: "text-lime-500",
     bgColor: "bg-lime-500/10",
   },
@@ -52,9 +52,9 @@ const features = [
 ];
 
 const benefits = [
-  "Reach international tourists and expat communities effortlessly",
-  "Reduce booking friction for non-English-speaking guests",
-  "Serve diverse communities with localized booking experiences",
+  "Reach international clients and global markets effortlessly",
+  "Reduce friction for non-English-speaking clients",
+  "Serve diverse communities with localized experiences",
   "Support 20+ languages including Spanish, French, Arabic, Chinese, and more",
 ];
 
@@ -70,13 +70,13 @@ export default function MultiLanguageFeature() {
               Multi-Language
             </Badge>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
-              Accept Bookings in{" "}
+              Serve Clients in{" "}
               <span className="bg-gradient-to-r from-green-500 to-teal-500 bg-clip-text text-transparent">
                 20+ Languages
               </span>
             </h1>
             <p className="text-lg text-muted-foreground mb-8">
-              Break language barriers for international guests. Your booking system automatically
+              Break language barriers for international clients. Your platform automatically
               adapts to each visitor's language, from forms to SMS confirmations.
             </p>
             <div className="flex items-center justify-center gap-4 flex-wrap">
@@ -98,9 +98,9 @@ export default function MultiLanguageFeature() {
       <section className="py-16 lg:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Speak Your Guest's Language</h2>
+            <h2 className="text-3xl font-bold mb-4">Speak Your Client's Language</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Every touchpoint is localized so international guests feel welcome from the first click.
+              Every touchpoint is localized so international clients feel welcome from the first click.
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -162,7 +162,7 @@ export default function MultiLanguageFeature() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold mb-4">Ready to Go Global?</h2>
           <p className="text-muted-foreground mb-8">
-            Start accepting bookings from international guests in their preferred language today.
+            Start serving international clients in their preferred language today.
           </p>
           <Link href="/contact">
             <Button size="lg" className="gap-2" data-testid="button-multilang-bottom-cta">

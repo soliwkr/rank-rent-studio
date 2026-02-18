@@ -9,15 +9,15 @@ import { SEO, seoData } from "@/components/seo";
 const features = [
   {
     icon: BarChart3,
-    title: "Booking Conversion Rates",
-    description: "Track how many website visitors convert into confirmed reservations across all channels.",
+    title: "Lead Conversion Rates",
+    description: "Track how many website visitors convert into confirmed clients across all channels.",
     color: "text-blue-500",
     bgColor: "bg-blue-500/10",
   },
   {
     icon: TrendingUp,
     title: "Widget Engagement Metrics",
-    description: "Monitor chat widget interactions, response times, and guest satisfaction scores.",
+    description: "Monitor chat widget interactions, response times, and client satisfaction scores.",
     color: "text-indigo-500",
     bgColor: "bg-indigo-500/10",
   },
@@ -31,21 +31,21 @@ const features = [
   {
     icon: Clock,
     title: "Peak Hours Analysis",
-    description: "Identify your busiest booking windows and optimize staffing and availability accordingly.",
+    description: "Identify your busiest engagement windows and optimize staffing and availability accordingly.",
     color: "text-orange-500",
     bgColor: "bg-orange-500/10",
   },
   {
     icon: DollarSign,
     title: "Revenue Trends",
-    description: "Visualize revenue from reservations, deposits, and prepaid bookings over time.",
+    description: "Visualize revenue from services, deposits, and prepaid packages over time.",
     color: "text-emerald-500",
     bgColor: "bg-emerald-500/10",
   },
   {
     icon: Users,
-    title: "Guest Demographics",
-    description: "Understand your audience with insights on repeat guests, group sizes, and booking preferences.",
+    title: "Client Demographics",
+    description: "Understand your audience with insights on repeat clients, project sizes, and engagement preferences.",
     color: "text-purple-500",
     bgColor: "bg-purple-500/10",
   },
@@ -55,7 +55,7 @@ const benefits = [
   "Real-time data updated every minute across all dashboards",
   "Export reports to CSV for accounting and team review",
   "Compare performance across custom date ranges and periods",
-  "Track no-show rates and cancellation patterns over time",
+  "Track cancellation rates and churn patterns over time",
 ];
 
 export default function AnalyticsFeature() {
@@ -70,13 +70,13 @@ export default function AnalyticsFeature() {
               Analytics
             </Badge>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
-              Booking, Widget &{" "}
+              Client, Widget &{" "}
               <span className="bg-gradient-to-r from-blue-500 to-indigo-500 bg-clip-text text-transparent">
                 Call Performance
               </span>
             </h1>
             <p className="text-lg text-muted-foreground mb-8">
-              A unified analytics dashboard for all businesses. Monitor every booking channel,
+              A unified analytics dashboard for all businesses. Monitor every engagement channel,
               track conversion rates, and make data-driven decisions to maximize revenue.
             </p>
             <div className="flex items-center justify-center gap-4 flex-wrap">
@@ -100,7 +100,7 @@ export default function AnalyticsFeature() {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">Insights That Drive Results</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              From booking funnels to guest demographics, get the full picture of your business performance.
+              From lead funnels to client demographics, get the full picture of your business performance.
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -125,7 +125,7 @@ export default function AnalyticsFeature() {
             <div>
               <Badge variant="outline" className="mb-4">What's Included</Badge>
               <h2 className="text-3xl font-bold mb-6">
-                Data-Driven Hospitality Management
+                Data-Driven Business Management
               </h2>
               <ul className="space-y-4">
                 {benefits.map((benefit, index) => (
@@ -162,7 +162,7 @@ export default function AnalyticsFeature() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold mb-4">Ready to Unlock Your Data?</h2>
           <p className="text-muted-foreground mb-8">
-            See how indexFlow's analytics dashboard can help you optimize every aspect of your booking operations.
+            See how indexFlow's analytics dashboard can help you optimize every aspect of your business operations.
           </p>
           <Link href="/contact">
             <Button size="lg" className="gap-2" data-testid="button-analytics-bottom-cta">

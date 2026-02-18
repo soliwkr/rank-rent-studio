@@ -103,9 +103,9 @@ export default function ByokGoogle() {
           </CardHeader>
           <CardContent>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Gemini-powered concierge</li>
+              <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Gemini-powered assistant</li>
               <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Multi-modal understanding</li>
-              <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Smart booking assistance</li>
+              <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Smart conversation assistance</li>
             </ul>
           </CardContent>
         </Card>

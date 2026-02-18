@@ -82,7 +82,7 @@ const benefits = [
   "Mobile-optimized booking widget",
   "Real-time table availability management",
   "Pre-paid deposit option to reduce no-shows",
-  "Multi-language support for international guests",
+  "Multi-language support for international clients",
   "Integration with your existing POS system",
 ];
 
@@ -155,9 +155,9 @@ export default function RestaurantsSolution() {
               <Bot className="w-3 h-3 mr-1" />
               How It Works
             </Badge>
-            <h2 className="text-3xl font-bold mb-4">Your AI Concierge 24/7</h2>
+            <h2 className="text-3xl font-bold mb-4">Your AI Assistant 24/7</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              From first inquiry to confirmed booking, your AI concierge handles it automatically.
+              From first inquiry to confirmed appointment, your AI assistant handles it automatically.
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-6 relative">
@@ -169,7 +169,7 @@ export default function RestaurantsSolution() {
                 <div className="w-14 h-14 rounded-full bg-blue-500/10 flex items-center justify-center mx-auto mb-4">
                   <MessageSquare className="w-7 h-7 text-blue-500" />
                 </div>
-                <h3 className="font-semibold mb-2">Guest Reaches Out</h3>
+                <h3 className="font-semibold mb-2">Client Reaches Out</h3>
                 <p className="text-sm text-muted-foreground text-justify">The AI handles live chat inquiries on your website and receives phone calls via your Twilio customer service number.</p>
               </CardContent>
             </Card>
@@ -181,7 +181,7 @@ export default function RestaurantsSolution() {
                   <CreditCard className="w-7 h-7 text-purple-500" />
                 </div>
                 <h3 className="font-semibold mb-2">AI Books & Collects</h3>
-                <p className="text-sm text-muted-foreground text-justify">The Concierge answers, replies, takes pre-paid reservations, and secures the booking with a credit or debit card.</p>
+                <p className="text-sm text-muted-foreground text-justify">The Assistant answers, replies, takes pre-paid appointments, and secures the engagement with a credit or debit card.</p>
               </CardContent>
             </Card>
 
@@ -192,7 +192,7 @@ export default function RestaurantsSolution() {
                   <Phone className="w-7 h-7 text-green-500" />
                 </div>
                 <h3 className="font-semibold mb-2">Confirms Instantly</h3>
-                <p className="text-sm text-muted-foreground text-justify">Guests receive instant SMS confirmations and email reminders, keeping them informed every step of the way.</p>
+                <p className="text-sm text-muted-foreground text-justify">Clients receive instant SMS confirmations and email reminders, keeping them informed every step of the way.</p>
               </CardContent>
             </Card>
 
@@ -219,9 +219,9 @@ export default function RestaurantsSolution() {
               <div className="mt-14" />
               <h3 className="font-semibold mb-2">Always On 24/7</h3>
               <p className="text-xs lg:text-sm font-bold leading-snug animate-[pulse_5s_ease-in-out_infinite]">
-                <span className="bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">AI Concierge never sleeps,</span>{" "}
+                <span className="bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">AI Assistant never sleeps,</span>{" "}
                 <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-primary bg-clip-text text-transparent">never gets tired &</span><br />
-                <span className="bg-gradient-to-r from-purple-500 via-primary to-blue-500 bg-clip-text text-transparent">never misses a booking!</span>
+                <span className="bg-gradient-to-r from-purple-500 via-primary to-blue-500 bg-clip-text text-transparent">never misses an inquiry!</span>
               </p>
               <div className="mt-1 mb-1 w-12 h-px bg-gradient-to-r from-transparent via-muted-foreground/40 to-transparent mx-auto" />
               <p className="text-[9px] lg:text-[10px] font-semibold text-muted-foreground tracking-wide uppercase animate-[pulse_5s_ease-in-out_infinite] whitespace-nowrap pt-0" style={{ animationDelay: "1s" }}>

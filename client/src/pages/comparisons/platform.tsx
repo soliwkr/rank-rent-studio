@@ -10,29 +10,29 @@ type Support = boolean | "limited";
 
 interface FeatureRow {
   feature: string;
-  resto: Support;
+  indexflow: Support;
   opentable: Support;
   resy: Support;
   sevenrooms: Support;
 }
 
 const featureMatrix: FeatureRow[] = [
-  { feature: "Online Booking Widget", resto: true, opentable: true, resy: true, sevenrooms: true },
-  { feature: "AI Phone Answering", resto: true, opentable: false, resy: false, sevenrooms: false },
-  { feature: "AI Live Chat Concierge", resto: true, opentable: false, resy: false, sevenrooms: false },
-  { feature: "SMS Confirmations", resto: true, opentable: "limited", resy: "limited", sevenrooms: true },
-  { feature: "Custom Website", resto: true, opentable: false, resy: false, sevenrooms: false },
-  { feature: "Analytics Dashboard", resto: true, opentable: true, resy: true, sevenrooms: true },
-  { feature: "Rank Tracking (1,000 KWs)", resto: true, opentable: false, resy: false, sevenrooms: false },
-  { feature: "BYOK AI (Bring Your Own Key)", resto: true, opentable: false, resy: false, sevenrooms: false },
-  { feature: "Multi-Language Support", resto: true, opentable: "limited", resy: false, sevenrooms: "limited" },
-  { feature: "Waitlist Management", resto: true, opentable: true, resy: true, sevenrooms: true },
-  { feature: "Prepaid Reservations", resto: true, opentable: "limited", resy: true, sevenrooms: true },
-  { feature: "Content Marketing Tools", resto: true, opentable: false, resy: false, sevenrooms: false },
-  { feature: "SEO Optimization", resto: true, opentable: false, resy: false, sevenrooms: false },
-  { feature: "Google Search Console", resto: true, opentable: false, resy: false, sevenrooms: false },
-  { feature: "Mobile App for Staff", resto: true, opentable: true, resy: true, sevenrooms: true },
-  { feature: "API Access", resto: true, opentable: true, resy: "limited", sevenrooms: true },
+  { feature: "Online Scheduling Widget", indexflow: true, opentable: true, resy: true, sevenrooms: true },
+  { feature: "AI Phone Answering", indexflow: true, opentable: false, resy: false, sevenrooms: false },
+  { feature: "AI Live Chat Assistant", indexflow: true, opentable: false, resy: false, sevenrooms: false },
+  { feature: "SMS Confirmations", indexflow: true, opentable: "limited", resy: "limited", sevenrooms: true },
+  { feature: "Custom Website", indexflow: true, opentable: false, resy: false, sevenrooms: false },
+  { feature: "Analytics Dashboard", indexflow: true, opentable: true, resy: true, sevenrooms: true },
+  { feature: "Rank Tracking (1,000 KWs)", indexflow: true, opentable: false, resy: false, sevenrooms: false },
+  { feature: "BYOK AI (Bring Your Own Key)", indexflow: true, opentable: false, resy: false, sevenrooms: false },
+  { feature: "Multi-Language Support", indexflow: true, opentable: "limited", resy: false, sevenrooms: "limited" },
+  { feature: "Client Waitlist Management", indexflow: true, opentable: true, resy: true, sevenrooms: true },
+  { feature: "Prepaid Services", indexflow: true, opentable: "limited", resy: true, sevenrooms: true },
+  { feature: "Content Marketing Tools", indexflow: true, opentable: false, resy: false, sevenrooms: false },
+  { feature: "SEO Optimization", indexflow: true, opentable: false, resy: false, sevenrooms: false },
+  { feature: "Google Search Console", indexflow: true, opentable: false, resy: false, sevenrooms: false },
+  { feature: "Mobile App for Teams", indexflow: true, opentable: true, resy: true, sevenrooms: true },
+  { feature: "API Access", indexflow: true, opentable: true, resy: "limited", sevenrooms: true },
 ];
 
 function FeatureIcon({ value }: { value: Support }) {
@@ -87,7 +87,7 @@ export default function PlatformComparison() {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">Complete Feature Matrix</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              16 capabilities compared across the four leading restaurant platforms.
+              16 capabilities compared across the four leading marketing platforms.
             </p>
           </div>
           <Card>
@@ -107,7 +107,7 @@ export default function PlatformComparison() {
                     {featureMatrix.map((row, index) => (
                       <tr key={row.feature} className={index % 2 === 0 ? "bg-accent/30" : ""}>
                         <td className="p-4 font-medium">{row.feature}</td>
-                        <td className="p-4 text-center"><FeatureIcon value={row.resto} /></td>
+                        <td className="p-4 text-center"><FeatureIcon value={row.indexflow} /></td>
                         <td className="p-4 text-center"><FeatureIcon value={row.opentable} /></td>
                         <td className="p-4 text-center"><FeatureIcon value={row.resy} /></td>
                         <td className="p-4 text-center"><FeatureIcon value={row.sevenrooms} /></td>
@@ -148,7 +148,7 @@ export default function PlatformComparison() {
             <Card className="hover-elevate">
               <CardContent className="p-6 text-center">
                 <div className="text-4xl font-bold text-primary mb-2">$0</div>
-                <p className="text-sm text-muted-foreground">Per-cover fees</p>
+                <p className="text-sm text-muted-foreground">Per-lead fees</p>
               </CardContent>
             </Card>
           </div>

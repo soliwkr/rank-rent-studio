@@ -103,7 +103,7 @@ export default function ByokMistral() {
           </CardHeader>
           <CardContent>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Mistral-powered concierge</li>
+              <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Mistral-powered assistant</li>
               <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Fast response generation</li>
               <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> European AI provider option</li>
             </ul>

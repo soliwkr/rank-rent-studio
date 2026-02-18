@@ -109,9 +109,9 @@ export default function ByokOpenai() {
           </CardHeader>
           <CardContent>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Virtual Concierge AI assistant</li>
+              <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Virtual AI assistant</li>
               <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Intelligent call handling</li>
-              <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Natural language booking</li>
+              <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Natural language conversations</li>
               <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Smart response generation</li>
             </ul>
           </CardContent>

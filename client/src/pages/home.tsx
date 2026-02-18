@@ -110,7 +110,7 @@ const testimonials = [
 ];
 
 const pricingFeatures = [
-  "AI Virtual Concierge",
+  "AI Assistant Widget",
   "AI-powered booking system",
   "Voice/text assistant (Twilio)",
   "Client dashboard",
@@ -321,7 +321,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <Badge variant="outline" className="mb-4 shadow-[0_0_20px_rgba(234,179,8,0.5)]">The Solution</Badge>
-            <h2 className="text-3xl lg:text-4xl font-bold">Virtual Concierge</h2>
+            <h2 className="text-3xl lg:text-4xl font-bold">AI Assistant Widget</h2>
             <p className="text-lg lg:text-xl text-muted-foreground mb-4">(AI) website booking widget</p>
             <p className="text-muted-foreground">
               Transform your business with indexFlow
@@ -488,7 +488,7 @@ export default function Home() {
                 </div>
                 <div className="flex items-center gap-3">
                   <CheckCircle className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-foreground/90 text-sm">Virtual Concierge <span className="text-xs">(AI booking widget)</span></span>
+                  <span className="text-foreground/90 text-sm">AI Assistant Widget <span className="text-xs">(AI booking widget)</span></span>
                 </div>
                 <div className="flex items-center gap-3">
                   <CheckCircle className="w-4 h-4 text-muted-foreground" />
@@ -547,13 +547,13 @@ export default function Home() {
               </Link>
             </div>
 
-            {/* Virtual Concierge - Widget Only */}
+            {/* AI Assistant Widget - Widget Only */}
             <div className="bg-gray-100 dark:bg-gray-800 rounded-2xl p-8 lg:p-10 relative overflow-visible border shadow-[0_0_25px_rgba(147,197,253,0.25)]">
               <div className="absolute top-4 right-4">
                 <Badge className="bg-blue-500 text-white border-0 shadow-[0_0_15px_rgba(59,130,246,0.6)]">Great Value</Badge>
               </div>
               <p className="text-muted-foreground text-sm font-medium mb-1">Widget Only</p>
-              <h3 className="text-2xl font-bold mb-4">Virtual Concierge</h3>
+              <h3 className="text-2xl font-bold mb-4">AI Assistant Widget</h3>
               
               <div className="mb-6">
                 <div className="flex items-baseline gap-2">
@@ -667,12 +667,12 @@ export default function Home() {
 
               <div>
                 <div className="mb-4 pb-4 border-b">
-                  <h3 className="text-lg font-bold text-muted-foreground">How AI Concierge Works</h3>
+                  <h3 className="text-lg font-bold text-muted-foreground">How AI Assistant Works</h3>
                 </div>
                 
                 <div className="space-y-4 text-sm text-muted-foreground">
                   <p>
-                    The AI concierge handles live chat inquiries on your website, and it also receives phone calls via your Twilio customer service number.
+                    The AI assistant handles live chat inquiries on your website, and it also receives phone calls via your Twilio customer service number.
                   </p>
                   <p>
                     It answers, replies and books pre-paid reservations; your guests receive instant SMS confirmations + email reminders.
@@ -681,7 +681,7 @@ export default function Home() {
                     Your workspace gets alerted to an RSVP confirmation, and your front desk immediately processes the booking.
                   </p>
                   <p className="font-semibold text-foreground">
-                    AI Concierge never sleeps, never gets tired & never misses a booking! Even when your front desk is closed.
+                    AI Assistant never sleeps, never gets tired & never misses a booking! Even when your front desk is closed.
                   </p>
                 </div>
               </div>

@@ -17,7 +17,7 @@ const features = [
   {
     icon: DollarSign,
     title: "Flexible Deposit Amounts",
-    description: "Set fixed amounts or percentage-based deposits per reservation type, party size, or time slot.",
+    description: "Set fixed amounts or percentage-based deposits per service type, project scope, or consultation slot.",
     color: "text-violet-500",
     bgColor: "bg-violet-500/10",
   },
@@ -37,25 +37,25 @@ const features = [
   },
   {
     icon: Users,
-    title: "Group Booking Deposits",
-    description: "Require higher deposits for large parties and special events to protect against costly no-shows.",
+    title: "Group Service Deposits",
+    description: "Require higher deposits for large projects and enterprise engagements to protect against costly cancellations.",
     color: "text-indigo-500",
     bgColor: "bg-indigo-500/10",
   },
   {
     icon: Ticket,
-    title: "Special Event Ticketing",
-    description: "Sell tickets for tasting menus, wine dinners, and special events with full prepayment.",
+    title: "Premium Package Sales",
+    description: "Sell tickets for workshops, training sessions, and premium consulting packages with full prepayment.",
     color: "text-purple-600",
     bgColor: "bg-purple-600/10",
   },
 ];
 
 const benefits = [
-  "Reduce no-shows by up to 60% with deposit requirements",
+  "Reduce cancellations by up to 60% with deposit requirements",
   "Protect revenue with automated cancellation fee collection",
   "Streamline payments with PCI-compliant processing",
-  "Offer flexible payment options to improve guest satisfaction",
+  "Offer flexible payment options to improve client satisfaction",
 ];
 
 export default function PrepaidReservationsFeature() {
@@ -67,17 +67,17 @@ export default function PrepaidReservationsFeature() {
           <div className="text-center max-w-3xl mx-auto">
             <Badge variant="outline" className="mb-4">
               <CreditCard className="w-3 h-3 mr-1" />
-              Prepaid Reservations
+              Prepaid Services
             </Badge>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
-              Prepaid Reservations to{" "}
+              Prepaid Services to{" "}
               <span className="bg-gradient-to-r from-purple-500 to-violet-500 bg-clip-text text-transparent">
-                Reduce No-Shows
+                Reduce Cancellations
               </span>
             </h1>
             <p className="text-lg text-muted-foreground mb-8">
-              Collect deposits and secure bookings upfront. Protect your revenue with flexible
-              payment policies that keep guests committed to their reservations.
+              Collect deposits and secure appointments upfront. Protect your revenue with flexible
+              payment policies that keep clients committed to their consultations.
             </p>
             <div className="flex items-center justify-center gap-4 flex-wrap">
               <Link href="/contact">
@@ -98,7 +98,7 @@ export default function PrepaidReservationsFeature() {
       <section className="py-16 lg:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Secure Every Reservation</h2>
+            <h2 className="text-3xl font-bold mb-4">Secure Every Engagement</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               From small deposits to full prepayment, choose the right strategy for your business.
             </p>
@@ -139,7 +139,7 @@ export default function PrepaidReservationsFeature() {
             <div className="grid grid-cols-2 gap-4">
               <Card className="p-6 text-center">
                 <div className="text-4xl font-bold text-primary mb-2">60%</div>
-                <p className="text-sm text-muted-foreground">Fewer No-Shows</p>
+                <p className="text-sm text-muted-foreground">Fewer Cancellations</p>
               </Card>
               <Card className="p-6 text-center">
                 <div className="text-4xl font-bold text-primary mb-2">PCI</div>
@@ -160,9 +160,9 @@ export default function PrepaidReservationsFeature() {
 
       <section className="py-16 lg:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Eliminate No-Shows?</h2>
+          <h2 className="text-3xl font-bold mb-4">Ready to Eliminate Cancellations?</h2>
           <p className="text-muted-foreground mb-8">
-            Start collecting deposits and securing your revenue with prepaid reservations today.
+            Start collecting deposits and securing your revenue with prepaid services today.
           </p>
           <Link href="/contact">
             <Button size="lg" className="gap-2" data-testid="button-prepaid-bottom-cta">
