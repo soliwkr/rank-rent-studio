@@ -48,7 +48,7 @@ const resourceItems = [
 ];
 
 const platformItems = [
-  { href: "/platform/dashboard", label: "Client Dashboard", icon: Layout, desc: "Set-up manage venue operations" },
+  { href: "/platform/dashboard", label: "Client Dashboard", icon: Layout, desc: "Set up & manage workspace operations" },
   { href: "/platform/integrations", label: "Integrations", icon: Code, desc: "Stripe | PayPal | Twilio" },
   { href: "/platform/byok", label: "BYOK", icon: Shield, desc: "Bring Your Own AI Keys" },
 ];
