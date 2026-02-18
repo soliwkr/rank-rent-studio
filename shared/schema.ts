@@ -953,6 +953,9 @@ export const venueBlogPosts = pgTable(
     generationStatus: text("generation_status").default("pending"),
     qualityGateStatus: text("quality_gate_status").default("unknown"),
     qualityFailReasons: jsonb("quality_fail_reasons").$type<string[]>(),
+    schemaType: text("schema_type"),
+    schemaJson: jsonb("schema_json").$type<Record<string, any>>(),
+    schemaAutoDetected: boolean("schema_auto_detected").default(false),
     campaignId: varchar("campaign_id", { length: 36 })
       .references(() => contentCampaigns.id, { onDelete: "set null" }),
     createdAt: timestamp("created_at").defaultNow(),

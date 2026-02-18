@@ -702,6 +702,8 @@ ${placeholders.map((p, i) => `${i + 1}. "${p.prompt}"`).join("\n")}`;
           post.intent ? `intent: "${post.intent}"` : null,
           post.funnel ? `funnel: "${post.funnel}"` : null,
           post.tags && post.tags.length > 0 ? `tags: [${post.tags.map(t => `"${t}"`).join(", ")}]` : null,
+          post.schemaType ? `schemaType: "${post.schemaType}"` : null,
+          post.schemaJson ? `schemaJson: ${JSON.stringify(post.schemaJson)}` : null,
           "---",
         ].filter(Boolean).join("\n");
 
@@ -785,6 +787,469 @@ ${placeholders.map((p, i) => `${i + 1}. "${p.prompt}"`).join("\n")}`;
         tags: post.tags,
         compiled_html: post.compiledHtml,
         publishedAt: post.publishedAt,
+        schemaType: post.schemaType || null,
+        schemaJson: post.schemaJson || null,
+      });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  const SCHEMA_TYPES = [
+    { value: "Article", label: "Article", description: "General articles and blog posts" },
+    { value: "HowTo", label: "How-To", description: "Step-by-step instructions or tutorials" },
+    { value: "FAQPage", label: "FAQ Page", description: "Frequently asked questions page" },
+    { value: "LocalBusiness", label: "Local Business", description: "Content about a specific local business" },
+    { value: "Recipe", label: "Recipe", description: "Food/drink recipe content" },
+    { value: "Review", label: "Review", description: "Product or service review" },
+    { value: "Event", label: "Event", description: "Event-related content" },
+    { value: "Product", label: "Product", description: "Product descriptions and details" },
+    { value: "BlogPosting", label: "Blog Posting", description: "Blog post (more specific than Article)" },
+    { value: "NewsArticle", label: "News Article", description: "News reporting content" },
+    { value: "TechArticle", label: "Tech Article", description: "Technical documentation or article" },
+  ];
+
+  function heuristicSchemaDetect(title: string, content: string, category?: string | null): { schemaType: string; confidence: number } {
+    const lower = (title + " " + content).toLowerCase();
+    const catLower = (category || "").toLowerCase();
+
+    if (/how\s+to\b|step[\s-]by[\s-]step|guide|tutorial|instructions/i.test(title)) {
+      return { schemaType: "HowTo", confidence: 0.8 };
+    }
+    if (/faq|frequently\s+asked|common\s+questions/i.test(title)) {
+      return { schemaType: "FAQPage", confidence: 0.85 };
+    }
+    if (/recipe|cooking|ingredient|preparation/i.test(title) || catLower === "recipe") {
+      return { schemaType: "Recipe", confidence: 0.75 };
+    }
+    if (/review|rating|comparison|vs\b|versus/i.test(title) || catLower === "comparisons") {
+      return { schemaType: "Review", confidence: 0.7 };
+    }
+    if (/event|conference|meetup|workshop|webinar/i.test(title)) {
+      return { schemaType: "Event", confidence: 0.7 };
+    }
+    if (/local.*guide|best.*restaurants|best.*bars|best.*hotels|city\s+guide/i.test(title) || catLower === "local-guides") {
+      return { schemaType: "LocalBusiness", confidence: 0.65 };
+    }
+    if (/news|breaking|update|announce/i.test(title)) {
+      return { schemaType: "NewsArticle", confidence: 0.6 };
+    }
+    if (/product|pricing|cost|plan|subscription/i.test(title) || catLower === "pricing-cost") {
+      return { schemaType: "Product", confidence: 0.6 };
+    }
+    if (/technical|api|code|development|integration/i.test(title) || catLower === "ai-automation") {
+      return { schemaType: "TechArticle", confidence: 0.55 };
+    }
+    return { schemaType: "Article", confidence: 0.5 };
+  }
+
+  function generateSchemaJson(schemaType: string, post: any, venue?: any): Record<string, any> {
+    const base: Record<string, any> = {
+      "@context": "https://schema.org",
+      "@type": schemaType,
+      "headline": post.title,
+      "description": post.description || `Learn about ${post.primaryKeyword || post.title}`,
+      "datePublished": post.publishedAt ? new Date(post.publishedAt).toISOString() : undefined,
+      "dateModified": post.updatedAt ? new Date(post.updatedAt).toISOString() : undefined,
+    };
+
+    if (post.primaryKeyword) {
+      base["keywords"] = post.primaryKeyword;
+    }
+
+    if (venue) {
+      base["publisher"] = {
+        "@type": "Organization",
+        "name": venue.name,
+        "url": venue.website || undefined,
+      };
+    }
+
+    if (schemaType === "Article" || schemaType === "BlogPosting" || schemaType === "NewsArticle" || schemaType === "TechArticle") {
+      base["@type"] = schemaType;
+      base["articleSection"] = post.category || "General";
+      if (post.tags && Array.isArray(post.tags)) {
+        base["keywords"] = post.tags.join(", ");
+      }
+    }
+
+    if (schemaType === "HowTo") {
+      base["@type"] = "HowTo";
+      base["name"] = post.title;
+    }
+
+    if (schemaType === "FAQPage") {
+      base["@type"] = "FAQPage";
+      base["mainEntity"] = [];
+    }
+
+    if (schemaType === "LocalBusiness") {
+      base["@type"] = "LocalBusiness";
+      if (venue) {
+        base["name"] = venue.name;
+        base["address"] = venue.address || undefined;
+        base["telephone"] = venue.phone || undefined;
+      }
+    }
+
+    if (schemaType === "Recipe") {
+      base["@type"] = "Recipe";
+      base["name"] = post.title;
+    }
+
+    if (schemaType === "Review") {
+      base["@type"] = "Review";
+      base["itemReviewed"] = { "@type": "Thing", "name": post.title };
+    }
+
+    if (schemaType === "Event") {
+      base["@type"] = "Event";
+      base["name"] = post.title;
+    }
+
+    if (schemaType === "Product") {
+      base["@type"] = "Product";
+      base["name"] = post.title;
+    }
+
+    Object.keys(base).forEach(k => base[k] === undefined && delete base[k]);
+    return base;
+  }
+
+  app.get("/api/admin/blog/schema-types", async (req, res) => {
+    if (!requireSuperAdmin(req, res)) return;
+    res.json(SCHEMA_TYPES);
+  });
+
+  app.get("/api/admin/blog/posts/:id/schema", async (req, res) => {
+    if (!requireSuperAdmin(req, res)) return;
+    try {
+      const post = await storage.getVenueBlogPost(req.params.id);
+      if (!post) return res.status(404).json({ error: "Post not found" });
+
+      res.json({
+        schemaType: post.schemaType || null,
+        schemaJson: post.schemaJson || null,
+        schemaAutoDetected: post.schemaAutoDetected || false,
+      });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  app.post("/api/admin/blog/posts/:id/schema/detect", async (req, res) => {
+    if (!requireSuperAdmin(req, res)) return;
+    try {
+      const post = await storage.getVenueBlogPost(req.params.id);
+      if (!post) return res.status(404).json({ error: "Post not found" });
+
+      const venue = await storage.getVenue(post.venueId);
+      let detectedType: string;
+      let confidence: number;
+      let method: string;
+
+      try {
+        const openai = new OpenAI({
+          baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
+          apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY || process.env.OPENAI_API_KEY,
+        });
+
+        const classifyPrompt = `You are an SEO schema.org markup specialist. Classify this blog post into the most appropriate schema.org type.
+
+Title: "${post.title}"
+Category: "${post.category || "general"}"
+Primary Keyword: "${post.primaryKeyword || ""}"
+Content excerpt (first 500 chars): "${(post.mdxContent || "").slice(0, 500)}"
+
+Choose EXACTLY ONE from these types: Article, HowTo, FAQPage, LocalBusiness, Recipe, Review, Event, Product, BlogPosting, NewsArticle, TechArticle
+
+Return ONLY a JSON object with:
+- "schemaType": the chosen type (string)
+- "confidence": your confidence level 0-1 (number)
+- "reasoning": one sentence explaining why (string)
+
+Return ONLY valid JSON, no markdown.`;
+
+        const response = await openai.chat.completions.create({
+          model: "gpt-4o",
+          messages: [{ role: "user", content: classifyPrompt }],
+          max_tokens: 256,
+          temperature: 0.2,
+        });
+
+        const raw = response.choices[0]?.message?.content || "{}";
+        const cleaned = raw.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+        const parsed = JSON.parse(cleaned);
+        detectedType = parsed.schemaType || "Article";
+        confidence = parsed.confidence || 0.5;
+        method = "gpt-4o";
+      } catch (aiErr: any) {
+        console.warn("[SchemaDetect] AI classification failed, using heuristic:", aiErr.message);
+        const heuristic = heuristicSchemaDetect(post.title, post.mdxContent || "", post.category);
+        detectedType = heuristic.schemaType;
+        confidence = heuristic.confidence;
+        method = "heuristic";
+      }
+
+      const schemaJson = generateSchemaJson(detectedType, post, venue);
+
+      const updated = await storage.updateVenueBlogPost(post.id, {
+        schemaType: detectedType,
+        schemaJson: schemaJson,
+        schemaAutoDetected: true,
+      });
+
+      res.json({
+        schemaType: detectedType,
+        schemaJson: schemaJson,
+        schemaAutoDetected: true,
+        confidence,
+        method,
+        post: updated,
+      });
+    } catch (err: any) {
+      console.error("[SchemaDetect] Error:", err.message);
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  app.post("/api/admin/blog/posts/:id/schema/override", async (req, res) => {
+    if (!requireSuperAdmin(req, res)) return;
+    try {
+      const post = await storage.getVenueBlogPost(req.params.id);
+      if (!post) return res.status(404).json({ error: "Post not found" });
+
+      const { schemaType } = req.body;
+      if (!schemaType) return res.status(400).json({ error: "schemaType required" });
+
+      const validTypes = SCHEMA_TYPES.map(t => t.value);
+      if (!validTypes.includes(schemaType)) {
+        return res.status(400).json({ error: `Invalid schemaType. Must be one of: ${validTypes.join(", ")}` });
+      }
+
+      const venue = await storage.getVenue(post.venueId);
+      const schemaJson = generateSchemaJson(schemaType, post, venue);
+
+      const updated = await storage.updateVenueBlogPost(post.id, {
+        schemaType,
+        schemaJson,
+        schemaAutoDetected: false,
+      });
+
+      res.json({
+        schemaType,
+        schemaJson,
+        schemaAutoDetected: false,
+        post: updated,
+      });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  app.post("/api/admin/blog/posts/:id/schema/edit-json", async (req, res) => {
+    if (!requireSuperAdmin(req, res)) return;
+    try {
+      const post = await storage.getVenueBlogPost(req.params.id);
+      if (!post) return res.status(404).json({ error: "Post not found" });
+
+      const { schemaJson } = req.body;
+      if (!schemaJson || typeof schemaJson !== "object") {
+        return res.status(400).json({ error: "schemaJson object required" });
+      }
+
+      if (!schemaJson["@context"]) schemaJson["@context"] = "https://schema.org";
+      if (!schemaJson["@type"]) {
+        return res.status(400).json({ error: "schemaJson must include @type" });
+      }
+
+      const schemaType = schemaJson["@type"];
+
+      const updated = await storage.updateVenueBlogPost(post.id, {
+        schemaType,
+        schemaJson,
+        schemaAutoDetected: false,
+      });
+
+      res.json({
+        schemaType,
+        schemaJson,
+        schemaAutoDetected: false,
+        post: updated,
+      });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  const CMS_FORMATS = ["wordpress", "ghost", "webflow", "hubspot", "contentful"] as const;
+  type CmsFormat = typeof CMS_FORMATS[number];
+
+  function formatForWordPress(post: any): Record<string, any> {
+    return {
+      title: post.title,
+      slug: post.slug,
+      content: post.compiledHtml || "",
+      excerpt: post.description || "",
+      status: post.status === "published" ? "publish" : "draft",
+      categories: post.category ? [post.category] : [],
+      tags: post.tags || [],
+      date: post.publishedAt ? new Date(post.publishedAt).toISOString() : undefined,
+      meta: {
+        _yoast_wpseo_focuskw: post.primaryKeyword || "",
+        _yoast_wpseo_metadesc: post.description || "",
+      },
+      schemaMarkup: post.schemaJson ? JSON.stringify(post.schemaJson) : null,
+    };
+  }
+
+  function formatForGhost(post: any): Record<string, any> {
+    return {
+      title: post.title,
+      slug: post.slug,
+      html: post.compiledHtml || "",
+      custom_excerpt: post.description || "",
+      status: post.status === "published" ? "published" : "draft",
+      tags: (post.tags || []).map((t: string) => ({ name: t })),
+      published_at: post.publishedAt ? new Date(post.publishedAt).toISOString() : undefined,
+      meta_title: post.title,
+      meta_description: post.description || "",
+      og_title: post.title,
+      og_description: post.description || "",
+      codeinjection_head: post.schemaJson
+        ? `<script type="application/ld+json">${JSON.stringify(post.schemaJson)}</script>`
+        : "",
+      schemaMarkup: post.schemaJson || null,
+    };
+  }
+
+  function formatForWebflow(post: any): Record<string, any> {
+    return {
+      name: post.title,
+      slug: post.slug,
+      "post-body": post.compiledHtml || "",
+      "post-summary": post.description || "",
+      _archived: false,
+      _draft: post.status !== "published",
+      category: post.category || "",
+      tags: (post.tags || []).join(", "),
+      "publish-date": post.publishedAt ? new Date(post.publishedAt).toISOString() : undefined,
+      "seo-title": post.title,
+      "seo-description": post.description || "",
+      "focus-keyword": post.primaryKeyword || "",
+      schemaMarkup: post.schemaJson
+        ? `<script type="application/ld+json">${JSON.stringify(post.schemaJson)}</script>`
+        : null,
+    };
+  }
+
+  function formatForHubSpot(post: any): Record<string, any> {
+    return {
+      name: post.title,
+      slug: post.slug,
+      post_body: post.compiledHtml || "",
+      post_summary: post.description || "",
+      state: post.status === "published" ? "PUBLISHED" : "DRAFT",
+      blog_author_id: null,
+      campaign: post.campaignId || null,
+      content_group_id: null,
+      meta_description: post.description || "",
+      html_title: post.title,
+      publish_date: post.publishedAt ? new Date(post.publishedAt).getTime() : undefined,
+      tag_ids: [],
+      keywords: post.primaryKeyword ? [post.primaryKeyword] : [],
+      head_html: post.schemaJson
+        ? `<script type="application/ld+json">${JSON.stringify(post.schemaJson)}</script>`
+        : "",
+      schemaMarkup: post.schemaJson || null,
+    };
+  }
+
+  function formatForContentful(post: any): Record<string, any> {
+    return {
+      fields: {
+        title: { "en-US": post.title },
+        slug: { "en-US": post.slug },
+        body: { "en-US": post.mdxContent || "" },
+        description: { "en-US": post.description || "" },
+        category: { "en-US": post.category || "" },
+        tags: { "en-US": post.tags || [] },
+        publishDate: { "en-US": post.publishedAt ? new Date(post.publishedAt).toISOString() : undefined },
+        seoTitle: { "en-US": post.title },
+        seoDescription: { "en-US": post.description || "" },
+        focusKeyword: { "en-US": post.primaryKeyword || "" },
+        schemaMarkup: { "en-US": post.schemaJson || null },
+      },
+    };
+  }
+
+  const cmsFormatters: Record<CmsFormat, (post: any) => Record<string, any>> = {
+    wordpress: formatForWordPress,
+    ghost: formatForGhost,
+    webflow: formatForWebflow,
+    hubspot: formatForHubSpot,
+    contentful: formatForContentful,
+  };
+
+  app.get("/api/admin/blog/cms-formats", async (req, res) => {
+    if (!requireSuperAdmin(req, res)) return;
+    res.json(CMS_FORMATS.map(f => ({
+      value: f,
+      label: f.charAt(0).toUpperCase() + f.slice(1),
+    })));
+  });
+
+  app.post("/api/admin/blog/posts/:id/export-cms", async (req, res) => {
+    if (!requireSuperAdmin(req, res)) return;
+    try {
+      const post = await storage.getVenueBlogPost(req.params.id);
+      if (!post) return res.status(404).json({ error: "Post not found" });
+
+      const format = (req.body.format || "wordpress") as CmsFormat;
+      if (!CMS_FORMATS.includes(format)) {
+        return res.status(400).json({ error: `Invalid format. Must be one of: ${CMS_FORMATS.join(", ")}` });
+      }
+
+      const formatter = cmsFormatters[format];
+      const formatted = formatter(post);
+
+      res.json({
+        format,
+        data: formatted,
+        postId: post.id,
+        title: post.title,
+      });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  app.post("/api/admin/blog/export-cms-bulk", async (req, res) => {
+    if (!requireSuperAdmin(req, res)) return;
+    try {
+      const { venueId, format: formatStr } = req.body;
+      if (!venueId) return res.status(400).json({ error: "venueId required" });
+
+      const format = (formatStr || "wordpress") as CmsFormat;
+      if (!CMS_FORMATS.includes(format)) {
+        return res.status(400).json({ error: `Invalid format. Must be one of: ${CMS_FORMATS.join(", ")}` });
+      }
+
+      const posts = await storage.getVenueBlogPosts(venueId);
+      const exportable = posts.filter(p => p.mdxContent && p.mdxContent.length > 100);
+
+      const formatter = cmsFormatters[format];
+      const items = exportable.map(post => ({
+        postId: post.id,
+        title: post.title,
+        slug: post.slug,
+        data: formatter(post),
+      }));
+
+      res.json({
+        format,
+        exported: items.length,
+        items,
       });
     } catch (err: any) {
       res.status(500).json({ error: err.message });

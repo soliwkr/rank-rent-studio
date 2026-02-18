@@ -50,6 +50,9 @@ import {
   TrendingUp,
   Mail,
   Hash,
+  Code2,
+  Wand2,
+  Copy,
 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
@@ -697,6 +700,13 @@ function PostEditor({
   const [activeTab, setActiveTab] = useState("editor");
   const [fullscreenPanel, setFullscreenPanel] = useState<"editor" | "preview" | null>(null);
   const [previewTemplate, setPreviewTemplate] = useState<string | null>(null);
+  const [schemaOpen, setSchemaOpen] = useState(false);
+  const [schemaType, setSchemaType] = useState(post?.schemaType || "");
+  const [schemaJson, setSchemaJson] = useState<Record<string, any> | null>((post?.schemaJson as Record<string, any>) || null);
+  const [schemaAutoDetected, setSchemaAutoDetected] = useState(post?.schemaAutoDetected || false);
+  const [schemaDetecting, setSchemaDetecting] = useState(false);
+  const [schemaJsonEditing, setSchemaJsonEditing] = useState(false);
+  const [schemaJsonDraft, setSchemaJsonDraft] = useState("");
 
   const { data: editorDomains = [] } = useQuery<VenueDomain[]>({
     queryKey: ["/api/admin/blog/domains", venueId],
@@ -944,6 +954,181 @@ function PostEditor({
           Schedule
         </Button>
       </div>
+
+      <Collapsible open={schemaOpen} onOpenChange={setSchemaOpen} className="mb-4">
+        <Card>
+          <CollapsibleTrigger asChild>
+            <button
+              type="button"
+              className="flex items-center justify-between gap-2 w-full px-4 py-3 text-left"
+              data-testid="button-toggle-schema-markup"
+            >
+              <div className="flex items-center gap-2">
+                <Code2 className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm font-medium">Schema Markup</span>
+                {schemaType && (
+                  <Badge variant="secondary" className="text-xs">
+                    {schemaType}
+                  </Badge>
+                )}
+                {schemaAutoDetected && schemaType && (
+                  <Badge variant="outline" className="text-xs">Auto-detected</Badge>
+                )}
+              </div>
+              <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${schemaOpen ? "rotate-180" : ""}`} />
+            </button>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <CardContent className="pt-0 pb-4 space-y-4">
+              <div className="flex items-center gap-2 flex-wrap">
+                <Select
+                  value={schemaType || ""}
+                  onValueChange={async (val) => {
+                    if (!post?.id) {
+                      toast({ title: "Save the post first", variant: "destructive" });
+                      return;
+                    }
+                    try {
+                      const result = await adminApi("POST", `/api/admin/blog/posts/${post.id}/schema/override`, { schemaType: val });
+                      setSchemaType(result.schemaType);
+                      setSchemaJson(result.schemaJson);
+                      setSchemaAutoDetected(false);
+                      toast({ title: `Schema type set to ${val}` });
+                    } catch (err: any) {
+                      toast({ title: "Failed to set schema type", description: err.message, variant: "destructive" });
+                    }
+                  }}
+                >
+                  <SelectTrigger className="w-[200px]" data-testid="select-schema-type">
+                    <SelectValue placeholder="Select schema type..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Article">Article</SelectItem>
+                    <SelectItem value="HowTo">How-To</SelectItem>
+                    <SelectItem value="FAQPage">FAQ Page</SelectItem>
+                    <SelectItem value="LocalBusiness">Local Business</SelectItem>
+                    <SelectItem value="Recipe">Recipe</SelectItem>
+                    <SelectItem value="Review">Review</SelectItem>
+                    <SelectItem value="Event">Event</SelectItem>
+                    <SelectItem value="Product">Product</SelectItem>
+                    <SelectItem value="BlogPosting">Blog Posting</SelectItem>
+                    <SelectItem value="NewsArticle">News Article</SelectItem>
+                    <SelectItem value="TechArticle">Tech Article</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={schemaDetecting || !post?.id}
+                  onClick={async () => {
+                    if (!post?.id) {
+                      toast({ title: "Save the post first", variant: "destructive" });
+                      return;
+                    }
+                    setSchemaDetecting(true);
+                    try {
+                      const result = await adminApi("POST", `/api/admin/blog/posts/${post.id}/schema/detect`);
+                      setSchemaType(result.schemaType);
+                      setSchemaJson(result.schemaJson);
+                      setSchemaAutoDetected(true);
+                      toast({
+                        title: `Detected: ${result.schemaType}`,
+                        description: `Confidence: ${Math.round((result.confidence || 0) * 100)}% (${result.method})`,
+                      });
+                    } catch (err: any) {
+                      toast({ title: "Detection failed", description: err.message, variant: "destructive" });
+                    } finally {
+                      setSchemaDetecting(false);
+                    }
+                  }}
+                  data-testid="button-auto-detect-schema"
+                >
+                  {schemaDetecting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Wand2 className="h-4 w-4 mr-2" />}
+                  Auto-Detect
+                </Button>
+              </div>
+
+              {schemaJson && (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="text-xs font-medium text-muted-foreground">JSON-LD Preview</div>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 text-xs"
+                        onClick={() => {
+                          navigator.clipboard.writeText(JSON.stringify(schemaJson, null, 2));
+                          toast({ title: "JSON-LD copied to clipboard" });
+                        }}
+                        data-testid="button-copy-schema-json"
+                      >
+                        <Copy className="h-3 w-3 mr-1" />
+                        Copy
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 text-xs"
+                        onClick={() => {
+                          setSchemaJsonDraft(JSON.stringify(schemaJson, null, 2));
+                          setSchemaJsonEditing(!schemaJsonEditing);
+                        }}
+                        data-testid="button-edit-schema-json"
+                      >
+                        <Code2 className="h-3 w-3 mr-1" />
+                        {schemaJsonEditing ? "Cancel Edit" : "Edit JSON"}
+                      </Button>
+                    </div>
+                  </div>
+
+                  {schemaJsonEditing ? (
+                    <div className="space-y-2">
+                      <Textarea
+                        value={schemaJsonDraft}
+                        onChange={(e) => setSchemaJsonDraft(e.target.value)}
+                        className="font-mono text-xs min-h-[200px]"
+                        data-testid="textarea-schema-json-edit"
+                      />
+                      <Button
+                        size="sm"
+                        onClick={async () => {
+                          if (!post?.id) return;
+                          try {
+                            const parsed = JSON.parse(schemaJsonDraft);
+                            const result = await adminApi("POST", `/api/admin/blog/posts/${post.id}/schema/edit-json`, { schemaJson: parsed });
+                            setSchemaType(result.schemaType);
+                            setSchemaJson(result.schemaJson);
+                            setSchemaAutoDetected(false);
+                            setSchemaJsonEditing(false);
+                            toast({ title: "Schema JSON updated" });
+                          } catch (err: any) {
+                            toast({ title: "Invalid JSON or save failed", description: err.message, variant: "destructive" });
+                          }
+                        }}
+                        data-testid="button-save-schema-json"
+                      >
+                        <Save className="h-4 w-4 mr-2" />
+                        Save JSON
+                      </Button>
+                    </div>
+                  ) : (
+                    <pre className="bg-muted rounded-md p-3 text-xs font-mono overflow-auto max-h-[300px] whitespace-pre-wrap" data-testid="pre-schema-json-preview">
+                      {JSON.stringify(schemaJson, null, 2)}
+                    </pre>
+                  )}
+                </div>
+              )}
+
+              {!schemaType && !schemaJson && (
+                <div className="text-sm text-muted-foreground">
+                  No schema markup set. Use Auto-Detect or select a type manually.
+                </div>
+              )}
+            </CardContent>
+          </CollapsibleContent>
+        </Card>
+      </Collapsible>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList>
