@@ -6,6 +6,7 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ClientLayout } from "@/components/client-layout";
 
 const NotFound = lazy(() => import("@/pages/not-found"));
 const Home = lazy(() => import("@/pages/home"));
@@ -227,8 +228,6 @@ function hasAdminPermission(role: AdminRole, permission: string): boolean {
   if (perms.includes("*")) return true;
   return perms.includes(permission);
 }
-
-import { ClientLayout } from "@/components/client-layout";
 
 function ClientRoute({ component: Component }: { component: ComponentType }) {
   return (
