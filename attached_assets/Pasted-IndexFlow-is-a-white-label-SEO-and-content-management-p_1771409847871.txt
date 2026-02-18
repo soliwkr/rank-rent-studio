@@ -1,0 +1,733 @@
+IndexFlow is a white-label SEO and content management platform 
+built for digital marketing agencies, SEO agencies, content agencies, and freelancers. It's a standalone commercial SaaS product at indexflow.cloud, extracted from the Content Engine infrastructure originally built inside resto.restaurant.
+
+What IndexFlow does:
+IndexFlow gives agencies a single platform to manage all their client SEO and content work, with the ability to resell it under their own brand. An agency signs up, creates workspaces for each of their clients, and gets access to every tool they need to run content marketing and SEO campaigns -- all in one place.
+
+Core capabilities:
+Content Engine
+Bulk draft generation powered by GPT-4o. Agencies create campaigns, generate multiple blog posts at once with AI, and the system enforces quality gates (word count, heading count, FAQ sections, image placeholders, duplicate detection). Images are automatically resolved from stock photo APIs (Pixabay, Pexels, Unsplash) with AI-generated SEO metadata (alt text, captions, search queries). Posts can be exported as MDX files or synced directly to CMS platforms.
+CMS Integration 
+
+Publish content directly to WordPress, Webflow, Shopify, Ghost, or Wix. Each integration formats posts with proper metadata, schema markup, and images for the target platform.
+
+
+SEO Tools
+Rank Tracker: Monitor keyword positions across search engines over time
+Local Search Grid: Visualize local search rankings across geographic grids (powered by DataForSEO)
+Google Search Console ingestion: Pull in GSC data for analysis
+On-Page SEO Auditing: Crawl and audit site pages for SEO issues
+Schema Markup Auto-Detection: AI classifies content into 20+ schema.org types and generates JSON-LD automatically, with manual override
+Post-Processing Validator: Scans posts for correct rel attributes (dofollow internal, nofollow external), anchor text diversity, link density, image alt coverage
+Cross-Post Link Builder: Indexes keywords across posts, suggests internal links, bulk auto-links, detects orphan pages, checks link health
+Site Profile System
+Crawl client sites to build a page inventory. The system uses this data during content generation to auto-insert internal links to existing site pages and add CTA blocks.
+CRM
+Full sales pipeline management. Contacts with company, email, phone, tags, source tracking. Customizable pipeline stages with color coding and position ordering. Deals with value, currency, stage assignment, contact linking, expected close dates. Board view and list view for the pipeline.
+Invoices & Reports
+Create and send invoices to clients with line items, tax calculations, multi-currency support (USD/EUR/GBP/AUD/CAD), and status tracking (draft/sent/paid/overdue/cancelled). Generate content reports (posts by status, category, type, word counts, schema coverage), SEO reports (page audits, scores), and revenue reports. Save report snapshots for historical comparison.
+AI Widget & Voice
+Embeddable chat widget with AI-powered responses. Voice mode with speech-to-text and text-to-speech. Agencies can deploy this on their clients' websites for customer interaction, booking, and support.
+Twilio Integration
+AI phone assistant with voice and SMS. Inbound SMS keyword processing (CANCEL, CONFIRM, STATUS, HOURS, HELP). Outbound messaging templates. Call logging and analytics.
+White Label
+Agencies can fully rebrand the platform as their own product. Upload their logo, set brand name, pick colors, configure custom domain, set support email. Their clients never see IndexFlow branding -- it looks like the agency's own software.
+AI Provider Flexibility (BYOK)
+Agencies can bring their own API keys for OpenAI, Anthropic, Google AI, Grok, Mistral, Cohere, Perplexity. Same for image banks (Unsplash, Pexels, Pixabay) and payments (Stripe, PayPal). This lets agencies control their own costs and usage.
+
+Two dashboards: 
+Super Admin Dashboard (for IndexFlow platform owners)
+Manage all agencies, workspaces, content moderation, platform billing/subscriptions, MRR tracking, API key management, Twilio accounts, system health, user management, support tickets, platform settings and feature flags.
+Client Dashboard (for agencies)
+Content Engine, SEO tools, CRM, analytics, invoices, reports, widget management, Twilio settings, AI training/knowledge base, team invites, white label configuration, billing and usage, documentation, and support tickets.
+
+Business model:
+Subscription-based SaaS. Agencies pay monthly for access. Tiered pricing based on workspaces, users, and API usage. White-label resale lets agencies mark up and resell to their own clients.
+
+That's IndexFlow in full. A complete agency operating system for SEO and content, with white-label so they can sell it as their own.
+redo and mention all ICP aka who its for also crm and any core stuff missed from y description
+IndexFlow is a white-label SEO, content, and client management platform built for agencies to run their entire content marketing and search engine optimization operation from one place -- and resell it under their own brand.
+
+Who it's for (ICP):
+SEO Agencies managing keyword rankings, local search, link building, and on-page audits for multiple clients
+Content Marketing Agencies producing blog posts, articles, and landing pages at scale for client websites
+Digital Marketing Agencies that offer SEO and content as part of a broader service package alongside paid ads, social, and web design
+PR and Communications Agencies doing thought leadership content, press-ready articles, and brand storytelling for clients
+Web Design and Development Agencies that want to add recurring SEO and content services on top of one-time build projects
+Freelance SEO Consultants managing a handful of clients who need professional tooling without enterprise pricing
+Freelance Content Writers producing high-volume blog content who want AI-assisted drafting with quality controls
+In-House Marketing Teams at mid-size companies managing their own content pipeline, SEO tracking, and publishing workflow
+White-Label Resellers who want to rebrand the entire platform as their own product and sell it to their own clients
+Media and Publishing Companies producing editorial content across multiple properties with SEO requirements
+E-commerce Brands that need product-focused content, schema markup, and local search visibility across multiple storefronts
+
+What IndexFlow does:
+Content Engine
+Bulk draft generation powered by GPT-4o. Agencies create campaigns with multiple posts, generate all drafts with AI, and the system enforces quality gates automatically -- word count (1500-2500), heading count (6+), FAQ sections, image placeholders, and duplicate content detection. Blog images are automatically resolved from stock photo APIs (Pixabay, Pexels, Unsplash) with AI-generated SEO metadata including alt text, captions, and optimized search queries. Content goes through a human review workflow before publishing. Posts export as MDX files with full frontmatter or sync directly to client CMS platforms. Scheduled publishing lets agencies queue content for future dates.
+CMS Integration
+Publish content directly to five platforms: WordPress, Webflow, Shopify, Ghost, and Wix. Each integration formats posts with proper metadata, featured images, categories, tags, schema markup, and platform-specific fields. Agencies manage multiple client sites across different CMS platforms from one place.
+SEO Tools
+Rank Tracker: Monitor keyword positions across search engines over time, track ranking changes, view historical trends
+Local Search Grid: Visualize local search rankings across geographic grids powered by DataForSEO, see how rankings change by location
+Google Search Console Ingestion: Pull in GSC data for clicks, impressions, CTR, and position analysis
+On-Page SEO Auditing: Crawl and audit client site pages for technical SEO issues, missing tags, broken links, performance problems
+Schema Markup Auto-Detection: AI classifies content into 20+ schema.org types (Article, BlogPosting, HowTo, Recipe, FAQPage, Product, Review, Event, LocalBusiness, and more) and generates JSON-LD automatically. Heuristic fallback if AI is unavailable. Manual override lets users pick any schema type. Direct JSON-LD editing for advanced users.
+Post-Processing Validator: Scans generated content and auto-fixes rel attributes (dofollow for internal links, nofollow for external), checks anchor text diversity, monitors link density, verifies image alt text coverage, saves validation results for review
+Cross-Post Link Builder: Indexes keywords from post titles, headings, and primary keywords. Suggests internal links between posts. Bulk auto-link across all content. Orphan page report finds unlinked content. Link health checker finds broken links.
+
+
+Site Profile System
+Crawl client websites to build a complete page inventory with URLs, titles, and target keywords. During content generation, the AI uses this data to auto-insert relevant internal links to existing site pages and add call-to-action blocks pointing to key conversion pages.
+CRM and Sales Pipeline
+Full contact management with name, email, phone, company, website, tags, source tracking, and notes. Customizable pipeline stages with position ordering and color coding -- default stages are Leads, Demo Scheduled, Proposal Sent, Closed Won but agencies can create whatever stages match their sales process. Deals track value, currency (USD/EUR/GBP/AUD/CAD), stage assignment, contact linking, expected close date, assigned team member, source, and notes. Pipeline has both a kanban board view and a list/table view. Drag deals between stages. Search and filter across all contacts and deals. Each workspace has its own isolated CRM data.
+Invoices and Billing
+Create and send invoices to clients with line items, descriptions, quantities, unit prices. Tax calculations. Multi-currency support (USD, EUR, GBP, AUD, CAD). Status tracking through draft, sent, paid, overdue, and cancelled. Automatic invoice numbering (INV-0001, INV-0002, etc.). Full CRUD -- create, edit, duplicate, delete invoices.
+Reports and Analytics
+Content reports showing posts by status, category, content type, and month. Word count totals and averages. Image counts. Schema markup coverage percentages. SEO reports with page audit scores. Invoice revenue tracking with totals, averages, and trends. Save report snapshots for historical comparison and client presentations.
+AI Widget and Voice
+Embeddable chat widget agencies deploy on their clients' websites. AI-powered responses trained on the client's knowledge base. Voice mode with browser-based speech-to-text and text-to-speech. Can handle customer questions, bookings, and support interactions. Configurable appearance and behavior per workspace.
+Twilio Integration
+AI phone assistant with inbound and outbound voice calls. Speech recognition and reservation/appointment parsing. Inbound SMS keyword processing -- customers text CANCEL, CONFIRM, STATUS, HOURS, or HELP and get automated responses. Outbound SMS with template variables. Full call logging with duration, transcripts, and outcomes. Phone number management.
+White Label
+Agencies fully rebrand the platform as their own product. Upload custom logo. Set brand name. Pick brand colors with a color picker. Configure custom domain (agency's own URL). Set support email. Their clients log in and see the agency's brand everywhere -- no IndexFlow branding visible. This lets agencies resell the platform at their own markup.
+AI Provider Flexibility (BYOK - Bring Your Own Key)
+Agencies connect their own API keys for AI providers: OpenAI, Anthropic, Google AI, Grok, Mistral, Cohere, Perplexity. Same for image banks: Unsplash, Pexels, Pixabay. Payment processors: Stripe, PayPal. Twilio accounts. This gives agencies full control over their costs, usage limits, and provider preferences. All credentials are encrypted with AES-256-GCM.
+Team and Access
+Invite team members with email. Role-based access so agencies can control who sees what. Multiple users per workspace.
+
+Two dashboards:
+Super Admin Dashboard (for IndexFlow platform owners)
+Platform overview with total agencies, workspaces, MRR, active users, system health. Agency management with search, filtering, detail views, pending approvals. Content moderation across all agencies. Platform-wide SEO metrics and API usage tracking. Subscription management, revenue charts, ARPU, churn. Platform-level API key management. Twilio account overview. Email configuration. Infrastructure monitoring. User management across all agencies. Support ticket system. System announcements. Platform config with default plans, limits, and feature flags.
+Client Dashboard (for agencies)
+Dashboard overview, Content Engine (posts, pages, campaigns, domains), SEO tools (links, health, CMS, reports, invoices), Rank Tracker, Local Search Grid, Google Search Console, Twilio (call logs, voice, SMS), Widget (monitoring, code), CRM (pipeline, contacts), Analytics (overview, export), Connections (AI providers, image banks, payments, Twilio), AI Training (knowledge base, channels), Settings (team, white label, billing, setup guide), Support (docs, tickets). Top-right avatar with theme toggle, account, sign out.
+
+Business model:
+Subscription SaaS with tiered pricing based on workspaces, users, and API usage. White-label resale lets agencies mark up and sell to their own clients as a revenue stream. Platform owners track MRR, churn, and ARPU through the super admin dashboard.
+
+
+
+Why IndexFlow? 
+What it does for every type of user:
+
+Solo Founder / Freelancer
+You're one person doing SEO and content for 3-10 clients. Right now you're juggling Google Docs, spreadsheets, rank tracking tools, invoicing software, and a CRM -- all separate, all costing you money individually.
+IndexFlow replaces all of that with one login:
+Write 20 blog posts in an afternoon instead of 20 hours. The AI drafts them, enforces quality standards automatically, and pulls in stock images with proper alt text. You review, tweak, and publish.
+Track keyword rankings for all your clients in one place instead of logging into separate rank tracker accounts.
+See which client pages are ranking locally with the search grid -- show clients a visual map of their local visibility.
+Send professional invoices directly from the same platform where you manage their content. No more switching to FreshBooks or Wave.
+Keep your sales pipeline organized. Know which prospects you're talking to, what stage they're at, how much revenue is coming. Stop losing deals because you forgot to follow up.
+Publish content straight to their WordPress, Shopify, Webflow, Ghost, or Wix site. No copy-pasting between tools.
+Connect your own OpenAI key so you control your AI costs. Use your own Unsplash/Pexels keys for images.
+The bottom line for solo founders: You operate like a 5-person agency but it's just you. Your clients get better work, faster, and you keep more profit because you're not paying for 8 different SaaS subscriptions.
+
+Small Agency (2-10 people)
+You have a team. Some people write, some do SEO, someone handles client communication. Coordination is the bottleneck.
+IndexFlow gives your team one shared workspace per client:
+Your writers create bulk campaigns and generate drafts. The quality gates catch problems before you even review -- word count too low, missing headings, no FAQ section, duplicate content. Fewer rounds of revision.
+Your SEO person tracks rankings, runs local search grids, pulls Google Search Console data, and audits client pages -- all from the same platform where content is created. SEO insights feed directly into content strategy.
+The link builder automatically suggests internal links between blog posts. No more manually hunting for linking opportunities. It finds orphan pages that aren't linked from anywhere. It checks for broken links.
+Schema markup is auto-detected on every post. Your team doesn't need to know JSON-LD. The AI picks the right schema type (Article, HowTo, FAQ, Recipe, Product, LocalBusiness, etc.) and generates the structured data.
+The CRM tracks your agency's own sales. Pipeline board shows deals at each stage. You know who's responsible for which prospect and when deals are expected to close.
+Invoices go out from the same platform. Multi-currency if you have international clients. Status tracking so you know who's paid and who's overdue.
+Reports are generated with real numbers from the platform. Content output, SEO scores, ranking changes. Save snapshots to show clients progress over time.
+Team members get invited by email with role-based access. Writers see content. SEO people see rankings. Account managers see everything.
+The bottom line for small agencies: Your whole operation runs from one tool. Less context-switching, fewer mistakes, faster delivery, happier clients.
+
+Mid-Size Agency (10-50 people)
+You have departments. Content team, SEO team, account management, sales. You serve dozens of clients across different industries. Consistency and scalability matter.
+Everything the small agency gets, plus:
+White Label. Put your agency's logo on it. Your brand colors. Your custom domain. Your support email. When clients log in, they see your brand -- not IndexFlow. This becomes your proprietary platform. Charge clients a monthly fee for "access to your content and SEO dashboard." That's recurring revenue on top of your service fees.
+Deploy the AI chat widget on client websites under your brand. Clients get an AI assistant that answers customer questions, handles bookings, provides support -- trained on their specific knowledge base. You charge for this as an add-on service.
+Set up Twilio phone lines for clients. AI answers calls, processes reservations, handles common questions. Call logs and transcripts are all in the platform. Another billable service.
+BYOK means each department or client can have different AI providers. One client wants Anthropic, another wants OpenAI -- no problem. Keys are encrypted and isolated per workspace.
+Bulk operations across many clients. Generate content campaigns for 5 clients in a morning. Run rank tracking across all workspaces. Pull reports for your weekly client review meetings.
+The bottom line for mid-size agencies: IndexFlow becomes your agency's operating system. White label turns it into a product you sell, creating a new revenue stream alongside your services.
+
+Large Agency / Enterprise (50+ people)
+You operate at scale. Hundreds of clients. Multiple office locations. Complex approval workflows. Compliance matters.
+Everything above, plus the enterprise advantages:
+Super Admin Dashboard gives leadership visibility across the entire operation. Total workspaces, MRR from white-label clients, active users, system health, API usage across the platform. Content moderation to catch issues before they reach clients.
+Centralized API key management. Platform-level keys for OpenAI, DataForSEO, image APIs, and Twilio. Control costs at the organization level while letting individual teams bring their own keys when needed.
+Revenue tracking with MRR, churn, ARPU charts. Know exactly how much your white-label product line is generating.
+Agency management -- see all sub-accounts, their usage, their billing status, pending approvals for new signups and domain verifications.
+Infrastructure monitoring with error rates, queue status, and system health. Your ops team knows what's happening before clients report problems.
+System announcements for maintenance windows and feature releases across all your agency clients.
+Platform configuration with default plans, usage limits, and feature flags. Roll out new features gradually. Set different limits for different pricing tiers.
+User management across all agencies. Admin roles for your platform staff.
+The bottom line for enterprise: IndexFlow is the infrastructure layer under your agency network. You control the platform, the branding, the pricing, the access. It's your product.
+
+White-Label Resellers
+You're not an agency at all. You're a SaaS entrepreneur who wants to sell an SEO and content platform without building one.
+Take IndexFlow, put your brand on it, set your pricing, and sell it.
+Your customers never know IndexFlow exists.
+You handle sales and support. IndexFlow handles the technology.
+Set up custom domains so your product lives at your URL.
+Configure support email so help requests go to your inbox.
+Revenue from subscriptions is yours. You pay IndexFlow a platform fee based on usage.
+The bottom line for resellers: You get a fully built SaaS product to sell, without writing a line of code. Launch in days, not months.
+
+What you're actually replacing by using IndexFlow:
+Separate tool today
+Replaced by IndexFlow
+Ahrefs / SEMrush / Moz (rank tracking)
+Rank Tracker + Local Search Grid
+SurferSEO / Clearscope (content optimization)
+Quality Gates + Post Validator + Schema Detection
+Jasper / Copy.ai (AI writing)
+Content Engine with GPT-4o
+WordPress admin / CMS logins
+CMS Integration (5 platforms)
+HubSpot / Pipedrive (CRM)
+CRM with Pipeline + Contacts
+FreshBooks / QuickBooks (invoicing)
+Invoices with multi-currency
+Google Sheets (reporting)
+Reports with saved snapshots
+Intercom / Drift (chat widget)
+AI Widget with voice
+Twilio console (phone/SMS)
+Twilio Integration with AI assistant
+LinkWhisper (internal linking)
+Cross-Post Link Builder
+Screaming Frog (site auditing)
+On-Page SEO Auditor
+
+One platform. One login. One bill. Everything connected.
+
+That's why someone uses IndexFlow -- from solo freelancer to enterprise agency network.
+Technical benefits of IndexFlow -- what agencies stop dealing with:
+
+No more 12 browser tabs open
+Everything is in one single platform. Rank tracking, content writing, CMS publishing, invoicing, CRM, call logs, chat widget, SEO auditing, link building, schema markup, reports. One login. One dashboard. You close Ahrefs, Jasper, HubSpot, FreshBooks, Intercom, Twilio console, Google Sheets, WordPress admin, LinkWhisper, Screaming Frog, and SurferSEO. Gone.
+No more copy-pasting content between tools
+Write a post in the Content Engine. Click publish. It goes straight to the client's WordPress, Webflow, Shopify, Ghost, or Wix -- formatted correctly with featured images, categories, tags, meta descriptions, and schema markup. No more writing in Google Docs, copying into WordPress, reformatting, re-adding images, manually pasting JSON-LD.
+No more manually writing alt text and image captions
+The image resolver pulls stock photos automatically from Pixabay, Pexels, and Unsplash based on content context. Then AI generates SEO-optimized alt text, captions, and search queries for every image. Your writers never touch an image metadata field again.
+No more forgetting internal links
+The link builder indexes every post's keywords, titles, and headings. It suggests internal links between posts automatically. Bulk auto-link across your entire content library in one click. It finds orphan pages sitting with zero internal links. It checks existing links and flags broken ones. No more "we should really go back and add internal links to that old post."
+No more guessing schema markup
+Every post gets auto-classified into the right schema.org type -- Article, HowTo, Recipe, FAQ, Product, Review, Event, LocalBusiness, and 12 more. JSON-LD is generated automatically. If the AI gets it wrong, override with a dropdown. If you're advanced, edit the JSON directly. No more Googling "how to write FAQ schema" or paying a developer to add structured data.
+No more broken SEO on published content
+The post-processing validator scans every piece of content before it goes live. It checks that internal links are do-follow. External links are no-follow. Anchor text is diverse (not the same phrase repeated 15 times). Link density isn't spammy. Every image has alt text. It auto-fixes what it can and flags what it can't. No more publishing a post and finding out weeks later that all your outbound links were passing link juice to competitors.
+No more spreadsheet CRM
+Stop tracking leads in a Google Sheet. The CRM has contacts with full details (email, phone, company, website, source, tags, notes), a pipeline board you can drag deals across, deal values with multi-currency, expected close dates, assigned team members. Filter and search everything. Every workspace has its own isolated CRM. No more "who was that lead from last month, check the spreadsheet."
+No more chasing invoices across platforms
+Create invoices inside the same platform where you do the work. Line items, tax calculations, five currencies, automatic numbering. Mark as draft, send, track payment status. See who's overdue at a glance. No more logging into FreshBooks separately to figure out who owes you money.
+No more building client reports manually
+Click generate. Get content reports (posts by status, category, month, word counts, schema coverage), SEO reports (audit scores, ranking changes), and revenue reports (invoice totals, trends). Save snapshots. Show clients real numbers from the actual platform where the work happened. No more spending Friday afternoon pulling data from four tools into a PowerPoint.
+No more juggling API keys across tools
+BYOK -- bring your own key. Connect OpenAI, Anthropic, Google AI, Mistral, Cohere, Perplexity. Connect Unsplash, Pexels, Pixabay. Connect Stripe, PayPal. Connect Twilio. All encrypted with AES-256-GCM. All in one settings page. No more hunting through five different dashboards to update an expired API key.
+No more setting up chat widgets from scratch
+Deploy the AI widget on a client site with a code snippet. It's trained on the client's knowledge base. It handles customer questions, bookings, support. Voice mode built in. Configure the look and behavior per client. No more integrating Intercom, training it, styling it, and paying per seat.
+No more separate Twilio console
+Manage phone numbers, voice calls, and SMS from inside IndexFlow. AI answers calls and processes common requests. Inbound SMS auto-responds to keywords. Call logs with transcripts. No more switching to the Twilio dashboard to check what happened on a call.
+No more "our tool doesn't support that CMS"
+Five CMS integrations built in. WordPress, Webflow, Shopify, Ghost, Wix. Each one handles the format differences so your team doesn't have to. Client on WordPress? Publish. Another on Shopify? Same button. No more maintaining separate publishing workflows for different CMS platforms.
+No more paying per-seat across 10 tools
+One subscription. Your whole team uses it. Instead of paying per-seat for Ahrefs AND Jasper AND HubSpot AND FreshBooks AND Intercom, you pay one bill. The math gets obvious fast when you add up what you're spending today.
+No more telling clients "we use a third-party tool"
+White label it. Your logo, your colors, your domain, your support email. Clients log into what looks like your proprietary platform. Charge them a monthly platform fee on top of your service fees. That's recurring revenue you didn't have before. No more explaining to clients why they're looking at someone else's software.
+No more waiting weeks for developers to build features
+Everything is already built. Content engine, rank tracker, local grid, CRM, invoicing, reports, widget, voice, SMS, schema detection, link building, site auditing, CMS publishing. You sign up and it's all there. No more "we'll add that to the roadmap."
+
+That's what IndexFlow eliminates. Every "no more" is a real problem agencies deal with daily, and IndexFlow makes each one go away.
+Why use IndexFlow:
+
+SEO Agencies
+You sell keyword rankings. Your clients pay you to get them to page one. Right now your team switches between a rank tracker, a site auditor, Google Search Console, a content tool, and spreadsheets to tie it all together.
+Use IndexFlow because:
+Track all client keywords in one place, see ranking changes over time, show clients real progress
+Local search grid shows exactly where clients rank across a geographic area -- restaurants, dentists, lawyers, anyone with local customers can see a visual map of their visibility
+On-page auditor crawls client sites and finds technical SEO problems without needing Screaming Frog
+Schema markup is auto-generated on every piece of content you publish -- you deliver structured data without needing a developer
+Link builder finds internal linking opportunities across all client content and auto-links in bulk -- the thing you always mean to do but never have time for
+Post validator catches SEO mistakes before content goes live -- wrong rel attributes, missing alt text, spammy link density
+Reports pull real data from the platform. No more assembling numbers from five sources into a slide deck
+White label it and charge clients a monthly "SEO dashboard access" fee. New recurring revenue line
+
+Content Marketing Agencies
+You produce volume. Blog posts, articles, landing pages, thought leadership. Your bottleneck is production speed without sacrificing quality.
+Use IndexFlow because:
+Bulk generate 10, 20, 50 draft posts in one campaign. AI writes them, quality gates enforce your standards automatically -- word count, headings, FAQ sections, image placeholders, duplicate detection
+Images resolve automatically from stock photo libraries with AI-written alt text and captions. Your writers stop spending 15 minutes per post finding and tagging images
+Publish directly to client CMS -- WordPress, Webflow, Shopify, Ghost, Wix. No more copy-paste formatting nightmares
+Human review workflow means AI does the first draft, your editors polish it, nothing goes live without approval
+Schema markup auto-detects whether a post is a how-to, recipe, FAQ, product review, or standard article and generates the JSON-LD. Your writers don't need to know what structured data is
+Export as MDX files for static site builds or sync to CMS in one click
+Track every post's status across all clients -- draft, review, scheduled, published. Know what's due today
+
+Digital Marketing Agencies
+You offer everything -- SEO, content, paid ads, social, web design. SEO and content are services you provide but they're not your only focus. You need tools that don't require a dedicated specialist to operate.
+Use IndexFlow because:
+One platform covers the SEO and content side of your business. Your generalist account managers can handle it without being SEO experts
+CRM tracks your agency's own sales pipeline. See which prospects are in play, deal values, expected close dates. Stop managing sales in a spreadsheet
+Invoices go out from the same tool where work is tracked. Multi-currency for international clients. Know who's paid and who's overdue
+AI widget deploys on client websites for chat support and bookings. Another service to offer clients without building anything custom
+Twilio integration adds phone and SMS capability. AI handles common customer calls for your clients. Bill for it as an add-on
+White label the whole thing. Your clients see your brand. They think you built a proprietary platform. Charge a platform fee
+
+PR and Communications Agencies
+You write thought leadership, press-ready articles, and brand storytelling. Quality matters more than volume, but you still need to be efficient.
+Use IndexFlow because:
+AI drafts give your writers a strong starting point. They spend time refining voice and narrative instead of staring at blank pages
+Quality gates catch structural issues before editors see them -- missing sections, low word count, no headings. The basics are handled
+Schema markup makes articles discoverable. A well-structured Article or NewsArticle schema helps content show up in Google News and rich results
+Site profile system auto-inserts links to the client's key pages and CTAs within every article. Every piece of content drives traffic where the client needs it
+Reports show content output and SEO impact. Give clients real numbers, not just "we published 8 articles this month"
+
+Web Design and Development Agencies
+You build websites. The project ends. The client goes quiet. You want to add recurring revenue with ongoing content and SEO services but you don't want to become an SEO agency.
+Use IndexFlow because:
+After you build the site, set up IndexFlow for the client's ongoing content. Bulk generate blog posts, publish directly to the CMS you just built
+Rank tracker and local grid give the client ongoing visibility into their search performance. They pay you monthly to manage it
+White label it as your own platform. Clients log into your branded dashboard to see their SEO progress. It looks like your proprietary offering
+You don't need to hire SEO specialists. The tools do the technical work -- schema detection, link building, on-page auditing, post validation
+Add chat widget and phone AI to client sites as premium add-ons. You already manage their website, now you manage their customer communication too
+Recurring monthly revenue from content, SEO tracking, and platform access on top of your one-time build fees
+
+Freelance SEO Consultants
+You work alone or with one assistant. You manage 3-15 clients. You need professional tools but you can't justify enterprise pricing across five separate subscriptions.
+Use IndexFlow because:
+One subscription replaces your rank tracker, content tool, CRM, invoicing software, and reporting spreadsheets
+CRM keeps your client pipeline organized. You know which leads to follow up with, what deals are close to signing, how much revenue is coming
+Invoices go out from the same platform. Stop paying for a separate invoicing tool
+Rank tracking and local search grid impress clients with visual data. Pull up their keyword positions and local rankings in a client call
+Generate content drafts quickly when clients need blog posts. Quality gates make sure the output is solid even when you're moving fast
+Reports are generated from real platform data. Hand clients a professional report instead of a spreadsheet you built manually
+BYOK means you connect your own OpenAI and image API keys. You control costs directly
+
+Freelance Content Writers
+You write a lot of posts. Speed and consistency are how you make a living. More posts per day means more income.
+Use IndexFlow because:
+Bulk draft generation means you're editing and refining instead of writing from scratch. Your output doubles or triples
+Quality gates catch structural problems before you deliver to clients. Word count, headings, FAQ sections, image coverage -- automatically checked
+Images resolve automatically with proper alt text. You stop spending time on Unsplash searching for photos and writing metadata
+Publish directly to client CMS platforms. No more emailing Google Docs and waiting for the client to copy-paste into WordPress
+Schema markup is handled. You deliver SEO-ready content with structured data without needing to understand JSON-LD
+Link builder suggests internal links based on the client's existing content. You deliver more valuable posts because they're properlyWhy each ICP should use IndexFlow:**
+
+SEO Agencies
+You sell keyword rankings. Your clients pay you to get them to page one. Right now your team switches between a rank tracker, a site auditor, Google Search Console, a content tool, and spreadsheets to tie it all together.
+Use IndexFlow because:
+Track all client keywords in one place, see ranking changes over time, show clients real progress
+Local search grid shows exactly where clients rank across a geographic area -- restaurants, dentists, lawyers, anyone with local customers can see a visual map of their visibility
+On-page auditor crawls client sites and finds technical SEO problems without needing Screaming Frog
+Schema markup is auto-generated on every piece of content you publish -- you deliver structured data without needing a developer
+Link builder finds internal linking opportunities across all client content and auto-links in bulk -- the thing you always mean to do but never have time for
+Post validator catches SEO mistakes before content goes live -- wrong rel attributes, missing alt text, spammy link density
+Reports pull real data from the platform. No more assembling numbers from five sources into a slide deck
+White label it and charge clients a monthly "SEO dashboard access" fee. New recurring revenue line
+
+Content Marketing Agencies
+You produce volume. Blog posts, articles, landing pages, thought leadership. Your bottleneck is production speed without sacrificing quality.
+Use IndexFlow because:
+Bulk generates 40 draft posts in one campaign and schedule or instant  publishing. AI writes them, quality gates enforce your standards automatically -- word count, headings, FAQ sections, image placeholders, duplicate detection
+Images resolve automatically from stock photo libraries with AI-written alt text and captions. Your writers stop spending 15 minutes per post finding and tagging images
+Publish directly to client CMS -- WordPress, Webflow, Shopify, Ghost, Wix. No more copy-paste formatting nightmares
+Human review workflow means AI does the first draft, your editors polish it, nothing goes live without approval
+Schema markup auto-detects whether a post is a how-to, recipe, FAQ, product review, or standard article and generates the JSON-LD. Your writers don't need to know what structured data is
+Export as MDX files for static site builds or sync to CMS in one click
+Track every post's status across all clients -- draft, review, scheduled, published. Know what's due today
+
+Digital Marketing Agencies
+You offer everything -- SEO, content, paid ads, social, web design. SEO and content are services you provide but they're not your only focus. You need tools that don't require a dedicated specialist to operate.
+Use IndexFlow because:
+One platform covers the SEO and content side of your business. Your generalist account managers can handle it without being SEO experts
+CRM tracks your agency's own sales pipeline. See which prospects are in play, deal values, expected close dates. Stop managing sales in a spreadsheet
+Invoices go out from the same tool where work is tracked. Multi-currency for international clients. Know who's paid and who's overdue
+AI widget deploys on client websites for chat support and bookings. Another service to offer clients without building anything custom
+Twilio integration adds phone and SMS capability. AI handles common customer calls for your clients. Bill for it as an add-on
+White label the whole thing. Your clients see your brand. They think you built a proprietary platform. Charge a platform fee
+
+PR and Communications Agencies
+You write thought leadership, press-ready articles, and brand storytelling. Quality matters more than volume, but you still need to be efficient.
+Use IndexFlow because:
+AI drafts give your writers a strong starting point. They spend time refining voice and narrative instead of staring at blank pages
+Quality gates catch structural issues before editors see them -- missing sections, low word count, no headings. The basics are handled
+Schema markup makes articles discoverable. A well-structured Article or NewsArticle schema helps content show up in Google News and rich results
+Site profile system auto-inserts links to the client's key pages and CTAs within every article. Every piece of content drives traffic where the client needs it
+Reports show content output and SEO impact. Give clients real numbers, not just "we published 8 articles this month"
+
+Web Design and Development Agencies
+You build websites. The project ends. The client goes quiet. You want to add recurring revenue with ongoing content and SEO services but you don't want to become an SEO agency.
+Use IndexFlow because:
+After you build the site, set up IndexFlow for the client's ongoing content. Bulk generate blog posts, publish directly to the CMS you just built
+Rank tracker and local grid give the client ongoing visibility into their search performance. They pay you monthly to manage it
+White label it as your own platform. Clients log into your branded dashboard to see their SEO progress. It looks like your proprietary offering
+You don't need to hire SEO specialists. The tools do the technical work -- schema detection, link building, on-page auditing, post validation
+Add chat widget and phone AI to client sites as premium add-ons. You already manage their website, now you manage their customer communication too
+Recurring monthly revenue from content, SEO tracking, and platform access on top of your one-time build fees
+
+Freelance SEO Consultants
+You work alone or with one assistant. You manage 3-15 clients. You need professional tools but you can't justify enterprise pricing across five separate subscriptions.
+Use IndexFlow because:
+One subscription replaces your rank tracker, content tool, CRM, invoicing software, and reporting spreadsheets
+CRM keeps your client pipeline organized. You know which leads to follow up with, what deals are close to signing, how much revenue is coming
+Invoices go out from the same platform. Stop paying for a separate invoicing tool
+Rank tracking and local search grid impress clients with visual data. Pull up their keyword positions and local rankings in a client call
+Generate content drafts quickly when clients need blog posts. Quality gates make sure the output is solid even when you're moving fast
+Reports are generated from real platform data. Hand clients a professional report instead of a spreadsheet you built manually
+BYOK means you connect your own OpenAI and image API keys. You control costs directly
+
+Freelance Content Writers
+You write a lot of posts. Speed and consistency are how you make a living. More posts per day means more income.
+Use IndexFlow because:
+Bulk draft generation means you're editing and refining instead of writing from scratch. Your output doubles or triples
+Quality gates catch structural problems before you deliver to clients. Word count, headings, FAQ sections, image coverage -- automatically checked
+Images resolve automatically with proper alt text. You stop spending time on Unsplash searching for photos and writing metadata
+Publish directly to client CMS platforms. No more emailing Google Docs and waiting for the client to copy-paste into WordPress
+Schema markup is handled. You deliver SEO-ready content with structured data without needing to understand JSON-LD
+Link builder suggests internal links based on the client's existing content. You deliver more valuable posts because they're properly connected to the client's site
+
+In-House Marketing Teams
+You're not an agency. You manage content and SEO for your own company. You have a small team and a lot of competing priorities.
+Use IndexFlow because:
+Content pipeline is organized in one place. See what's drafted, what's in review, what's scheduled, what's published
+Rank tracker shows your keyword positions without needing an expensive SEO tool subscription
+Schema markup is automatic on every blog post. Your team doesn't need a developer to add structured data
+Link builder finds opportunities to connect your existing content. Strengthens your site's internal linking without a manual audit
+On-page auditor finds technical SEO issues on your site. Fix problems before they hurt rankings
+Reports show leadership real numbers on content output and SEO performance. Pull them in seconds instead of building a deck
+
+White-Label Resellers
+You want to sell a SaaS product without building one. You're a business person, not a developer.
+Use IndexFlow because:
+The platform is built. Content engine, SEO tools, CRM, invoicing, reports, chat widget, voice, SMS, schema detection, link building, CMS publishing. All of it. Already working.
+Put your brand on it. Logo, colors, domain, support email. Your customers have no idea IndexFlow exists
+Set your own pricing. Charge whatever the market will bear. Your cost is the IndexFlow platform fee
+Launch in days. Not months of development. Not hiring engineers. Not managing servers
+Your customers get a genuinely powerful product. This isn't a thin white-label wrapper. It's a full platform with real functionality
+As IndexFlow adds features, your product gets better automatically. You don't maintain anything
+
+Media and Publishing Companies
+You publish editorial content across multiple properties. Volume is high. SEO is critical for traffic. Consistency across publications matters.
+Use IndexFlow because:
+Bulk content generation scales to your volume. Generate campaigns of 20-50 posts per publication per month
+Quality gates enforce editorial standards across all writers and publications consistently
+Schema markup ensures every article has proper structured data for Google News and rich results
+CMS integration publishes to multiple properties on different platforms without separate workflows
+Link builder connects content across your properties. Cross-publication internal linking done automatically
+Reports show content performance across all properties in one view
+
+E-commerce Brands
+You sell products online. Content drives organic traffic. Local search matters if you have physical locations.
+Use IndexFlow because:
+Generate product-focused blog content (buying guides, comparisons, how-tos) at scale with AI
+Schema markup auto-detects Product, Review, and FAQ schemas on relevant content. Rich results drive click-through rates
+Local search grid shows how your stores rank across different locations. See where you're visible and where you're not
+Rank tracker monitors your target keywords across all product categories
+Publish content directly to your Shopify or Wix store blog
+Link builder connects your blog content to product pages automatically. Every article drives traffic to something you sell
+
+Every ICP has the same fundamental problem: too many tools, too much manual work, too much time spent on operations instead of results. IndexFlow consolidates it into one platform and lets you focus on the work that actually matters.
+
+
+
+Plugins and integrations -- we've got you covered before and after you publish:
+
+Before you publish:
+IndexFlow works with you during the entire content creation process. Before a single word goes live on your site, the platform has already:
+Generated AI-drafted content with enforced quality standards
+Pulled in stock images with SEO-optimized alt text and captions automatically
+Auto-detected the right schema.org markup and generated the JSON-LD
+Scanned for internal linking opportunities and inserted links to your existing pages
+Validated that all link rel attributes are correct -- dofollow internal, nofollow external
+Checked anchor text diversity so you're not over-optimizing
+Verified image alt text coverage across every image in the post
+Run the content through quality gates -- word count, heading count, FAQ section, duplicate detection
+Formatted everything for your specific CMS platform so it's ready to go
+You review, approve, and hit publish. That's it.
+
+After you publish:
+This is where most tools stop. IndexFlow doesn't.
+WordPress plugin: Content syncs directly to your WordPress site. Posts arrive with featured images, categories, tags, meta descriptions, and schema markup already in place. No reformatting. No missing images. No broken metadata. Updates push automatically.
+Shopify integration: Blog posts publish straight to your Shopify store blog. Product schema, review schema, FAQ schema -- all included. Your content drives traffic to product pages because the link builder already connected them.
+Webflow integration: Content publishes to your Webflow CMS collections. Formatted for Webflow's structure. No manual field mapping.
+Ghost integration: Posts push directly to Ghost with proper formatting, tags, and metadata.
+Wix integration: Content publishes to your Wix blog. Structured data included.
+After content is live, IndexFlow keeps working:
+Rank Tracker monitors how your published content performs in search results over time. See which posts are climbing, which are dropping, which keywords are gaining traction.
+Local Search Grid shows how your pages rank across geographic locations after publishing. A restaurant post you published last month -- is it ranking in the neighborhoods that matter?
+Google Search Console ingestion pulls in real click, impression, CTR, and position data for your published content. See what Google actually thinks about your pages.
+Link health checker continuously monitors links in your published content. Finds broken outbound links before they hurt your SEO. Catches dead internal links when pages get removed.
+Cross-post link builder keeps indexing new content as you publish. Every new post creates new linking opportunities to older content. The platform suggests them. You approve or bulk auto-link.
+On-page auditor recrawls your site and catches new technical SEO issues -- missing meta tags, slow pages, broken images, redirect chains. Problems that appear after launch, not before.
+Reports track published content performance over time. Word counts, schema coverage, ranking changes, traffic trends. Save snapshots month over month. Show clients the trajectory, not just a single data point.
+
+The point:
+Most content tools help you write. Then you're on your own.
+Most SEO tools help you track. But they don't help you create.
+Most CMS plugins handle publishing. But they don't check your SEO before you hit publish and they don't monitor it after.
+IndexFlow covers the entire lifecycle:
+Create (AI drafts, quality gates, image resolution, schema detection)
+then Optimize (link building, post validation, internal linking, schema markup)
+then Publish (WordPress, Shopify, Webflow, Ghost, Wix -- one click)
+then Monitor (rank tracking, local grid, GSC data, link health, site audits)
+then Report (content stats, SEO performance, revenue tracking, saved snapshots)
+Before and after. Start to finish. We've got you covered.
+
+
+
+
+
+
+CMS Integration:
+IndexFlow publishes content directly from the platform to your website's content management system. No copy-pasting, no reformatting, no switching between tools.
+The five supported platforms:
+WordPress -- The most common CMS. IndexFlow pushes posts to your WordPress site with the title, body content, featured image, categories, tags, meta description, excerpt, and schema markup all included. Works with self-hosted WordPress and WordPress.com. Your writers never need to log into the WordPress admin.
+Shopify -- For e-commerce stores with a blog. IndexFlow publishes blog posts to your Shopify store blog with proper formatting, images, and tags. Product-focused content like buying guides and comparisons go straight to your store. Schema markup (Product, Review, FAQ) is included so your content is eligible for rich results in search.
+Webflow -- For agencies and designers using Webflow's visual CMS. IndexFlow pushes content into Webflow CMS collections with the fields mapped correctly. No manual field-by-field entry. Your Webflow site updates with new content automatically.
+Ghost -- For publishers and content-focused sites using Ghost as their blogging platform. Posts publish with proper formatting, tags, featured images, and metadata. Ghost's clean publishing workflow stays clean because everything arrives ready to go.
+Wix -- For small businesses and local companies on Wix. Blog posts publish directly to the Wix blog with images, metadata, and structured data. Business owners on Wix get the same automated publishing that agencies on WordPress get.
+What this means in practice:
+You have 30 clients. Some are on WordPress. Some are on Shopify. One's on Webflow. A few are on Wix. One publication runs Ghost.
+Without IndexFlow: You log into 30 different CMS dashboards. You copy content from your writing tool. You paste it in. You reformat it. You upload images. You add alt text. You paste meta descriptions. You set categories and tags. You add schema markup manually. For every single post. For every single client.
+With IndexFlow: You write the content once. You pick the client. You hit publish. Done. The platform knows which CMS they're on and formats everything correctly for that platform.
+Same content, same workflow, five different CMS platforms. You don't think about it.
+
+
+IndexFlow Pricing:
+
+Solo -- $99/month
+For solo founders, freelancers, and local businesses
+1 user
+1 workspace
+40 AI-generated posts per month
+Content grading on all posts (quality gates: word count 1500-2500, heading count 6+, FAQ section, duplicate detection, image placeholder coverage)
+Core pages and posts management
+Rank Tracker -- up to 1,000 keywords, 1 free check per calendar week (auto-applied every Monday), buy instant refresh credits (5 for $10 or 25 for $35)
+Local Search Grid -- 5x5 grid, 1 free weekly scan (auto-applied), buy instant scan credits (5 for $10 or 25 for $35)
+Google Search Console integration -- pull in real clicks, impressions, CTR, and position data from Google directly into your dashboard
+Full CRM -- contacts, customizable pipeline stages, deals with value tracking, all managed per workspace
+Invoicing -- create and send invoices with line items, tax calculations, and status tracking (draft/sent/paid/overdue/cancelled)
+All 5 CMS integrations -- publish directly to WordPress, Shopify, Webflow, Ghost, and Wix with formatted content, images, tags, and schema markup
+Link Builder -- auto-suggest internal links between posts, bulk auto-link, orphan page detection
+Link Health -- auto-applied monitoring of all published links, catches broken outbound and dead internal links
+Post Validator -- scans content for correct rel attributes, anchor text diversity, link density, and image alt coverage
+Schema Markup auto-detection -- AI classifies posts into 20+ schema.org types and generates JSON-LD automatically
+On-Page SEO Auditor -- crawl site pages for technical SEO issues, missing tags, broken links, and performance problems
+Site Profiler -- crawl and inventory all pages on a client site for internal linking and CTA insertion during content generation
+AI Widget -- embeddable chat widget with AI-powered responses trained on the workspace's knowledge base
+Twilio integration -- AI phone assistant with voice calls, inbound/outbound SMS, call logging, and keyword auto-responses
+Domain mapping -- map a custom domain to each workspace for client-facing content and blog delivery
+Reports with export -- content stats, SEO performance, and revenue tracking with downloadable exports
+BYOK -- bring your own API keys for AI providers, image banks, and payment processors with AES-256-GCM encryption
+Multi-language support
+Support via email
+
+Professional -- $299/month
+For growing agencies and teams -- up to 50 clients
+3 users
+3 workspaces (buy additional workspaces up to 50)
+40 AI-generated posts per workspace per month
+Content grading on all posts
+Core pages and posts management per workspace
+Rank Tracker -- up to 1,000 keywords per workspace, 1 free check per calendar week (auto-applied), buy instant refresh credits (5 for $10 or 25 for $35)
+Local Search Grid -- 5x5 grid per workspace, 1 free weekly scan (auto-applied), buy instant scan credits (5 for $10 or 25 for $35)
+Google Search Console integration -- pull in real clicks, impressions, CTR, and position data per workspace
+Full CRM per workspace -- contacts, customizable pipeline stages, deals with value tracking
+Invoicing per workspace -- create and send invoices with line items, tax calculations, and status tracking
+All 5 CMS integrations -- publish directly to WordPress, Shopify, Webflow, Ghost, and Wix
+Link Builder -- auto-suggest internal links, bulk auto-link, orphan page detection per workspace
+Link Health -- auto-applied broken link monitoring on all published content
+Post Validator -- rel attribute checking, anchor diversity, link density, alt text coverage
+Schema Markup -- all 20+ types with auto-detection plus manual JSON-LD editing for advanced users
+On-Page SEO Auditor -- crawl and audit client sites for technical SEO issues
+Site Profiler -- page inventory and internal linking data per workspace
+AI Widget per workspace -- embeddable chat with AI responses trained on each workspace's knowledge base
+Twilio integration per workspace -- voice, SMS, call logging, keyword auto-responses
+Domain mapping per workspace -- custom domain for each client's content delivery
+Bulk content campaigns -- generate multiple posts across workspaces in batch operations
+Advanced reports with saved snapshots and export -- save monthly snapshots for client presentations
+BYOK for all providers
+Multi-language support
+Team roles and permissions
+Support via email + support tickets
+
+White Label Agency -- $499/month
+For established agencies reselling under their own brand -- up to 100 clients
+6 users
+100 workspaces
+40 AI-generated posts per workspace per month
+Content grading on all posts
+Core pages and posts management per workspace
+Rank Tracker -- up to 1,000 keywords per workspace, 1 free check per calendar week (auto-applied), buy instant refresh credits (5 for $10 or 25 for $35)
+Local Search Grid -- 5x5 grid per workspace, 1 free weekly scan (auto-applied), buy instant scan credits (5 for $10 or 25 for $35)
+Google Search Console integration -- real search data per workspace
+Full CRM per workspace -- contacts, pipeline, deals
+Invoicing per workspace -- line items, tax, status tracking
+All 5 CMS integrations -- WordPress, Shopify, Webflow, Ghost, Wix
+All SEO tools -- Link Builder, Link Health (auto-applied), Post Validator, On-Page Auditor, Site Profiler
+Schema Markup -- all types + JSON-LD editing
+AI Widget per workspace -- embeddable chat with per-workspace AI training
+Twilio integration per workspace -- voice, SMS, call logging
+Domain mapping per workspace -- custom domains for client content
+Bulk content campaigns -- batch content generation across workspaces
+Content moderation tools -- review and flag content across all workspaces
+Advanced reports with snapshots and export
+Full white label -- custom logo, brand name, colors, support email; clients see your brand, not IndexFlow
+Custom domain -- run the entire platform on your-agency.com
+BYOK for all providers (AI, images, payments, Twilio)
+Multi-language support
+Team roles and permissions
+Dedicated account manager
+Support via email + support tickets + live chat
+
+Enterprise -- Contact Sales
+For large agencies, networks, and reseller platforms -- unlimited everything
+Unlimited users
+Unlimited workspaces
+Unlimited AI-generated posts per workspace (fair use)
+Content grading on all posts
+Core pages and posts management per workspace
+Rank Tracker -- up to 1,000 keywords per workspace, 1 free check per calendar week (auto-applied), buy instant refresh credits
+Local Search Grid -- 5x5 grid per workspace, 1 free weekly scan (auto-applied), buy instant scan credits
+Google Search Console integration -- real search data per workspace
+Full CRM per workspace -- contacts, pipeline, deals
+Invoicing per workspace -- line items, tax, status tracking
+All CMS integrations -- WordPress, Shopify, Webflow, Ghost, Wix
+All SEO tools with Link Health auto-applied
+All schema types with JSON-LD editing
+AI Widget per workspace -- embeddable chat with per-workspace AI training
+Twilio integration per workspace -- voice, SMS, call logging
+Domain mapping per workspace
+Full white label with custom domain
+Super Admin Dashboard -- manage sub-agencies, platform analytics, MRR tracking, content moderation, API usage monitoring
+Multi-tenant reseller mode -- sell to your own agency clients under your brand
+API access -- programmatic access to all platform features
+Custom feature flags and usage limits -- control what each tier can access
+SSO / SAML authentication -- enterprise single sign-on for your organization
+Dedicated infrastructure -- isolated resources for performance and security
+SLA with uptime guarantee -- contractual uptime commitment
+Onboarding and training -- guided setup for your team
+Dedicated success manager -- named contact for ongoing support
+Multi-language support
+Support via email + support tickets + live chat + phone
+
+What's the same across all tiers:
+Feature
+All tiers
+Rank Tracker keyword cap
+1,000 keywords per workspace
+Rank Tracker free refresh
+1 check per calendar week (auto-applied every Monday)
+Rank Tracker instant credits
+Buy 5 for $10 or 25 for $35
+Local Search Grid size
+5x5 grid
+Local Search Grid free scan
+1 weekly scan (auto-applied)
+Grid instant scan credits
+Buy 5 for $10 or 25 for $35
+Content grading
+All posts graded automatically
+Core pages and posts
+Full access per workspace
+Full CRM
+Contacts, pipeline, deals per workspace
+AI Widget
+Per workspace with knowledge base training
+Twilio (voice + SMS)
+Per workspace with call logging
+Domain mapping
+Per workspace
+Link Health
+Auto-applied on all published content
+All 5 CMS integrations
+WordPress, Shopify, Webflow, Ghost, Wix
+Schema Markup
+All 20+ types, auto-detection
+On-Page SEO Auditor
+Full access
+Link Builder + Post Validator
+Full access
+Site Profiler
+Full access
+Google Search Console
+Full access
+Invoicing
+Per workspace
+AI posts per workspace
+40/month
+Multi-language
+Yes
+BYOK
+Yes
+
+What changes between tiers:
+Feature
+Solo
+Professional
+White Label Agency
+Enterprise
+Users
+1
+3
+6
+Unlimited
+Workspaces
+1
+3 (up to 50)
+100
+Unlimited
+White label
+No
+No
+Yes
+Yes
+Custom domain
+No
+No
+Yes
+Yes
+Super Admin Dashboard
+No
+No
+No
+Yes
+Multi-tenant reseller
+No
+No
+No
+Yes
+Team roles
+No
+Yes
+Yes
+Yes
+Bulk campaigns
+No
+Yes
+Yes
+Yes
+Content moderation
+No
+No
+Yes
+Yes
+Support
+Email
+Email + tickets
+Email + tickets + chat
+Full
+
+
+Annual pricing: 2 months free (pay for 10, get 12)
+Plan
+Monthly
+Annual (per month)
+Solo
+$99
+$83
+Professional
+$299
+$249
+White Label Agency
+$499
+$416
+Enterprise
+Custom
+Custom
+
+
