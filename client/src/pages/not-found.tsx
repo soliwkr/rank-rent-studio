@@ -18,7 +18,7 @@ export default function NotFound() {
     <Layout>
       <SEO 
         title="Page Not Found" 
-        description="The page you're looking for doesn't exist. Browse our restaurant booking software, pricing, or contact us for help."
+        description="The page you're looking for doesn't exist. Browse our SEO and content management platform, pricing, or contact us for help."
         canonical="/404"
       />
       <section className="py-16 lg:py-24">
