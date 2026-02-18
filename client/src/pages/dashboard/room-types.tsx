@@ -14,7 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 
 interface RoomType {
   id: string;
-  venueId: string;
+  workspaceId: string;
   name: string;
   description: string | null;
   basePrice: string;
@@ -26,7 +26,7 @@ interface RoomType {
 }
 
 export default function RoomTypes() {
-  const { venueId } = useParams<{ venueId: string }>();
+  const { workspaceId } = useParams<{ workspaceId: string }>();
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingType, setEditingType] = useState<RoomType | null>(null);
@@ -43,14 +43,14 @@ export default function RoomTypes() {
   }, []);
 
   const { data: roomTypes = [], isLoading } = useQuery<RoomType[]>({
-    queryKey: ["/api/venues", venueId, "room-types"],
+    queryKey: ["/api/workspaces", workspaceId, "room-types"],
   });
 
   const createMutation = useMutation({
     mutationFn: (data: typeof formData) =>
-      apiRequest("POST", `/api/venues/${venueId}/room-types`, data),
+      apiRequest("POST", `/api/workspaces/${workspaceId}/room-types`, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "room-types"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "room-types"] });
       toast({ title: "Room type created", description: "The room type has been added." });
       resetForm();
       setIsDialogOpen(false);
@@ -64,7 +64,7 @@ export default function RoomTypes() {
     mutationFn: ({ id, data }: { id: string; data: typeof formData }) =>
       apiRequest("PATCH", `/api/room-types/${id}`, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "room-types"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "room-types"] });
       toast({ title: "Room type updated", description: "Changes have been saved." });
       resetForm();
       setIsDialogOpen(false);
@@ -78,7 +78,7 @@ export default function RoomTypes() {
     mutationFn: (id: string) =>
       apiRequest("DELETE", `/api/room-types/${id}`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "room-types"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "room-types"] });
       toast({ title: "Room type deleted", description: "The room type has been removed." });
     },
     onError: () => {

@@ -1,10 +1,8 @@
 import { ReactNode } from "react";
 import { Link, useLocation } from "wouter";
-import { useVenue } from "@/lib/venue-context";
+import { useWorkspace } from "@/lib/workspace-context";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useQuery } from "@tanstack/react-query";
-import type { Venue } from "@shared/schema";
 import {
   Calendar, Phone, BarChart3, Settings, Clock, Users, CreditCard, X as XIcon,
   Building2, Bed, BookOpen, HelpCircle, Download, Search, Globe, FileText,
@@ -80,12 +78,8 @@ const navSections = [
 
 export function DashboardLayout({ children }: { children: ReactNode }) {
   const [location] = useLocation();
-  const { selectedVenue, setSelectedVenue } = useVenue();
+  const { selectedWorkspace, selectWorkspace, workspaces } = useWorkspace();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  const { data: venues = [] } = useQuery<Venue[]>({
-    queryKey: ["/api/venues"],
-  });
 
   return (
     <div className="flex h-screen w-full" data-testid="dashboard-layout">
@@ -95,12 +89,12 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
           <span className="font-bold text-lg">indexFlow</span>
         </div>
         <div className="p-3 border-b">
-          <Select value={selectedVenue || ""} onValueChange={setSelectedVenue}>
-            <SelectTrigger data-testid="select-venue">
-              <SelectValue placeholder="Select venue" />
+          <Select value={selectedWorkspace?.id || ""} onValueChange={(id) => { const w = workspaces.find(v => v.id === id) || null; selectWorkspace(w); }}>
+            <SelectTrigger data-testid="select-workspace">
+              <SelectValue placeholder="Select workspace" />
             </SelectTrigger>
             <SelectContent>
-              {venues.map((v) => (
+              {workspaces.map((v) => (
                 <SelectItem key={v.id} value={v.id}>{v.name}</SelectItem>
               ))}
             </SelectContent>

@@ -17,7 +17,7 @@ import { Link } from "wouter";
 
 interface TwilioSettingsData {
   id: number;
-  venueId: string;
+  workspaceId: string;
   accountSid: string | null;
   authToken: string | null;
   phoneNumber: string | null;
@@ -31,7 +31,7 @@ interface TwilioSettingsData {
 }
 
 export default function SettingsTwilioVoice() {
-  const { venueId } = useParams<{ venueId: string }>();
+  const { workspaceId } = useParams<{ workspaceId: string }>();
   const { toast } = useToast();
   
   const [twilioConnected, setTwilioConnected] = useState(false);
@@ -45,7 +45,7 @@ export default function SettingsTwilioVoice() {
   const [maxCallDuration, setMaxCallDuration] = useState("5");
 
   const { data: settings } = useQuery<TwilioSettingsData>({
-    queryKey: ["/api/venues", venueId, "twilio-settings"],
+    queryKey: ["/api/workspaces", workspaceId, "twilio-settings"],
   });
 
   useEffect(() => {
@@ -64,35 +64,35 @@ export default function SettingsTwilioVoice() {
   }, []);
 
   const connectMutation = useMutation({
-    mutationFn: () => apiRequest("PUT", `/api/venues/${venueId}/twilio-settings`, {
-      venueId, accountSid, authToken, phoneNumber, isConnected: true,
+    mutationFn: () => apiRequest("PUT", `/api/workspaces/${workspaceId}/twilio-settings`, {
+      workspaceId, accountSid, authToken, phoneNumber, isConnected: true,
       voicePersona, phoneGreeting: voiceGreeting, maxCallDuration: parseInt(maxCallDuration), voicemailEnabled: enableVoicemail,
     }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "twilio-settings"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "twilio-settings"] });
       toast({ title: "Twilio Connected" });
     },
     onError: () => toast({ title: "Error", description: "Failed to connect.", variant: "destructive" }),
   });
 
   const saveMutation = useMutation({
-    mutationFn: () => apiRequest("PUT", `/api/venues/${venueId}/twilio-settings`, {
-      venueId, voicePersona, phoneGreeting: voiceGreeting, maxCallDuration: parseInt(maxCallDuration),
+    mutationFn: () => apiRequest("PUT", `/api/workspaces/${workspaceId}/twilio-settings`, {
+      workspaceId, voicePersona, phoneGreeting: voiceGreeting, maxCallDuration: parseInt(maxCallDuration),
       voicemailEnabled: enableVoicemail, isConnected: twilioConnected,
     }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "twilio-settings"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "twilio-settings"] });
       toast({ title: "Voice settings saved" });
     },
     onError: () => toast({ title: "Error", description: "Failed to save.", variant: "destructive" }),
   });
 
   const disconnectMutation = useMutation({
-    mutationFn: () => apiRequest("PUT", `/api/venues/${venueId}/twilio-settings`, {
-      venueId, isConnected: false, accountSid: null, authToken: null, phoneNumber: null,
+    mutationFn: () => apiRequest("PUT", `/api/workspaces/${workspaceId}/twilio-settings`, {
+      workspaceId, isConnected: false, accountSid: null, authToken: null, phoneNumber: null,
     }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "twilio-settings"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "twilio-settings"] });
       setTwilioConnected(false);
       setAccountSid("");
       setAuthToken("");
@@ -111,7 +111,7 @@ export default function SettingsTwilioVoice() {
     <DashboardLayout>
       <div className="space-y-6">
         <div className="flex items-center gap-4">
-          <Link href={`/${venueId}/settings/train-widget`}>
+          <Link href={`/${workspaceId}/settings/train-widget`}>
             <Button variant="ghost" size="icon" data-testid="button-back-training">
               <ArrowLeft className="w-4 h-4" />
             </Button>

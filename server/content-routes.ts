@@ -1,7 +1,7 @@
 import type { Express, Request, Response } from "express";
 import { storage } from "./storage";
 import { compileMdxToHtml } from "./mdx-compiler";
-import { insertVenueBlogPostSchema, insertVenueDomainSchema, insertContentAssetSchema, insertContentAssetUsageSchema, insertInvoiceSchema, insertInvoiceLineItemSchema, insertContentReportSchema, blogTemplates } from "@shared/schema";
+import { insertWorkspaceBlogPostSchema, insertWorkspaceDomainSchema, insertContentAssetSchema, insertContentAssetUsageSchema, insertInvoiceSchema, insertInvoiceLineItemSchema, insertContentReportSchema, blogTemplates } from "@shared/schema";
 import { z } from "zod";
 import { bulkCreateDraftPosts, generateCampaignDrafts, generateSingleDraft } from "./draft-generator";
 import { randomUUID } from "crypto";
@@ -36,8 +36,6 @@ function normalizeTags(tags: any): string[] | null {
 function isSuperAdmin(req: Request): boolean {
   const session = (req as any).session;
   if (session?.adminRole === "super_admin") return true;
-  const authHeader = req.headers["x-admin-role"];
-  if (authHeader === "super_admin") return true;
   return false;
 }
 
@@ -51,11 +49,11 @@ function requireSuperAdmin(req: Request, res: Response): boolean {
 
 export function registerContentRoutes(app: Express) {
 
-  app.get("/api/admin/venues", async (req, res) => {
+  app.get("/api/workspaces", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      const venues = await storage.getVenues();
-      const restoVenue = {
+      const workspaces = await storage.getWorkspaces();
+      const restoWorkspace = {
         id: "resto-platform",
         shardId: 0,
         ownerId: "system",
@@ -77,34 +75,34 @@ export function registerContentRoutes(app: Express) {
         createdAt: new Date("2024-01-01"),
         updatedAt: new Date(),
       };
-      res.json([restoVenue, ...venues]);
+      res.json([restoWorkspace, ...workspaces]);
     } catch (err: any) {
       res.status(500).json({ error: err.message });
     }
   });
 
-  app.post("/api/admin/blog/posts", async (req, res) => {
+  app.post("/api/blog/posts", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      const data = insertVenueBlogPostSchema.parse({
+      const data = insertWorkspaceBlogPostSchema.parse({
         ...req.body,
         category: normalizeCategory(req.body.category),
         tags: normalizeTags(req.body.tags),
       });
-      const post = await storage.createVenueBlogPost(data);
+      const post = await storage.createWorkspaceBlogPost(data);
       res.status(201).json(post);
     } catch (err: any) {
       res.status(400).json({ error: err.message });
     }
   });
 
-  app.put("/api/admin/blog/posts/:id", async (req, res) => {
+  app.put("/api/blog/posts/:id", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
       const updates = { ...req.body };
       if ("category" in updates) updates.category = normalizeCategory(updates.category);
       if ("tags" in updates) updates.tags = normalizeTags(updates.tags);
-      const post = await storage.updateVenueBlogPost(req.params.id, updates);
+      const post = await storage.updateWorkspaceBlogPost(req.params.id, updates);
       if (!post) return res.status(404).json({ error: "Post not found" });
       res.json(post);
     } catch (err: any) {
@@ -112,23 +110,23 @@ export function registerContentRoutes(app: Express) {
     }
   });
 
-  app.get("/api/admin/blog/posts", async (req, res) => {
+  app.get("/api/blog/posts", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      const venueId = req.query.venueId as string;
-      if (!venueId) return res.status(400).json({ error: "venueId required" });
+      const workspaceId = req.query.workspaceId as string;
+      if (!workspaceId) return res.status(400).json({ error: "workspaceId required" });
       const status = req.query.status as string | undefined;
-      const posts = await storage.getVenueBlogPosts(venueId, status);
+      const posts = await storage.getWorkspaceBlogPosts(workspaceId, status);
       res.json(posts);
     } catch (err: any) {
       res.status(500).json({ error: err.message });
     }
   });
 
-  app.get("/api/admin/blog/posts/:id", async (req, res) => {
+  app.get("/api/blog/posts/:id", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      const post = await storage.getVenueBlogPost(req.params.id);
+      const post = await storage.getWorkspaceBlogPost(req.params.id);
       if (!post) return res.status(404).json({ error: "Post not found" });
       res.json(post);
     } catch (err: any) {
@@ -136,10 +134,10 @@ export function registerContentRoutes(app: Express) {
     }
   });
 
-  app.delete("/api/admin/blog/posts/:id", async (req, res) => {
+  app.delete("/api/blog/posts/:id", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      const deleted = await storage.deleteVenueBlogPost(req.params.id);
+      const deleted = await storage.deleteWorkspaceBlogPost(req.params.id);
       if (!deleted) return res.status(404).json({ error: "Post not found" });
       res.json({ success: true });
     } catch (err: any) {
@@ -147,10 +145,10 @@ export function registerContentRoutes(app: Express) {
     }
   });
 
-  app.post("/api/admin/blog/posts/:id/publish-now", async (req, res) => {
+  app.post("/api/blog/posts/:id/publish-now", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      const post = await storage.getVenueBlogPost(req.params.id);
+      const post = await storage.getWorkspaceBlogPost(req.params.id);
       if (!post) return res.status(404).json({ error: "Post not found" });
 
       const { html, errors } = await compileMdxToHtml(post.mdxContent);
@@ -158,7 +156,7 @@ export function registerContentRoutes(app: Express) {
         return res.status(400).json({ error: "MDX compilation failed", errors });
       }
 
-      const updated = await storage.updateVenueBlogPost(post.id, {
+      const updated = await storage.updateWorkspaceBlogPost(post.id, {
         compiledHtml: html,
         status: "published",
         publishedAt: new Date(),
@@ -169,10 +167,10 @@ export function registerContentRoutes(app: Express) {
     }
   });
 
-  app.post("/api/admin/blog/posts/:id/process-images", async (req, res) => {
+  app.post("/api/blog/posts/:id/process-images", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      const post = await storage.getVenueBlogPost(req.params.id);
+      const post = await storage.getWorkspaceBlogPost(req.params.id);
       if (!post) return res.status(404).json({ error: "Post not found" });
 
       const mdx = post.mdxContent;
@@ -263,10 +261,10 @@ ${placeholders.map((p, i) => `${i + 1}. "${p.prompt}"`).join("\n")}`;
     }
   });
 
-  app.post("/api/admin/blog/posts/:id/apply-images", async (req, res) => {
+  app.post("/api/blog/posts/:id/apply-images", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      const post = await storage.getVenueBlogPost(req.params.id);
+      const post = await storage.getWorkspaceBlogPost(req.params.id);
       if (!post) return res.status(404).json({ error: "Post not found" });
 
       const { images } = req.body;
@@ -318,7 +316,7 @@ ${placeholders.map((p, i) => `${i + 1}. "${p.prompt}"`).join("\n")}`;
         return res.status(400).json({ error: "MDX compilation failed after image replacement", errors });
       }
 
-      const updated = await storage.updateVenueBlogPost(post.id, {
+      const updated = await storage.updateWorkspaceBlogPost(post.id, {
         mdxContent: updatedMdx,
         compiledHtml: html,
       });
@@ -333,16 +331,16 @@ ${placeholders.map((p, i) => `${i + 1}. "${p.prompt}"`).join("\n")}`;
     }
   });
 
-  app.post("/api/admin/blog/posts/:id/schedule", async (req, res) => {
+  app.post("/api/blog/posts/:id/schedule", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
       const { publish_at } = req.body;
       if (!publish_at) return res.status(400).json({ error: "publish_at required" });
 
-      const post = await storage.getVenueBlogPost(req.params.id);
+      const post = await storage.getWorkspaceBlogPost(req.params.id);
       if (!post) return res.status(404).json({ error: "Post not found" });
 
-      const updated = await storage.updateVenueBlogPost(post.id, {
+      const updated = await storage.updateWorkspaceBlogPost(post.id, {
         status: "scheduled",
         publishAt: new Date(publish_at),
       });
@@ -352,7 +350,7 @@ ${placeholders.map((p, i) => `${i + 1}. "${p.prompt}"`).join("\n")}`;
     }
   });
 
-  app.post("/api/admin/content/preview", async (req, res) => {
+  app.post("/api/content/preview", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
       const { mdx } = req.body;
@@ -364,7 +362,7 @@ ${placeholders.map((p, i) => `${i + 1}. "${p.prompt}"`).join("\n")}`;
     }
   });
 
-  app.get("/api/admin/assets/search", async (req, res) => {
+  app.get("/api/assets/search", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
       const source = (req.query.source as string) || "pexels";
@@ -440,7 +438,7 @@ ${placeholders.map((p, i) => `${i + 1}. "${p.prompt}"`).join("\n")}`;
     }
   });
 
-  app.post("/api/admin/assets/save", async (req, res) => {
+  app.post("/api/assets/save", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
       const data = insertContentAssetSchema.parse(req.body);
@@ -454,7 +452,7 @@ ${placeholders.map((p, i) => `${i + 1}. "${p.prompt}"`).join("\n")}`;
     }
   });
 
-  app.post("/api/admin/blog/posts/:postId/assets/attach", async (req, res) => {
+  app.post("/api/blog/posts/:postId/assets/attach", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
       const data = insertContentAssetUsageSchema.parse({
@@ -468,30 +466,30 @@ ${placeholders.map((p, i) => `${i + 1}. "${p.prompt}"`).join("\n")}`;
     }
   });
 
-  app.get("/api/admin/blog/domains", async (req, res) => {
+  app.get("/api/blog/domains", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      const venueId = req.query.venueId as string;
-      if (!venueId) return res.status(400).json({ error: "venueId required" });
-      const domains = await storage.getVenueDomains(venueId);
+      const workspaceId = req.query.workspaceId as string;
+      if (!workspaceId) return res.status(400).json({ error: "workspaceId required" });
+      const domains = await storage.getWorkspaceDomains(workspaceId);
       res.json(domains);
     } catch (err: any) {
       res.status(500).json({ error: err.message });
     }
   });
 
-  app.post("/api/admin/blog/domains", async (req, res) => {
+  app.post("/api/blog/domains", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      const data = insertVenueDomainSchema.parse(req.body);
-      const domain = await storage.createVenueDomain(data);
+      const data = insertWorkspaceDomainSchema.parse(req.body);
+      const domain = await storage.createWorkspaceDomain(data);
       res.status(201).json(domain);
     } catch (err: any) {
       res.status(400).json({ error: err.message });
     }
   });
 
-  app.patch("/api/admin/blog/domains/:id", async (req, res) => {
+  app.patch("/api/blog/domains/:id", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
       const updateSchema = z.object({
@@ -501,7 +499,7 @@ ${placeholders.map((p, i) => `${i + 1}. "${p.prompt}"`).join("\n")}`;
         accentForeground: z.string().max(20).optional().nullable(),
       });
       const data = updateSchema.parse(req.body);
-      const updated = await storage.updateVenueDomain(req.params.id, data);
+      const updated = await storage.updateWorkspaceDomain(req.params.id, data);
       if (!updated) return res.status(404).json({ error: "Domain not found" });
       res.json(updated);
     } catch (err: any) {
@@ -509,10 +507,10 @@ ${placeholders.map((p, i) => `${i + 1}. "${p.prompt}"`).join("\n")}`;
     }
   });
 
-  app.delete("/api/admin/blog/domains/:id", async (req, res) => {
+  app.delete("/api/blog/domains/:id", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      const deleted = await storage.deleteVenueDomain(req.params.id);
+      const deleted = await storage.deleteWorkspaceDomain(req.params.id);
       if (!deleted) return res.status(404).json({ error: "Domain not found" });
       res.json({ success: true });
     } catch (err: any) {
@@ -521,7 +519,7 @@ ${placeholders.map((p, i) => `${i + 1}. "${p.prompt}"`).join("\n")}`;
   });
 
   const bulkCreateSchema = z.object({
-    venueId: z.string().min(1),
+    workspaceId: z.string().min(1),
     posts: z.array(z.object({
       title: z.string().min(1),
       primaryKeyword: z.string().min(1),
@@ -531,20 +529,20 @@ ${placeholders.map((p, i) => `${i + 1}. "${p.prompt}"`).join("\n")}`;
     })).min(1).max(50),
   });
 
-  app.post("/api/admin/blog/posts/bulk/create", async (req, res) => {
+  app.post("/api/blog/posts/bulk/create", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
       const data = bulkCreateSchema.parse(req.body);
       const campaignId = randomUUID();
       await storage.createContentCampaign({
         id: campaignId,
-        venueId: data.venueId,
+        workspaceId: data.workspaceId,
         name: `Bulk ${new Date().toISOString().slice(0, 10)}`,
         status: "active",
         postsTotal: data.posts.length,
       });
       const posts = await bulkCreateDraftPosts({
-        venueId: data.venueId,
+        workspaceId: data.workspaceId,
         campaignId,
         posts: data.posts,
       });
@@ -554,12 +552,12 @@ ${placeholders.map((p, i) => `${i + 1}. "${p.prompt}"`).join("\n")}`;
     }
   });
 
-  app.post("/api/admin/blog/posts/bulk/generate", async (req, res) => {
+  app.post("/api/blog/posts/bulk/generate", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      const { venueId, campaignId } = req.body;
-      if (!venueId || !campaignId) {
-        return res.status(400).json({ error: "venueId and campaignId required" });
+      const { workspaceId, campaignId } = req.body;
+      if (!workspaceId || !campaignId) {
+        return res.status(400).json({ error: "workspaceId and campaignId required" });
       }
 
       res.writeHead(200, {
@@ -574,7 +572,7 @@ ${placeholders.map((p, i) => `${i + 1}. "${p.prompt}"`).join("\n")}`;
 
       sendSSE({ type: "started" });
 
-      const result = await generateCampaignDrafts(venueId, campaignId, (completed, total) => {
+      const result = await generateCampaignDrafts(workspaceId, campaignId, (completed, total) => {
         sendSSE({ type: "progress", completed, total });
       });
 
@@ -590,10 +588,10 @@ ${placeholders.map((p, i) => `${i + 1}. "${p.prompt}"`).join("\n")}`;
     }
   });
 
-  app.post("/api/admin/blog/posts/:id/regenerate", async (req, res) => {
+  app.post("/api/blog/posts/:id/regenerate", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      await storage.updateVenueBlogPost(req.params.id, {
+      await storage.updateWorkspaceBlogPost(req.params.id, {
         generationStatus: "pending",
         qualityGateStatus: "unknown",
         qualityFailReasons: null,
@@ -607,10 +605,10 @@ ${placeholders.map((p, i) => `${i + 1}. "${p.prompt}"`).join("\n")}`;
     }
   });
 
-  app.post("/api/admin/blog/posts/:id/approve-and-schedule", async (req, res) => {
+  app.post("/api/blog/posts/:id/approve-and-schedule", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      const post = await storage.getVenueBlogPost(req.params.id);
+      const post = await storage.getWorkspaceBlogPost(req.params.id);
       if (!post) return res.status(404).json({ error: "Post not found" });
 
       const { publish_at } = req.body;
@@ -621,7 +619,7 @@ ${placeholders.map((p, i) => `${i + 1}. "${p.prompt}"`).join("\n")}`;
       }
 
       if (publish_at) {
-        const updated = await storage.updateVenueBlogPost(post.id, {
+        const updated = await storage.updateWorkspaceBlogPost(post.id, {
           compiledHtml: html,
           status: "scheduled",
           publishAt: new Date(publish_at),
@@ -630,7 +628,7 @@ ${placeholders.map((p, i) => `${i + 1}. "${p.prompt}"`).join("\n")}`;
         });
         res.json(updated);
       } else {
-        const updated = await storage.updateVenueBlogPost(post.id, {
+        const updated = await storage.updateWorkspaceBlogPost(post.id, {
           compiledHtml: html,
           status: "published",
           publishedAt: new Date(),
@@ -644,33 +642,33 @@ ${placeholders.map((p, i) => `${i + 1}. "${p.prompt}"`).join("\n")}`;
     }
   });
 
-  app.get("/api/admin/blog/campaigns/:venueId", async (req, res) => {
+  app.get("/api/blog/campaigns/:workspaceId", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      const campaigns = await storage.getVenueCampaigns(req.params.venueId);
+      const campaigns = await storage.getWorkspaceCampaigns(req.params.workspaceId);
       res.json(campaigns);
     } catch (err: any) {
       res.status(500).json({ error: err.message });
     }
   });
 
-  app.get("/api/admin/blog/posts/campaign/:venueId/:campaignId", async (req, res) => {
+  app.get("/api/blog/posts/campaign/:workspaceId/:campaignId", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      const posts = await storage.getVenueBlogPostsByCampaign(req.params.venueId, req.params.campaignId);
+      const posts = await storage.getWorkspaceBlogPostsByCampaign(req.params.workspaceId, req.params.campaignId);
       res.json(posts);
     } catch (err: any) {
       res.status(500).json({ error: err.message });
     }
   });
 
-  app.post("/api/admin/blog/export-mdx", async (req, res) => {
+  app.post("/api/blog/export-mdx", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      const { venueId } = req.body;
-      if (!venueId) return res.status(400).json({ error: "venueId required" });
+      const { workspaceId } = req.body;
+      if (!workspaceId) return res.status(400).json({ error: "workspaceId required" });
 
-      const posts = await storage.getVenueBlogPosts(venueId);
+      const posts = await storage.getWorkspaceBlogPosts(workspaceId);
       const exportable = posts.filter(p => p.mdxContent && p.mdxContent.length > 100);
 
       if (exportable.length === 0) {
@@ -734,12 +732,12 @@ ${placeholders.map((p, i) => `${i + 1}. "${p.prompt}"`).join("\n")}`;
       const domain = (req.query.domain as string) || req.hostname;
       const normalized = domain.toLowerCase().replace(/^www\./, "").split(":")[0];
 
-      const venueDomain = await storage.getVenueDomainByDomain(normalized);
+      const venueDomain = await storage.getWorkspaceDomainByDomain(normalized);
       if (!venueDomain) {
         return res.status(404).json({ error: "Domain not found" });
       }
 
-      const posts = await storage.getPublishedPostsByVenue(venueDomain.venueId);
+      const posts = await storage.getPublishedPostsByWorkspace(venueDomain.workspaceId);
       const safeList = posts.map(p => ({
         slug: p.slug,
         title: p.title,
@@ -768,12 +766,12 @@ ${placeholders.map((p, i) => `${i + 1}. "${p.prompt}"`).join("\n")}`;
       if (!slug) return res.status(400).json({ error: "slug required" });
 
       const normalized = domain.toLowerCase().replace(/^www\./, "").split(":")[0];
-      const venueDomain = await storage.getVenueDomainByDomain(normalized);
+      const venueDomain = await storage.getWorkspaceDomainByDomain(normalized);
       if (!venueDomain) {
         return res.status(404).json({ error: "Domain not found" });
       }
 
-      const post = await storage.getVenueBlogPostBySlug(venueDomain.venueId, slug);
+      const post = await storage.getWorkspaceBlogPostBySlug(venueDomain.workspaceId, slug);
       if (!post || post.status !== "published") {
         return res.status(404).json({ error: "Post not found" });
       }
@@ -919,15 +917,15 @@ ${placeholders.map((p, i) => `${i + 1}. "${p.prompt}"`).join("\n")}`;
     return base;
   }
 
-  app.get("/api/admin/blog/schema-types", async (req, res) => {
+  app.get("/api/blog/schema-types", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     res.json(SCHEMA_TYPES);
   });
 
-  app.get("/api/admin/blog/posts/:id/schema", async (req, res) => {
+  app.get("/api/blog/posts/:id/schema", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      const post = await storage.getVenueBlogPost(req.params.id);
+      const post = await storage.getWorkspaceBlogPost(req.params.id);
       if (!post) return res.status(404).json({ error: "Post not found" });
 
       res.json({
@@ -940,13 +938,13 @@ ${placeholders.map((p, i) => `${i + 1}. "${p.prompt}"`).join("\n")}`;
     }
   });
 
-  app.post("/api/admin/blog/posts/:id/schema/detect", async (req, res) => {
+  app.post("/api/blog/posts/:id/schema/detect", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      const post = await storage.getVenueBlogPost(req.params.id);
+      const post = await storage.getWorkspaceBlogPost(req.params.id);
       if (!post) return res.status(404).json({ error: "Post not found" });
 
-      const venue = await storage.getVenue(post.venueId);
+      const venue = await storage.getWorkspace(post.workspaceId);
       let detectedType: string;
       let confidence: number;
       let method: string;
@@ -996,7 +994,7 @@ Return ONLY valid JSON, no markdown.`;
 
       const schemaJson = generateSchemaJson(detectedType, post, venue);
 
-      const updated = await storage.updateVenueBlogPost(post.id, {
+      const updated = await storage.updateWorkspaceBlogPost(post.id, {
         schemaType: detectedType,
         schemaJson: schemaJson,
         schemaAutoDetected: true,
@@ -1016,10 +1014,10 @@ Return ONLY valid JSON, no markdown.`;
     }
   });
 
-  app.post("/api/admin/blog/posts/:id/schema/override", async (req, res) => {
+  app.post("/api/blog/posts/:id/schema/override", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      const post = await storage.getVenueBlogPost(req.params.id);
+      const post = await storage.getWorkspaceBlogPost(req.params.id);
       if (!post) return res.status(404).json({ error: "Post not found" });
 
       const { schemaType } = req.body;
@@ -1030,10 +1028,10 @@ Return ONLY valid JSON, no markdown.`;
         return res.status(400).json({ error: `Invalid schemaType. Must be one of: ${validTypes.join(", ")}` });
       }
 
-      const venue = await storage.getVenue(post.venueId);
+      const venue = await storage.getWorkspace(post.workspaceId);
       const schemaJson = generateSchemaJson(schemaType, post, venue);
 
-      const updated = await storage.updateVenueBlogPost(post.id, {
+      const updated = await storage.updateWorkspaceBlogPost(post.id, {
         schemaType,
         schemaJson,
         schemaAutoDetected: false,
@@ -1050,10 +1048,10 @@ Return ONLY valid JSON, no markdown.`;
     }
   });
 
-  app.post("/api/admin/blog/posts/:id/schema/edit-json", async (req, res) => {
+  app.post("/api/blog/posts/:id/schema/edit-json", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      const post = await storage.getVenueBlogPost(req.params.id);
+      const post = await storage.getWorkspaceBlogPost(req.params.id);
       if (!post) return res.status(404).json({ error: "Post not found" });
 
       const { schemaJson } = req.body;
@@ -1068,7 +1066,7 @@ Return ONLY valid JSON, no markdown.`;
 
       const schemaType = schemaJson["@type"];
 
-      const updated = await storage.updateVenueBlogPost(post.id, {
+      const updated = await storage.updateWorkspaceBlogPost(post.id, {
         schemaType,
         schemaJson,
         schemaAutoDetected: false,
@@ -1194,7 +1192,7 @@ Return ONLY valid JSON, no markdown.`;
     contentful: formatForContentful,
   };
 
-  app.get("/api/admin/blog/cms-formats", async (req, res) => {
+  app.get("/api/blog/cms-formats", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     res.json(CMS_FORMATS.map(f => ({
       value: f,
@@ -1202,10 +1200,10 @@ Return ONLY valid JSON, no markdown.`;
     })));
   });
 
-  app.post("/api/admin/blog/posts/:id/export-cms", async (req, res) => {
+  app.post("/api/blog/posts/:id/export-cms", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      const post = await storage.getVenueBlogPost(req.params.id);
+      const post = await storage.getWorkspaceBlogPost(req.params.id);
       if (!post) return res.status(404).json({ error: "Post not found" });
 
       const format = (req.body.format || "wordpress") as CmsFormat;
@@ -1227,18 +1225,18 @@ Return ONLY valid JSON, no markdown.`;
     }
   });
 
-  app.post("/api/admin/blog/export-cms-bulk", async (req, res) => {
+  app.post("/api/blog/export-cms-bulk", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      const { venueId, format: formatStr } = req.body;
-      if (!venueId) return res.status(400).json({ error: "venueId required" });
+      const { workspaceId, format: formatStr } = req.body;
+      if (!workspaceId) return res.status(400).json({ error: "workspaceId required" });
 
       const format = (formatStr || "wordpress") as CmsFormat;
       if (!CMS_FORMATS.includes(format)) {
         return res.status(400).json({ error: `Invalid format. Must be one of: ${CMS_FORMATS.join(", ")}` });
       }
 
-      const posts = await storage.getVenueBlogPosts(venueId);
+      const posts = await storage.getWorkspaceBlogPosts(workspaceId);
       const exportable = posts.filter(p => p.mdxContent && p.mdxContent.length > 100);
 
       const formatter = cmsFormatters[format];
@@ -1259,7 +1257,7 @@ Return ONLY valid JSON, no markdown.`;
     }
   });
 
-  app.get("/api/admin/invoices", async (req, res) => {
+  app.get("/api/invoices", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
       const workspaceId = req.query.workspaceId as string | undefined;
@@ -1270,7 +1268,7 @@ Return ONLY valid JSON, no markdown.`;
     }
   });
 
-  app.get("/api/admin/invoices/:id", async (req, res) => {
+  app.get("/api/invoices/:id", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
       const invoice = await storage.getInvoice(Number(req.params.id));
@@ -1282,7 +1280,7 @@ Return ONLY valid JSON, no markdown.`;
     }
   });
 
-  app.post("/api/admin/invoices", async (req, res) => {
+  app.post("/api/invoices", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
       const { lineItems, ...invoiceData } = req.body;
@@ -1302,7 +1300,7 @@ Return ONLY valid JSON, no markdown.`;
     }
   });
 
-  app.patch("/api/admin/invoices/:id", async (req, res) => {
+  app.patch("/api/invoices/:id", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
       const id = Number(req.params.id);
@@ -1323,7 +1321,7 @@ Return ONLY valid JSON, no markdown.`;
     }
   });
 
-  app.delete("/api/admin/invoices/:id", async (req, res) => {
+  app.delete("/api/invoices/:id", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
       const ok = await storage.deleteInvoice(Number(req.params.id));
@@ -1334,7 +1332,7 @@ Return ONLY valid JSON, no markdown.`;
     }
   });
 
-  app.get("/api/admin/content-reports", async (req, res) => {
+  app.get("/api/content-reports", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
       const workspaceId = req.query.workspaceId as string | undefined;
@@ -1345,7 +1343,7 @@ Return ONLY valid JSON, no markdown.`;
     }
   });
 
-  app.get("/api/admin/content-reports/:id", async (req, res) => {
+  app.get("/api/content-reports/:id", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
       const report = await storage.getContentReport(Number(req.params.id));
@@ -1356,7 +1354,7 @@ Return ONLY valid JSON, no markdown.`;
     }
   });
 
-  app.post("/api/admin/content-reports", async (req, res) => {
+  app.post("/api/content-reports", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
       const parsed = insertContentReportSchema.parse(req.body);
@@ -1368,7 +1366,7 @@ Return ONLY valid JSON, no markdown.`;
     }
   });
 
-  app.patch("/api/admin/content-reports/:id", async (req, res) => {
+  app.patch("/api/content-reports/:id", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
       const updated = await storage.updateContentReport(Number(req.params.id), req.body);
@@ -1379,7 +1377,7 @@ Return ONLY valid JSON, no markdown.`;
     }
   });
 
-  app.delete("/api/admin/content-reports/:id", async (req, res) => {
+  app.delete("/api/content-reports/:id", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
       const ok = await storage.deleteContentReport(Number(req.params.id));
@@ -1390,10 +1388,10 @@ Return ONLY valid JSON, no markdown.`;
     }
   });
 
-  app.post("/api/admin/blog/posts/:id/validate", async (req, res) => {
+  app.post("/api/blog/posts/:id/validate", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      const post = await storage.getVenueBlogPost(req.params.id);
+      const post = await storage.getWorkspaceBlogPost(req.params.id);
       if (!post) return res.status(404).json({ error: "Post not found" });
 
       const report = validatePost(post);
@@ -1410,13 +1408,13 @@ Return ONLY valid JSON, no markdown.`;
     }
   });
 
-  app.post("/api/admin/blog/validate-all", async (req, res) => {
+  app.post("/api/blog/validate-all", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      const { venueId, workspaceId } = req.body;
-      if (!venueId) return res.status(400).json({ error: "venueId required" });
+      const { workspaceId } = req.body;
+      if (!workspaceId) return res.status(400).json({ error: "workspaceId required" });
 
-      const posts = await storage.getVenueBlogPosts(venueId);
+      const posts = await storage.getWorkspaceBlogPosts(workspaceId);
       const reports = [];
 
       for (const post of posts) {
@@ -1446,7 +1444,7 @@ Return ONLY valid JSON, no markdown.`;
     }
   });
 
-  app.get("/api/admin/blog/posts/:id/validation", async (req, res) => {
+  app.get("/api/blog/posts/:id/validation", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
       const results = await storage.getPostValidationResults(req.params.id);
@@ -1456,16 +1454,16 @@ Return ONLY valid JSON, no markdown.`;
     }
   });
 
-  app.post("/api/admin/blog/posts/:id/index-keywords", async (req, res) => {
+  app.post("/api/blog/posts/:id/index-keywords", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      const post = await storage.getVenueBlogPost(req.params.id);
+      const post = await storage.getWorkspaceBlogPost(req.params.id);
       if (!post) return res.status(404).json({ error: "Post not found" });
 
       const entries = indexPostKeywords(post);
 
       await storage.deletePostKeywordIndexByPost(post.id);
-      const records = keywordEntriesToInsertRecords(entries, post.venueId, req.body.workspaceId);
+      const records = keywordEntriesToInsertRecords(entries, post.workspaceId, req.body.workspaceId);
       if (records.length > 0) {
         await storage.bulkUpsertPostKeywordIndex(records);
       }
@@ -1486,19 +1484,19 @@ Return ONLY valid JSON, no markdown.`;
     }
   });
 
-  app.post("/api/admin/blog/index-all-keywords", async (req, res) => {
+  app.post("/api/blog/index-all-keywords", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      const { venueId, workspaceId } = req.body;
-      if (!venueId) return res.status(400).json({ error: "venueId required" });
+      const { workspaceId } = req.body;
+      if (!workspaceId) return res.status(400).json({ error: "workspaceId required" });
 
-      const posts = await storage.getVenueBlogPosts(venueId);
+      const posts = await storage.getWorkspaceBlogPosts(workspaceId);
       let totalIndexed = 0;
 
       for (const post of posts) {
         const entries = indexPostKeywords(post);
         await storage.deletePostKeywordIndexByPost(post.id);
-        const records = keywordEntriesToInsertRecords(entries, post.venueId, workspaceId);
+        const records = keywordEntriesToInsertRecords(entries, post.workspaceId, workspaceId);
         if (records.length > 0) {
           await storage.bulkUpsertPostKeywordIndex(records);
         }
@@ -1511,13 +1509,13 @@ Return ONLY valid JSON, no markdown.`;
     }
   });
 
-  app.get("/api/admin/blog/link-suggestions", async (req, res) => {
+  app.get("/api/blog/link-suggestions", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      const venueId = req.query.venueId as string;
-      if (!venueId) return res.status(400).json({ error: "venueId required" });
+      const workspaceId = req.query.workspaceId as string;
+      if (!workspaceId) return res.status(400).json({ error: "workspaceId required" });
 
-      const posts = await storage.getVenueBlogPosts(venueId);
+      const posts = await storage.getWorkspaceBlogPosts(workspaceId);
       const suggestions = generateLinkSuggestions(posts);
 
       res.json({ total: suggestions.length, suggestions });
@@ -1526,10 +1524,10 @@ Return ONLY valid JSON, no markdown.`;
     }
   });
 
-  app.post("/api/admin/blog/posts/:id/apply-link", async (req, res) => {
+  app.post("/api/blog/posts/:id/apply-link", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      const post = await storage.getVenueBlogPost(req.params.id);
+      const post = await storage.getWorkspaceBlogPost(req.params.id);
       if (!post) return res.status(404).json({ error: "Post not found" });
 
       const { keyword, targetSlug, maxOccurrences } = req.body;
@@ -1541,7 +1539,7 @@ Return ONLY valid JSON, no markdown.`;
       const { html: updatedHtml, applied } = applyLink(html, keyword, targetSlug, maxOccurrences || 1);
 
       if (applied > 0) {
-        await storage.updateVenueBlogPost(post.id, { compiledHtml: updatedHtml });
+        await storage.updateWorkspaceBlogPost(post.id, { compiledHtml: updatedHtml });
       }
 
       res.json({ postId: post.id, keyword, targetSlug, linksApplied: applied });
@@ -1550,18 +1548,18 @@ Return ONLY valid JSON, no markdown.`;
     }
   });
 
-  app.post("/api/admin/blog/bulk-auto-link", async (req, res) => {
+  app.post("/api/blog/bulk-auto-link", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      const { venueId, maxLinksPerPost } = req.body;
-      if (!venueId) return res.status(400).json({ error: "venueId required" });
+      const { workspaceId, maxLinksPerPost } = req.body;
+      if (!workspaceId) return res.status(400).json({ error: "workspaceId required" });
 
-      const posts = await storage.getVenueBlogPosts(venueId);
+      const posts = await storage.getWorkspaceBlogPosts(workspaceId);
       const suggestions = generateLinkSuggestions(posts);
       const results = bulkAutoLink(posts, suggestions, maxLinksPerPost || 3);
 
       for (const result of results) {
-        await storage.updateVenueBlogPost(result.postId, { compiledHtml: result.updatedHtml });
+        await storage.updateWorkspaceBlogPost(result.postId, { compiledHtml: result.updatedHtml });
       }
 
       res.json({
@@ -1577,13 +1575,13 @@ Return ONLY valid JSON, no markdown.`;
     }
   });
 
-  app.get("/api/admin/blog/orphan-report", async (req, res) => {
+  app.get("/api/blog/orphan-report", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      const venueId = req.query.venueId as string;
-      if (!venueId) return res.status(400).json({ error: "venueId required" });
+      const workspaceId = req.query.workspaceId as string;
+      if (!workspaceId) return res.status(400).json({ error: "workspaceId required" });
 
-      const posts = await storage.getVenueBlogPosts(venueId);
+      const posts = await storage.getWorkspaceBlogPosts(workspaceId);
       const orphans = generateOrphanReport(posts);
 
       res.json({
@@ -1596,13 +1594,13 @@ Return ONLY valid JSON, no markdown.`;
     }
   });
 
-  app.get("/api/admin/blog/link-health", async (req, res) => {
+  app.get("/api/blog/link-health", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      const venueId = req.query.venueId as string;
-      if (!venueId) return res.status(400).json({ error: "venueId required" });
+      const workspaceId = req.query.workspaceId as string;
+      if (!workspaceId) return res.status(400).json({ error: "workspaceId required" });
 
-      const posts = await storage.getVenueBlogPosts(venueId);
+      const posts = await storage.getWorkspaceBlogPosts(workspaceId);
       const results = await checkLinkHealth(posts);
 
       const broken = results.filter((r) => r.status === "broken").length;
@@ -1620,10 +1618,10 @@ Return ONLY valid JSON, no markdown.`;
     }
   });
 
-  app.post("/api/admin/blog/posts/:id/image-suggestions", async (req, res) => {
+  app.post("/api/blog/posts/:id/image-suggestions", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      const post = await storage.getVenueBlogPost(req.params.id);
+      const post = await storage.getWorkspaceBlogPost(req.params.id);
       if (!post) return res.status(404).json({ error: "Post not found" });
 
       const suggestions = analyzePostForImageSuggestions(post);
@@ -1633,10 +1631,10 @@ Return ONLY valid JSON, no markdown.`;
     }
   });
 
-  app.post("/api/admin/blog/posts/:id/resolve-images", async (req, res) => {
+  app.post("/api/blog/posts/:id/resolve-images", async (req, res) => {
     if (!requireSuperAdmin(req, res)) return;
     try {
-      const post = await storage.getVenueBlogPost(req.params.id);
+      const post = await storage.getWorkspaceBlogPost(req.params.id);
       if (!post) return res.status(404).json({ error: "Post not found" });
 
       const { source, count, allSources } = req.body;
@@ -1662,7 +1660,7 @@ export async function runScheduledPublisher() {
       try {
         const { html, errors } = await compileMdxToHtml(post.mdxContent);
         if (errors.length === 0) {
-          await storage.updateVenueBlogPost(post.id, {
+          await storage.updateWorkspaceBlogPost(post.id, {
             compiledHtml: html,
             status: "published",
             publishedAt: new Date(),

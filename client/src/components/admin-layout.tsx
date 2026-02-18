@@ -1,7 +1,7 @@
 import { type ReactNode } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AdminSidebar } from "@/components/admin-sidebar";
-import { VenueProvider } from "@/lib/venue-context";
+import { WorkspaceProvider } from "@/lib/workspace-context";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 const sidebarStyle = {
@@ -11,7 +11,7 @@ const sidebarStyle = {
 
 export function AdminLayout({ children }: { children: ReactNode }) {
   return (
-    <VenueProvider>
+    <WorkspaceProvider>
       <SidebarProvider style={sidebarStyle as React.CSSProperties}>
         <div className="flex h-screen w-full" data-testid="admin-layout">
           <AdminSidebar />
@@ -26,6 +26,6 @@ export function AdminLayout({ children }: { children: ReactNode }) {
           </div>
         </div>
       </SidebarProvider>
-    </VenueProvider>
+    </WorkspaceProvider>
   );
 }

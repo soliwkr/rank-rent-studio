@@ -33,7 +33,7 @@ export const insertContactMessageSchema = createInsertSchema(contactMessages).om
 export type InsertContactMessage = z.infer<typeof insertContactMessageSchema>;
 export type ContactMessage = typeof contactMessages.$inferSelect;
 
-export const venues = pgTable(
+export const workspaces = pgTable(
   "venues",
   {
     id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),
@@ -65,23 +65,23 @@ export const venues = pgTable(
   ]
 );
 
-export const insertVenueSchema = createInsertSchema(venues).omit({
+export const insertWorkspaceSchema = createInsertSchema(workspaces).omit({
   id: true,
   shardId: true,
   createdAt: true,
   updatedAt: true,
 });
 
-export type InsertVenue = z.infer<typeof insertVenueSchema>;
-export type Venue = typeof venues.$inferSelect;
+export type InsertWorkspace = z.infer<typeof insertWorkspaceSchema>;
+export type Workspace = typeof workspaces.$inferSelect;
 
 export const reservations = pgTable(
   "reservations",
   {
     id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),
-    venueId: varchar("venue_id", { length: 36 })
+    workspaceId: varchar("venue_id", { length: 36 })
       .notNull()
-      .references(() => venues.id, { onDelete: "cascade" }),
+      .references(() => workspaces.id, { onDelete: "cascade" }),
     guestName: text("guest_name").notNull(),
     guestEmail: text("guest_email"),
     guestPhone: text("guest_phone"),
@@ -103,10 +103,10 @@ export const reservations = pgTable(
     updatedAt: timestamp("updated_at").defaultNow(),
   },
   (t) => [
-    uniqueIndex("reservations_venue_confirmation_uq").on(t.venueId, t.confirmationCode),
-    index("reservations_venue_date_idx").on(t.venueId, t.date),
-    index("reservations_venue_date_time_idx").on(t.venueId, t.date, t.time),
-    index("reservations_venue_resource_date_idx").on(t.venueId, t.resourceId, t.date),
+    uniqueIndex("reservations_venue_confirmation_uq").on(t.workspaceId, t.confirmationCode),
+    index("reservations_venue_date_idx").on(t.workspaceId, t.date),
+    index("reservations_venue_date_time_idx").on(t.workspaceId, t.date, t.time),
+    index("reservations_venue_resource_date_idx").on(t.workspaceId, t.resourceId, t.date),
   ]
 );
 
@@ -123,13 +123,13 @@ export const businessHours = pgTable(
   "business_hours",
   {
     id: serial("id").primaryKey(),
-    venueId: varchar("venue_id", { length: 36 }).notNull().references(() => venues.id, { onDelete: "cascade" }),
+    workspaceId: varchar("venue_id", { length: 36 }).notNull().references(() => workspaces.id, { onDelete: "cascade" }),
     dayOfWeek: integer("day_of_week").notNull(),
     openTime: time("open_time"),
     closeTime: time("close_time"),
     isClosed: boolean("is_closed").default(false),
   },
-  (t) => [uniqueIndex("business_hours_venue_day_uq").on(t.venueId, t.dayOfWeek)]
+  (t) => [uniqueIndex("business_hours_venue_day_uq").on(t.workspaceId, t.dayOfWeek)]
 );
 
 export const insertBusinessHoursSchema = createInsertSchema(businessHours).omit({
@@ -143,14 +143,14 @@ export const closures = pgTable(
   "closures",
   {
     id: serial("id").primaryKey(),
-    venueId: varchar("venue_id", { length: 36 })
+    workspaceId: varchar("venue_id", { length: 36 })
       .notNull()
-      .references(() => venues.id, { onDelete: "cascade" }),
+      .references(() => workspaces.id, { onDelete: "cascade" }),
     date: text("date").notNull(),
     reason: text("reason"),
     createdAt: timestamp("created_at").defaultNow(),
   },
-  (t) => [uniqueIndex("closures_venue_date_uq").on(t.venueId, t.date)]
+  (t) => [uniqueIndex("closures_venue_date_uq").on(t.workspaceId, t.date)]
 );
 
 export const insertClosureSchema = createInsertSchema(closures).omit({
@@ -165,9 +165,9 @@ export const resources = pgTable(
   "resources",
   {
     id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),
-    venueId: varchar("venue_id", { length: 36 })
+    workspaceId: varchar("venue_id", { length: 36 })
       .notNull()
-      .references(() => venues.id, { onDelete: "cascade" }),
+      .references(() => workspaces.id, { onDelete: "cascade" }),
     name: text("name").notNull(),
     type: text("type").default("table"),
     capacity: integer("capacity").default(4),
@@ -176,9 +176,9 @@ export const resources = pgTable(
     createdAt: timestamp("created_at").defaultNow(),
   },
   (t) => [
-    index("resources_venue_idx").on(t.venueId),
-    index("resources_venue_active_idx").on(t.venueId, t.isActive),
-    uniqueIndex("resources_venue_name_uq").on(t.venueId, t.name),
+    index("resources_venue_idx").on(t.workspaceId),
+    index("resources_venue_active_idx").on(t.workspaceId, t.isActive),
+    uniqueIndex("resources_venue_name_uq").on(t.workspaceId, t.name),
   ]
 );
 
@@ -194,9 +194,9 @@ export const teamMembers = pgTable(
   "team_members",
   {
     id: serial("id").primaryKey(),
-    venueId: varchar("venue_id", { length: 36 })
+    workspaceId: varchar("venue_id", { length: 36 })
       .notNull()
-      .references(() => venues.id, { onDelete: "cascade" }),
+      .references(() => workspaces.id, { onDelete: "cascade" }),
     userId: varchar("user_id", { length: 36 })
       .references(() => users.id, { onDelete: "set null" }),
     email: text("email").notNull(),
@@ -206,8 +206,8 @@ export const teamMembers = pgTable(
     acceptedAt: timestamp("accepted_at"),
   },
   (t) => [
-    uniqueIndex("team_members_venue_email_uq").on(t.venueId, t.email),
-    index("team_members_venue_status_idx").on(t.venueId, t.status),
+    uniqueIndex("team_members_venue_email_uq").on(t.workspaceId, t.email),
+    index("team_members_venue_status_idx").on(t.workspaceId, t.status),
   ]
 );
 
@@ -224,9 +224,9 @@ export const knowledgeBaseItems = pgTable(
   "knowledge_base_items",
   {
     id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),
-    venueId: varchar("venue_id", { length: 36 })
+    workspaceId: varchar("venue_id", { length: 36 })
       .notNull()
-      .references(() => venues.id, { onDelete: "cascade" }),
+      .references(() => workspaces.id, { onDelete: "cascade" }),
     type: text("type").notNull(),
     category: text("category"),
     title: text("title"),
@@ -239,9 +239,9 @@ export const knowledgeBaseItems = pgTable(
     trainedAt: timestamp("trained_at"),
   },
   (t) => [
-    index("kbi_venue_status_idx").on(t.venueId, t.status),
-    index("kbi_venue_type_idx").on(t.venueId, t.type),
-    index("kbi_venue_created_idx").on(t.venueId, t.createdAt),
+    index("kbi_venue_status_idx").on(t.workspaceId, t.status),
+    index("kbi_venue_type_idx").on(t.workspaceId, t.type),
+    index("kbi_venue_created_idx").on(t.workspaceId, t.createdAt),
   ]
 );
 
@@ -258,9 +258,9 @@ export const callLogs = pgTable(
   "call_logs",
   {
     id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),
-    venueId: varchar("venue_id", { length: 36 })
+    workspaceId: varchar("venue_id", { length: 36 })
       .notNull()
-      .references(() => venues.id, { onDelete: "cascade" }),
+      .references(() => workspaces.id, { onDelete: "cascade" }),
     twilioSid: text("twilio_sid"),
     callerPhone: text("caller_phone"),
     duration: integer("duration"),
@@ -273,8 +273,8 @@ export const callLogs = pgTable(
     createdAt: timestamp("created_at").defaultNow(),
   },
   (t) => [
-    index("call_logs_venue_created_idx").on(t.venueId, t.createdAt),
-    index("call_logs_venue_reservation_idx").on(t.venueId, t.reservationId),
+    index("call_logs_venue_created_idx").on(t.workspaceId, t.createdAt),
+    index("call_logs_venue_reservation_idx").on(t.workspaceId, t.reservationId),
   ]
 );
 
@@ -290,10 +290,10 @@ export const widgetSettings = pgTable(
   "widget_settings",
   {
     id: serial("id").primaryKey(),
-    venueId: varchar("venue_id", { length: 36 })
+    workspaceId: varchar("venue_id", { length: 36 })
       .notNull()
       .unique()
-      .references(() => venues.id, { onDelete: "cascade" }),
+      .references(() => workspaces.id, { onDelete: "cascade" }),
     primaryColor: text("primary_color").default("#000000"),
     position: text("position").default("bottom-right"),
     welcomeMessage: text("welcome_message"),
@@ -317,10 +317,10 @@ export const twilioSettings = pgTable(
   "twilio_settings",
   {
     id: serial("id").primaryKey(),
-    venueId: varchar("venue_id", { length: 36 })
+    workspaceId: varchar("venue_id", { length: 36 })
       .notNull()
       .unique()
-      .references(() => venues.id, { onDelete: "cascade" }),
+      .references(() => workspaces.id, { onDelete: "cascade" }),
     accountSid: text("account_sid"),
     authToken: text("auth_token"),
     phoneNumber: text("phone_number"),
@@ -347,10 +347,10 @@ export const paymentSettings = pgTable(
   "payment_settings",
   {
     id: serial("id").primaryKey(),
-    venueId: varchar("venue_id", { length: 36 })
+    workspaceId: varchar("venue_id", { length: 36 })
       .notNull()
       .unique()
-      .references(() => venues.id, { onDelete: "cascade" }),
+      .references(() => workspaces.id, { onDelete: "cascade" }),
     stripeSecretKey: text("stripe_secret_key"),
     stripePublishableKey: text("stripe_publishable_key"),
     stripeConnected: boolean("stripe_connected").default(false),
@@ -375,17 +375,17 @@ export const aiProviderSettings = pgTable(
   "ai_provider_settings",
   {
     id: serial("id").primaryKey(),
-    venueId: varchar("venue_id", { length: 36 })
+    workspaceId: varchar("venue_id", { length: 36 })
       .notNull()
-      .references(() => venues.id, { onDelete: "cascade" }),
+      .references(() => workspaces.id, { onDelete: "cascade" }),
     provider: text("provider").notNull(),
     apiKey: text("api_key"),
     isEnabled: boolean("is_enabled").default(false),
     updatedAt: timestamp("updated_at").defaultNow(),
   },
   (t) => [
-    uniqueIndex("ai_provider_settings_venue_provider_uq").on(t.venueId, t.provider),
-    index("ai_provider_settings_venue_enabled_idx").on(t.venueId, t.isEnabled),
+    uniqueIndex("ai_provider_settings_venue_provider_uq").on(t.workspaceId, t.provider),
+    index("ai_provider_settings_venue_enabled_idx").on(t.workspaceId, t.isEnabled),
   ]
 );
 
@@ -401,9 +401,9 @@ export const widgetChatLogs = pgTable(
   "widget_chat_logs",
   {
     id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),
-    venueId: varchar("venue_id", { length: 36 })
+    workspaceId: varchar("venue_id", { length: 36 })
       .notNull()
-      .references(() => venues.id, { onDelete: "cascade" }),
+      .references(() => workspaces.id, { onDelete: "cascade" }),
     sessionId: varchar("session_id", { length: 64 }).notNull(),
     visitorIp: text("visitor_ip"),
     messageCount: integer("message_count").notNull().default(1),
@@ -413,10 +413,10 @@ export const widgetChatLogs = pgTable(
     lastMessageAt: timestamp("last_message_at").defaultNow(),
   },
   (t) => [
-    index("widget_chat_logs_venue_idx").on(t.venueId),
-    index("widget_chat_logs_venue_created_idx").on(t.venueId, t.createdAt),
+    index("widget_chat_logs_venue_idx").on(t.workspaceId),
+    index("widget_chat_logs_venue_created_idx").on(t.workspaceId, t.createdAt),
     index("widget_chat_logs_session_idx").on(t.sessionId),
-    index("widget_chat_logs_venue_last_idx").on(t.venueId, t.lastMessageAt),
+    index("widget_chat_logs_venue_last_idx").on(t.workspaceId, t.lastMessageAt),
   ]
 );
 
@@ -493,7 +493,7 @@ export const roomTypes = pgTable(
   "room_types",
   {
     id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),
-    venueId: varchar("venue_id", { length: 36 }).notNull().references(() => venues.id, { onDelete: "cascade" }),
+    workspaceId: varchar("venue_id", { length: 36 }).notNull().references(() => workspaces.id, { onDelete: "cascade" }),
     name: text("name").notNull(),
     description: text("description"),
     basePrice: decimal("base_price", { precision: 10, scale: 2 }).notNull(),
@@ -506,7 +506,7 @@ export const roomTypes = pgTable(
     updatedAt: timestamp("updated_at").defaultNow(),
   },
   (t) => [
-    uniqueIndex("room_types_venue_name_uq").on(t.venueId, t.name),
+    uniqueIndex("room_types_venue_name_uq").on(t.workspaceId, t.name),
   ]
 );
 
@@ -523,7 +523,7 @@ export const rooms = pgTable(
   "rooms",
   {
     id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),
-    venueId: varchar("venue_id", { length: 36 }).notNull().references(() => venues.id, { onDelete: "cascade" }),
+    workspaceId: varchar("venue_id", { length: 36 }).notNull().references(() => workspaces.id, { onDelete: "cascade" }),
     roomTypeId: varchar("room_type_id", { length: 36 }).notNull().references(() => roomTypes.id, { onDelete: "restrict" }),
     roomNumber: text("room_number").notNull(),
     floor: text("floor"),
@@ -533,8 +533,8 @@ export const rooms = pgTable(
     updatedAt: timestamp("updated_at").defaultNow(),
   },
   (t) => [
-    uniqueIndex("rooms_venue_room_number_uq").on(t.venueId, t.roomNumber),
-    index("rooms_venue_room_type_idx").on(t.venueId, t.roomTypeId),
+    uniqueIndex("rooms_venue_room_number_uq").on(t.workspaceId, t.roomNumber),
+    index("rooms_venue_room_type_idx").on(t.workspaceId, t.roomTypeId),
   ]
 );
 
@@ -551,7 +551,7 @@ export const roomBookings = pgTable(
   "room_bookings",
   {
     id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),
-    venueId: varchar("venue_id", { length: 36 }).notNull().references(() => venues.id, { onDelete: "cascade" }),
+    workspaceId: varchar("venue_id", { length: 36 }).notNull().references(() => workspaces.id, { onDelete: "cascade" }),
     roomId: varchar("room_id", { length: 36 }).notNull().references(() => rooms.id, { onDelete: "restrict" }),
     roomTypeId: varchar("room_type_id", { length: 36 }).notNull().references(() => roomTypes.id, { onDelete: "restrict" }),
     guestName: text("guest_name").notNull(),
@@ -575,11 +575,11 @@ export const roomBookings = pgTable(
     updatedAt: timestamp("updated_at").defaultNow(),
   },
   (t) => [
-    index("room_bookings_venue_room_dates_idx").on(t.venueId, t.roomId, t.checkIn, t.checkOut),
-    index("room_bookings_venue_dates_idx").on(t.venueId, t.checkIn, t.checkOut),
-    index("room_bookings_venue_checkin_idx").on(t.venueId, t.checkIn),
-    uniqueIndex("room_bookings_venue_confirmation_uq").on(t.venueId, t.confirmationCode),
-    index("room_bookings_venue_checkout_idx").on(t.venueId, t.checkOut),
+    index("room_bookings_venue_room_dates_idx").on(t.workspaceId, t.roomId, t.checkIn, t.checkOut),
+    index("room_bookings_venue_dates_idx").on(t.workspaceId, t.checkIn, t.checkOut),
+    index("room_bookings_venue_checkin_idx").on(t.workspaceId, t.checkIn),
+    uniqueIndex("room_bookings_venue_confirmation_uq").on(t.workspaceId, t.confirmationCode),
+    index("room_bookings_venue_checkout_idx").on(t.workspaceId, t.checkOut),
   ]
 );
 
@@ -603,9 +603,9 @@ export const supportTickets = pgTable(
   "support_tickets",
   {
     id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),
-    venueId: varchar("venue_id", { length: 36 })
+    workspaceId: varchar("venue_id", { length: 36 })
       .notNull()
-      .references(() => venues.id, { onDelete: "cascade" }),
+      .references(() => workspaces.id, { onDelete: "cascade" }),
     userId: varchar("user_id", { length: 36 })
       .notNull()
       .references(() => users.id, { onDelete: "restrict" }),
@@ -618,9 +618,9 @@ export const supportTickets = pgTable(
     updatedAt: timestamp("updated_at").defaultNow(),
   },
   (t) => [
-    index("support_tickets_venue_status_idx").on(t.venueId, t.status),
-    index("support_tickets_venue_priority_idx").on(t.venueId, t.priority),
-    index("support_tickets_venue_created_idx").on(t.venueId, t.createdAt),
+    index("support_tickets_venue_status_idx").on(t.workspaceId, t.status),
+    index("support_tickets_venue_priority_idx").on(t.workspaceId, t.priority),
+    index("support_tickets_venue_created_idx").on(t.workspaceId, t.createdAt),
   ]
 );
 
@@ -637,9 +637,9 @@ export const websiteChangeRequests = pgTable(
   "website_change_requests",
   {
     id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),
-    venueId: varchar("venue_id", { length: 36 })
+    workspaceId: varchar("venue_id", { length: 36 })
       .notNull()
-      .references(() => venues.id, { onDelete: "cascade" }),
+      .references(() => workspaces.id, { onDelete: "cascade" }),
     userId: varchar("user_id", { length: 36 })
       .notNull()
       .references(() => users.id, { onDelete: "restrict" }),
@@ -653,8 +653,8 @@ export const websiteChangeRequests = pgTable(
     updatedAt: timestamp("updated_at").defaultNow(),
   },
   (t) => [
-    index("website_changes_venue_status_idx").on(t.venueId, t.status),
-    index("website_changes_venue_created_idx").on(t.venueId, t.createdAt),
+    index("website_changes_venue_status_idx").on(t.workspaceId, t.status),
+    index("website_changes_venue_created_idx").on(t.workspaceId, t.createdAt),
   ]
 );
 
@@ -671,9 +671,9 @@ export const seoSettings = pgTable(
   "seo_settings",
   {
     id: serial("id").primaryKey(),
-    venueId: varchar("venue_id", { length: 36 })
+    workspaceId: varchar("venue_id", { length: 36 })
       .notNull()
-      .references(() => venues.id, { onDelete: "cascade" }),
+      .references(() => workspaces.id, { onDelete: "cascade" }),
     provider: text("provider").notNull(),
     apiKey: text("api_key"),
     apiLogin: text("api_login"),
@@ -684,7 +684,7 @@ export const seoSettings = pgTable(
     updatedAt: timestamp("updated_at").defaultNow(),
   },
   (t) => [
-    uniqueIndex("seo_settings_venue_provider_idx").on(t.venueId, t.provider),
+    uniqueIndex("seo_settings_venue_provider_idx").on(t.workspaceId, t.provider),
   ]
 );
 
@@ -701,15 +701,15 @@ export const rankTrackerKeywords = pgTable(
   "rank_tracker_keywords",
   {
     id: serial("id").primaryKey(),
-    venueId: varchar("venue_id", { length: 36 })
+    workspaceId: varchar("venue_id", { length: 36 })
       .notNull()
-      .references(() => venues.id, { onDelete: "cascade" }),
+      .references(() => workspaces.id, { onDelete: "cascade" }),
     keyword: text("keyword").notNull(),
     createdAt: timestamp("created_at").defaultNow(),
   },
   (t) => [
-    index("rank_keywords_venue_idx").on(t.venueId),
-    uniqueIndex("rank_keywords_venue_keyword_uq").on(t.venueId, t.keyword),
+    index("rank_keywords_venue_idx").on(t.workspaceId),
+    uniqueIndex("rank_keywords_venue_keyword_uq").on(t.workspaceId, t.keyword),
   ]
 );
 
@@ -724,9 +724,9 @@ export const rankTrackerResults = pgTable(
   "rank_tracker_results",
   {
     id: serial("id").primaryKey(),
-    venueId: varchar("venue_id", { length: 36 })
+    workspaceId: varchar("venue_id", { length: 36 })
       .notNull()
-      .references(() => venues.id, { onDelete: "cascade" }),
+      .references(() => workspaces.id, { onDelete: "cascade" }),
     keywordId: integer("keyword_id")
       .notNull()
       .references(() => rankTrackerKeywords.id, { onDelete: "cascade" }),
@@ -738,10 +738,10 @@ export const rankTrackerResults = pgTable(
     checkedAt: timestamp("checked_at").defaultNow(),
   },
   (t) => [
-    index("rank_results_venue_idx").on(t.venueId),
+    index("rank_results_venue_idx").on(t.workspaceId),
     index("rank_results_keyword_idx").on(t.keywordId),
     index("rank_results_keyword_checked_idx").on(t.keywordId, t.checkedAt),
-    index("rank_results_venue_checked_idx").on(t.venueId, t.checkedAt),
+    index("rank_results_venue_checked_idx").on(t.workspaceId, t.checkedAt),
   ]
 );
 
@@ -756,17 +756,17 @@ export const gridKeywords = pgTable(
   "grid_keywords",
   {
     id: serial("id").primaryKey(),
-    venueId: varchar("venue_id", { length: 36 })
+    workspaceId: varchar("venue_id", { length: 36 })
       .notNull()
-      .references(() => venues.id, { onDelete: "cascade" }),
+      .references(() => workspaces.id, { onDelete: "cascade" }),
     keyword: text("keyword").notNull(),
     gridSize: integer("grid_size").notNull().default(5),
     distance: decimal("distance", { precision: 4, scale: 1 }).notNull().default("2.0"),
     createdAt: timestamp("created_at").defaultNow(),
   },
   (t) => [
-    index("grid_keywords_venue_idx").on(t.venueId),
-    uniqueIndex("grid_keywords_venue_keyword_uq").on(t.venueId, t.keyword),
+    index("grid_keywords_venue_idx").on(t.workspaceId),
+    uniqueIndex("grid_keywords_venue_keyword_uq").on(t.workspaceId, t.keyword),
   ]
 );
 
@@ -781,9 +781,9 @@ export const gridRefreshCredits = pgTable(
   "grid_refresh_credits",
   {
     id: serial("id").primaryKey(),
-    venueId: varchar("venue_id", { length: 36 })
+    workspaceId: varchar("venue_id", { length: 36 })
       .notNull()
-      .references(() => venues.id, { onDelete: "cascade" }),
+      .references(() => workspaces.id, { onDelete: "cascade" }),
     balance: integer("balance").notNull().default(0),
     totalPurchased: integer("total_purchased").notNull().default(0),
     totalUsed: integer("total_used").notNull().default(0),
@@ -792,7 +792,7 @@ export const gridRefreshCredits = pgTable(
     updatedAt: timestamp("updated_at").defaultNow(),
   },
   (t) => [
-    uniqueIndex("grid_refresh_credits_venue_uq").on(t.venueId),
+    uniqueIndex("grid_refresh_credits_venue_uq").on(t.workspaceId),
   ]
 );
 
@@ -802,17 +802,17 @@ export const gridRefreshHistory = pgTable(
   "grid_refresh_history",
   {
     id: serial("id").primaryKey(),
-    venueId: varchar("venue_id", { length: 36 })
+    workspaceId: varchar("venue_id", { length: 36 })
       .notNull()
-      .references(() => venues.id, { onDelete: "cascade" }),
+      .references(() => workspaces.id, { onDelete: "cascade" }),
     type: text("type").notNull(),
     amount: integer("amount").notNull(),
     description: text("description"),
     createdAt: timestamp("created_at").defaultNow(),
   },
   (t) => [
-    index("grid_refresh_history_venue_idx").on(t.venueId),
-    index("grid_refresh_history_venue_created_idx").on(t.venueId, t.createdAt),
+    index("grid_refresh_history_venue_idx").on(t.workspaceId),
+    index("grid_refresh_history_venue_created_idx").on(t.workspaceId, t.createdAt),
   ]
 );
 
@@ -822,9 +822,9 @@ export const rankTrackerCredits = pgTable(
   "rank_tracker_credits",
   {
     id: serial("id").primaryKey(),
-    venueId: varchar("venue_id", { length: 36 })
+    workspaceId: varchar("venue_id", { length: 36 })
       .notNull()
-      .references(() => venues.id, { onDelete: "cascade" }),
+      .references(() => workspaces.id, { onDelete: "cascade" }),
     balance: integer("balance").notNull().default(5),
     totalPurchased: integer("total_purchased").notNull().default(0),
     totalUsed: integer("total_used").notNull().default(0),
@@ -832,7 +832,7 @@ export const rankTrackerCredits = pgTable(
     updatedAt: timestamp("updated_at").defaultNow(),
   },
   (t) => [
-    uniqueIndex("rank_tracker_credits_venue_uq").on(t.venueId),
+    uniqueIndex("rank_tracker_credits_venue_uq").on(t.workspaceId),
   ]
 );
 
@@ -842,17 +842,17 @@ export const rankTrackerHistory = pgTable(
   "rank_tracker_history",
   {
     id: serial("id").primaryKey(),
-    venueId: varchar("venue_id", { length: 36 })
+    workspaceId: varchar("venue_id", { length: 36 })
       .notNull()
-      .references(() => venues.id, { onDelete: "cascade" }),
+      .references(() => workspaces.id, { onDelete: "cascade" }),
     type: text("type").notNull(),
     amount: integer("amount").notNull(),
     description: text("description"),
     createdAt: timestamp("created_at").defaultNow(),
   },
   (t) => [
-    index("rank_tracker_history_venue_idx").on(t.venueId),
-    index("rank_tracker_history_venue_created_idx").on(t.venueId, t.createdAt),
+    index("rank_tracker_history_venue_idx").on(t.workspaceId),
+    index("rank_tracker_history_venue_created_idx").on(t.workspaceId, t.createdAt),
   ]
 );
 
@@ -862,9 +862,9 @@ export const gridScanResults = pgTable(
   "grid_scan_results",
   {
     id: serial("id").primaryKey(),
-    venueId: varchar("venue_id", { length: 36 })
+    workspaceId: varchar("venue_id", { length: 36 })
       .notNull()
-      .references(() => venues.id, { onDelete: "cascade" }),
+      .references(() => workspaces.id, { onDelete: "cascade" }),
     keyword: text("keyword").notNull(),
     gridSize: integer("grid_size").notNull(),
     gridIndex: integer("grid_index").notNull(),
@@ -875,9 +875,9 @@ export const gridScanResults = pgTable(
     scanDate: timestamp("scan_date").defaultNow(),
   },
   (t) => [
-    index("grid_scan_results_venue_idx").on(t.venueId),
-    index("grid_scan_results_keyword_idx").on(t.venueId, t.keyword),
-    index("grid_scan_results_venue_keyword_date_idx").on(t.venueId, t.keyword, t.scanDate),
+    index("grid_scan_results_venue_idx").on(t.workspaceId),
+    index("grid_scan_results_keyword_idx").on(t.workspaceId, t.keyword),
+    index("grid_scan_results_venue_keyword_date_idx").on(t.workspaceId, t.keyword, t.scanDate),
   ]
 );
 
@@ -895,13 +895,13 @@ export type BlogTemplate = typeof blogTemplates[number];
 //   CREATE UNIQUE INDEX venue_domains_one_primary_per_venue ON venue_domains (venue_id) WHERE is_primary = true;
 // Ensures AT MOST one primary domain per venue (0 or 1), while allowing unlimited non-primary domains.
 // "At least one primary" must be enforced in application logic / seed / migration.
-export const venueDomains = pgTable(
+export const workspaceDomains = pgTable(
   "venue_domains",
   {
     id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),
-    venueId: varchar("venue_id", { length: 36 })
+    workspaceId: varchar("venue_id", { length: 36 })
       .notNull()
-      .references(() => venues.id, { onDelete: "cascade" }),
+      .references(() => workspaces.id, { onDelete: "cascade" }),
     domain: text("domain").notNull().unique(),
     isPrimary: boolean("is_primary").notNull().default(false),
     blogTemplate: text("blog_template").notNull().default("editorial"),
@@ -910,16 +910,16 @@ export const venueDomains = pgTable(
     createdAt: timestamp("created_at").defaultNow(),
   },
   (t) => [
-    index("venue_domains_venue_idx").on(t.venueId),
+    index("venue_domains_venue_idx").on(t.workspaceId),
   ]
 );
 
-export const insertVenueDomainSchema = createInsertSchema(venueDomains).omit({
+export const insertWorkspaceDomainSchema = createInsertSchema(workspaceDomains).omit({
   id: true,
   createdAt: true,
 });
-export type InsertVenueDomain = z.infer<typeof insertVenueDomainSchema>;
-export type VenueDomain = typeof venueDomains.$inferSelect;
+export type InsertWorkspaceDomain = z.infer<typeof insertWorkspaceDomainSchema>;
+export type WorkspaceDomain = typeof workspaceDomains.$inferSelect;
 
 export const postStatuses = ["draft", "scheduled", "published", "archived"] as const;
 export type PostStatus = typeof postStatuses[number];
@@ -930,13 +930,13 @@ export type GenerationStatus = typeof generationStatuses[number];
 export const qualityGateStatuses = ["pass", "fail", "unknown"] as const;
 export type QualityGateStatus = typeof qualityGateStatuses[number];
 
-export const venueBlogPosts = pgTable(
+export const workspaceBlogPosts = pgTable(
   "venue_blog_posts",
   {
     id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),
-    venueId: varchar("venue_id", { length: 36 })
+    workspaceId: varchar("venue_id", { length: 36 })
       .notNull()
-      .references(() => venues.id, { onDelete: "cascade" }),
+      .references(() => workspaces.id, { onDelete: "cascade" }),
     slug: text("slug").notNull(),
     title: text("title").notNull(),
     description: text("description"),
@@ -962,26 +962,26 @@ export const venueBlogPosts = pgTable(
     updatedAt: timestamp("updated_at").defaultNow(),
   },
   (t) => [
-    uniqueIndex("venue_blog_posts_venue_slug_uq").on(t.venueId, t.slug),
-    index("venue_blog_posts_venue_status_idx").on(t.venueId, t.status),
-    index("venue_blog_posts_gen_status_idx").on(t.venueId, t.generationStatus),
-    index("venue_blog_posts_venue_publish_at_idx").on(t.venueId, t.publishAt),
-    index("venue_blog_posts_venue_published_at_idx").on(t.venueId, t.publishedAt),
+    uniqueIndex("venue_blog_posts_venue_slug_uq").on(t.workspaceId, t.slug),
+    index("venue_blog_posts_venue_status_idx").on(t.workspaceId, t.status),
+    index("venue_blog_posts_gen_status_idx").on(t.workspaceId, t.generationStatus),
+    index("venue_blog_posts_venue_publish_at_idx").on(t.workspaceId, t.publishAt),
+    index("venue_blog_posts_venue_published_at_idx").on(t.workspaceId, t.publishedAt),
     index("venue_blog_posts_campaign_idx").on(t.campaignId),
-    index("venue_blog_posts_venue_status_publish_at_idx").on(t.venueId, t.status, t.publishAt),
-    index("venue_blog_posts_venue_status_published_at_idx").on(t.venueId, t.status, t.publishedAt),
+    index("venue_blog_posts_venue_status_publish_at_idx").on(t.workspaceId, t.status, t.publishAt),
+    index("venue_blog_posts_venue_status_published_at_idx").on(t.workspaceId, t.status, t.publishedAt),
   ]
 );
 
-export const insertVenueBlogPostSchema = createInsertSchema(venueBlogPosts).omit({
+export const insertWorkspaceBlogPostSchema = createInsertSchema(workspaceBlogPosts).omit({
   id: true,
   compiledHtml: true,
   publishedAt: true,
   createdAt: true,
   updatedAt: true,
 });
-export type InsertVenueBlogPost = z.infer<typeof insertVenueBlogPostSchema>;
-export type VenueBlogPost = typeof venueBlogPosts.$inferSelect;
+export type InsertWorkspaceBlogPost = z.infer<typeof insertWorkspaceBlogPostSchema>;
+export type WorkspaceBlogPost = typeof workspaceBlogPosts.$inferSelect;
 
 export const campaignStatuses = ["draft", "active", "paused", "completed", "cancelled"] as const;
 export type CampaignStatus = typeof campaignStatuses[number];
@@ -990,9 +990,9 @@ export const contentCampaigns = pgTable(
   "content_campaigns",
   {
     id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),
-    venueId: varchar("venue_id", { length: 36 })
+    workspaceId: varchar("venue_id", { length: 36 })
       .notNull()
-      .references(() => venues.id, { onDelete: "cascade" }),
+      .references(() => workspaces.id, { onDelete: "cascade" }),
     name: text("name").notNull(),
     status: text("status").notNull().default("draft"),
     timezone: text("timezone").notNull().default("UTC"),
@@ -1006,7 +1006,7 @@ export const contentCampaigns = pgTable(
     updatedAt: timestamp("updated_at").defaultNow(),
   },
   (t) => [
-    index("content_campaigns_venue_status_idx").on(t.venueId, t.status),
+    index("content_campaigns_venue_status_idx").on(t.workspaceId, t.status),
   ]
 );
 
@@ -1028,10 +1028,10 @@ export const contentAssets = pgTable(
   "content_assets",
   {
     id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),
-    venueId: varchar("venue_id", { length: 36 })
-      .references(() => venues.id, { onDelete: "set null" }),
+    workspaceId: varchar("venue_id", { length: 36 })
+      .references(() => workspaces.id, { onDelete: "set null" }),
     postId: varchar("post_id", { length: 36 })
-      .references(() => venueBlogPosts.id, { onDelete: "set null" }),
+      .references(() => workspaceBlogPosts.id, { onDelete: "set null" }),
     source: text("source").notNull(),
     sourceAssetId: text("source_asset_id"),
     type: text("type").notNull().default("generic"),
@@ -1048,9 +1048,9 @@ export const contentAssets = pgTable(
     createdAt: timestamp("created_at").defaultNow(),
   },
   (t) => [
-    index("content_assets_venue_idx").on(t.venueId),
+    index("content_assets_venue_idx").on(t.workspaceId),
     index("content_assets_post_idx").on(t.postId),
-    index("content_assets_venue_type_idx").on(t.venueId, t.type),
+    index("content_assets_venue_type_idx").on(t.workspaceId, t.type),
   ]
 );
 
@@ -1070,7 +1070,7 @@ export const contentAssetUsage = pgTable(
     id: serial("id").primaryKey(),
     postId: varchar("post_id", { length: 36 })
       .notNull()
-      .references(() => venueBlogPosts.id, { onDelete: "cascade" }),
+      .references(() => workspaceBlogPosts.id, { onDelete: "cascade" }),
     assetId: varchar("asset_id", { length: 36 })
       .notNull()
       .references(() => contentAssets.id, { onDelete: "cascade" }),
@@ -1256,7 +1256,6 @@ export const contentReports = pgTable(
   {
     id: serial("id").primaryKey(),
     workspaceId: varchar("workspace_id", { length: 36 }),
-    venueId: varchar("venue_id", { length: 36 }),
     title: text("title").notNull(),
     type: text("type").notNull().default("monthly"),
     status: text("status").notNull().default("draft"),
@@ -1275,7 +1274,7 @@ export const contentReports = pgTable(
   },
   (t) => [
     index("content_reports_workspace_idx").on(t.workspaceId),
-    index("content_reports_venue_idx").on(t.venueId),
+    index("content_reports_venue_idx").on(t.workspaceId),
     index("content_reports_type_idx").on(t.type),
     index("content_reports_status_idx").on(t.status),
   ]
@@ -1289,13 +1288,12 @@ export const insertContentReportSchema = createInsertSchema(contentReports).omit
 export type InsertContentReport = z.infer<typeof insertContentReportSchema>;
 export type ContentReport = typeof contentReports.$inferSelect;
 
-export const venueSiteProfiles = pgTable(
+export const workspaceSiteProfiles = pgTable(
   "venue_site_profiles",
   {
     id: serial("id").primaryKey(),
-    workspaceId: varchar("workspace_id", { length: 36 }),
-    venueId: varchar("venue_id", { length: 36 })
-      .references(() => venues.id, { onDelete: "cascade" }),
+    workspaceId: varchar("workspace_id", { length: 36 })
+      .references(() => workspaces.id, { onDelete: "cascade" }),
     siteName: text("site_name"),
     siteUrl: text("site_url"),
     logoUrl: text("logo_url"),
@@ -1317,25 +1315,24 @@ export const venueSiteProfiles = pgTable(
   },
   (t) => [
     index("venue_site_profiles_workspace_idx").on(t.workspaceId),
-    index("venue_site_profiles_venue_idx").on(t.venueId),
+    index("venue_site_profiles_venue_idx").on(t.workspaceId),
   ]
 );
 
-export const insertVenueSiteProfileSchema = createInsertSchema(venueSiteProfiles).omit({
+export const insertWorkspaceSiteProfileSchema = createInsertSchema(workspaceSiteProfiles).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
 });
-export type InsertVenueSiteProfile = z.infer<typeof insertVenueSiteProfileSchema>;
-export type VenueSiteProfile = typeof venueSiteProfiles.$inferSelect;
+export type InsertWorkspaceSiteProfile = z.infer<typeof insertWorkspaceSiteProfileSchema>;
+export type WorkspaceSiteProfile = typeof workspaceSiteProfiles.$inferSelect;
 
-export const venueSitePages = pgTable(
+export const workspaceSitePages = pgTable(
   "venue_site_pages",
   {
     id: serial("id").primaryKey(),
-    workspaceId: varchar("workspace_id", { length: 36 }),
-    venueId: varchar("venue_id", { length: 36 })
-      .references(() => venues.id, { onDelete: "cascade" }),
+    workspaceId: varchar("workspace_id", { length: 36 })
+      .references(() => workspaces.id, { onDelete: "cascade" }),
     slug: text("slug").notNull(),
     title: text("title").notNull(),
     description: text("description"),
@@ -1354,29 +1351,28 @@ export const venueSitePages = pgTable(
   },
   (t) => [
     index("venue_site_pages_workspace_idx").on(t.workspaceId),
-    index("venue_site_pages_venue_idx").on(t.venueId),
+    index("venue_site_pages_venue_idx").on(t.workspaceId),
     index("venue_site_pages_slug_idx").on(t.slug),
   ]
 );
 
-export const insertVenueSitePageSchema = createInsertSchema(venueSitePages).omit({
+export const insertWorkspaceSitePageSchema = createInsertSchema(workspaceSitePages).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
 });
-export type InsertVenueSitePage = z.infer<typeof insertVenueSitePageSchema>;
-export type VenueSitePage = typeof venueSitePages.$inferSelect;
+export type InsertWorkspaceSitePage = z.infer<typeof insertWorkspaceSitePageSchema>;
+export type WorkspaceSitePage = typeof workspaceSitePages.$inferSelect;
 
 export const postKeywordIndex = pgTable(
   "post_keyword_index",
   {
     id: serial("id").primaryKey(),
-    workspaceId: varchar("workspace_id", { length: 36 }),
-    venueId: varchar("venue_id", { length: 36 })
-      .references(() => venues.id, { onDelete: "cascade" }),
+    workspaceId: varchar("workspace_id", { length: 36 })
+      .references(() => workspaces.id, { onDelete: "cascade" }),
     postId: varchar("post_id", { length: 36 })
       .notNull()
-      .references(() => venueBlogPosts.id, { onDelete: "cascade" }),
+      .references(() => workspaceBlogPosts.id, { onDelete: "cascade" }),
     keyword: text("keyword").notNull(),
     slug: text("slug").notNull(),
     title: text("title").notNull(),
@@ -1390,7 +1386,7 @@ export const postKeywordIndex = pgTable(
   },
   (t) => [
     index("post_keyword_index_workspace_idx").on(t.workspaceId),
-    index("post_keyword_index_venue_idx").on(t.venueId),
+    index("post_keyword_index_venue_idx").on(t.workspaceId),
     index("post_keyword_index_post_idx").on(t.postId),
     index("post_keyword_index_keyword_idx").on(t.keyword),
   ]
@@ -1410,12 +1406,11 @@ export const postValidationResults = pgTable(
   "post_validation_results",
   {
     id: serial("id").primaryKey(),
-    workspaceId: varchar("workspace_id", { length: 36 }),
-    venueId: varchar("venue_id", { length: 36 })
-      .references(() => venues.id, { onDelete: "cascade" }),
+    workspaceId: varchar("workspace_id", { length: 36 })
+      .references(() => workspaces.id, { onDelete: "cascade" }),
     postId: varchar("post_id", { length: 36 })
       .notNull()
-      .references(() => venueBlogPosts.id, { onDelete: "cascade" }),
+      .references(() => workspaceBlogPosts.id, { onDelete: "cascade" }),
     rule: text("rule").notNull(),
     severity: text("severity").notNull().default("warning"),
     message: text("message").notNull(),
@@ -1427,7 +1422,7 @@ export const postValidationResults = pgTable(
   },
   (t) => [
     index("post_validation_results_workspace_idx").on(t.workspaceId),
-    index("post_validation_results_venue_idx").on(t.venueId),
+    index("post_validation_results_venue_idx").on(t.workspaceId),
     index("post_validation_results_post_idx").on(t.postId),
     index("post_validation_results_rule_idx").on(t.rule),
     index("post_validation_results_severity_idx").on(t.severity),

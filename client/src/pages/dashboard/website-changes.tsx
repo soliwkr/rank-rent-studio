@@ -19,7 +19,7 @@ import {
 
 interface WebsiteChangeRequest {
   id: string;
-  venueId: string;
+  workspaceId: string;
   userId: string;
   changeType: string;
   description: string;
@@ -48,7 +48,7 @@ const statusConfig: Record<string, { label: string; variant: "default" | "second
 };
 
 export default function WebsiteChanges() {
-  const { venueId } = useParams<{ venueId: string }>();
+  const { workspaceId } = useParams<{ workspaceId: string }>();
   const { toast } = useToast();
   const [changeType, setChangeType] = useState("text");
   const [description, setDescription] = useState("");
@@ -61,19 +61,19 @@ export default function WebsiteChanges() {
   }, []);
 
   const { data: changes = [], isLoading } = useQuery<WebsiteChangeRequest[]>({
-    queryKey: ["/api/venues", venueId, "website-changes"],
+    queryKey: ["/api/workspaces", workspaceId, "website-changes"],
   });
 
   const submitMutation = useMutation({
     mutationFn: async () => {
-      return apiRequest("POST", `/api/venues/${venueId}/website-changes`, {
+      return apiRequest("POST", `/api/workspaces/${workspaceId}/website-changes`, {
         changeType,
         description: description.trim(),
         pageUrl: pageUrl.trim() || null,
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "website-changes"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "website-changes"] });
       setDescription("");
       setPageUrl("");
       setChangeType("text");

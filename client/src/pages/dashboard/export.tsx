@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useVenue } from "@/lib/venue-context";
+import { useWorkspace } from "@/lib/workspace-context";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -35,18 +35,18 @@ const exportItems = [
 ];
 
 export default function DashboardExport() {
-  const { selectedVenue } = useVenue();
+  const { selectedWorkspace } = useWorkspace();
   const { toast } = useToast();
   const [loading, setLoading] = useState<string | null>(null);
 
-  if (!selectedVenue?.id) {
+  if (!selectedWorkspace?.id) {
     return <div className="p-6 text-muted-foreground" data-testid="no-venue-message">Please select a venue from the sidebar to export data.</div>;
   }
 
   const handleExport = async (item: typeof exportItems[0]) => {
     setLoading(item.endpoint);
     try {
-      const res = await fetch(`/api/${item.endpoint}?venueId=${selectedVenue.id}`);
+      const res = await fetch(`/api/${item.endpoint}?workspaceId=${selectedWorkspace.id}`);
       if (!res.ok) throw new Error("Failed to fetch data");
       const data = await res.json();
       if (!Array.isArray(data) || data.length === 0) {
@@ -54,7 +54,7 @@ export default function DashboardExport() {
         return;
       }
       const csv = convertToCSV(data);
-      downloadCSV(csv, `${item.endpoint}-${selectedVenue.id}.csv`);
+      downloadCSV(csv, `${item.endpoint}-${selectedWorkspace.id}.csv`);
       toast({ title: "Export complete", description: `${item.label} exported successfully.` });
     } catch (err: any) {
       toast({ title: "Export failed", description: err.message, variant: "destructive" });

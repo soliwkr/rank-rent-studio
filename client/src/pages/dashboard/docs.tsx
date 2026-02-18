@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useVenue } from "@/lib/venue-context";
+import { useWorkspace } from "@/lib/workspace-context";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -42,15 +42,15 @@ const faqItems = [
 ];
 
 export default function Documentation() {
-  const { selectedVenue } = useVenue();
-  const venueId = selectedVenue?.id;
+  const { selectedWorkspace } = useWorkspace();
+  const workspaceId = selectedWorkspace?.id;
 
   const { data: articles = [], isLoading } = useQuery<any[]>({
-    queryKey: [`/api/knowledge-base?venueId=${venueId}`],
-    enabled: !!venueId,
+    queryKey: [`/api/knowledge-base?workspaceId=${workspaceId}`],
+    enabled: !!workspaceId,
   });
 
-  if (!venueId) {
+  if (!workspaceId) {
     return <div className="p-6 text-muted-foreground" data-testid="no-venue-message">Please select a venue from the sidebar to view documentation.</div>;
   }
 

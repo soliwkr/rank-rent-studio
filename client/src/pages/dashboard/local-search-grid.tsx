@@ -68,7 +68,7 @@ const demoKeywords = [
 ];
 
 export default function LocalSearchGrid() {
-  const { venueId } = useParams<{ venueId: string }>();
+  const { workspaceId } = useParams<{ workspaceId: string }>();
   const { toast } = useToast();
   const [gridSize, setGridSize] = useState("5");
   const [distance, setDistance] = useState("2");
@@ -85,20 +85,20 @@ export default function LocalSearchGrid() {
   }, []);
 
   const { data: venue } = useQuery<{ id: string; name: string; address: string | null }>({
-    queryKey: ["/api/venues", venueId],
+    queryKey: ["/api/workspaces", workspaceId],
   });
 
   const { data: gridKeywords = [], isLoading: keywordsLoading } = useQuery<{ id: number; keyword: string }[]>({
-    queryKey: ["/api/venues", venueId, "grid-keywords"],
+    queryKey: ["/api/workspaces", workspaceId, "grid-keywords"],
   });
 
   const addKeywordsMutation = useMutation({
     mutationFn: async (kws: string[]) => {
-      return apiRequest("POST", `/api/venues/${venueId}/grid-keywords`, { keywords: kws });
+      return apiRequest("POST", `/api/workspaces/${workspaceId}/grid-keywords`, { keywords: kws });
     },
     onSuccess: () => {
       setKeywordInput("");
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "grid-keywords"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "grid-keywords"] });
       toast({ title: "Added", description: "Keywords added to grid tracking" });
     },
     onError: () => {
@@ -108,10 +108,10 @@ export default function LocalSearchGrid() {
 
   const deleteKeywordMutation = useMutation({
     mutationFn: async (id: number) => {
-      return apiRequest("DELETE", `/api/venues/${venueId}/grid-keywords/${id}`);
+      return apiRequest("DELETE", `/api/workspaces/${workspaceId}/grid-keywords/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "grid-keywords"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "grid-keywords"] });
       toast({ title: "Removed", description: "Keyword removed from grid tracking" });
     },
     onError: () => {
@@ -120,15 +120,15 @@ export default function LocalSearchGrid() {
   });
 
   const { data: refreshCredits, isLoading: creditsLoading } = useQuery<{ balance: number; totalPurchased: number; totalUsed: number }>({
-    queryKey: ["/api/venues", venueId, "grid-refresh-credits"],
+    queryKey: ["/api/workspaces", workspaceId, "grid-refresh-credits"],
   });
 
   const purchaseCreditsMutation = useMutation({
     mutationFn: async (amount: number) => {
-      return apiRequest("POST", `/api/venues/${venueId}/grid-refresh-credits/purchase`, { amount });
+      return apiRequest("POST", `/api/workspaces/${workspaceId}/grid-refresh-credits/purchase`, { amount });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "grid-refresh-credits"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "grid-refresh-credits"] });
       toast({ title: "Credits purchased", description: "Refresh credits have been added to your account" });
     },
     onError: () => {
@@ -138,14 +138,14 @@ export default function LocalSearchGrid() {
 
   const useRefreshCreditMutation = useMutation({
     mutationFn: async () => {
-      await apiRequest("POST", `/api/venues/${venueId}/grid-refresh-credits/use`);
-      const res = await apiRequest("POST", `/api/venues/${venueId}/grid-scan`);
+      await apiRequest("POST", `/api/workspaces/${workspaceId}/grid-refresh-credits/use`);
+      const res = await apiRequest("POST", `/api/workspaces/${workspaceId}/grid-scan`);
       return res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "grid-refresh-credits"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "grid-scan-results"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "grid-scan-keywords"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "grid-refresh-credits"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "grid-scan-results"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "grid-scan-keywords"] });
       toast({ title: "Grid scanned", description: "Your grid rankings have been updated with live data from Google Maps" });
     },
     onError: (err: any) => {
@@ -199,13 +199,13 @@ export default function LocalSearchGrid() {
   };
 
   const { data: scannedKeywords = [] } = useQuery<string[]>({
-    queryKey: ["/api/venues", venueId, "grid-scan-keywords"],
+    queryKey: ["/api/workspaces", workspaceId, "grid-scan-keywords"],
   });
 
   const activeKeyword = selectedKeyword || (scannedKeywords.length > 0 ? scannedKeywords[0] : (gridKeywords.length > 0 ? gridKeywords[0].keyword : ""));
 
   const { data: scanResults = [] } = useQuery<{ gridIndex: number; gridSize: number; rank: number | null; businessName: string | null }[]>({
-    queryKey: ["/api/venues", venueId, "grid-scan-results", activeKeyword],
+    queryKey: ["/api/workspaces", workspaceId, "grid-scan-results", activeKeyword],
     enabled: !!activeKeyword && scannedKeywords.includes(activeKeyword),
   });
 

@@ -2,7 +2,7 @@ import { type ReactNode } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { ClientSidebar } from "@/components/client-sidebar";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { VenueProvider, useVenue } from "@/lib/venue-context";
+import { WorkspaceProvider, useWorkspace } from "@/lib/workspace-context";
 import { Badge } from "@/components/ui/badge";
 
 interface ClientLayoutProps {
@@ -10,7 +10,7 @@ interface ClientLayoutProps {
 }
 
 function ClientLayoutInner({ children }: ClientLayoutProps) {
-  const { selectedVenue } = useVenue();
+  const { selectedWorkspace } = useWorkspace();
 
   return (
     <SidebarProvider>
@@ -20,9 +20,9 @@ function ClientLayoutInner({ children }: ClientLayoutProps) {
           <header className="flex items-center justify-between gap-2 p-2 border-b">
             <div className="flex items-center gap-2 flex-wrap">
               <SidebarTrigger data-testid="button-client-sidebar-toggle" />
-              {selectedVenue && (
+              {selectedWorkspace && (
                 <Badge variant="secondary" data-testid="badge-venue-name">
-                  {selectedVenue.name}
+                  {selectedWorkspace.name}
                 </Badge>
               )}
             </div>
@@ -39,8 +39,8 @@ function ClientLayoutInner({ children }: ClientLayoutProps) {
 
 export function ClientLayout({ children }: ClientLayoutProps) {
   return (
-    <VenueProvider>
+    <WorkspaceProvider>
       <ClientLayoutInner>{children}</ClientLayoutInner>
-    </VenueProvider>
+    </WorkspaceProvider>
   );
 }

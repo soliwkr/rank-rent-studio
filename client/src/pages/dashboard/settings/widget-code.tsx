@@ -155,7 +155,7 @@ export default function SettingsWidgetCode() {
   const [selectedCms, setSelectedCms] = useState<string>("wordpress");
   const { toast } = useToast();
   
-  const venueId = location.split("/")[1];
+  const workspaceId = location.split("/")[1];
 
   useEffect(() => {
     document.title = "Widget Code - Dashboard";
@@ -164,12 +164,12 @@ export default function SettingsWidgetCode() {
   const currentCms = cmsOptions.find(cms => cms.id === selectedCms) || cmsOptions[0];
 
   const scriptCode = `<!-- Resto Booking Widget -->
-<script src="https://resto.restaurant/widget.js" data-venue-id="${venueId}"></script>
+<script src="https://resto.restaurant/widget.js" data-venue-id="${workspaceId}"></script>
 <div id="resto-booking-widget"></div>`;
 
   const iframeCode = `<!-- Resto Booking Widget -->
 <iframe 
-  src="https://resto.restaurant/widget/${venueId}" 
+  src="https://resto.restaurant/widget/${workspaceId}" 
   width="100%" 
   height="600" 
   frameborder="0"

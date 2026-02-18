@@ -9,7 +9,7 @@ import { DashboardLayout } from "@/components/dashboard-layout";
 
 interface Reservation {
   id: string;
-  venueId: string;
+  workspaceId: string;
   guestName: string;
   guestEmail: string | null;
   guestPhone: string | null;
@@ -27,7 +27,7 @@ interface Reservation {
 }
 
 export default function Today() {
-  const { venueId } = useParams<{ venueId: string }>();
+  const { workspaceId } = useParams<{ workspaceId: string }>();
   const [activeTab, setActiveTab] = useState("all");
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export default function Today() {
 
   const today = new Date().toISOString().slice(0, 10);
   const { data: reservations = [], isLoading } = useQuery<Reservation[]>({
-    queryKey: [`/api/venues/${venueId}/reservations?date=${today}`],
+    queryKey: [`/api/workspaces/${workspaceId}/reservations?date=${today}`],
   });
 
   const websiteBookings = reservations.filter(r => r.source === "widget" || r.source === "website");
@@ -69,7 +69,7 @@ export default function Today() {
   };
 
   const renderBookingRow = (booking: Reservation) => (
-    <Link key={booking.id} href={`/${venueId}/bookings/${booking.id}`}>
+    <Link key={booking.id} href={`/${workspaceId}/bookings/${booking.id}`}>
       <div 
         className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 rounded-lg border hover-elevate cursor-pointer gap-3"
         data-testid={`booking-${booking.id}`}
@@ -235,7 +235,7 @@ export default function Today() {
                     ) : (
                       <div className="space-y-3">
                         {websiteBookings.map((booking) => (
-                          <Link key={booking.id} href={`/${venueId}/bookings/${booking.id}`}>
+                          <Link key={booking.id} href={`/${workspaceId}/bookings/${booking.id}`}>
                             <div 
                               className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 rounded-lg border border-l-4 border-l-blue-500 hover-elevate cursor-pointer gap-3"
                               data-testid={`booking-${booking.id}`}
@@ -282,7 +282,7 @@ export default function Today() {
                     ) : (
                       <div className="space-y-3">
                         {phoneBookings.map((booking) => (
-                          <Link key={booking.id} href={`/${venueId}/bookings/${booking.id}`}>
+                          <Link key={booking.id} href={`/${workspaceId}/bookings/${booking.id}`}>
                             <div 
                               className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 rounded-lg border border-l-4 border-l-green-500 hover-elevate cursor-pointer gap-3"
                               data-testid={`booking-${booking.id}`}

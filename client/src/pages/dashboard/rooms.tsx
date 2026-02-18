@@ -22,7 +22,7 @@ interface RoomType {
 
 interface Room {
   id: string;
-  venueId: string;
+  workspaceId: string;
   roomTypeId: string;
   roomNumber: string;
   floor: string | null;
@@ -31,7 +31,7 @@ interface Room {
 }
 
 export default function Rooms() {
-  const { venueId } = useParams<{ venueId: string }>();
+  const { workspaceId } = useParams<{ workspaceId: string }>();
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingRoom, setEditingRoom] = useState<Room | null>(null);
@@ -47,18 +47,18 @@ export default function Rooms() {
   }, []);
 
   const { data: rooms = [], isLoading } = useQuery<Room[]>({
-    queryKey: ["/api/venues", venueId, "rooms"],
+    queryKey: ["/api/workspaces", workspaceId, "rooms"],
   });
 
   const { data: roomTypes = [] } = useQuery<RoomType[]>({
-    queryKey: ["/api/venues", venueId, "room-types"],
+    queryKey: ["/api/workspaces", workspaceId, "room-types"],
   });
 
   const createMutation = useMutation({
     mutationFn: (data: typeof formData) =>
-      apiRequest("POST", `/api/venues/${venueId}/rooms`, data),
+      apiRequest("POST", `/api/workspaces/${workspaceId}/rooms`, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "rooms"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "rooms"] });
       toast({ title: "Room created", description: "The room has been added." });
       resetForm();
       setIsDialogOpen(false);
@@ -72,7 +72,7 @@ export default function Rooms() {
     mutationFn: ({ id, data }: { id: string; data: typeof formData }) =>
       apiRequest("PATCH", `/api/rooms/${id}`, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "rooms"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "rooms"] });
       toast({ title: "Room updated", description: "Changes have been saved." });
       resetForm();
       setIsDialogOpen(false);
@@ -86,7 +86,7 @@ export default function Rooms() {
     mutationFn: (id: string) =>
       apiRequest("DELETE", `/api/rooms/${id}`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "rooms"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "rooms"] });
       toast({ title: "Room deleted", description: "The room has been removed." });
     },
     onError: () => {
@@ -234,7 +234,7 @@ export default function Rooms() {
           <Card className="border-dashed">
             <CardContent className="p-6 text-center">
               <p className="text-muted-foreground">You need to create room types before adding rooms.</p>
-              <Button variant="ghost" className="mt-2" onClick={() => window.location.href = `/${venueId}/room-types`}>
+              <Button variant="ghost" className="mt-2" onClick={() => window.location.href = `/${workspaceId}/room-types`}>
                 Go to Room Types
               </Button>
             </CardContent>

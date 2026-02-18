@@ -38,14 +38,14 @@ function getSeededAiEngines(id: number) {
 
 interface RankKeyword {
   id: number;
-  venueId: string;
+  workspaceId: string;
   keyword: string;
   createdAt: string;
 }
 
 interface RankResult {
   id: number;
-  venueId: string;
+  workspaceId: string;
   keywordId: number;
   keyword: string;
   position: number | null;
@@ -84,7 +84,7 @@ const demoResults: RankResult[] = Array.from({ length: 300 }, (_, i) => {
   const prev = pos === null ? null : Math.max(1, pos + Math.floor(Math.random() * 21) - 10);
   return {
     id: -(i + 1),
-    venueId: "",
+    workspaceId: "",
     keywordId: i + 1,
     keyword: `${base}${suffix}`,
     position: pos,
@@ -96,7 +96,7 @@ const demoResults: RankResult[] = Array.from({ length: 300 }, (_, i) => {
 });
 
 export default function RankTracker() {
-  const { venueId } = useParams<{ venueId: string }>();
+  const { workspaceId } = useParams<{ workspaceId: string }>();
   const { toast } = useToast();
   const [keywordInput, setKeywordInput] = useState("");
   const [resultsPage, setResultsPage] = useState(1);
@@ -122,22 +122,22 @@ export default function RankTracker() {
   }, []);
 
   const { data: venue } = useQuery<{ id: string; name: string; website: string | null }>({
-    queryKey: ["/api/venues", venueId],
+    queryKey: ["/api/workspaces", workspaceId],
   });
   const venueDomain = venue?.website || null;
 
   const { data: keywords = [], isLoading: keywordsLoading } = useQuery<RankKeyword[]>({
-    queryKey: ["/api/venues", venueId, "rank-tracker", "keywords"],
+    queryKey: ["/api/workspaces", workspaceId, "rank-tracker", "keywords"],
   });
 
   const { data: latestData, isLoading: latestLoading } = useQuery<{ results: RankResult[]; lastCheckedAt: string | null }>({
-    queryKey: ["/api/venues", venueId, "rank-tracker", "latest"],
+    queryKey: ["/api/workspaces", workspaceId, "rank-tracker", "latest"],
   });
 
   const { data: paginatedData, isLoading: resultsLoading } = useQuery<{ results: RankResult[]; total: number }>({
-    queryKey: ["/api/venues", venueId, "rank-tracker", "results", resultsPage],
+    queryKey: ["/api/workspaces", workspaceId, "rank-tracker", "results", resultsPage],
     queryFn: async () => {
-      const res = await fetch(`/api/venues/${venueId}/rank-tracker/results?page=${resultsPage}&limit=${resultsLimit}`, { credentials: "include" });
+      const res = await fetch(`/api/workspaces/${workspaceId}/rank-tracker/results?page=${resultsPage}&limit=${resultsLimit}`, { credentials: "include" });
       if (!res.ok) throw new Error("Failed to fetch results");
       return res.json();
     },
@@ -145,11 +145,11 @@ export default function RankTracker() {
 
   const addKeywordsMutation = useMutation({
     mutationFn: async (kws: string[]) => {
-      return apiRequest("POST", `/api/venues/${venueId}/rank-tracker/keywords`, { keywords: kws });
+      return apiRequest("POST", `/api/workspaces/${workspaceId}/rank-tracker/keywords`, { keywords: kws });
     },
     onSuccess: () => {
       setKeywordInput("");
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "rank-tracker", "keywords"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "rank-tracker", "keywords"] });
       toast({ title: "Added", description: "Keywords added successfully" });
     },
     onError: (err: any) => {
@@ -159,33 +159,33 @@ export default function RankTracker() {
 
   const deleteKeywordMutation = useMutation({
     mutationFn: async (id: number) => {
-      return apiRequest("DELETE", `/api/venues/${venueId}/rank-tracker/keywords/${id}`);
+      return apiRequest("DELETE", `/api/workspaces/${workspaceId}/rank-tracker/keywords/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "rank-tracker", "keywords"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "rank-tracker", "keywords"] });
     },
   });
 
   const clearAllKeywordsMutation = useMutation({
     mutationFn: async () => {
-      return apiRequest("DELETE", `/api/venues/${venueId}/rank-tracker/keywords`);
+      return apiRequest("DELETE", `/api/workspaces/${workspaceId}/rank-tracker/keywords`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "rank-tracker", "keywords"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "rank-tracker", "keywords"] });
       toast({ title: "Cleared", description: "All keywords removed" });
     },
   });
 
   const { data: rankCredits, isLoading: creditsLoading } = useQuery<{ balance: number; totalPurchased: number; totalUsed: number }>({
-    queryKey: ["/api/venues", venueId, "rank-tracker-credits"],
+    queryKey: ["/api/workspaces", workspaceId, "rank-tracker-credits"],
   });
 
   const purchaseCreditsMutation = useMutation({
     mutationFn: async (amount: number) => {
-      return apiRequest("POST", `/api/venues/${venueId}/rank-tracker-credits/purchase`, { amount });
+      return apiRequest("POST", `/api/workspaces/${workspaceId}/rank-tracker-credits/purchase`, { amount });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "rank-tracker-credits"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "rank-tracker-credits"] });
       toast({ title: "Credits purchased", description: "Rank check credits have been added to your account" });
     },
     onError: () => {
@@ -195,13 +195,13 @@ export default function RankTracker() {
 
   const useRankCreditMutation = useMutation({
     mutationFn: async () => {
-      await apiRequest("POST", `/api/venues/${venueId}/rank-tracker-credits/use`);
-      const res = await apiRequest("POST", `/api/venues/${venueId}/rank-tracker/check`);
+      await apiRequest("POST", `/api/workspaces/${workspaceId}/rank-tracker-credits/use`);
+      const res = await apiRequest("POST", `/api/workspaces/${workspaceId}/rank-tracker/check`);
       return res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "rank-tracker-credits"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "rank-tracker"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "rank-tracker-credits"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "rank-tracker"] });
       toast({ title: "Rankings checked", description: "Your keyword rankings have been updated" });
     },
     onError: () => {

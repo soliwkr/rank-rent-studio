@@ -13,7 +13,7 @@ import { Sparkles, CheckCircle, AlertCircle } from "lucide-react";
 
 interface AiProviderSettings {
   id: number;
-  venueId: string;
+  workspaceId: string;
   provider: string;
   apiKey: string | null;
   organizationId: string | null;
@@ -21,7 +21,7 @@ interface AiProviderSettings {
 }
 
 export default function ByokGrok() {
-  const { venueId } = useParams<{ venueId: string }>();
+  const { workspaceId } = useParams<{ workspaceId: string }>();
   const { toast } = useToast();
   const [apiKey, setApiKey] = useState("");
   const [isConnected, setIsConnected] = useState(false);
@@ -31,7 +31,7 @@ export default function ByokGrok() {
   }, []);
 
   const { data: allProviders = [] } = useQuery<AiProviderSettings[]>({
-    queryKey: ["/api/venues", venueId, "ai-providers"],
+    queryKey: ["/api/workspaces", workspaceId, "ai-providers"],
   });
   const settings = allProviders.find(p => p.provider === "grok");
 
@@ -43,15 +43,15 @@ export default function ByokGrok() {
   }, [settings]);
 
   const saveMutation = useMutation({
-    mutationFn: () => apiRequest("PUT", `/api/venues/${venueId}/ai-providers`, {
-      venueId,
+    mutationFn: () => apiRequest("PUT", `/api/workspaces/${workspaceId}/ai-providers`, {
+      workspaceId,
       provider: "grok",
       apiKey,
       organizationId: null,
       isConnected: !!apiKey,
     }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "ai-providers"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "ai-providers"] });
       toast({ title: "Credentials saved" });
     },
     onError: () => {

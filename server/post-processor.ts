@@ -1,4 +1,4 @@
-import type { VenueBlogPost, InsertPostValidationResult } from "@shared/schema";
+import type { WorkspaceBlogPost, InsertPostValidationResult } from "@shared/schema";
 
 export interface ValidationIssue {
   rule: string;
@@ -10,7 +10,7 @@ export interface ValidationIssue {
 
 export interface ValidationReport {
   postId: string;
-  venueId: string;
+  workspaceId: string;
   issues: ValidationIssue[];
   score: number;
   checkedAt: string;
@@ -334,7 +334,7 @@ export function validateHeadingStructure(html: string): ValidationIssue[] {
   return issues;
 }
 
-export function validateMetaFields(post: VenueBlogPost): ValidationIssue[] {
+export function validateMetaFields(post: WorkspaceBlogPost): ValidationIssue[] {
   const issues: ValidationIssue[] = [];
 
   if (!post.title || post.title.length < 10) {
@@ -404,7 +404,7 @@ export function validateMetaFields(post: VenueBlogPost): ValidationIssue[] {
   return issues;
 }
 
-export function validatePost(post: VenueBlogPost): ValidationReport {
+export function validatePost(post: WorkspaceBlogPost): ValidationReport {
   const html = post.compiledHtml || post.mdxContent || "";
   const allIssues: ValidationIssue[] = [
     ...validateRelAttributes(html),
@@ -421,7 +421,7 @@ export function validatePost(post: VenueBlogPost): ValidationReport {
 
   return {
     postId: post.id,
-    venueId: post.venueId,
+    workspaceId: post.workspaceId,
     issues: allIssues,
     score,
     checkedAt: new Date().toISOString(),
@@ -433,8 +433,7 @@ export function issuesToInsertRecords(
   workspaceId?: string
 ): InsertPostValidationResult[] {
   return report.issues.map((issue) => ({
-    workspaceId: workspaceId || null,
-    venueId: report.venueId,
+    workspaceId: workspaceId || report.workspaceId || null,
     postId: report.postId,
     rule: issue.rule,
     severity: issue.severity,

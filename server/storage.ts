@@ -2,8 +2,8 @@ import {
   type User, 
   type ContactMessage,
   type InsertContactMessage,
-  type Venue,
-  type InsertVenue,
+  type Workspace,
+  type InsertWorkspace,
   type Reservation,
   type InsertReservation,
   type BusinessHours,
@@ -53,10 +53,10 @@ import {
   type RankTrackerHistory,
   type GridScanResult,
   type InsertGridScanResult,
-  type VenueDomain,
-  type InsertVenueDomain,
-  type VenueBlogPost,
-  type InsertVenueBlogPost,
+  type WorkspaceDomain,
+  type InsertWorkspaceDomain,
+  type WorkspaceBlogPost,
+  type InsertWorkspaceBlogPost,
   type ContentAsset,
   type InsertContentAsset,
   type ContentAssetUsage,
@@ -75,16 +75,16 @@ import {
   type InsertInvoiceLineItem,
   type ContentReport,
   type InsertContentReport,
-  type VenueSiteProfile,
-  type InsertVenueSiteProfile,
-  type VenueSitePage,
-  type InsertVenueSitePage,
+  type WorkspaceSiteProfile,
+  type InsertWorkspaceSiteProfile,
+  type WorkspaceSitePage,
+  type InsertWorkspaceSitePage,
   type PostKeywordIndex,
   type InsertPostKeywordIndex,
   type PostValidationResult,
   type InsertPostValidationResult,
   contactMessages,
-  venues,
+  workspaces,
   reservations,
   businessHours,
   closures,
@@ -113,8 +113,8 @@ import {
   rankTrackerCredits,
   rankTrackerHistory,
   gridScanResults,
-  venueDomains,
-  venueBlogPosts,
+  workspaceDomains,
+  workspaceBlogPosts,
   contentAssets,
   contentAssetUsage,
   contentCampaigns,
@@ -124,8 +124,8 @@ import {
   invoices,
   invoiceLineItems,
   contentReports,
-  venueSiteProfiles,
-  venueSitePages,
+  workspaceSiteProfiles,
+  workspaceSitePages,
   postKeywordIndex,
   postValidationResults,
 } from "@shared/schema";
@@ -139,138 +139,138 @@ export interface IStorage {
   getUserByEmail(email: string): Promise<User | undefined>;
   getContactMessages(): Promise<ContactMessage[]>;
   createContactMessage(message: InsertContactMessage): Promise<ContactMessage>;
-  getVenues(): Promise<Venue[]>;
-  getVenuesByOwner(ownerId: string): Promise<Venue[]>;
-  getVenue(id: string): Promise<Venue | undefined>;
-  createVenue(venue: InsertVenue): Promise<Venue>;
-  updateVenue(id: string, venue: Partial<InsertVenue>): Promise<Venue | undefined>;
-  deleteVenue(id: string): Promise<boolean>;
-  getReservations(venueId: string): Promise<Reservation[]>;
-  getReservationsByDate(venueId: string, date: string): Promise<Reservation[]>;
+  getWorkspaces(): Promise<Workspace[]>;
+  getWorkspacesByOwner(ownerId: string): Promise<Workspace[]>;
+  getWorkspace(id: string): Promise<Workspace | undefined>;
+  createWorkspace(venue: InsertWorkspace): Promise<Workspace>;
+  updateWorkspace(id: string, venue: Partial<InsertWorkspace>): Promise<Workspace | undefined>;
+  deleteWorkspace(id: string): Promise<boolean>;
+  getReservations(workspaceId: string): Promise<Reservation[]>;
+  getReservationsByDate(workspaceId: string, date: string): Promise<Reservation[]>;
   getReservation(id: string): Promise<Reservation | undefined>;
   createReservation(reservation: InsertReservation): Promise<Reservation>;
   updateReservation(id: string, reservation: Partial<InsertReservation>): Promise<Reservation | undefined>;
   deleteReservation(id: string): Promise<boolean>;
-  getBusinessHours(venueId: string): Promise<BusinessHours[]>;
-  setBusinessHours(venueId: string, hours: InsertBusinessHours[]): Promise<BusinessHours[]>;
-  getClosures(venueId: string): Promise<Closure[]>;
+  getBusinessHours(workspaceId: string): Promise<BusinessHours[]>;
+  setBusinessHours(workspaceId: string, hours: InsertBusinessHours[]): Promise<BusinessHours[]>;
+  getClosures(workspaceId: string): Promise<Closure[]>;
   getClosure(id: number): Promise<Closure | undefined>;
   createClosure(closure: InsertClosure): Promise<Closure>;
   deleteClosure(id: number): Promise<boolean>;
-  getResources(venueId: string): Promise<Resource[]>;
+  getResources(workspaceId: string): Promise<Resource[]>;
   getResource(id: string): Promise<Resource | undefined>;
   createResource(resource: InsertResource): Promise<Resource>;
   updateResource(id: string, resource: Partial<InsertResource>): Promise<Resource | undefined>;
   deleteResource(id: string): Promise<boolean>;
-  getTeamMembers(venueId: string): Promise<TeamMember[]>;
+  getTeamMembers(workspaceId: string): Promise<TeamMember[]>;
   getTeamMember(id: number): Promise<TeamMember | undefined>;
-  getTeamMemberByUserAndVenue(userId: string, venueId: string): Promise<TeamMember | undefined>;
+  getTeamMemberByUserAndWorkspace(userId: string, workspaceId: string): Promise<TeamMember | undefined>;
   createTeamMember(member: InsertTeamMember): Promise<TeamMember>;
   updateTeamMember(id: number, member: Partial<InsertTeamMember>): Promise<TeamMember | undefined>;
   deleteTeamMember(id: number): Promise<boolean>;
-  getKnowledgeBaseItems(venueId: string): Promise<KnowledgeBaseItem[]>;
+  getKnowledgeBaseItems(workspaceId: string): Promise<KnowledgeBaseItem[]>;
   getKnowledgeBaseItem(id: string): Promise<KnowledgeBaseItem | undefined>;
   createKnowledgeBaseItem(item: InsertKnowledgeBaseItem): Promise<KnowledgeBaseItem>;
   updateKnowledgeBaseItem(id: string, item: Partial<InsertKnowledgeBaseItem>): Promise<KnowledgeBaseItem | undefined>;
   deleteKnowledgeBaseItem(id: string): Promise<boolean>;
-  getCallLogs(venueId: string): Promise<CallLog[]>;
+  getCallLogs(workspaceId: string): Promise<CallLog[]>;
   getCallLog(id: string): Promise<CallLog | undefined>;
   createCallLog(log: InsertCallLog): Promise<CallLog>;
   updateCallLogByTwilioSid(twilioSid: string, updates: Partial<InsertCallLog>): Promise<CallLog | undefined>;
-  getWidgetSettings(venueId: string): Promise<WidgetSettings | undefined>;
+  getWidgetSettings(workspaceId: string): Promise<WidgetSettings | undefined>;
   upsertWidgetSettings(settings: InsertWidgetSettings): Promise<WidgetSettings>;
-  getTwilioSettings(venueId: string): Promise<TwilioSettings | undefined>;
+  getTwilioSettings(workspaceId: string): Promise<TwilioSettings | undefined>;
   upsertTwilioSettings(settings: InsertTwilioSettings): Promise<TwilioSettings>;
-  getPaymentSettings(venueId: string): Promise<PaymentSettings | undefined>;
+  getPaymentSettings(workspaceId: string): Promise<PaymentSettings | undefined>;
   upsertPaymentSettings(settings: InsertPaymentSettings): Promise<PaymentSettings>;
-  getAiProviderSettings(venueId: string): Promise<AiProviderSettings[]>;
+  getAiProviderSettings(workspaceId: string): Promise<AiProviderSettings[]>;
   upsertAiProviderSettings(settings: InsertAiProviderSettings): Promise<AiProviderSettings>;
   getAdminSetting(key: string): Promise<AdminSettings | undefined>;
   setAdminSetting(key: string, value: any): Promise<AdminSettings>;
   // Room Types
-  getRoomTypes(venueId: string): Promise<RoomType[]>;
+  getRoomTypes(workspaceId: string): Promise<RoomType[]>;
   getRoomType(id: string): Promise<RoomType | undefined>;
   createRoomType(roomType: InsertRoomType): Promise<RoomType>;
   updateRoomType(id: string, roomType: Partial<InsertRoomType>): Promise<RoomType | undefined>;
   deleteRoomType(id: string): Promise<boolean>;
   // Rooms
-  getRooms(venueId: string): Promise<Room[]>;
+  getRooms(workspaceId: string): Promise<Room[]>;
   getRoomsByType(roomTypeId: string): Promise<Room[]>;
   getRoom(id: string): Promise<Room | undefined>;
   createRoom(room: InsertRoom): Promise<Room>;
   updateRoom(id: string, room: Partial<InsertRoom>): Promise<Room | undefined>;
   deleteRoom(id: string): Promise<boolean>;
   // Room Bookings
-  getRoomBookings(venueId: string): Promise<RoomBooking[]>;
-  getRoomBookingsByDateRange(venueId: string, checkIn: string, checkOut: string): Promise<RoomBooking[]>;
+  getRoomBookings(workspaceId: string): Promise<RoomBooking[]>;
+  getRoomBookingsByDateRange(workspaceId: string, checkIn: string, checkOut: string): Promise<RoomBooking[]>;
   getRoomBooking(id: string): Promise<RoomBooking | undefined>;
   createRoomBooking(booking: InsertRoomBooking): Promise<RoomBooking>;
   updateRoomBooking(id: string, booking: Partial<InsertRoomBooking>): Promise<RoomBooking | undefined>;
   deleteRoomBooking(id: string): Promise<boolean>;
 
-  getSupportTicketsByVenue(venueId: string): Promise<SupportTicket[]>;
+  getSupportTicketsByWorkspace(workspaceId: string): Promise<SupportTicket[]>;
   getSupportTicketsByUser(userId: string): Promise<SupportTicket[]>;
   createSupportTicket(ticket: InsertSupportTicket): Promise<SupportTicket>;
   getAllSupportTickets(): Promise<SupportTicket[]>;
   getSupportTicket(id: string): Promise<SupportTicket | undefined>;
   updateSupportTicket(id: string, updates: Partial<InsertSupportTicket>): Promise<SupportTicket | undefined>;
   // Widget Chat Logs
-  getWidgetChatLogs(venueId: string): Promise<WidgetChatLog[]>;
+  getWidgetChatLogs(workspaceId: string): Promise<WidgetChatLog[]>;
   createWidgetChatLog(log: InsertWidgetChatLog): Promise<WidgetChatLog>;
   updateWidgetChatLogMessageCount(sessionId: string): Promise<WidgetChatLog | undefined>;
   // Website Change Requests
-  getWebsiteChangeRequests(venueId: string): Promise<WebsiteChangeRequest[]>;
+  getWebsiteChangeRequests(workspaceId: string): Promise<WebsiteChangeRequest[]>;
   createWebsiteChangeRequest(request: InsertWebsiteChangeRequest): Promise<WebsiteChangeRequest>;
   updateWebsiteChangeRequest(id: string, updates: Partial<InsertWebsiteChangeRequest>): Promise<WebsiteChangeRequest | undefined>;
   // SEO Settings
-  getSeoSettings(venueId: string): Promise<SeoSettings[]>;
+  getSeoSettings(workspaceId: string): Promise<SeoSettings[]>;
   upsertSeoSettings(settings: InsertSeoSettings): Promise<SeoSettings>;
   // Rank Tracker
-  getRankTrackerKeywords(venueId: string): Promise<RankTrackerKeyword[]>;
+  getRankTrackerKeywords(workspaceId: string): Promise<RankTrackerKeyword[]>;
   addRankTrackerKeywords(keywords: InsertRankTrackerKeyword[]): Promise<RankTrackerKeyword[]>;
   deleteRankTrackerKeyword(id: number): Promise<void>;
-  deleteAllRankTrackerKeywords(venueId: string): Promise<void>;
-  getRankTrackerResults(venueId: string, page?: number, limit?: number): Promise<{ results: RankTrackerResult[]; total: number }>;
-  getLatestRankTrackerResults(venueId: string): Promise<RankTrackerResult[]>;
+  deleteAllRankTrackerKeywords(workspaceId: string): Promise<void>;
+  getRankTrackerResults(workspaceId: string, page?: number, limit?: number): Promise<{ results: RankTrackerResult[]; total: number }>;
+  getLatestRankTrackerResults(workspaceId: string): Promise<RankTrackerResult[]>;
   saveRankTrackerResults(results: InsertRankTrackerResult[]): Promise<RankTrackerResult[]>;
-  getLastRankCheckDate(venueId: string): Promise<Date | null>;
+  getLastRankCheckDate(workspaceId: string): Promise<Date | null>;
   // Grid Keywords
-  getGridKeywords(venueId: string): Promise<GridKeyword[]>;
+  getGridKeywords(workspaceId: string): Promise<GridKeyword[]>;
   addGridKeywords(keywords: InsertGridKeyword[]): Promise<GridKeyword[]>;
   deleteGridKeyword(id: number): Promise<void>;
-  deleteAllGridKeywords(venueId: string): Promise<void>;
+  deleteAllGridKeywords(workspaceId: string): Promise<void>;
   // Grid Refresh Credits
-  getGridRefreshCredits(venueId: string): Promise<GridRefreshCredits>;
-  addGridRefreshCredits(venueId: string, amount: number, description: string): Promise<GridRefreshCredits>;
-  useGridRefreshCredit(venueId: string): Promise<{ success: boolean; balance: number }>;
-  getGridRefreshHistory(venueId: string): Promise<GridRefreshHistory[]>;
+  getGridRefreshCredits(workspaceId: string): Promise<GridRefreshCredits>;
+  addGridRefreshCredits(workspaceId: string, amount: number, description: string): Promise<GridRefreshCredits>;
+  useGridRefreshCredit(workspaceId: string): Promise<{ success: boolean; balance: number }>;
+  getGridRefreshHistory(workspaceId: string): Promise<GridRefreshHistory[]>;
   // Rank Tracker Credits
-  getRankTrackerCredits(venueId: string): Promise<RankTrackerCredits>;
-  addRankTrackerCredits(venueId: string, amount: number, description: string): Promise<RankTrackerCredits>;
-  useRankTrackerCredit(venueId: string): Promise<{ success: boolean; balance: number }>;
-  getRankTrackerHistory(venueId: string): Promise<RankTrackerHistory[]>;
+  getRankTrackerCredits(workspaceId: string): Promise<RankTrackerCredits>;
+  addRankTrackerCredits(workspaceId: string, amount: number, description: string): Promise<RankTrackerCredits>;
+  useRankTrackerCredit(workspaceId: string): Promise<{ success: boolean; balance: number }>;
+  getRankTrackerHistory(workspaceId: string): Promise<RankTrackerHistory[]>;
   saveGridScanResults(results: InsertGridScanResult[]): Promise<GridScanResult[]>;
-  getLatestGridScanResults(venueId: string, keyword: string): Promise<GridScanResult[]>;
-  getGridScanKeywords(venueId: string): Promise<string[]>;
-  // Venue Domains
-  getVenueDomains(venueId: string): Promise<VenueDomain[]>;
-  getVenueDomainByDomain(domain: string): Promise<VenueDomain | undefined>;
-  createVenueDomain(d: InsertVenueDomain): Promise<VenueDomain>;
-  updateVenueDomain(id: string, data: Partial<Pick<VenueDomain, "domain" | "blogTemplate" | "isPrimary" | "accentColor" | "accentForeground">>): Promise<VenueDomain | undefined>;
-  deleteVenueDomain(id: string): Promise<boolean>;
-  // Venue Blog Posts
-  getVenueBlogPosts(venueId: string, status?: string): Promise<VenueBlogPost[]>;
-  getVenueBlogPost(id: string): Promise<VenueBlogPost | undefined>;
-  getVenueBlogPostBySlug(venueId: string, slug: string): Promise<VenueBlogPost | undefined>;
-  getPublishedPostsByVenue(venueId: string): Promise<VenueBlogPost[]>;
-  getScheduledPostsDue(): Promise<VenueBlogPost[]>;
-  createVenueBlogPost(post: InsertVenueBlogPost): Promise<VenueBlogPost>;
-  bulkCreateVenueBlogPosts(posts: InsertVenueBlogPost[]): Promise<VenueBlogPost[]>;
-  getVenueBlogPostsByCampaign(venueId: string, campaignId: string): Promise<VenueBlogPost[]>;
-  getVenueCampaigns(venueId: string): Promise<{ campaignId: string; postCount: number; createdAt: Date; statuses: Record<string, number> }[]>;
+  getLatestGridScanResults(workspaceId: string, keyword: string): Promise<GridScanResult[]>;
+  getGridScanKeywords(workspaceId: string): Promise<string[]>;
+  // Workspace Domains
+  getWorkspaceDomains(workspaceId: string): Promise<WorkspaceDomain[]>;
+  getWorkspaceDomainByDomain(domain: string): Promise<WorkspaceDomain | undefined>;
+  createWorkspaceDomain(d: InsertWorkspaceDomain): Promise<WorkspaceDomain>;
+  updateWorkspaceDomain(id: string, data: Partial<Pick<WorkspaceDomain, "domain" | "blogTemplate" | "isPrimary" | "accentColor" | "accentForeground">>): Promise<WorkspaceDomain | undefined>;
+  deleteWorkspaceDomain(id: string): Promise<boolean>;
+  // Workspace Blog Posts
+  getWorkspaceBlogPosts(workspaceId: string, status?: string): Promise<WorkspaceBlogPost[]>;
+  getWorkspaceBlogPost(id: string): Promise<WorkspaceBlogPost | undefined>;
+  getWorkspaceBlogPostBySlug(workspaceId: string, slug: string): Promise<WorkspaceBlogPost | undefined>;
+  getPublishedPostsByWorkspace(workspaceId: string): Promise<WorkspaceBlogPost[]>;
+  getScheduledPostsDue(): Promise<WorkspaceBlogPost[]>;
+  createWorkspaceBlogPost(post: InsertWorkspaceBlogPost): Promise<WorkspaceBlogPost>;
+  bulkCreateWorkspaceBlogPosts(posts: InsertWorkspaceBlogPost[]): Promise<WorkspaceBlogPost[]>;
+  getWorkspaceBlogPostsByCampaign(workspaceId: string, campaignId: string): Promise<WorkspaceBlogPost[]>;
+  getWorkspaceCampaigns(workspaceId: string): Promise<{ campaignId: string; postCount: number; createdAt: Date; statuses: Record<string, number> }[]>;
   createContentCampaign(data: InsertContentCampaign): Promise<ContentCampaign>;
-  updateVenueBlogPost(id: string, post: Partial<VenueBlogPost>): Promise<VenueBlogPost | undefined>;
-  deleteVenueBlogPost(id: string): Promise<boolean>;
+  updateWorkspaceBlogPost(id: string, post: Partial<WorkspaceBlogPost>): Promise<WorkspaceBlogPost | undefined>;
+  deleteWorkspaceBlogPost(id: string): Promise<boolean>;
   // Content Assets
   getContentAssets(postId: string): Promise<ContentAsset[]>;
   createContentAsset(asset: InsertContentAsset): Promise<ContentAsset>;
@@ -305,21 +305,21 @@ export interface IStorage {
   createContentReport(data: InsertContentReport): Promise<ContentReport>;
   updateContentReport(id: number, data: Partial<InsertContentReport>): Promise<ContentReport | undefined>;
   deleteContentReport(id: number): Promise<boolean>;
-  getSiteProfile(venueId: string): Promise<VenueSiteProfile | undefined>;
-  upsertSiteProfile(data: InsertVenueSiteProfile): Promise<VenueSiteProfile>;
-  getSitePages(venueId: string): Promise<VenueSitePage[]>;
-  getSitePage(id: number): Promise<VenueSitePage | undefined>;
-  createSitePage(data: InsertVenueSitePage): Promise<VenueSitePage>;
-  updateSitePage(id: number, data: Partial<InsertVenueSitePage>): Promise<VenueSitePage | undefined>;
+  getSiteProfile(workspaceId: string): Promise<WorkspaceSiteProfile | undefined>;
+  upsertSiteProfile(data: InsertWorkspaceSiteProfile): Promise<WorkspaceSiteProfile>;
+  getSitePages(workspaceId: string): Promise<WorkspaceSitePage[]>;
+  getSitePage(id: number): Promise<WorkspaceSitePage | undefined>;
+  createSitePage(data: InsertWorkspaceSitePage): Promise<WorkspaceSitePage>;
+  updateSitePage(id: number, data: Partial<InsertWorkspaceSitePage>): Promise<WorkspaceSitePage | undefined>;
   deleteSitePage(id: number): Promise<boolean>;
-  getPostKeywordIndex(venueId: string): Promise<PostKeywordIndex[]>;
+  getPostKeywordIndex(workspaceId: string): Promise<PostKeywordIndex[]>;
   getPostKeywordIndexByPost(postId: string): Promise<PostKeywordIndex[]>;
-  getPostKeywordIndexByKeyword(venueId: string, keyword: string): Promise<PostKeywordIndex[]>;
+  getPostKeywordIndexByKeyword(workspaceId: string, keyword: string): Promise<PostKeywordIndex[]>;
   upsertPostKeywordIndex(data: InsertPostKeywordIndex): Promise<PostKeywordIndex>;
   bulkUpsertPostKeywordIndex(items: InsertPostKeywordIndex[]): Promise<PostKeywordIndex[]>;
   deletePostKeywordIndexByPost(postId: string): Promise<void>;
   getPostValidationResults(postId: string): Promise<PostValidationResult[]>;
-  getPostValidationResultsByVenue(venueId: string): Promise<PostValidationResult[]>;
+  getPostValidationResultsByWorkspace(workspaceId: string): Promise<PostValidationResult[]>;
   createPostValidationResult(data: InsertPostValidationResult): Promise<PostValidationResult>;
   bulkCreatePostValidationResults(items: InsertPostValidationResult[]): Promise<PostValidationResult[]>;
   deletePostValidationResultsByPost(postId: string): Promise<void>;
@@ -329,7 +329,7 @@ export interface IStorage {
 export class MemStorage implements IStorage {
   private users: Map<string, User> = new Map();
   private contactMessages: Map<string, ContactMessage> = new Map();
-  private venues: Map<string, Venue> = new Map();
+  private workspaces: Map<string, Workspace> = new Map();
   private reservations: Map<string, Reservation> = new Map();
   private businessHoursMap: Map<string, BusinessHours[]> = new Map();
   private closures: Map<number, Closure> = new Map();
@@ -389,21 +389,21 @@ export class MemStorage implements IStorage {
     return msg;
   }
 
-  async getVenues(): Promise<Venue[]> {
-    return Array.from(this.venues.values());
+  async getWorkspaces(): Promise<Workspace[]> {
+    return Array.from(this.workspaces.values());
   }
 
-  async getVenuesByOwner(ownerId: string): Promise<Venue[]> {
-    return Array.from(this.venues.values()).filter((v) => v.ownerId === ownerId);
+  async getWorkspacesByOwner(ownerId: string): Promise<Workspace[]> {
+    return Array.from(this.workspaces.values()).filter((v) => v.ownerId === ownerId);
   }
 
-  async getVenue(id: string): Promise<Venue | undefined> {
-    return this.venues.get(id);
+  async getWorkspace(id: string): Promise<Workspace | undefined> {
+    return this.workspaces.get(id);
   }
 
-  async createVenue(data: InsertVenue): Promise<Venue> {
+  async createWorkspace(data: InsertWorkspace): Promise<Workspace> {
     const id = randomUUID();
-    const venue: Venue = {
+    const venue: Workspace = {
       id,
       ownerId: data.ownerId,
       name: data.name,
@@ -425,29 +425,29 @@ export class MemStorage implements IStorage {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    this.venues.set(id, venue);
+    this.workspaces.set(id, venue);
     return venue;
   }
 
-  async updateVenue(id: string, update: Partial<InsertVenue>): Promise<Venue | undefined> {
-    const venue = this.venues.get(id);
+  async updateWorkspace(id: string, update: Partial<InsertWorkspace>): Promise<Workspace | undefined> {
+    const venue = this.workspaces.get(id);
     if (!venue) return undefined;
     const updated = { ...venue, ...update, updatedAt: new Date() };
-    this.venues.set(id, updated);
+    this.workspaces.set(id, updated);
     return updated;
   }
 
-  async deleteVenue(id: string): Promise<boolean> {
-    return this.venues.delete(id);
+  async deleteWorkspace(id: string): Promise<boolean> {
+    return this.workspaces.delete(id);
   }
 
-  async getReservations(venueId: string): Promise<Reservation[]> {
-    return Array.from(this.reservations.values()).filter((r) => r.venueId === venueId);
+  async getReservations(workspaceId: string): Promise<Reservation[]> {
+    return Array.from(this.reservations.values()).filter((r) => r.workspaceId === workspaceId);
   }
 
-  async getReservationsByDate(venueId: string, date: string): Promise<Reservation[]> {
+  async getReservationsByDate(workspaceId: string, date: string): Promise<Reservation[]> {
     return Array.from(this.reservations.values()).filter(
-      (r) => r.venueId === venueId && r.date === date
+      (r) => r.workspaceId === workspaceId && r.date === date
     );
   }
 
@@ -460,7 +460,7 @@ export class MemStorage implements IStorage {
     const confirmationCode = Math.random().toString(36).substring(2, 8).toUpperCase();
     const res: Reservation = {
       id,
-      venueId: data.venueId,
+      workspaceId: data.workspaceId,
       guestName: data.guestName,
       guestEmail: data.guestEmail ?? null,
       guestPhone: data.guestPhone ?? null,
@@ -496,25 +496,25 @@ export class MemStorage implements IStorage {
     return this.reservations.delete(id);
   }
 
-  async getBusinessHours(venueId: string): Promise<BusinessHours[]> {
-    return this.businessHoursMap.get(venueId) || [];
+  async getBusinessHours(workspaceId: string): Promise<BusinessHours[]> {
+    return this.businessHoursMap.get(workspaceId) || [];
   }
 
-  async setBusinessHours(venueId: string, hours: InsertBusinessHours[]): Promise<BusinessHours[]> {
+  async setBusinessHours(workspaceId: string, hours: InsertBusinessHours[]): Promise<BusinessHours[]> {
     const result: BusinessHours[] = hours.map((h, i) => ({
       id: i + 1,
-      venueId: h.venueId,
+      workspaceId: h.workspaceId,
       dayOfWeek: h.dayOfWeek,
       openTime: h.openTime ?? null,
       closeTime: h.closeTime ?? null,
       isClosed: h.isClosed ?? false,
     }));
-    this.businessHoursMap.set(venueId, result);
+    this.businessHoursMap.set(workspaceId, result);
     return result;
   }
 
-  async getClosures(venueId: string): Promise<Closure[]> {
-    return Array.from(this.closures.values()).filter((c) => c.venueId === venueId);
+  async getClosures(workspaceId: string): Promise<Closure[]> {
+    return Array.from(this.closures.values()).filter((c) => c.workspaceId === workspaceId);
   }
 
   async getClosure(id: number): Promise<Closure | undefined> {
@@ -525,7 +525,7 @@ export class MemStorage implements IStorage {
     const id = this.closureIdCounter++;
     const closure: Closure = {
       id,
-      venueId: data.venueId,
+      workspaceId: data.workspaceId,
       date: data.date,
       reason: data.reason ?? null,
       createdAt: new Date(),
@@ -538,9 +538,9 @@ export class MemStorage implements IStorage {
     return this.closures.delete(id);
   }
 
-  async getResources(venueId: string): Promise<Resource[]> {
+  async getResources(workspaceId: string): Promise<Resource[]> {
     return Array.from(this.resources.values())
-      .filter((r) => r.venueId === venueId)
+      .filter((r) => r.workspaceId === workspaceId)
       .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
   }
 
@@ -552,7 +552,7 @@ export class MemStorage implements IStorage {
     const id = randomUUID();
     const resource: Resource = {
       id,
-      venueId: data.venueId,
+      workspaceId: data.workspaceId,
       name: data.name,
       type: data.type ?? "table",
       capacity: data.capacity ?? 4,
@@ -576,17 +576,17 @@ export class MemStorage implements IStorage {
     return this.resources.delete(id);
   }
 
-  async getTeamMembers(venueId: string): Promise<TeamMember[]> {
-    return Array.from(this.teamMembers.values()).filter((t) => t.venueId === venueId);
+  async getTeamMembers(workspaceId: string): Promise<TeamMember[]> {
+    return Array.from(this.teamMembers.values()).filter((t) => t.workspaceId === workspaceId);
   }
 
   async getTeamMember(id: number): Promise<TeamMember | undefined> {
     return this.teamMembers.get(id);
   }
 
-  async getTeamMemberByUserAndVenue(userId: string, venueId: string): Promise<TeamMember | undefined> {
+  async getTeamMemberByUserAndWorkspace(userId: string, workspaceId: string): Promise<TeamMember | undefined> {
     return Array.from(this.teamMembers.values()).find(
-      (t) => t.userId === userId && t.venueId === venueId && t.status === "accepted"
+      (t) => t.userId === userId && t.workspaceId === workspaceId && t.status === "accepted"
     );
   }
 
@@ -594,7 +594,7 @@ export class MemStorage implements IStorage {
     const id = this.teamMemberIdCounter++;
     const member: TeamMember = {
       id,
-      venueId: data.venueId,
+      workspaceId: data.workspaceId,
       userId: data.userId ?? null,
       email: data.email,
       role: data.role ?? "staff",
@@ -618,8 +618,8 @@ export class MemStorage implements IStorage {
     return this.teamMembers.delete(id);
   }
 
-  async getKnowledgeBaseItems(venueId: string): Promise<KnowledgeBaseItem[]> {
-    return Array.from(this.knowledgeBaseItems.values()).filter((k) => k.venueId === venueId);
+  async getKnowledgeBaseItems(workspaceId: string): Promise<KnowledgeBaseItem[]> {
+    return Array.from(this.knowledgeBaseItems.values()).filter((k) => k.workspaceId === workspaceId);
   }
 
   async getKnowledgeBaseItem(id: string): Promise<KnowledgeBaseItem | undefined> {
@@ -630,7 +630,7 @@ export class MemStorage implements IStorage {
     const id = randomUUID();
     const item: KnowledgeBaseItem = {
       id,
-      venueId: data.venueId,
+      workspaceId: data.workspaceId,
       type: data.type,
       category: data.category ?? null,
       title: data.title ?? null,
@@ -658,9 +658,9 @@ export class MemStorage implements IStorage {
     return this.knowledgeBaseItems.delete(id);
   }
 
-  async getCallLogs(venueId: string): Promise<CallLog[]> {
+  async getCallLogs(workspaceId: string): Promise<CallLog[]> {
     return Array.from(this.callLogs.values())
-      .filter((c) => c.venueId === venueId)
+      .filter((c) => c.workspaceId === workspaceId)
       .sort((a, b) => new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime());
   }
 
@@ -672,7 +672,7 @@ export class MemStorage implements IStorage {
     const id = randomUUID();
     const log: CallLog = {
       id,
-      venueId: data.venueId,
+      workspaceId: data.workspaceId,
       twilioSid: data.twilioSid ?? null,
       callerPhone: data.callerPhone ?? null,
       duration: data.duration ?? null,
@@ -698,15 +698,15 @@ export class MemStorage implements IStorage {
     return undefined;
   }
 
-  async getWidgetSettings(venueId: string): Promise<WidgetSettings | undefined> {
-    return this.widgetSettingsMap.get(venueId);
+  async getWidgetSettings(workspaceId: string): Promise<WidgetSettings | undefined> {
+    return this.widgetSettingsMap.get(workspaceId);
   }
 
   async upsertWidgetSettings(data: InsertWidgetSettings): Promise<WidgetSettings> {
-    const existing = this.widgetSettingsMap.get(data.venueId);
+    const existing = this.widgetSettingsMap.get(data.workspaceId);
     const settings: WidgetSettings = {
       id: existing?.id || 1,
-      venueId: data.venueId,
+      workspaceId: data.workspaceId,
       primaryColor: data.primaryColor ?? "#000000",
       position: data.position ?? "bottom-right",
       welcomeMessage: data.welcomeMessage ?? null,
@@ -716,21 +716,21 @@ export class MemStorage implements IStorage {
       logoUrl: data.logoUrl ?? null,
       updatedAt: new Date(),
     };
-    this.widgetSettingsMap.set(data.venueId, settings);
+    this.widgetSettingsMap.set(data.workspaceId, settings);
     return settings;
   }
 
-  async getTwilioSettings(venueId: string): Promise<TwilioSettings | undefined> {
-    const s = this.twilioSettingsMap.get(venueId);
+  async getTwilioSettings(workspaceId: string): Promise<TwilioSettings | undefined> {
+    const s = this.twilioSettingsMap.get(workspaceId);
     if (!s) return s;
     return { ...s, authToken: decryptField(s.authToken) };
   }
 
   async upsertTwilioSettings(data: InsertTwilioSettings): Promise<TwilioSettings> {
-    const existing = this.twilioSettingsMap.get(data.venueId);
+    const existing = this.twilioSettingsMap.get(data.workspaceId);
     const settings: TwilioSettings = {
       id: existing?.id || 1,
-      venueId: data.venueId,
+      workspaceId: data.workspaceId,
       accountSid: data.accountSid ?? null,
       authToken: encryptField(data.authToken) ?? null,
       phoneNumber: data.phoneNumber ?? null,
@@ -743,21 +743,21 @@ export class MemStorage implements IStorage {
       isConnected: data.isConnected ?? false,
       updatedAt: new Date(),
     };
-    this.twilioSettingsMap.set(data.venueId, settings);
+    this.twilioSettingsMap.set(data.workspaceId, settings);
     return { ...settings, authToken: decryptField(settings.authToken) };
   }
 
-  async getPaymentSettings(venueId: string): Promise<PaymentSettings | undefined> {
-    const s = this.paymentSettingsMap.get(venueId);
+  async getPaymentSettings(workspaceId: string): Promise<PaymentSettings | undefined> {
+    const s = this.paymentSettingsMap.get(workspaceId);
     if (!s) return s;
     return { ...s, stripeSecretKey: decryptField(s.stripeSecretKey), paypalClientSecret: decryptField(s.paypalClientSecret) };
   }
 
   async upsertPaymentSettings(data: InsertPaymentSettings): Promise<PaymentSettings> {
-    const existing = this.paymentSettingsMap.get(data.venueId);
+    const existing = this.paymentSettingsMap.get(data.workspaceId);
     const settings: PaymentSettings = {
       id: existing?.id || 1,
-      venueId: data.venueId,
+      workspaceId: data.workspaceId,
       stripeSecretKey: encryptField(data.stripeSecretKey) ?? null,
       stripePublishableKey: data.stripePublishableKey ?? null,
       stripeConnected: data.stripeConnected ?? false,
@@ -768,20 +768,20 @@ export class MemStorage implements IStorage {
       depositType: data.depositType ?? "fixed",
       updatedAt: new Date(),
     };
-    this.paymentSettingsMap.set(data.venueId, settings);
+    this.paymentSettingsMap.set(data.workspaceId, settings);
     return { ...settings, stripeSecretKey: decryptField(settings.stripeSecretKey), paypalClientSecret: decryptField(settings.paypalClientSecret) };
   }
 
-  async getAiProviderSettings(venueId: string): Promise<AiProviderSettings[]> {
-    return Array.from(this.aiProviderSettingsMap.values()).filter((a) => a.venueId === venueId).map(r => ({ ...r, apiKey: decryptField(r.apiKey) }));
+  async getAiProviderSettings(workspaceId: string): Promise<AiProviderSettings[]> {
+    return Array.from(this.aiProviderSettingsMap.values()).filter((a) => a.workspaceId === workspaceId).map(r => ({ ...r, apiKey: decryptField(r.apiKey) }));
   }
 
   async upsertAiProviderSettings(data: InsertAiProviderSettings): Promise<AiProviderSettings> {
-    const key = `${data.venueId}-${data.provider}`;
+    const key = `${data.workspaceId}-${data.provider}`;
     const existing = this.aiProviderSettingsMap.get(key);
     const settings: AiProviderSettings = {
       id: existing?.id || 1,
-      venueId: data.venueId,
+      workspaceId: data.workspaceId,
       provider: data.provider,
       apiKey: encryptField(data.apiKey) ?? null,
       isEnabled: data.isEnabled ?? false,
@@ -808,9 +808,9 @@ export class MemStorage implements IStorage {
   }
 
   // Room Types
-  async getRoomTypes(venueId: string): Promise<RoomType[]> {
+  async getRoomTypes(workspaceId: string): Promise<RoomType[]> {
     return Array.from(this.roomTypesMap.values())
-      .filter((rt) => rt.venueId === venueId)
+      .filter((rt) => rt.workspaceId === workspaceId)
       .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
   }
 
@@ -822,7 +822,7 @@ export class MemStorage implements IStorage {
     const id = randomUUID();
     const roomType: RoomType = {
       id,
-      venueId: data.venueId,
+      workspaceId: data.workspaceId,
       name: data.name,
       description: data.description ?? null,
       basePrice: data.basePrice,
@@ -851,8 +851,8 @@ export class MemStorage implements IStorage {
   }
 
   // Rooms
-  async getRooms(venueId: string): Promise<Room[]> {
-    return Array.from(this.roomsMap.values()).filter((r) => r.venueId === venueId);
+  async getRooms(workspaceId: string): Promise<Room[]> {
+    return Array.from(this.roomsMap.values()).filter((r) => r.workspaceId === workspaceId);
   }
 
   async getRoomsByType(roomTypeId: string): Promise<Room[]> {
@@ -867,7 +867,7 @@ export class MemStorage implements IStorage {
     const id = randomUUID();
     const room: Room = {
       id,
-      venueId: data.venueId,
+      workspaceId: data.workspaceId,
       roomTypeId: data.roomTypeId,
       roomNumber: data.roomNumber,
       floor: data.floor ?? null,
@@ -893,19 +893,19 @@ export class MemStorage implements IStorage {
   }
 
   // Room Bookings
-  async getRoomBookings(venueId: string): Promise<RoomBooking[]> {
+  async getRoomBookings(workspaceId: string): Promise<RoomBooking[]> {
     return Array.from(this.roomBookingsMap.values())
-      .filter((rb) => rb.venueId === venueId)
+      .filter((rb) => rb.workspaceId === workspaceId)
       .sort((a, b) => new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime());
   }
 
-  async getRoomBookingsByDateRange(venueId: string, checkIn: string, checkOut: string): Promise<RoomBooking[]> {
+  async getRoomBookingsByDateRange(workspaceId: string, checkIn: string, checkOut: string): Promise<RoomBooking[]> {
     // Overlap formula: new.checkIn < existing.checkOut AND new.checkOut > existing.checkIn
     // Use timestamps for reliable comparison (handles both Date objects and strings)
     const newCheckInTs = new Date(checkIn).getTime();
     const newCheckOutTs = new Date(checkOut).getTime();
     return Array.from(this.roomBookingsMap.values()).filter((rb) => {
-      if (rb.venueId !== venueId) return false;
+      if (rb.workspaceId !== workspaceId) return false;
       const existingCheckInTs = new Date(rb.checkIn).getTime();
       const existingCheckOutTs = new Date(rb.checkOut).getTime();
       return newCheckInTs < existingCheckOutTs && newCheckOutTs > existingCheckInTs;
@@ -921,7 +921,7 @@ export class MemStorage implements IStorage {
     const confirmationCode = Math.random().toString(36).substring(2, 8).toUpperCase();
     const booking: RoomBooking = {
       id,
-      venueId: data.venueId,
+      workspaceId: data.workspaceId,
       roomId: data.roomId,
       roomTypeId: data.roomTypeId,
       guestName: data.guestName,
@@ -960,9 +960,9 @@ export class MemStorage implements IStorage {
     return this.roomBookingsMap.delete(id);
   }
 
-  async getSupportTicketsByVenue(venueId: string): Promise<SupportTicket[]> {
+  async getSupportTicketsByWorkspace(workspaceId: string): Promise<SupportTicket[]> {
     return Array.from(this.supportTicketsMap.values())
-      .filter((t) => t.venueId === venueId)
+      .filter((t) => t.workspaceId === workspaceId)
       .sort((a, b) => new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime());
   }
 
@@ -976,7 +976,7 @@ export class MemStorage implements IStorage {
     const id = randomUUID();
     const ticket: SupportTicket = {
       id,
-      venueId: data.venueId,
+      workspaceId: data.workspaceId,
       userId: data.userId,
       subject: data.subject,
       description: data.description,
@@ -1012,8 +1012,8 @@ export class MemStorage implements IStorage {
     return updated;
   }
 
-  async getWidgetChatLogs(venueId: string): Promise<WidgetChatLog[]> {
-    return Array.from(this.widgetChatLogsMap.values()).filter(l => l.venueId === venueId);
+  async getWidgetChatLogs(workspaceId: string): Promise<WidgetChatLog[]> {
+    return Array.from(this.widgetChatLogsMap.values()).filter(l => l.workspaceId === workspaceId);
   }
 
   async createWidgetChatLog(log: InsertWidgetChatLog): Promise<WidgetChatLog> {
@@ -1047,8 +1047,8 @@ export class MemStorage implements IStorage {
     return undefined;
   }
 
-  async getWebsiteChangeRequests(venueId: string): Promise<WebsiteChangeRequest[]> {
-    return Array.from(this.websiteChangeRequestsMap.values()).filter(r => r.venueId === venueId).sort((a, b) => (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0));
+  async getWebsiteChangeRequests(workspaceId: string): Promise<WebsiteChangeRequest[]> {
+    return Array.from(this.websiteChangeRequestsMap.values()).filter(r => r.workspaceId === workspaceId).sort((a, b) => (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0));
   }
 
   async createWebsiteChangeRequest(request: InsertWebsiteChangeRequest): Promise<WebsiteChangeRequest> {
@@ -1066,12 +1066,12 @@ export class MemStorage implements IStorage {
     return updated;
   }
 
-  async getSeoSettings(venueId: string): Promise<SeoSettings[]> {
-    return Array.from(this.seoSettingsMap.values()).filter(s => s.venueId === venueId).map(r => ({ ...r, apiKey: decryptField(r.apiKey), apiLogin: decryptField(r.apiLogin), apiPassword: decryptField(r.apiPassword) }));
+  async getSeoSettings(workspaceId: string): Promise<SeoSettings[]> {
+    return Array.from(this.seoSettingsMap.values()).filter(s => s.workspaceId === workspaceId).map(r => ({ ...r, apiKey: decryptField(r.apiKey), apiLogin: decryptField(r.apiLogin), apiPassword: decryptField(r.apiPassword) }));
   }
 
   async upsertSeoSettings(settings: InsertSeoSettings): Promise<SeoSettings> {
-    const key = `${settings.venueId}:${settings.provider}`;
+    const key = `${settings.workspaceId}:${settings.provider}`;
     const existing = this.seoSettingsMap.get(key);
     const encrypted = { ...settings, apiKey: encryptField(settings.apiKey), apiLogin: encryptField(settings.apiLogin), apiPassword: encryptField(settings.apiPassword) };
     if (existing) {
@@ -1084,9 +1084,9 @@ export class MemStorage implements IStorage {
     return { ...newSettings, apiKey: decryptField(newSettings.apiKey), apiLogin: decryptField(newSettings.apiLogin), apiPassword: decryptField(newSettings.apiPassword) };
   }
 
-  async getRankTrackerKeywords(venueId: string): Promise<RankTrackerKeyword[]> {
+  async getRankTrackerKeywords(workspaceId: string): Promise<RankTrackerKeyword[]> {
     return Array.from(this.rankTrackerKeywordsMap.values())
-      .filter(k => k.venueId === venueId)
+      .filter(k => k.workspaceId === workspaceId)
       .sort((a, b) => a.keyword.localeCompare(b.keyword));
   }
 
@@ -1094,7 +1094,7 @@ export class MemStorage implements IStorage {
     const results: RankTrackerKeyword[] = [];
     for (const kw of keywords) {
       const id = this.rankKeywordCounter++;
-      const item: RankTrackerKeyword = { id, venueId: kw.venueId, keyword: kw.keyword, createdAt: new Date() };
+      const item: RankTrackerKeyword = { id, workspaceId: kw.workspaceId, keyword: kw.keyword, createdAt: new Date() };
       this.rankTrackerKeywordsMap.set(id, item);
       results.push(item);
     }
@@ -1105,15 +1105,15 @@ export class MemStorage implements IStorage {
     this.rankTrackerKeywordsMap.delete(id);
   }
 
-  async deleteAllRankTrackerKeywords(venueId: string): Promise<void> {
+  async deleteAllRankTrackerKeywords(workspaceId: string): Promise<void> {
     for (const [id, kw] of Array.from(this.rankTrackerKeywordsMap)) {
-      if (kw.venueId === venueId) this.rankTrackerKeywordsMap.delete(id);
+      if (kw.workspaceId === workspaceId) this.rankTrackerKeywordsMap.delete(id);
     }
   }
 
-  async getRankTrackerResults(venueId: string, page?: number, limit?: number): Promise<{ results: RankTrackerResult[]; total: number }> {
+  async getRankTrackerResults(workspaceId: string, page?: number, limit?: number): Promise<{ results: RankTrackerResult[]; total: number }> {
     const all = Array.from(this.rankTrackerResultsMap.values())
-      .filter(r => r.venueId === venueId)
+      .filter(r => r.workspaceId === workspaceId)
       .sort((a, b) => new Date(b.checkedAt!).getTime() - new Date(a.checkedAt!).getTime());
     const p = page || 1;
     const l = limit || 20;
@@ -1121,11 +1121,11 @@ export class MemStorage implements IStorage {
     return { results: all.slice(offset, offset + l), total: all.length };
   }
 
-  async getLatestRankTrackerResults(venueId: string): Promise<RankTrackerResult[]> {
-    const lastCheck = await this.getLastRankCheckDate(venueId);
+  async getLatestRankTrackerResults(workspaceId: string): Promise<RankTrackerResult[]> {
+    const lastCheck = await this.getLastRankCheckDate(workspaceId);
     if (!lastCheck) return [];
     return Array.from(this.rankTrackerResultsMap.values())
-      .filter(r => r.venueId === venueId && r.checkedAt?.getTime() === lastCheck.getTime())
+      .filter(r => r.workspaceId === workspaceId && r.checkedAt?.getTime() === lastCheck.getTime())
       .sort((a, b) => a.keyword.localeCompare(b.keyword));
   }
 
@@ -1140,19 +1140,19 @@ export class MemStorage implements IStorage {
     return saved;
   }
 
-  async getLastRankCheckDate(venueId: string): Promise<Date | null> {
+  async getLastRankCheckDate(workspaceId: string): Promise<Date | null> {
     let maxDate: Date | null = null;
     for (const r of Array.from(this.rankTrackerResultsMap.values())) {
-      if (r.venueId === venueId && r.checkedAt) {
+      if (r.workspaceId === workspaceId && r.checkedAt) {
         if (!maxDate || r.checkedAt > maxDate) maxDate = r.checkedAt;
       }
     }
     return maxDate;
   }
 
-  async getGridKeywords(venueId: string): Promise<GridKeyword[]> {
+  async getGridKeywords(workspaceId: string): Promise<GridKeyword[]> {
     return Array.from(this.gridKeywordsMap.values())
-      .filter(k => k.venueId === venueId)
+      .filter(k => k.workspaceId === workspaceId)
       .sort((a, b) => a.keyword.localeCompare(b.keyword));
   }
 
@@ -1160,7 +1160,7 @@ export class MemStorage implements IStorage {
     const results: GridKeyword[] = [];
     for (const kw of keywords) {
       const id = this.gridKeywordCounter++;
-      const item: GridKeyword = { id, venueId: kw.venueId, keyword: kw.keyword, gridSize: kw.gridSize ?? 5, distance: kw.distance ?? "2.0", createdAt: new Date() };
+      const item: GridKeyword = { id, workspaceId: kw.workspaceId, keyword: kw.keyword, gridSize: kw.gridSize ?? 5, distance: kw.distance ?? "2.0", createdAt: new Date() };
       this.gridKeywordsMap.set(id, item);
       results.push(item);
     }
@@ -1171,9 +1171,9 @@ export class MemStorage implements IStorage {
     this.gridKeywordsMap.delete(id);
   }
 
-  async deleteAllGridKeywords(venueId: string): Promise<void> {
+  async deleteAllGridKeywords(workspaceId: string): Promise<void> {
     for (const [id, kw] of Array.from(this.gridKeywordsMap)) {
-      if (kw.venueId === venueId) this.gridKeywordsMap.delete(id);
+      if (kw.workspaceId === workspaceId) this.gridKeywordsMap.delete(id);
     }
   }
 
@@ -1181,76 +1181,76 @@ export class MemStorage implements IStorage {
   private gridRefreshHistoryList: GridRefreshHistory[] = [];
   private gridRefreshHistoryCounter = 1;
 
-  async getGridRefreshCredits(venueId: string): Promise<GridRefreshCredits> {
-    let credits = this.gridRefreshCreditsMap.get(venueId);
+  async getGridRefreshCredits(workspaceId: string): Promise<GridRefreshCredits> {
+    let credits = this.gridRefreshCreditsMap.get(workspaceId);
     if (!credits) {
-      credits = { id: Date.now(), venueId, balance: 3, totalPurchased: 3, totalUsed: 0, lastFreeScanDate: null, createdAt: new Date(), updatedAt: new Date() };
-      this.gridRefreshHistoryList.push({ id: this.gridRefreshHistoryCounter++, venueId, type: "bonus", amount: 3, description: "Welcome bonus — $5 starter credit", createdAt: new Date() });
-      this.gridRefreshCreditsMap.set(venueId, credits);
+      credits = { id: Date.now(), workspaceId, balance: 3, totalPurchased: 3, totalUsed: 0, lastFreeScanDate: null, createdAt: new Date(), updatedAt: new Date() };
+      this.gridRefreshHistoryList.push({ id: this.gridRefreshHistoryCounter++, workspaceId, type: "bonus", amount: 3, description: "Welcome bonus — $5 starter credit", createdAt: new Date() });
+      this.gridRefreshCreditsMap.set(workspaceId, credits);
     }
     return credits;
   }
 
-  async addGridRefreshCredits(venueId: string, amount: number, description: string): Promise<GridRefreshCredits> {
-    const credits = await this.getGridRefreshCredits(venueId);
+  async addGridRefreshCredits(workspaceId: string, amount: number, description: string): Promise<GridRefreshCredits> {
+    const credits = await this.getGridRefreshCredits(workspaceId);
     credits.balance += amount;
     credits.totalPurchased += amount;
     credits.updatedAt = new Date();
-    this.gridRefreshHistoryList.push({ id: this.gridRefreshHistoryCounter++, venueId, type: "purchase", amount, description, createdAt: new Date() });
+    this.gridRefreshHistoryList.push({ id: this.gridRefreshHistoryCounter++, workspaceId, type: "purchase", amount, description, createdAt: new Date() });
     return credits;
   }
 
-  async useGridRefreshCredit(venueId: string): Promise<{ success: boolean; balance: number }> {
-    const credits = await this.getGridRefreshCredits(venueId);
+  async useGridRefreshCredit(workspaceId: string): Promise<{ success: boolean; balance: number }> {
+    const credits = await this.getGridRefreshCredits(workspaceId);
     if (credits.balance <= 0) return { success: false, balance: 0 };
     credits.balance -= 1;
     credits.totalUsed += 1;
     credits.updatedAt = new Date();
-    this.gridRefreshHistoryList.push({ id: this.gridRefreshHistoryCounter++, venueId, type: "usage", amount: -1, description: "Grid refresh", createdAt: new Date() });
+    this.gridRefreshHistoryList.push({ id: this.gridRefreshHistoryCounter++, workspaceId, type: "usage", amount: -1, description: "Grid refresh", createdAt: new Date() });
     return { success: true, balance: credits.balance };
   }
 
 
 
-  async getGridRefreshHistory(venueId: string): Promise<GridRefreshHistory[]> {
-    return this.gridRefreshHistoryList.filter(h => h.venueId === venueId).sort((a, b) => (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0));
+  async getGridRefreshHistory(workspaceId: string): Promise<GridRefreshHistory[]> {
+    return this.gridRefreshHistoryList.filter(h => h.workspaceId === workspaceId).sort((a, b) => (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0));
   }
 
   private rankTrackerCreditsMap: Map<string, RankTrackerCredits> = new Map();
   private rankTrackerHistoryList: RankTrackerHistory[] = [];
   private rankTrackerHistoryCounter = 1;
 
-  async getRankTrackerCredits(venueId: string): Promise<RankTrackerCredits> {
-    let credits = this.rankTrackerCreditsMap.get(venueId);
+  async getRankTrackerCredits(workspaceId: string): Promise<RankTrackerCredits> {
+    let credits = this.rankTrackerCreditsMap.get(workspaceId);
     if (!credits) {
-      credits = { id: Date.now(), venueId, balance: 5, totalPurchased: 0, totalUsed: 0, createdAt: new Date(), updatedAt: new Date() };
-      this.rankTrackerCreditsMap.set(venueId, credits);
-      this.rankTrackerHistoryList.push({ id: this.rankTrackerHistoryCounter++, venueId, type: "bonus", amount: 5, description: "Welcome bonus — $5 starter credit", createdAt: new Date() });
+      credits = { id: Date.now(), workspaceId, balance: 5, totalPurchased: 0, totalUsed: 0, createdAt: new Date(), updatedAt: new Date() };
+      this.rankTrackerCreditsMap.set(workspaceId, credits);
+      this.rankTrackerHistoryList.push({ id: this.rankTrackerHistoryCounter++, workspaceId, type: "bonus", amount: 5, description: "Welcome bonus — $5 starter credit", createdAt: new Date() });
     }
     return credits;
   }
 
-  async addRankTrackerCredits(venueId: string, amount: number, description: string): Promise<RankTrackerCredits> {
-    const credits = await this.getRankTrackerCredits(venueId);
+  async addRankTrackerCredits(workspaceId: string, amount: number, description: string): Promise<RankTrackerCredits> {
+    const credits = await this.getRankTrackerCredits(workspaceId);
     credits.balance += amount;
     credits.totalPurchased += amount;
     credits.updatedAt = new Date();
-    this.rankTrackerHistoryList.push({ id: this.rankTrackerHistoryCounter++, venueId, type: "purchase", amount, description, createdAt: new Date() });
+    this.rankTrackerHistoryList.push({ id: this.rankTrackerHistoryCounter++, workspaceId, type: "purchase", amount, description, createdAt: new Date() });
     return credits;
   }
 
-  async useRankTrackerCredit(venueId: string): Promise<{ success: boolean; balance: number }> {
-    const credits = await this.getRankTrackerCredits(venueId);
+  async useRankTrackerCredit(workspaceId: string): Promise<{ success: boolean; balance: number }> {
+    const credits = await this.getRankTrackerCredits(workspaceId);
     if (credits.balance <= 0) return { success: false, balance: 0 };
     credits.balance -= 1;
     credits.totalUsed += 1;
     credits.updatedAt = new Date();
-    this.rankTrackerHistoryList.push({ id: this.rankTrackerHistoryCounter++, venueId, type: "usage", amount: -1, description: "Rank check", createdAt: new Date() });
+    this.rankTrackerHistoryList.push({ id: this.rankTrackerHistoryCounter++, workspaceId, type: "usage", amount: -1, description: "Rank check", createdAt: new Date() });
     return { success: true, balance: credits.balance };
   }
 
-  async getRankTrackerHistory(venueId: string): Promise<RankTrackerHistory[]> {
-    return this.rankTrackerHistoryList.filter(h => h.venueId === venueId).sort((a, b) => (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0));
+  async getRankTrackerHistory(workspaceId: string): Promise<RankTrackerHistory[]> {
+    return this.rankTrackerHistoryList.filter(h => h.workspaceId === workspaceId).sort((a, b) => (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0));
   }
 
   private gridScanResultsList: GridScanResult[] = [];
@@ -1268,83 +1268,83 @@ export class MemStorage implements IStorage {
     return saved;
   }
 
-  async getLatestGridScanResults(venueId: string, keyword: string): Promise<GridScanResult[]> {
-    const matching = this.gridScanResultsList.filter(r => r.venueId === venueId && r.keyword === keyword);
+  async getLatestGridScanResults(workspaceId: string, keyword: string): Promise<GridScanResult[]> {
+    const matching = this.gridScanResultsList.filter(r => r.workspaceId === workspaceId && r.keyword === keyword);
     if (matching.length === 0) return [];
     const latestDate = matching.reduce((max, r) => (r.scanDate && r.scanDate > max ? r.scanDate : max), matching[0].scanDate || new Date(0));
     return matching.filter(r => r.scanDate?.getTime() === latestDate?.getTime());
   }
 
-  async getGridScanKeywords(venueId: string): Promise<string[]> {
-    const keywords = new Set(this.gridScanResultsList.filter(r => r.venueId === venueId).map(r => r.keyword));
+  async getGridScanKeywords(workspaceId: string): Promise<string[]> {
+    const keywords = new Set(this.gridScanResultsList.filter(r => r.workspaceId === workspaceId).map(r => r.keyword));
     return Array.from(keywords);
   }
 
-  private venueDomainsMap: Map<string, VenueDomain> = new Map();
-  private venueBlogPostsMap: Map<string, VenueBlogPost> = new Map();
+  private workspaceDomainsMap: Map<string, WorkspaceDomain> = new Map();
+  private workspaceBlogPostsMap: Map<string, WorkspaceBlogPost> = new Map();
   private contentCampaignsMap: Map<string, ContentCampaign> = new Map();
   private contentAssetsMap: Map<string, ContentAsset> = new Map();
   private contentAssetUsageList: ContentAssetUsage[] = [];
 
-  async getVenueDomains(venueId: string): Promise<VenueDomain[]> {
-    return Array.from(this.venueDomainsMap.values()).filter(d => d.venueId === venueId);
+  async getWorkspaceDomains(workspaceId: string): Promise<WorkspaceDomain[]> {
+    return Array.from(this.workspaceDomainsMap.values()).filter(d => d.workspaceId === workspaceId);
   }
-  async getVenueDomainByDomain(domain: string): Promise<VenueDomain | undefined> {
-    return Array.from(this.venueDomainsMap.values()).find(d => d.domain === domain.toLowerCase());
+  async getWorkspaceDomainByDomain(domain: string): Promise<WorkspaceDomain | undefined> {
+    return Array.from(this.workspaceDomainsMap.values()).find(d => d.domain === domain.toLowerCase());
   }
-  async createVenueDomain(d: InsertVenueDomain): Promise<VenueDomain> {
-    const record: VenueDomain = { ...d, id: randomUUID(), isPrimary: d.isPrimary ?? true, blogTemplate: d.blogTemplate ?? "editorial", accentColor: d.accentColor ?? null, accentForeground: d.accentForeground ?? null, domain: d.domain.toLowerCase(), createdAt: new Date() };
-    this.venueDomainsMap.set(record.id, record);
+  async createWorkspaceDomain(d: InsertWorkspaceDomain): Promise<WorkspaceDomain> {
+    const record: WorkspaceDomain = { ...d, id: randomUUID(), isPrimary: d.isPrimary ?? true, blogTemplate: d.blogTemplate ?? "editorial", accentColor: d.accentColor ?? null, accentForeground: d.accentForeground ?? null, domain: d.domain.toLowerCase(), createdAt: new Date() };
+    this.workspaceDomainsMap.set(record.id, record);
     return record;
   }
-  async updateVenueDomain(id: string, data: Partial<Pick<VenueDomain, "domain" | "blogTemplate" | "isPrimary" | "accentColor" | "accentForeground">>): Promise<VenueDomain | undefined> {
-    const existing = this.venueDomainsMap.get(id);
+  async updateWorkspaceDomain(id: string, data: Partial<Pick<WorkspaceDomain, "domain" | "blogTemplate" | "isPrimary" | "accentColor" | "accentForeground">>): Promise<WorkspaceDomain | undefined> {
+    const existing = this.workspaceDomainsMap.get(id);
     if (!existing) return undefined;
     if (data.isPrimary === true) {
-      for (const [k, v] of this.venueDomainsMap) {
-        if (v.venueId === existing.venueId && v.isPrimary && k !== id) {
-          this.venueDomainsMap.set(k, { ...v, isPrimary: false });
+      for (const [k, v] of this.workspaceDomainsMap) {
+        if (v.workspaceId === existing.workspaceId && v.isPrimary && k !== id) {
+          this.workspaceDomainsMap.set(k, { ...v, isPrimary: false });
         }
       }
     }
     const updated = { ...existing, ...data, ...(data.domain ? { domain: data.domain.toLowerCase() } : {}) };
-    this.venueDomainsMap.set(id, updated);
+    this.workspaceDomainsMap.set(id, updated);
     return updated;
   }
-  async deleteVenueDomain(id: string): Promise<boolean> {
-    return this.venueDomainsMap.delete(id);
+  async deleteWorkspaceDomain(id: string): Promise<boolean> {
+    return this.workspaceDomainsMap.delete(id);
   }
 
-  async getVenueBlogPosts(venueId: string, status?: string): Promise<VenueBlogPost[]> {
-    return Array.from(this.venueBlogPostsMap.values()).filter(p => p.venueId === venueId && (!status || p.status === status)).sort((a, b) => ((b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0)));
+  async getWorkspaceBlogPosts(workspaceId: string, status?: string): Promise<WorkspaceBlogPost[]> {
+    return Array.from(this.workspaceBlogPostsMap.values()).filter(p => p.workspaceId === workspaceId && (!status || p.status === status)).sort((a, b) => ((b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0)));
   }
-  async getVenueBlogPost(id: string): Promise<VenueBlogPost | undefined> {
-    return this.venueBlogPostsMap.get(id);
+  async getWorkspaceBlogPost(id: string): Promise<WorkspaceBlogPost | undefined> {
+    return this.workspaceBlogPostsMap.get(id);
   }
-  async getVenueBlogPostBySlug(venueId: string, slug: string): Promise<VenueBlogPost | undefined> {
-    return Array.from(this.venueBlogPostsMap.values()).find(p => p.venueId === venueId && p.slug === slug);
+  async getWorkspaceBlogPostBySlug(workspaceId: string, slug: string): Promise<WorkspaceBlogPost | undefined> {
+    return Array.from(this.workspaceBlogPostsMap.values()).find(p => p.workspaceId === workspaceId && p.slug === slug);
   }
-  async getPublishedPostsByVenue(venueId: string): Promise<VenueBlogPost[]> {
-    return Array.from(this.venueBlogPostsMap.values()).filter(p => p.venueId === venueId && p.status === "published").sort((a, b) => ((b.publishedAt?.getTime() || 0) - (a.publishedAt?.getTime() || 0)));
+  async getPublishedPostsByWorkspace(workspaceId: string): Promise<WorkspaceBlogPost[]> {
+    return Array.from(this.workspaceBlogPostsMap.values()).filter(p => p.workspaceId === workspaceId && p.status === "published").sort((a, b) => ((b.publishedAt?.getTime() || 0) - (a.publishedAt?.getTime() || 0)));
   }
-  async getScheduledPostsDue(): Promise<VenueBlogPost[]> {
+  async getScheduledPostsDue(): Promise<WorkspaceBlogPost[]> {
     const now = new Date();
-    return Array.from(this.venueBlogPostsMap.values()).filter(p => p.status === "scheduled" && p.publishAt && p.publishAt <= now);
+    return Array.from(this.workspaceBlogPostsMap.values()).filter(p => p.status === "scheduled" && p.publishAt && p.publishAt <= now);
   }
-  async createVenueBlogPost(post: InsertVenueBlogPost): Promise<VenueBlogPost> {
-    const record: VenueBlogPost = { ...post, id: randomUUID(), compiledHtml: null, publishedAt: null, tags: post.tags ?? null, description: post.description ?? null, category: post.category ?? null, publishAt: post.publishAt ?? null, mdxContent: post.mdxContent ?? "", status: post.status ?? "draft", primaryKeyword: post.primaryKeyword ?? null, intent: post.intent ?? null, funnel: post.funnel ?? null, generationStatus: post.generationStatus ?? "pending", qualityGateStatus: post.qualityGateStatus ?? "unknown", qualityFailReasons: post.qualityFailReasons ?? null, campaignId: post.campaignId ?? null, createdAt: new Date(), updatedAt: new Date() };
-    this.venueBlogPostsMap.set(record.id, record);
+  async createWorkspaceBlogPost(post: InsertWorkspaceBlogPost): Promise<WorkspaceBlogPost> {
+    const record: WorkspaceBlogPost = { ...post, id: randomUUID(), compiledHtml: null, publishedAt: null, tags: post.tags ?? null, description: post.description ?? null, category: post.category ?? null, publishAt: post.publishAt ?? null, mdxContent: post.mdxContent ?? "", status: post.status ?? "draft", primaryKeyword: post.primaryKeyword ?? null, intent: post.intent ?? null, funnel: post.funnel ?? null, generationStatus: post.generationStatus ?? "pending", qualityGateStatus: post.qualityGateStatus ?? "unknown", qualityFailReasons: post.qualityFailReasons ?? null, campaignId: post.campaignId ?? null, createdAt: new Date(), updatedAt: new Date() };
+    this.workspaceBlogPostsMap.set(record.id, record);
     return record;
   }
-  async bulkCreateVenueBlogPosts(posts: InsertVenueBlogPost[]): Promise<VenueBlogPost[]> {
-    const results: VenueBlogPost[] = [];
+  async bulkCreateWorkspaceBlogPosts(posts: InsertWorkspaceBlogPost[]): Promise<WorkspaceBlogPost[]> {
+    const results: WorkspaceBlogPost[] = [];
     for (const post of posts) {
-      results.push(await this.createVenueBlogPost(post));
+      results.push(await this.createWorkspaceBlogPost(post));
     }
     return results;
   }
-  async getVenueBlogPostsByCampaign(venueId: string, campaignId: string): Promise<VenueBlogPost[]> {
-    return Array.from(this.venueBlogPostsMap.values()).filter(p => p.venueId === venueId && p.campaignId === campaignId);
+  async getWorkspaceBlogPostsByCampaign(workspaceId: string, campaignId: string): Promise<WorkspaceBlogPost[]> {
+    return Array.from(this.workspaceBlogPostsMap.values()).filter(p => p.workspaceId === workspaceId && p.campaignId === campaignId);
   }
   async createContentCampaign(data: InsertContentCampaign): Promise<ContentCampaign> {
     const id = data.id || randomUUID();
@@ -1352,9 +1352,9 @@ export class MemStorage implements IStorage {
     this.contentCampaignsMap.set(id, campaign);
     return campaign;
   }
-  async getVenueCampaigns(venueId: string): Promise<{ campaignId: string; postCount: number; createdAt: Date; statuses: Record<string, number> }[]> {
-    const posts = Array.from(this.venueBlogPostsMap.values()).filter(p => p.venueId === venueId && p.campaignId);
-    const map = new Map<string, VenueBlogPost[]>();
+  async getWorkspaceCampaigns(workspaceId: string): Promise<{ campaignId: string; postCount: number; createdAt: Date; statuses: Record<string, number> }[]> {
+    const posts = Array.from(this.workspaceBlogPostsMap.values()).filter(p => p.workspaceId === workspaceId && p.campaignId);
+    const map = new Map<string, WorkspaceBlogPost[]>();
     for (const p of posts) {
       const arr = map.get(p.campaignId!) || [];
       arr.push(p);
@@ -1370,22 +1370,22 @@ export class MemStorage implements IStorage {
       return { campaignId, postCount: cPosts.length, createdAt: earliest, statuses };
     }).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
   }
-  async updateVenueBlogPost(id: string, post: Partial<VenueBlogPost>): Promise<VenueBlogPost | undefined> {
-    const existing = this.venueBlogPostsMap.get(id);
+  async updateWorkspaceBlogPost(id: string, post: Partial<WorkspaceBlogPost>): Promise<WorkspaceBlogPost | undefined> {
+    const existing = this.workspaceBlogPostsMap.get(id);
     if (!existing) return undefined;
     const updated = { ...existing, ...post, updatedAt: new Date() };
-    this.venueBlogPostsMap.set(id, updated);
+    this.workspaceBlogPostsMap.set(id, updated);
     return updated;
   }
-  async deleteVenueBlogPost(id: string): Promise<boolean> {
-    return this.venueBlogPostsMap.delete(id);
+  async deleteWorkspaceBlogPost(id: string): Promise<boolean> {
+    return this.workspaceBlogPostsMap.delete(id);
   }
 
   async getContentAssets(postId: string): Promise<ContentAsset[]> {
     return Array.from(this.contentAssetsMap.values()).filter(a => a.postId === postId);
   }
   async createContentAsset(asset: InsertContentAsset): Promise<ContentAsset> {
-    const record: ContentAsset = { ...asset, id: randomUUID(), venueId: asset.venueId ?? null, postId: asset.postId ?? null, sourceAssetId: asset.sourceAssetId ?? null, type: asset.type ?? "generic", prompt: asset.prompt ?? null, title: asset.title ?? null, width: asset.width ?? null, height: asset.height ?? null, r2Key: asset.r2Key ?? null, publicUrl: asset.publicUrl ?? null, creditName: asset.creditName ?? null, creditUrl: asset.creditUrl ?? null, licenseNote: asset.licenseNote ?? null, createdAt: new Date() };
+    const record: ContentAsset = { ...asset, id: randomUUID(), workspaceId: asset.workspaceId ?? null, postId: asset.postId ?? null, sourceAssetId: asset.sourceAssetId ?? null, type: asset.type ?? "generic", prompt: asset.prompt ?? null, title: asset.title ?? null, width: asset.width ?? null, height: asset.height ?? null, r2Key: asset.r2Key ?? null, publicUrl: asset.publicUrl ?? null, creditName: asset.creditName ?? null, creditUrl: asset.creditUrl ?? null, licenseNote: asset.licenseNote ?? null, createdAt: new Date() };
     this.contentAssetsMap.set(record.id, record);
     return record;
   }
@@ -1515,7 +1515,7 @@ export class MemStorage implements IStorage {
   }
   async getContentReport(id: number): Promise<ContentReport | undefined> { return this.contentReportsMap.get(id); }
   async createContentReport(data: InsertContentReport): Promise<ContentReport> {
-    const record: ContentReport = { ...data, id: this.contentReportIdCounter++, workspaceId: data.workspaceId ?? null, venueId: data.venueId ?? null, type: data.type ?? "monthly", status: data.status ?? "draft", period: data.period ?? null, metrics: data.metrics ?? null, summary: data.summary ?? null, postsPublished: data.postsPublished ?? 0, totalWords: data.totalWords ?? 0, avgWordCount: data.avgWordCount ?? 0, topKeywords: data.topKeywords ?? null, trafficChange: data.trafficChange ?? null, rankingsImproved: data.rankingsImproved ?? 0, generatedAt: data.generatedAt ?? null, createdAt: new Date(), updatedAt: new Date() };
+    const record: ContentReport = { ...data, id: this.contentReportIdCounter++, workspaceId: data.workspaceId ?? null, type: data.type ?? "monthly", status: data.status ?? "draft", period: data.period ?? null, metrics: data.metrics ?? null, summary: data.summary ?? null, postsPublished: data.postsPublished ?? 0, totalWords: data.totalWords ?? 0, avgWordCount: data.avgWordCount ?? 0, topKeywords: data.topKeywords ?? null, trafficChange: data.trafficChange ?? null, rankingsImproved: data.rankingsImproved ?? 0, generatedAt: data.generatedAt ?? null, createdAt: new Date(), updatedAt: new Date() };
     this.contentReportsMap.set(record.id, record);
     return record;
   }
@@ -1549,40 +1549,40 @@ export class DbStorage implements IStorage {
     return msg;
   }
 
-  async getVenues(): Promise<Venue[]> {
-    return db!.select().from(venues);
+  async getWorkspaces(): Promise<Workspace[]> {
+    return db!.select().from(workspaces);
   }
 
-  async getVenuesByOwner(ownerId: string): Promise<Venue[]> {
-    return db!.select().from(venues).where(eq(venues.ownerId, ownerId));
+  async getWorkspacesByOwner(ownerId: string): Promise<Workspace[]> {
+    return db!.select().from(workspaces).where(eq(workspaces.ownerId, ownerId));
   }
 
-  async getVenue(id: string): Promise<Venue | undefined> {
-    const [venue] = await db!.select().from(venues).where(eq(venues.id, id));
+  async getWorkspace(id: string): Promise<Workspace | undefined> {
+    const [venue] = await db!.select().from(workspaces).where(eq(workspaces.id, id));
     return venue;
   }
 
-  async createVenue(data: InsertVenue): Promise<Venue> {
-    const [venue] = await db!.insert(venues).values({ id: randomUUID(), ...data }).returning();
+  async createWorkspace(data: InsertWorkspace): Promise<Workspace> {
+    const [venue] = await db!.insert(workspaces).values({ id: randomUUID(), ...data }).returning();
     return venue;
   }
 
-  async updateVenue(id: string, update: Partial<InsertVenue>): Promise<Venue | undefined> {
-    const [venue] = await db!.update(venues).set({ ...update, updatedAt: new Date() }).where(eq(venues.id, id)).returning();
+  async updateWorkspace(id: string, update: Partial<InsertWorkspace>): Promise<Workspace | undefined> {
+    const [venue] = await db!.update(workspaces).set({ ...update, updatedAt: new Date() }).where(eq(workspaces.id, id)).returning();
     return venue;
   }
 
-  async deleteVenue(id: string): Promise<boolean> {
-    const result = await db!.delete(venues).where(eq(venues.id, id));
+  async deleteWorkspace(id: string): Promise<boolean> {
+    const result = await db!.delete(workspaces).where(eq(workspaces.id, id));
     return (result.rowCount ?? 0) > 0;
   }
 
-  async getReservations(venueId: string): Promise<Reservation[]> {
-    return db!.select().from(reservations).where(eq(reservations.venueId, venueId));
+  async getReservations(workspaceId: string): Promise<Reservation[]> {
+    return db!.select().from(reservations).where(eq(reservations.workspaceId, workspaceId));
   }
 
-  async getReservationsByDate(venueId: string, date: string): Promise<Reservation[]> {
-    return db!.select().from(reservations).where(and(eq(reservations.venueId, venueId), eq(reservations.date, date)));
+  async getReservationsByDate(workspaceId: string, date: string): Promise<Reservation[]> {
+    return db!.select().from(reservations).where(and(eq(reservations.workspaceId, workspaceId), eq(reservations.date, date)));
   }
 
   async getReservation(id: string): Promise<Reservation | undefined> {
@@ -1606,18 +1606,18 @@ export class DbStorage implements IStorage {
     return (result.rowCount ?? 0) > 0;
   }
 
-  async getBusinessHours(venueId: string): Promise<BusinessHours[]> {
-    return db!.select().from(businessHours).where(eq(businessHours.venueId, venueId));
+  async getBusinessHours(workspaceId: string): Promise<BusinessHours[]> {
+    return db!.select().from(businessHours).where(eq(businessHours.workspaceId, workspaceId));
   }
 
-  async setBusinessHours(venueId: string, hours: InsertBusinessHours[]): Promise<BusinessHours[]> {
-    await db!.delete(businessHours).where(eq(businessHours.venueId, venueId));
+  async setBusinessHours(workspaceId: string, hours: InsertBusinessHours[]): Promise<BusinessHours[]> {
+    await db!.delete(businessHours).where(eq(businessHours.workspaceId, workspaceId));
     if (hours.length === 0) return [];
-    return db!.insert(businessHours).values(hours.map(h => ({ ...h, venueId }))).returning();
+    return db!.insert(businessHours).values(hours.map(h => ({ ...h, workspaceId }))).returning();
   }
 
-  async getClosures(venueId: string): Promise<Closure[]> {
-    return db!.select().from(closures).where(eq(closures.venueId, venueId));
+  async getClosures(workspaceId: string): Promise<Closure[]> {
+    return db!.select().from(closures).where(eq(closures.workspaceId, workspaceId));
   }
 
   async getClosure(id: number): Promise<Closure | undefined> {
@@ -1635,8 +1635,8 @@ export class DbStorage implements IStorage {
     return (result.rowCount ?? 0) > 0;
   }
 
-  async getResources(venueId: string): Promise<Resource[]> {
-    return db!.select().from(resources).where(eq(resources.venueId, venueId)).orderBy(asc(resources.sortOrder));
+  async getResources(workspaceId: string): Promise<Resource[]> {
+    return db!.select().from(resources).where(eq(resources.workspaceId, workspaceId)).orderBy(asc(resources.sortOrder));
   }
 
   async getResource(id: string): Promise<Resource | undefined> {
@@ -1659,8 +1659,8 @@ export class DbStorage implements IStorage {
     return (result.rowCount ?? 0) > 0;
   }
 
-  async getTeamMembers(venueId: string): Promise<TeamMember[]> {
-    return db!.select().from(teamMembers).where(eq(teamMembers.venueId, venueId));
+  async getTeamMembers(workspaceId: string): Promise<TeamMember[]> {
+    return db!.select().from(teamMembers).where(eq(teamMembers.workspaceId, workspaceId));
   }
 
   async getTeamMember(id: number): Promise<TeamMember | undefined> {
@@ -1668,8 +1668,8 @@ export class DbStorage implements IStorage {
     return m;
   }
 
-  async getTeamMemberByUserAndVenue(userId: string, venueId: string): Promise<TeamMember | undefined> {
-    const [m] = await db!.select().from(teamMembers).where(and(eq(teamMembers.userId, userId), eq(teamMembers.venueId, venueId), eq(teamMembers.status, "accepted")));
+  async getTeamMemberByUserAndWorkspace(userId: string, workspaceId: string): Promise<TeamMember | undefined> {
+    const [m] = await db!.select().from(teamMembers).where(and(eq(teamMembers.userId, userId), eq(teamMembers.workspaceId, workspaceId), eq(teamMembers.status, "accepted")));
     return m;
   }
 
@@ -1688,8 +1688,8 @@ export class DbStorage implements IStorage {
     return (result.rowCount ?? 0) > 0;
   }
 
-  async getKnowledgeBaseItems(venueId: string): Promise<KnowledgeBaseItem[]> {
-    return db!.select().from(knowledgeBaseItems).where(eq(knowledgeBaseItems.venueId, venueId));
+  async getKnowledgeBaseItems(workspaceId: string): Promise<KnowledgeBaseItem[]> {
+    return db!.select().from(knowledgeBaseItems).where(eq(knowledgeBaseItems.workspaceId, workspaceId));
   }
 
   async getKnowledgeBaseItem(id: string): Promise<KnowledgeBaseItem | undefined> {
@@ -1712,8 +1712,8 @@ export class DbStorage implements IStorage {
     return (result.rowCount ?? 0) > 0;
   }
 
-  async getCallLogs(venueId: string): Promise<CallLog[]> {
-    return db!.select().from(callLogs).where(eq(callLogs.venueId, venueId)).orderBy(desc(callLogs.createdAt));
+  async getCallLogs(workspaceId: string): Promise<CallLog[]> {
+    return db!.select().from(callLogs).where(eq(callLogs.workspaceId, workspaceId)).orderBy(desc(callLogs.createdAt));
   }
 
   async getCallLog(id: string): Promise<CallLog | undefined> {
@@ -1731,63 +1731,63 @@ export class DbStorage implements IStorage {
     return c;
   }
 
-  async getWidgetSettings(venueId: string): Promise<WidgetSettings | undefined> {
-    const [s] = await db!.select().from(widgetSettings).where(eq(widgetSettings.venueId, venueId));
+  async getWidgetSettings(workspaceId: string): Promise<WidgetSettings | undefined> {
+    const [s] = await db!.select().from(widgetSettings).where(eq(widgetSettings.workspaceId, workspaceId));
     return s;
   }
 
   async upsertWidgetSettings(data: InsertWidgetSettings): Promise<WidgetSettings> {
-    const existing = await this.getWidgetSettings(data.venueId);
+    const existing = await this.getWidgetSettings(data.workspaceId);
     if (existing) {
-      const [s] = await db!.update(widgetSettings).set({ ...data, updatedAt: new Date() }).where(eq(widgetSettings.venueId, data.venueId)).returning();
+      const [s] = await db!.update(widgetSettings).set({ ...data, updatedAt: new Date() }).where(eq(widgetSettings.workspaceId, data.workspaceId)).returning();
       return s;
     }
     const [s] = await db!.insert(widgetSettings).values(data).returning();
     return s;
   }
 
-  async getTwilioSettings(venueId: string): Promise<TwilioSettings | undefined> {
-    const [s] = await db!.select().from(twilioSettings).where(eq(twilioSettings.venueId, venueId));
+  async getTwilioSettings(workspaceId: string): Promise<TwilioSettings | undefined> {
+    const [s] = await db!.select().from(twilioSettings).where(eq(twilioSettings.workspaceId, workspaceId));
     if (!s) return s;
     return { ...s, authToken: decryptField(s.authToken) };
   }
 
   async upsertTwilioSettings(data: InsertTwilioSettings): Promise<TwilioSettings> {
     const encrypted = { ...data, authToken: encryptField(data.authToken) };
-    const existing = await db!.select({ id: twilioSettings.id }).from(twilioSettings).where(eq(twilioSettings.venueId, data.venueId)).limit(1);
+    const existing = await db!.select({ id: twilioSettings.id }).from(twilioSettings).where(eq(twilioSettings.workspaceId, data.workspaceId)).limit(1);
     if (existing.length) {
-      const [s] = await db!.update(twilioSettings).set({ ...encrypted, updatedAt: new Date() }).where(eq(twilioSettings.venueId, data.venueId)).returning();
+      const [s] = await db!.update(twilioSettings).set({ ...encrypted, updatedAt: new Date() }).where(eq(twilioSettings.workspaceId, data.workspaceId)).returning();
       return { ...s, authToken: decryptField(s.authToken) };
     }
     const [s] = await db!.insert(twilioSettings).values(encrypted).returning();
     return { ...s, authToken: decryptField(s.authToken) };
   }
 
-  async getPaymentSettings(venueId: string): Promise<PaymentSettings | undefined> {
-    const [s] = await db!.select().from(paymentSettings).where(eq(paymentSettings.venueId, venueId));
+  async getPaymentSettings(workspaceId: string): Promise<PaymentSettings | undefined> {
+    const [s] = await db!.select().from(paymentSettings).where(eq(paymentSettings.workspaceId, workspaceId));
     if (!s) return s;
     return { ...s, stripeSecretKey: decryptField(s.stripeSecretKey), paypalClientSecret: decryptField(s.paypalClientSecret) };
   }
 
   async upsertPaymentSettings(data: InsertPaymentSettings): Promise<PaymentSettings> {
     const encrypted = { ...data, stripeSecretKey: encryptField(data.stripeSecretKey), paypalClientSecret: encryptField(data.paypalClientSecret) };
-    const existing = await db!.select({ id: paymentSettings.id }).from(paymentSettings).where(eq(paymentSettings.venueId, data.venueId)).limit(1);
+    const existing = await db!.select({ id: paymentSettings.id }).from(paymentSettings).where(eq(paymentSettings.workspaceId, data.workspaceId)).limit(1);
     if (existing.length) {
-      const [s] = await db!.update(paymentSettings).set({ ...encrypted, updatedAt: new Date() }).where(eq(paymentSettings.venueId, data.venueId)).returning();
+      const [s] = await db!.update(paymentSettings).set({ ...encrypted, updatedAt: new Date() }).where(eq(paymentSettings.workspaceId, data.workspaceId)).returning();
       return { ...s, stripeSecretKey: decryptField(s.stripeSecretKey), paypalClientSecret: decryptField(s.paypalClientSecret) };
     }
     const [s] = await db!.insert(paymentSettings).values(encrypted).returning();
     return { ...s, stripeSecretKey: decryptField(s.stripeSecretKey), paypalClientSecret: decryptField(s.paypalClientSecret) };
   }
 
-  async getAiProviderSettings(venueId: string): Promise<AiProviderSettings[]> {
-    const rows = await db!.select().from(aiProviderSettings).where(eq(aiProviderSettings.venueId, venueId));
+  async getAiProviderSettings(workspaceId: string): Promise<AiProviderSettings[]> {
+    const rows = await db!.select().from(aiProviderSettings).where(eq(aiProviderSettings.workspaceId, workspaceId));
     return rows.map(r => ({ ...r, apiKey: decryptField(r.apiKey) }));
   }
 
   async upsertAiProviderSettings(data: InsertAiProviderSettings): Promise<AiProviderSettings> {
     const encrypted = { ...data, apiKey: encryptField(data.apiKey) };
-    const [existing] = await db!.select().from(aiProviderSettings).where(and(eq(aiProviderSettings.venueId, data.venueId), eq(aiProviderSettings.provider, data.provider)));
+    const [existing] = await db!.select().from(aiProviderSettings).where(and(eq(aiProviderSettings.workspaceId, data.workspaceId), eq(aiProviderSettings.provider, data.provider)));
     if (existing) {
       const [s] = await db!.update(aiProviderSettings).set({ ...encrypted, updatedAt: new Date() }).where(eq(aiProviderSettings.id, existing.id)).returning();
       return { ...s, apiKey: decryptField(s.apiKey) };
@@ -1812,8 +1812,8 @@ export class DbStorage implements IStorage {
   }
 
   // Room Types
-  async getRoomTypes(venueId: string): Promise<RoomType[]> {
-    return db!.select().from(roomTypes).where(eq(roomTypes.venueId, venueId)).orderBy(asc(roomTypes.sortOrder));
+  async getRoomTypes(workspaceId: string): Promise<RoomType[]> {
+    return db!.select().from(roomTypes).where(eq(roomTypes.workspaceId, workspaceId)).orderBy(asc(roomTypes.sortOrder));
   }
 
   async getRoomType(id: string): Promise<RoomType | undefined> {
@@ -1837,8 +1837,8 @@ export class DbStorage implements IStorage {
   }
 
   // Rooms
-  async getRooms(venueId: string): Promise<Room[]> {
-    return db!.select().from(rooms).where(eq(rooms.venueId, venueId));
+  async getRooms(workspaceId: string): Promise<Room[]> {
+    return db!.select().from(rooms).where(eq(rooms.workspaceId, workspaceId));
   }
 
   async getRoomsByType(roomTypeId: string): Promise<Room[]> {
@@ -1866,16 +1866,16 @@ export class DbStorage implements IStorage {
   }
 
   // Room Bookings
-  async getRoomBookings(venueId: string): Promise<RoomBooking[]> {
-    return db!.select().from(roomBookings).where(eq(roomBookings.venueId, venueId)).orderBy(desc(roomBookings.createdAt));
+  async getRoomBookings(workspaceId: string): Promise<RoomBooking[]> {
+    return db!.select().from(roomBookings).where(eq(roomBookings.workspaceId, workspaceId)).orderBy(desc(roomBookings.createdAt));
   }
 
-  async getRoomBookingsByDateRange(venueId: string, checkIn: string, checkOut: string): Promise<RoomBooking[]> {
+  async getRoomBookingsByDateRange(workspaceId: string, checkIn: string, checkOut: string): Promise<RoomBooking[]> {
     // Overlap formula: new.checkIn < existing.checkOut AND new.checkOut > existing.checkIn
     // Use timestamps for reliable comparison (handles both Date objects and strings)
     const newCheckInTs = new Date(checkIn).getTime();
     const newCheckOutTs = new Date(checkOut).getTime();
-    const allBookings = await db!.select().from(roomBookings).where(eq(roomBookings.venueId, venueId));
+    const allBookings = await db!.select().from(roomBookings).where(eq(roomBookings.workspaceId, workspaceId));
     return allBookings.filter((rb) => {
       const existingCheckInTs = new Date(rb.checkIn).getTime();
       const existingCheckOutTs = new Date(rb.checkOut).getTime();
@@ -1904,8 +1904,8 @@ export class DbStorage implements IStorage {
     return (result.rowCount ?? 0) > 0;
   }
 
-  async getSupportTicketsByVenue(venueId: string): Promise<SupportTicket[]> {
-    return db!.select().from(supportTickets).where(eq(supportTickets.venueId, venueId)).orderBy(desc(supportTickets.createdAt));
+  async getSupportTicketsByWorkspace(workspaceId: string): Promise<SupportTicket[]> {
+    return db!.select().from(supportTickets).where(eq(supportTickets.workspaceId, workspaceId)).orderBy(desc(supportTickets.createdAt));
   }
 
   async getSupportTicketsByUser(userId: string): Promise<SupportTicket[]> {
@@ -1935,8 +1935,8 @@ export class DbStorage implements IStorage {
     return ticket;
   }
 
-  async getWidgetChatLogs(venueId: string): Promise<WidgetChatLog[]> {
-    return db!.select().from(widgetChatLogs).where(eq(widgetChatLogs.venueId, venueId)).orderBy(desc(widgetChatLogs.createdAt));
+  async getWidgetChatLogs(workspaceId: string): Promise<WidgetChatLog[]> {
+    return db!.select().from(widgetChatLogs).where(eq(widgetChatLogs.workspaceId, workspaceId)).orderBy(desc(widgetChatLogs.createdAt));
   }
 
   async createWidgetChatLog(log: InsertWidgetChatLog): Promise<WidgetChatLog> {
@@ -1955,8 +1955,8 @@ export class DbStorage implements IStorage {
     return updated;
   }
 
-  async getWebsiteChangeRequests(venueId: string): Promise<WebsiteChangeRequest[]> {
-    return db!.select().from(websiteChangeRequests).where(eq(websiteChangeRequests.venueId, venueId)).orderBy(desc(websiteChangeRequests.createdAt));
+  async getWebsiteChangeRequests(workspaceId: string): Promise<WebsiteChangeRequest[]> {
+    return db!.select().from(websiteChangeRequests).where(eq(websiteChangeRequests.workspaceId, workspaceId)).orderBy(desc(websiteChangeRequests.createdAt));
   }
 
   async createWebsiteChangeRequest(request: InsertWebsiteChangeRequest): Promise<WebsiteChangeRequest> {
@@ -1969,24 +1969,24 @@ export class DbStorage implements IStorage {
     return cr;
   }
 
-  async getSeoSettings(venueId: string): Promise<SeoSettings[]> {
-    const rows = await db!.select().from(seoSettings).where(eq(seoSettings.venueId, venueId));
+  async getSeoSettings(workspaceId: string): Promise<SeoSettings[]> {
+    const rows = await db!.select().from(seoSettings).where(eq(seoSettings.workspaceId, workspaceId));
     return rows.map(r => ({ ...r, apiKey: decryptField(r.apiKey), apiLogin: decryptField(r.apiLogin), apiPassword: decryptField(r.apiPassword) }));
   }
 
   async upsertSeoSettings(settings: InsertSeoSettings): Promise<SeoSettings> {
     const encrypted = { ...settings, apiKey: encryptField(settings.apiKey), apiLogin: encryptField(settings.apiLogin), apiPassword: encryptField(settings.apiPassword) };
-    const existing = await db!.select().from(seoSettings).where(and(eq(seoSettings.venueId, settings.venueId), eq(seoSettings.provider, settings.provider)));
+    const existing = await db!.select().from(seoSettings).where(and(eq(seoSettings.workspaceId, settings.workspaceId), eq(seoSettings.provider, settings.provider)));
     if (existing.length > 0) {
-      const [updated] = await db!.update(seoSettings).set({ ...encrypted, updatedAt: new Date() }).where(and(eq(seoSettings.venueId, settings.venueId), eq(seoSettings.provider, settings.provider))).returning();
+      const [updated] = await db!.update(seoSettings).set({ ...encrypted, updatedAt: new Date() }).where(and(eq(seoSettings.workspaceId, settings.workspaceId), eq(seoSettings.provider, settings.provider))).returning();
       return { ...updated, apiKey: decryptField(updated.apiKey), apiLogin: decryptField(updated.apiLogin), apiPassword: decryptField(updated.apiPassword) };
     }
     const [created] = await db!.insert(seoSettings).values(encrypted).returning();
     return { ...created, apiKey: decryptField(created.apiKey), apiLogin: decryptField(created.apiLogin), apiPassword: decryptField(created.apiPassword) };
   }
 
-  async getRankTrackerKeywords(venueId: string): Promise<RankTrackerKeyword[]> {
-    return db!.select().from(rankTrackerKeywords).where(eq(rankTrackerKeywords.venueId, venueId)).orderBy(asc(rankTrackerKeywords.keyword));
+  async getRankTrackerKeywords(workspaceId: string): Promise<RankTrackerKeyword[]> {
+    return db!.select().from(rankTrackerKeywords).where(eq(rankTrackerKeywords.workspaceId, workspaceId)).orderBy(asc(rankTrackerKeywords.keyword));
   }
 
   async addRankTrackerKeywords(keywords: InsertRankTrackerKeyword[]): Promise<RankTrackerKeyword[]> {
@@ -1997,34 +1997,34 @@ export class DbStorage implements IStorage {
     await db!.delete(rankTrackerKeywords).where(eq(rankTrackerKeywords.id, id));
   }
 
-  async deleteAllRankTrackerKeywords(venueId: string): Promise<void> {
-    await db!.delete(rankTrackerKeywords).where(eq(rankTrackerKeywords.venueId, venueId));
+  async deleteAllRankTrackerKeywords(workspaceId: string): Promise<void> {
+    await db!.delete(rankTrackerKeywords).where(eq(rankTrackerKeywords.workspaceId, workspaceId));
   }
 
-  async getRankTrackerResults(venueId: string, page?: number, limit?: number): Promise<{ results: RankTrackerResult[]; total: number }> {
+  async getRankTrackerResults(workspaceId: string, page?: number, limit?: number): Promise<{ results: RankTrackerResult[]; total: number }> {
     const offset = ((page || 1) - 1) * (limit || 20);
-    const [totalRow] = await db!.select({ count: count() }).from(rankTrackerResults).where(eq(rankTrackerResults.venueId, venueId));
-    const results = await db!.select().from(rankTrackerResults).where(eq(rankTrackerResults.venueId, venueId)).orderBy(desc(rankTrackerResults.checkedAt)).limit(limit || 20).offset(offset);
+    const [totalRow] = await db!.select({ count: count() }).from(rankTrackerResults).where(eq(rankTrackerResults.workspaceId, workspaceId));
+    const results = await db!.select().from(rankTrackerResults).where(eq(rankTrackerResults.workspaceId, workspaceId)).orderBy(desc(rankTrackerResults.checkedAt)).limit(limit || 20).offset(offset);
     return { results, total: totalRow.count };
   }
 
-  async getLatestRankTrackerResults(venueId: string): Promise<RankTrackerResult[]> {
-    const lastCheck = await this.getLastRankCheckDate(venueId);
+  async getLatestRankTrackerResults(workspaceId: string): Promise<RankTrackerResult[]> {
+    const lastCheck = await this.getLastRankCheckDate(workspaceId);
     if (!lastCheck) return [];
-    return db!.select().from(rankTrackerResults).where(and(eq(rankTrackerResults.venueId, venueId), eq(rankTrackerResults.checkedAt, lastCheck))).orderBy(asc(rankTrackerResults.keyword));
+    return db!.select().from(rankTrackerResults).where(and(eq(rankTrackerResults.workspaceId, workspaceId), eq(rankTrackerResults.checkedAt, lastCheck))).orderBy(asc(rankTrackerResults.keyword));
   }
 
   async saveRankTrackerResults(results: InsertRankTrackerResult[]): Promise<RankTrackerResult[]> {
     return db!.insert(rankTrackerResults).values(results).returning();
   }
 
-  async getLastRankCheckDate(venueId: string): Promise<Date | null> {
-    const [row] = await db!.select({ maxDate: max(rankTrackerResults.checkedAt) }).from(rankTrackerResults).where(eq(rankTrackerResults.venueId, venueId));
+  async getLastRankCheckDate(workspaceId: string): Promise<Date | null> {
+    const [row] = await db!.select({ maxDate: max(rankTrackerResults.checkedAt) }).from(rankTrackerResults).where(eq(rankTrackerResults.workspaceId, workspaceId));
     return row?.maxDate || null;
   }
 
-  async getGridKeywords(venueId: string): Promise<GridKeyword[]> {
-    return db!.select().from(gridKeywords).where(eq(gridKeywords.venueId, venueId)).orderBy(asc(gridKeywords.keyword));
+  async getGridKeywords(workspaceId: string): Promise<GridKeyword[]> {
+    return db!.select().from(gridKeywords).where(eq(gridKeywords.workspaceId, workspaceId)).orderBy(asc(gridKeywords.keyword));
   }
 
   async addGridKeywords(keywords: InsertGridKeyword[]): Promise<GridKeyword[]> {
@@ -2035,74 +2035,74 @@ export class DbStorage implements IStorage {
     await db!.delete(gridKeywords).where(eq(gridKeywords.id, id));
   }
 
-  async deleteAllGridKeywords(venueId: string): Promise<void> {
-    await db!.delete(gridKeywords).where(eq(gridKeywords.venueId, venueId));
+  async deleteAllGridKeywords(workspaceId: string): Promise<void> {
+    await db!.delete(gridKeywords).where(eq(gridKeywords.workspaceId, workspaceId));
   }
 
-  async getGridRefreshCredits(venueId: string): Promise<GridRefreshCredits> {
-    const [existing] = await db!.select().from(gridRefreshCredits).where(eq(gridRefreshCredits.venueId, venueId));
+  async getGridRefreshCredits(workspaceId: string): Promise<GridRefreshCredits> {
+    const [existing] = await db!.select().from(gridRefreshCredits).where(eq(gridRefreshCredits.workspaceId, workspaceId));
     if (existing) return existing;
-    const [created] = await db!.insert(gridRefreshCredits).values({ venueId, balance: 3, totalPurchased: 3, totalUsed: 0 }).returning();
-    await db!.insert(gridRefreshHistory).values({ venueId, type: "bonus", amount: 3, description: "Welcome bonus — $5 starter credit" });
+    const [created] = await db!.insert(gridRefreshCredits).values({ workspaceId, balance: 3, totalPurchased: 3, totalUsed: 0 }).returning();
+    await db!.insert(gridRefreshHistory).values({ workspaceId, type: "bonus", amount: 3, description: "Welcome bonus — $5 starter credit" });
     return created;
   }
 
-  async addGridRefreshCredits(venueId: string, amount: number, description: string): Promise<GridRefreshCredits> {
-    const credits = await this.getGridRefreshCredits(venueId);
+  async addGridRefreshCredits(workspaceId: string, amount: number, description: string): Promise<GridRefreshCredits> {
+    const credits = await this.getGridRefreshCredits(workspaceId);
     const [updated] = await db!.update(gridRefreshCredits)
       .set({ balance: credits.balance + amount, totalPurchased: credits.totalPurchased + amount, updatedAt: new Date() })
-      .where(eq(gridRefreshCredits.venueId, venueId))
+      .where(eq(gridRefreshCredits.workspaceId, workspaceId))
       .returning();
-    await db!.insert(gridRefreshHistory).values({ venueId, type: "purchase", amount, description });
+    await db!.insert(gridRefreshHistory).values({ workspaceId, type: "purchase", amount, description });
     return updated;
   }
 
-  async useGridRefreshCredit(venueId: string): Promise<{ success: boolean; balance: number }> {
-    const credits = await this.getGridRefreshCredits(venueId);
+  async useGridRefreshCredit(workspaceId: string): Promise<{ success: boolean; balance: number }> {
+    const credits = await this.getGridRefreshCredits(workspaceId);
     if (credits.balance <= 0) return { success: false, balance: 0 };
     const [updated] = await db!.update(gridRefreshCredits)
       .set({ balance: credits.balance - 1, totalUsed: credits.totalUsed + 1, updatedAt: new Date() })
-      .where(eq(gridRefreshCredits.venueId, venueId))
+      .where(eq(gridRefreshCredits.workspaceId, workspaceId))
       .returning();
-    await db!.insert(gridRefreshHistory).values({ venueId, type: "usage", amount: -1, description: "Grid refresh" });
+    await db!.insert(gridRefreshHistory).values({ workspaceId, type: "usage", amount: -1, description: "Grid refresh" });
     return { success: true, balance: updated.balance };
   }
 
-  async getGridRefreshHistory(venueId: string): Promise<GridRefreshHistory[]> {
-    return db!.select().from(gridRefreshHistory).where(eq(gridRefreshHistory.venueId, venueId)).orderBy(desc(gridRefreshHistory.createdAt));
+  async getGridRefreshHistory(workspaceId: string): Promise<GridRefreshHistory[]> {
+    return db!.select().from(gridRefreshHistory).where(eq(gridRefreshHistory.workspaceId, workspaceId)).orderBy(desc(gridRefreshHistory.createdAt));
   }
 
-  async getRankTrackerCredits(venueId: string): Promise<RankTrackerCredits> {
-    const [existing] = await db!.select().from(rankTrackerCredits).where(eq(rankTrackerCredits.venueId, venueId));
+  async getRankTrackerCredits(workspaceId: string): Promise<RankTrackerCredits> {
+    const [existing] = await db!.select().from(rankTrackerCredits).where(eq(rankTrackerCredits.workspaceId, workspaceId));
     if (existing) return existing;
-    const [created] = await db!.insert(rankTrackerCredits).values({ venueId, balance: 5, totalPurchased: 0, totalUsed: 0 }).returning();
-    await db!.insert(rankTrackerHistory).values({ venueId, type: "bonus", amount: 5, description: "Welcome bonus — $5 starter credit" });
+    const [created] = await db!.insert(rankTrackerCredits).values({ workspaceId, balance: 5, totalPurchased: 0, totalUsed: 0 }).returning();
+    await db!.insert(rankTrackerHistory).values({ workspaceId, type: "bonus", amount: 5, description: "Welcome bonus — $5 starter credit" });
     return created;
   }
 
-  async addRankTrackerCredits(venueId: string, amount: number, description: string): Promise<RankTrackerCredits> {
-    const credits = await this.getRankTrackerCredits(venueId);
+  async addRankTrackerCredits(workspaceId: string, amount: number, description: string): Promise<RankTrackerCredits> {
+    const credits = await this.getRankTrackerCredits(workspaceId);
     const [updated] = await db!.update(rankTrackerCredits)
       .set({ balance: credits.balance + amount, totalPurchased: credits.totalPurchased + amount, updatedAt: new Date() })
-      .where(eq(rankTrackerCredits.venueId, venueId))
+      .where(eq(rankTrackerCredits.workspaceId, workspaceId))
       .returning();
-    await db!.insert(rankTrackerHistory).values({ venueId, type: "purchase", amount, description });
+    await db!.insert(rankTrackerHistory).values({ workspaceId, type: "purchase", amount, description });
     return updated;
   }
 
-  async useRankTrackerCredit(venueId: string): Promise<{ success: boolean; balance: number }> {
-    const credits = await this.getRankTrackerCredits(venueId);
+  async useRankTrackerCredit(workspaceId: string): Promise<{ success: boolean; balance: number }> {
+    const credits = await this.getRankTrackerCredits(workspaceId);
     if (credits.balance <= 0) return { success: false, balance: 0 };
     const [updated] = await db!.update(rankTrackerCredits)
       .set({ balance: credits.balance - 1, totalUsed: credits.totalUsed + 1, updatedAt: new Date() })
-      .where(eq(rankTrackerCredits.venueId, venueId))
+      .where(eq(rankTrackerCredits.workspaceId, workspaceId))
       .returning();
-    await db!.insert(rankTrackerHistory).values({ venueId, type: "usage", amount: -1, description: "Rank check" });
+    await db!.insert(rankTrackerHistory).values({ workspaceId, type: "usage", amount: -1, description: "Rank check" });
     return { success: true, balance: updated.balance };
   }
 
-  async getRankTrackerHistory(venueId: string): Promise<RankTrackerHistory[]> {
-    return db!.select().from(rankTrackerHistory).where(eq(rankTrackerHistory.venueId, venueId)).orderBy(desc(rankTrackerHistory.createdAt));
+  async getRankTrackerHistory(workspaceId: string): Promise<RankTrackerHistory[]> {
+    return db!.select().from(rankTrackerHistory).where(eq(rankTrackerHistory.workspaceId, workspaceId)).orderBy(desc(rankTrackerHistory.createdAt));
   }
 
   async saveGridScanResults(results: InsertGridScanResult[]): Promise<GridScanResult[]> {
@@ -2111,47 +2111,47 @@ export class DbStorage implements IStorage {
     return saved;
   }
 
-  async getLatestGridScanResults(venueId: string, keyword: string): Promise<GridScanResult[]> {
+  async getLatestGridScanResults(workspaceId: string, keyword: string): Promise<GridScanResult[]> {
     const [latest] = await db!.select({ scanDate: max(gridScanResults.scanDate) })
       .from(gridScanResults)
-      .where(and(eq(gridScanResults.venueId, venueId), eq(gridScanResults.keyword, keyword)));
+      .where(and(eq(gridScanResults.workspaceId, workspaceId), eq(gridScanResults.keyword, keyword)));
     if (!latest?.scanDate) return [];
     return db!.select().from(gridScanResults)
       .where(and(
-        eq(gridScanResults.venueId, venueId),
+        eq(gridScanResults.workspaceId, workspaceId),
         eq(gridScanResults.keyword, keyword),
         eq(gridScanResults.scanDate, latest.scanDate)
       ))
       .orderBy(asc(gridScanResults.gridIndex));
   }
 
-  async getGridScanKeywords(venueId: string): Promise<string[]> {
+  async getGridScanKeywords(workspaceId: string): Promise<string[]> {
     const rows = await db!.selectDistinct({ keyword: gridScanResults.keyword })
       .from(gridScanResults)
-      .where(eq(gridScanResults.venueId, venueId));
+      .where(eq(gridScanResults.workspaceId, workspaceId));
     return rows.map(r => r.keyword);
   }
 
-  async getVenueDomains(venueId: string): Promise<VenueDomain[]> {
-    return db!.select().from(venueDomains).where(eq(venueDomains.venueId, venueId));
+  async getWorkspaceDomains(workspaceId: string): Promise<WorkspaceDomain[]> {
+    return db!.select().from(workspaceDomains).where(eq(workspaceDomains.workspaceId, workspaceId));
   }
-  async getVenueDomainByDomain(domain: string): Promise<VenueDomain | undefined> {
-    const [row] = await db!.select().from(venueDomains).where(eq(venueDomains.domain, domain.toLowerCase()));
+  async getWorkspaceDomainByDomain(domain: string): Promise<WorkspaceDomain | undefined> {
+    const [row] = await db!.select().from(workspaceDomains).where(eq(workspaceDomains.domain, domain.toLowerCase()));
     return row;
   }
-  async createVenueDomain(data: InsertVenueDomain): Promise<VenueDomain> {
+  async createWorkspaceDomain(data: InsertWorkspaceDomain): Promise<WorkspaceDomain> {
     const normalizedDomain = data.domain.toLowerCase();
 
     return await db!.transaction(async (tx) => {
       const existing = await tx
-        .select({ id: venueDomains.id })
-        .from(venueDomains)
-        .where(eq(venueDomains.venueId, data.venueId))
+        .select({ id: workspaceDomains.id })
+        .from(workspaceDomains)
+        .where(eq(workspaceDomains.workspaceId, data.workspaceId))
         .limit(1);
 
       if (existing.length === 0) {
         const [row] = await tx
-          .insert(venueDomains)
+          .insert(workspaceDomains)
           .values({
             ...data,
             domain: normalizedDomain,
@@ -2163,15 +2163,15 @@ export class DbStorage implements IStorage {
 
       if (data.isPrimary === true) {
         await tx
-          .update(venueDomains)
+          .update(workspaceDomains)
           .set({ isPrimary: false })
           .where(and(
-            eq(venueDomains.venueId, data.venueId),
-            eq(venueDomains.isPrimary, true)
+            eq(workspaceDomains.workspaceId, data.workspaceId),
+            eq(workspaceDomains.isPrimary, true)
           ));
 
         const [row] = await tx
-          .insert(venueDomains)
+          .insert(workspaceDomains)
           .values({
             ...data,
             domain: normalizedDomain,
@@ -2182,7 +2182,7 @@ export class DbStorage implements IStorage {
       }
 
       const [row] = await tx
-        .insert(venueDomains)
+        .insert(workspaceDomains)
         .values({
           ...data,
           domain: normalizedDomain,
@@ -2193,122 +2193,122 @@ export class DbStorage implements IStorage {
       return row;
     });
   }
-  async updateVenueDomain(id: string, data: Partial<Pick<VenueDomain, "domain" | "blogTemplate" | "isPrimary" | "accentColor" | "accentForeground">>): Promise<VenueDomain | undefined> {
+  async updateWorkspaceDomain(id: string, data: Partial<Pick<WorkspaceDomain, "domain" | "blogTemplate" | "isPrimary" | "accentColor" | "accentForeground">>): Promise<WorkspaceDomain | undefined> {
     if (data.isPrimary === true) {
-      const existing = await db!.select({ venueId: venueDomains.venueId }).from(venueDomains).where(eq(venueDomains.id, id)).limit(1);
+      const existing = await db!.select({ workspaceId: workspaceDomains.workspaceId }).from(workspaceDomains).where(eq(workspaceDomains.id, id)).limit(1);
       if (!existing.length) return undefined;
-      const venueId = existing[0].venueId;
+      const workspaceId = existing[0].workspaceId;
       const { isPrimary, ...otherFields } = data;
       if (otherFields.domain) otherFields.domain = otherFields.domain.toLowerCase();
       // Atomic swap: partial unique index (venue_domains_one_primary_per_venue)
       // allows only one isPrimary=true per venue. Unset others first, then set
       // the target, all inside one transaction for concurrency safety.
       return await db!.transaction(async (tx) => {
-        await tx.update(venueDomains)
+        await tx.update(workspaceDomains)
           .set({ isPrimary: false })
           .where(and(
-            eq(venueDomains.venueId, venueId),
-            eq(venueDomains.isPrimary, true),
-            ne(venueDomains.id, id)
+            eq(workspaceDomains.workspaceId, workspaceId),
+            eq(workspaceDomains.isPrimary, true),
+            ne(workspaceDomains.id, id)
           ));
-        const [row] = await tx.update(venueDomains)
+        const [row] = await tx.update(workspaceDomains)
           .set({ ...otherFields, isPrimary: true })
-          .where(and(eq(venueDomains.id, id), eq(venueDomains.venueId, venueId)))
+          .where(and(eq(workspaceDomains.id, id), eq(workspaceDomains.workspaceId, workspaceId)))
           .returning();
         return row ?? undefined;
       });
     }
     const updateSet = { ...data };
     if (updateSet.domain) updateSet.domain = updateSet.domain.toLowerCase();
-    const [row] = await db!.update(venueDomains).set(updateSet).where(eq(venueDomains.id, id)).returning();
+    const [row] = await db!.update(workspaceDomains).set(updateSet).where(eq(workspaceDomains.id, id)).returning();
     return row ?? undefined;
   }
-  async deleteVenueDomain(id: string): Promise<boolean> {
+  async deleteWorkspaceDomain(id: string): Promise<boolean> {
     return await db!.transaction(async (tx) => {
       const existing = await tx
         .select({
-          venueId: venueDomains.venueId,
-          isPrimary: venueDomains.isPrimary,
+          workspaceId: workspaceDomains.workspaceId,
+          isPrimary: workspaceDomains.isPrimary,
         })
-        .from(venueDomains)
-        .where(eq(venueDomains.id, id))
+        .from(workspaceDomains)
+        .where(eq(workspaceDomains.id, id))
         .limit(1);
 
       if (!existing.length) return false;
 
-      const { venueId, isPrimary } = existing[0];
+      const { workspaceId, isPrimary } = existing[0];
 
       const [{ count }] = await tx
         .select({ count: sql<number>`count(*)` })
-        .from(venueDomains)
-        .where(eq(venueDomains.venueId, venueId));
+        .from(workspaceDomains)
+        .where(eq(workspaceDomains.workspaceId, workspaceId));
 
       if (isPrimary && Number(count) > 1) {
         const replacement = await tx
-          .select({ id: venueDomains.id })
-          .from(venueDomains)
+          .select({ id: workspaceDomains.id })
+          .from(workspaceDomains)
           .where(and(
-            eq(venueDomains.venueId, venueId),
-            ne(venueDomains.id, id)
+            eq(workspaceDomains.workspaceId, workspaceId),
+            ne(workspaceDomains.id, id)
           ))
           .limit(1);
 
         if (replacement.length) {
           await tx
-            .update(venueDomains)
+            .update(workspaceDomains)
             .set({ isPrimary: true })
-            .where(eq(venueDomains.id, replacement[0].id));
+            .where(eq(workspaceDomains.id, replacement[0].id));
         }
       }
 
       const deleted = await tx
-        .delete(venueDomains)
-        .where(eq(venueDomains.id, id))
+        .delete(workspaceDomains)
+        .where(eq(workspaceDomains.id, id))
         .returning();
 
       return deleted.length > 0;
     });
   }
 
-  async getVenueBlogPosts(venueId: string, status?: string): Promise<VenueBlogPost[]> {
+  async getWorkspaceBlogPosts(workspaceId: string, status?: string): Promise<WorkspaceBlogPost[]> {
     if (status) {
-      return db!.select().from(venueBlogPosts).where(and(eq(venueBlogPosts.venueId, venueId), eq(venueBlogPosts.status, status))).orderBy(desc(venueBlogPosts.createdAt));
+      return db!.select().from(workspaceBlogPosts).where(and(eq(workspaceBlogPosts.workspaceId, workspaceId), eq(workspaceBlogPosts.status, status))).orderBy(desc(workspaceBlogPosts.createdAt));
     }
-    return db!.select().from(venueBlogPosts).where(eq(venueBlogPosts.venueId, venueId)).orderBy(desc(venueBlogPosts.createdAt));
+    return db!.select().from(workspaceBlogPosts).where(eq(workspaceBlogPosts.workspaceId, workspaceId)).orderBy(desc(workspaceBlogPosts.createdAt));
   }
-  async getVenueBlogPost(id: string): Promise<VenueBlogPost | undefined> {
-    const [row] = await db!.select().from(venueBlogPosts).where(eq(venueBlogPosts.id, id));
+  async getWorkspaceBlogPost(id: string): Promise<WorkspaceBlogPost | undefined> {
+    const [row] = await db!.select().from(workspaceBlogPosts).where(eq(workspaceBlogPosts.id, id));
     return row;
   }
-  async getVenueBlogPostBySlug(venueId: string, slug: string): Promise<VenueBlogPost | undefined> {
-    const [row] = await db!.select().from(venueBlogPosts).where(and(eq(venueBlogPosts.venueId, venueId), eq(venueBlogPosts.slug, slug)));
+  async getWorkspaceBlogPostBySlug(workspaceId: string, slug: string): Promise<WorkspaceBlogPost | undefined> {
+    const [row] = await db!.select().from(workspaceBlogPosts).where(and(eq(workspaceBlogPosts.workspaceId, workspaceId), eq(workspaceBlogPosts.slug, slug)));
     return row;
   }
-  async getPublishedPostsByVenue(venueId: string): Promise<VenueBlogPost[]> {
-    return db!.select().from(venueBlogPosts).where(and(eq(venueBlogPosts.venueId, venueId), eq(venueBlogPosts.status, "published"))).orderBy(desc(venueBlogPosts.publishedAt));
+  async getPublishedPostsByWorkspace(workspaceId: string): Promise<WorkspaceBlogPost[]> {
+    return db!.select().from(workspaceBlogPosts).where(and(eq(workspaceBlogPosts.workspaceId, workspaceId), eq(workspaceBlogPosts.status, "published"))).orderBy(desc(workspaceBlogPosts.publishedAt));
   }
-  async getScheduledPostsDue(): Promise<VenueBlogPost[]> {
-    return db!.select().from(venueBlogPosts).where(and(eq(venueBlogPosts.status, "scheduled"), lte(venueBlogPosts.publishAt, new Date())));
+  async getScheduledPostsDue(): Promise<WorkspaceBlogPost[]> {
+    return db!.select().from(workspaceBlogPosts).where(and(eq(workspaceBlogPosts.status, "scheduled"), lte(workspaceBlogPosts.publishAt, new Date())));
   }
-  async createVenueBlogPost(post: InsertVenueBlogPost): Promise<VenueBlogPost> {
-    const [row] = await db!.insert(venueBlogPosts).values(post).returning();
+  async createWorkspaceBlogPost(post: InsertWorkspaceBlogPost): Promise<WorkspaceBlogPost> {
+    const [row] = await db!.insert(workspaceBlogPosts).values(post).returning();
     return row;
   }
-  async bulkCreateVenueBlogPosts(posts: InsertVenueBlogPost[]): Promise<VenueBlogPost[]> {
+  async bulkCreateWorkspaceBlogPosts(posts: InsertWorkspaceBlogPost[]): Promise<WorkspaceBlogPost[]> {
     if (posts.length === 0) return [];
-    const rows = await db!.insert(venueBlogPosts).values(posts).returning();
+    const rows = await db!.insert(workspaceBlogPosts).values(posts).returning();
     return rows;
   }
-  async getVenueBlogPostsByCampaign(venueId: string, campaignId: string): Promise<VenueBlogPost[]> {
-    return db!.select().from(venueBlogPosts).where(and(eq(venueBlogPosts.venueId, venueId), eq(venueBlogPosts.campaignId, campaignId))).orderBy(desc(venueBlogPosts.createdAt));
+  async getWorkspaceBlogPostsByCampaign(workspaceId: string, campaignId: string): Promise<WorkspaceBlogPost[]> {
+    return db!.select().from(workspaceBlogPosts).where(and(eq(workspaceBlogPosts.workspaceId, workspaceId), eq(workspaceBlogPosts.campaignId, campaignId))).orderBy(desc(workspaceBlogPosts.createdAt));
   }
   async createContentCampaign(data: InsertContentCampaign): Promise<ContentCampaign> {
     const [row] = await db!.insert(contentCampaigns).values(data).returning();
     return row;
   }
-  async getVenueCampaigns(venueId: string): Promise<{ campaignId: string; postCount: number; createdAt: Date; statuses: Record<string, number> }[]> {
-    const posts = await db!.select().from(venueBlogPosts).where(and(eq(venueBlogPosts.venueId, venueId), sql`${venueBlogPosts.campaignId} IS NOT NULL`)).orderBy(desc(venueBlogPosts.createdAt));
-    const map = new Map<string, VenueBlogPost[]>();
+  async getWorkspaceCampaigns(workspaceId: string): Promise<{ campaignId: string; postCount: number; createdAt: Date; statuses: Record<string, number> }[]> {
+    const posts = await db!.select().from(workspaceBlogPosts).where(and(eq(workspaceBlogPosts.workspaceId, workspaceId), sql`${workspaceBlogPosts.campaignId} IS NOT NULL`)).orderBy(desc(workspaceBlogPosts.createdAt));
+    const map = new Map<string, WorkspaceBlogPost[]>();
     for (const p of posts) {
       const arr = map.get(p.campaignId!) || [];
       arr.push(p);
@@ -2324,13 +2324,13 @@ export class DbStorage implements IStorage {
       return { campaignId, postCount: cPosts.length, createdAt: earliest, statuses };
     }).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
   }
-  async updateVenueBlogPost(id: string, post: Partial<VenueBlogPost>): Promise<VenueBlogPost | undefined> {
+  async updateWorkspaceBlogPost(id: string, post: Partial<WorkspaceBlogPost>): Promise<WorkspaceBlogPost | undefined> {
     const { id: _id, createdAt: _c, ...updates } = post as any;
-    const [row] = await db!.update(venueBlogPosts).set({ ...updates, updatedAt: new Date() }).where(eq(venueBlogPosts.id, id)).returning();
+    const [row] = await db!.update(workspaceBlogPosts).set({ ...updates, updatedAt: new Date() }).where(eq(workspaceBlogPosts.id, id)).returning();
     return row;
   }
-  async deleteVenueBlogPost(id: string): Promise<boolean> {
-    const result = await db!.delete(venueBlogPosts).where(eq(venueBlogPosts.id, id)).returning();
+  async deleteWorkspaceBlogPost(id: string): Promise<boolean> {
+    const result = await db!.delete(workspaceBlogPosts).where(eq(workspaceBlogPosts.id, id)).returning();
     return result.length > 0;
   }
 
@@ -2469,50 +2469,50 @@ export class DbStorage implements IStorage {
     return result.length > 0;
   }
 
-  async getSiteProfile(venueId: string): Promise<VenueSiteProfile | undefined> {
-    const [row] = await db!.select().from(venueSiteProfiles).where(eq(venueSiteProfiles.venueId, venueId));
+  async getSiteProfile(workspaceId: string): Promise<WorkspaceSiteProfile | undefined> {
+    const [row] = await db!.select().from(workspaceSiteProfiles).where(eq(workspaceSiteProfiles.workspaceId, workspaceId));
     return row;
   }
-  async upsertSiteProfile(data: InsertVenueSiteProfile): Promise<VenueSiteProfile> {
-    if (data.venueId) {
-      const existing = await this.getSiteProfile(data.venueId);
+  async upsertSiteProfile(data: InsertWorkspaceSiteProfile): Promise<WorkspaceSiteProfile> {
+    if (data.workspaceId) {
+      const existing = await this.getSiteProfile(data.workspaceId);
       if (existing) {
-        const [row] = await db!.update(venueSiteProfiles).set({ ...data, updatedAt: new Date() }).where(eq(venueSiteProfiles.id, existing.id)).returning();
+        const [row] = await db!.update(workspaceSiteProfiles).set({ ...data, updatedAt: new Date() }).where(eq(workspaceSiteProfiles.id, existing.id)).returning();
         return row;
       }
     }
-    const [row] = await db!.insert(venueSiteProfiles).values(data).returning();
+    const [row] = await db!.insert(workspaceSiteProfiles).values(data).returning();
     return row;
   }
 
-  async getSitePages(venueId: string): Promise<VenueSitePage[]> {
-    return db!.select().from(venueSitePages).where(eq(venueSitePages.venueId, venueId)).orderBy(asc(venueSitePages.sortOrder));
+  async getSitePages(workspaceId: string): Promise<WorkspaceSitePage[]> {
+    return db!.select().from(workspaceSitePages).where(eq(workspaceSitePages.workspaceId, workspaceId)).orderBy(asc(workspaceSitePages.sortOrder));
   }
-  async getSitePage(id: number): Promise<VenueSitePage | undefined> {
-    const [row] = await db!.select().from(venueSitePages).where(eq(venueSitePages.id, id));
+  async getSitePage(id: number): Promise<WorkspaceSitePage | undefined> {
+    const [row] = await db!.select().from(workspaceSitePages).where(eq(workspaceSitePages.id, id));
     return row;
   }
-  async createSitePage(data: InsertVenueSitePage): Promise<VenueSitePage> {
-    const [row] = await db!.insert(venueSitePages).values(data).returning();
+  async createSitePage(data: InsertWorkspaceSitePage): Promise<WorkspaceSitePage> {
+    const [row] = await db!.insert(workspaceSitePages).values(data).returning();
     return row;
   }
-  async updateSitePage(id: number, data: Partial<InsertVenueSitePage>): Promise<VenueSitePage | undefined> {
-    const [row] = await db!.update(venueSitePages).set({ ...data, updatedAt: new Date() }).where(eq(venueSitePages.id, id)).returning();
+  async updateSitePage(id: number, data: Partial<InsertWorkspaceSitePage>): Promise<WorkspaceSitePage | undefined> {
+    const [row] = await db!.update(workspaceSitePages).set({ ...data, updatedAt: new Date() }).where(eq(workspaceSitePages.id, id)).returning();
     return row;
   }
   async deleteSitePage(id: number): Promise<boolean> {
-    const result = await db!.delete(venueSitePages).where(eq(venueSitePages.id, id)).returning();
+    const result = await db!.delete(workspaceSitePages).where(eq(workspaceSitePages.id, id)).returning();
     return result.length > 0;
   }
 
-  async getPostKeywordIndex(venueId: string): Promise<PostKeywordIndex[]> {
-    return db!.select().from(postKeywordIndex).where(eq(postKeywordIndex.venueId, venueId)).orderBy(desc(postKeywordIndex.frequency));
+  async getPostKeywordIndex(workspaceId: string): Promise<PostKeywordIndex[]> {
+    return db!.select().from(postKeywordIndex).where(eq(postKeywordIndex.workspaceId, workspaceId)).orderBy(desc(postKeywordIndex.frequency));
   }
   async getPostKeywordIndexByPost(postId: string): Promise<PostKeywordIndex[]> {
     return db!.select().from(postKeywordIndex).where(eq(postKeywordIndex.postId, postId));
   }
-  async getPostKeywordIndexByKeyword(venueId: string, keyword: string): Promise<PostKeywordIndex[]> {
-    return db!.select().from(postKeywordIndex).where(and(eq(postKeywordIndex.venueId, venueId), eq(postKeywordIndex.keyword, keyword)));
+  async getPostKeywordIndexByKeyword(workspaceId: string, keyword: string): Promise<PostKeywordIndex[]> {
+    return db!.select().from(postKeywordIndex).where(and(eq(postKeywordIndex.workspaceId, workspaceId), eq(postKeywordIndex.keyword, keyword)));
   }
   async upsertPostKeywordIndex(data: InsertPostKeywordIndex): Promise<PostKeywordIndex> {
     const [row] = await db!.insert(postKeywordIndex).values(data).returning();
@@ -2530,8 +2530,8 @@ export class DbStorage implements IStorage {
   async getPostValidationResults(postId: string): Promise<PostValidationResult[]> {
     return db!.select().from(postValidationResults).where(eq(postValidationResults.postId, postId)).orderBy(desc(postValidationResults.createdAt));
   }
-  async getPostValidationResultsByVenue(venueId: string): Promise<PostValidationResult[]> {
-    return db!.select().from(postValidationResults).where(eq(postValidationResults.venueId, venueId)).orderBy(desc(postValidationResults.createdAt));
+  async getPostValidationResultsByWorkspace(workspaceId: string): Promise<PostValidationResult[]> {
+    return db!.select().from(postValidationResults).where(eq(postValidationResults.workspaceId, workspaceId)).orderBy(desc(postValidationResults.createdAt));
   }
   async createPostValidationResult(data: InsertPostValidationResult): Promise<PostValidationResult> {
     const [row] = await db!.insert(postValidationResults).values(data).returning();

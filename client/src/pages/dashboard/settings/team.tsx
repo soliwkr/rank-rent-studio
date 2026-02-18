@@ -14,7 +14,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 
 interface TeamMember {
   id: number;
-  venueId: string;
+  workspaceId: string;
   userId: string | null;
   email: string;
   role: string;
@@ -35,7 +35,7 @@ const statusColors: Record<string, string> = {
 };
 
 export default function SettingsTeam() {
-  const { venueId } = useParams<{ venueId: string }>();
+  const { workspaceId } = useParams<{ workspaceId: string }>();
   const [newEmail, setNewEmail] = useState("");
   const [newRole, setNewRole] = useState<string>("staff");
   const { toast } = useToast();
@@ -45,14 +45,14 @@ export default function SettingsTeam() {
   }, []);
 
   const { data: team = [], isLoading } = useQuery<TeamMember[]>({
-    queryKey: ["/api/venues", venueId, "team"],
+    queryKey: ["/api/workspaces", workspaceId, "team"],
   });
 
   const inviteMutation = useMutation({
     mutationFn: (data: { email: string; role: string }) =>
-      apiRequest("POST", `/api/venues/${venueId}/team`, { ...data, venueId }),
+      apiRequest("POST", `/api/workspaces/${workspaceId}/team`, { ...data, workspaceId }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "team"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "team"] });
       setNewEmail("");
       toast({ title: "Team member added" });
     },
@@ -64,7 +64,7 @@ export default function SettingsTeam() {
   const deleteMutation = useMutation({
     mutationFn: (id: number) => apiRequest("DELETE", `/api/team/${id}`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "team"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "team"] });
       toast({ title: "Team member removed" });
     },
   });

@@ -47,7 +47,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { useVenue } from "@/lib/venue-context";
+import { useWorkspace } from "@/lib/workspace-context";
 
 const navItemsBefore = [
   { title: "Dashboard", icon: LayoutDashboard, path: "/admin" },
@@ -79,7 +79,7 @@ const seoSubItems = [
 
 export function AdminSidebar() {
   const [location] = useLocation();
-  const { venues, selectedVenue, selectVenue } = useVenue();
+  const { venues, selectedWorkspace, selectWorkspace } = useWorkspace();
 
   const isActive = (path: string) => {
     if (path === "/admin") return location === "/admin";
@@ -98,10 +98,10 @@ export function AdminSidebar() {
           </span>
         </div>
         <Select
-          value={selectedVenue?.id ?? ""}
+          value={selectedWorkspace?.id ?? ""}
           onValueChange={(val) => {
             const venue = venues.find((v) => v.id === val) ?? null;
-            selectVenue(venue);
+            selectWorkspace(venue);
           }}
         >
           <SelectTrigger data-testid="select-venue" className="w-full">

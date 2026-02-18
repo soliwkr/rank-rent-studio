@@ -13,7 +13,7 @@ import { Bot, CheckCircle, AlertCircle } from "lucide-react";
 
 interface AiProviderSettings {
   id: number;
-  venueId: string;
+  workspaceId: string;
   provider: string;
   apiKey: string | null;
   organizationId: string | null;
@@ -21,7 +21,7 @@ interface AiProviderSettings {
 }
 
 export default function ByokOpenai() {
-  const { venueId } = useParams<{ venueId: string }>();
+  const { workspaceId } = useParams<{ workspaceId: string }>();
   const { toast } = useToast();
   const [apiKey, setApiKey] = useState("");
   const [orgId, setOrgId] = useState("");
@@ -32,7 +32,7 @@ export default function ByokOpenai() {
   }, []);
 
   const { data: allProviders = [] } = useQuery<AiProviderSettings[]>({
-    queryKey: ["/api/venues", venueId, "ai-providers"],
+    queryKey: ["/api/workspaces", workspaceId, "ai-providers"],
   });
   const settings = allProviders.find(p => p.provider === "openai");
 
@@ -45,15 +45,15 @@ export default function ByokOpenai() {
   }, [settings]);
 
   const saveMutation = useMutation({
-    mutationFn: () => apiRequest("PUT", `/api/venues/${venueId}/ai-providers`, {
-      venueId,
+    mutationFn: () => apiRequest("PUT", `/api/workspaces/${workspaceId}/ai-providers`, {
+      workspaceId,
       provider: "openai",
       apiKey,
       organizationId: orgId || null,
       isConnected: !!apiKey,
     }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "ai-providers"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "ai-providers"] });
       toast({ title: "Credentials saved" });
     },
     onError: () => {

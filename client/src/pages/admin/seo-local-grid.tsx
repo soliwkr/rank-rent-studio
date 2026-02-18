@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useVenue } from "@/lib/venue-context";
+import { useWorkspace } from "@/lib/workspace-context";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -13,7 +13,7 @@ import { AdminLayout } from "@/components/admin-layout";
 
 interface GridKeyword {
   id: number;
-  venueId: string;
+  workspaceId: string;
   keyword: string;
   gridSize: number;
   distance: string;
@@ -22,7 +22,7 @@ interface GridKeyword {
 
 interface GridScanResult {
   id: number;
-  venueId: string;
+  workspaceId: string;
   keyword: string;
   gridSize: number;
   gridIndex: number;
@@ -32,25 +32,25 @@ interface GridScanResult {
 }
 
 export default function AdminLocalGrid() {
-  const { selectedVenue } = useVenue();
+  const { selectedWorkspace } = useWorkspace();
   const { toast } = useToast();
   const [newKeyword, setNewKeyword] = useState("");
 
-  const venueId = selectedVenue?.id;
+  const workspaceId = selectedWorkspace?.id;
 
   const { data: keywords = [], isLoading: kwLoading } = useQuery<GridKeyword[]>({
-    queryKey: ["/api/grid-keywords", `?venueId=${venueId}`],
-    enabled: !!venueId,
+    queryKey: ["/api/grid-keywords", `?workspaceId=${workspaceId}`],
+    enabled: !!workspaceId,
   });
 
   const { data: scanResults = [], isLoading: resultsLoading } = useQuery<GridScanResult[]>({
-    queryKey: ["/api/grid-scan-results", `?venueId=${venueId}`],
-    enabled: !!venueId,
+    queryKey: ["/api/grid-scan-results", `?workspaceId=${workspaceId}`],
+    enabled: !!workspaceId,
   });
 
   const addMutation = useMutation({
     mutationFn: async (keyword: string) => {
-      const res = await apiRequest("POST", "/api/grid-keywords", { venueId, keyword });
+      const res = await apiRequest("POST", "/api/grid-keywords", { workspaceId, keyword });
       return res.json();
     },
     onSuccess: () => {
@@ -83,7 +83,7 @@ export default function AdminLocalGrid() {
         </h1>
       </div>
 
-      {!selectedVenue ? (
+      {!selectedWorkspace ? (
         <Card>
           <CardContent className="py-8">
             <p className="text-muted-foreground text-center" data-testid="no-venue-selected">
@@ -95,7 +95,7 @@ export default function AdminLocalGrid() {
         <>
           <Card>
             <CardHeader>
-              <CardTitle>Grid Keywords - {selectedVenue.name}</CardTitle>
+              <CardTitle>Grid Keywords - {selectedWorkspace.name}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <form

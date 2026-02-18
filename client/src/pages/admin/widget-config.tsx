@@ -1,16 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
-import { useVenue } from "@/lib/venue-context";
+import { useWorkspace } from "@/lib/workspace-context";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MessageCircle } from "lucide-react";
-import type { Venue } from "@shared/schema";
+import type { Workspace } from "@shared/schema";
 import { AdminLayout } from "@/components/admin-layout";
 
 interface WidgetSetting {
   id: number;
-  venueId: string;
+  workspaceId: string;
   isEnabled: boolean | null;
   primaryColor: string | null;
   position: string | null;
@@ -19,14 +19,14 @@ interface WidgetSetting {
 }
 
 export default function AdminWidgetConfig() {
-  useVenue();
+  useWorkspace();
 
-  const { data: venues = [], isLoading: venuesLoading } = useQuery<Venue[]>({
-    queryKey: ["/api/venues"],
+  const { data: venues = [], isLoading: venuesLoading } = useQuery<Workspace[]>({
+    queryKey: ["/api/workspaces"],
   });
 
   const { data: allWidgetSettings = [], isLoading: widgetLoading } = useQuery<WidgetSetting[]>({
-    queryKey: ["/api/admin/widget-settings"],
+    queryKey: ["/api/widget-settings"],
   });
 
   const isLoading = venuesLoading || widgetLoading;
@@ -72,7 +72,7 @@ export default function AdminWidgetConfig() {
                 {allWidgetSettings.map((ws) => (
                   <TableRow key={ws.id} data-testid={`row-widget-${ws.id}`}>
                     <TableCell className="font-medium">
-                      {venueMap.get(ws.venueId)?.name || ws.venueId}
+                      {venueMap.get(ws.workspaceId)?.name || ws.workspaceId}
                     </TableCell>
                     <TableCell>
                       <Badge variant={ws.isEnabled ? "default" : "outline"}>

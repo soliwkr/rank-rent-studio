@@ -17,7 +17,7 @@ interface Reservation {
 }
 
 export default function CalendarView() {
-  const { venueId } = useParams<{ venueId: string }>();
+  const { workspaceId } = useParams<{ workspaceId: string }>();
   const [currentDate, setCurrentDate] = useState(new Date());
 
   useEffect(() => {
@@ -25,7 +25,7 @@ export default function CalendarView() {
   }, []);
 
   const { data: reservations = [], isLoading } = useQuery<Reservation[]>({
-    queryKey: ["/api/venues", venueId, "reservations"],
+    queryKey: ["/api/workspaces", workspaceId, "reservations"],
   });
 
   const bookingsByDate = useMemo(() =>

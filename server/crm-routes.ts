@@ -2,26 +2,9 @@ import type { Express, Request, Response } from "express";
 import { storage } from "./storage";
 import { insertCrmContactSchema, insertCrmDealSchema, insertCrmPipelineStageSchema } from "@shared/schema";
 
-function isSuperAdmin(req: Request): boolean {
-  const session = (req as any).session;
-  if (session?.adminRole === "super_admin") return true;
-  const authHeader = req.headers["x-admin-role"];
-  if (authHeader === "super_admin") return true;
-  return false;
-}
-
-function requireSuperAdmin(req: Request, res: Response): boolean {
-  if (process.env.NODE_ENV === "production" && !isSuperAdmin(req)) {
-    res.status(403).json({ error: "Forbidden: super_admin required" });
-    return false;
-  }
-  return true;
-}
-
 export function registerCrmRoutes(app: Express) {
 
-  app.get("/api/admin/crm/contacts", async (req, res) => {
-    if (!requireSuperAdmin(req, res)) return;
+  app.get("/api/crm/contacts", async (req, res) => {
     try {
       const workspaceId = req.query.workspaceId as string | undefined;
       const contacts = await storage.getCrmContacts(workspaceId);
@@ -31,8 +14,7 @@ export function registerCrmRoutes(app: Express) {
     }
   });
 
-  app.get("/api/admin/crm/contacts/:id", async (req, res) => {
-    if (!requireSuperAdmin(req, res)) return;
+  app.get("/api/crm/contacts/:id", async (req, res) => {
     try {
       const contact = await storage.getCrmContact(Number(req.params.id));
       if (!contact) return res.status(404).json({ error: "Contact not found" });
@@ -42,8 +24,7 @@ export function registerCrmRoutes(app: Express) {
     }
   });
 
-  app.post("/api/admin/crm/contacts", async (req, res) => {
-    if (!requireSuperAdmin(req, res)) return;
+  app.post("/api/crm/contacts", async (req, res) => {
     try {
       const parsed = insertCrmContactSchema.parse(req.body);
       const contact = await storage.createCrmContact(parsed);
@@ -53,8 +34,7 @@ export function registerCrmRoutes(app: Express) {
     }
   });
 
-  app.patch("/api/admin/crm/contacts/:id", async (req, res) => {
-    if (!requireSuperAdmin(req, res)) return;
+  app.patch("/api/crm/contacts/:id", async (req, res) => {
     try {
       const contact = await storage.updateCrmContact(Number(req.params.id), req.body);
       if (!contact) return res.status(404).json({ error: "Contact not found" });
@@ -64,8 +44,7 @@ export function registerCrmRoutes(app: Express) {
     }
   });
 
-  app.delete("/api/admin/crm/contacts/:id", async (req, res) => {
-    if (!requireSuperAdmin(req, res)) return;
+  app.delete("/api/crm/contacts/:id", async (req, res) => {
     try {
       const deleted = await storage.deleteCrmContact(Number(req.params.id));
       if (!deleted) return res.status(404).json({ error: "Contact not found" });
@@ -75,8 +54,7 @@ export function registerCrmRoutes(app: Express) {
     }
   });
 
-  app.get("/api/admin/crm/stages", async (req, res) => {
-    if (!requireSuperAdmin(req, res)) return;
+  app.get("/api/crm/stages", async (req, res) => {
     try {
       const workspaceId = req.query.workspaceId as string | undefined;
       const stages = await storage.getCrmPipelineStages(workspaceId);
@@ -86,8 +64,7 @@ export function registerCrmRoutes(app: Express) {
     }
   });
 
-  app.post("/api/admin/crm/stages", async (req, res) => {
-    if (!requireSuperAdmin(req, res)) return;
+  app.post("/api/crm/stages", async (req, res) => {
     try {
       const parsed = insertCrmPipelineStageSchema.parse(req.body);
       const stage = await storage.createCrmPipelineStage(parsed);
@@ -97,8 +74,7 @@ export function registerCrmRoutes(app: Express) {
     }
   });
 
-  app.patch("/api/admin/crm/stages/:id", async (req, res) => {
-    if (!requireSuperAdmin(req, res)) return;
+  app.patch("/api/crm/stages/:id", async (req, res) => {
     try {
       const stage = await storage.updateCrmPipelineStage(Number(req.params.id), req.body);
       if (!stage) return res.status(404).json({ error: "Stage not found" });
@@ -108,8 +84,7 @@ export function registerCrmRoutes(app: Express) {
     }
   });
 
-  app.delete("/api/admin/crm/stages/:id", async (req, res) => {
-    if (!requireSuperAdmin(req, res)) return;
+  app.delete("/api/crm/stages/:id", async (req, res) => {
     try {
       const deleted = await storage.deleteCrmPipelineStage(Number(req.params.id));
       if (!deleted) return res.status(404).json({ error: "Stage not found" });
@@ -119,8 +94,7 @@ export function registerCrmRoutes(app: Express) {
     }
   });
 
-  app.get("/api/admin/crm/deals", async (req, res) => {
-    if (!requireSuperAdmin(req, res)) return;
+  app.get("/api/crm/deals", async (req, res) => {
     try {
       const workspaceId = req.query.workspaceId as string | undefined;
       const deals = await storage.getCrmDeals(workspaceId);
@@ -130,8 +104,7 @@ export function registerCrmRoutes(app: Express) {
     }
   });
 
-  app.get("/api/admin/crm/deals/:id", async (req, res) => {
-    if (!requireSuperAdmin(req, res)) return;
+  app.get("/api/crm/deals/:id", async (req, res) => {
     try {
       const deal = await storage.getCrmDeal(Number(req.params.id));
       if (!deal) return res.status(404).json({ error: "Deal not found" });
@@ -141,8 +114,7 @@ export function registerCrmRoutes(app: Express) {
     }
   });
 
-  app.post("/api/admin/crm/deals", async (req, res) => {
-    if (!requireSuperAdmin(req, res)) return;
+  app.post("/api/crm/deals", async (req, res) => {
     try {
       const parsed = insertCrmDealSchema.parse(req.body);
       const deal = await storage.createCrmDeal(parsed);
@@ -152,8 +124,7 @@ export function registerCrmRoutes(app: Express) {
     }
   });
 
-  app.patch("/api/admin/crm/deals/:id", async (req, res) => {
-    if (!requireSuperAdmin(req, res)) return;
+  app.patch("/api/crm/deals/:id", async (req, res) => {
     try {
       const deal = await storage.updateCrmDeal(Number(req.params.id), req.body);
       if (!deal) return res.status(404).json({ error: "Deal not found" });
@@ -163,8 +134,7 @@ export function registerCrmRoutes(app: Express) {
     }
   });
 
-  app.delete("/api/admin/crm/deals/:id", async (req, res) => {
-    if (!requireSuperAdmin(req, res)) return;
+  app.delete("/api/crm/deals/:id", async (req, res) => {
     try {
       const deleted = await storage.deleteCrmDeal(Number(req.params.id));
       if (!deleted) return res.status(404).json({ error: "Deal not found" });

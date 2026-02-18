@@ -8,7 +8,7 @@ import { DashboardLayout } from "@/components/dashboard-layout";
 
 interface Reservation {
   id: string;
-  venueId: string;
+  workspaceId: string;
   guestName: string;
   guestEmail: string | null;
   guestPhone: string | null;
@@ -23,7 +23,7 @@ interface Reservation {
 
 interface CallLog {
   id: string;
-  venueId: string;
+  workspaceId: string;
   callerPhone: string | null;
   duration: number | null;
   status: string | null;
@@ -129,7 +129,7 @@ function WeekComparisonChart({ data }: { data: { label: string; thisWeek: number
 }
 
 export default function Analytics() {
-  const { venueId } = useParams<{ venueId: string }>();
+  const { workspaceId } = useParams<{ workspaceId: string }>();
   const [activeTab, setActiveTab] = useState("bookings");
 
   useEffect(() => {
@@ -137,10 +137,10 @@ export default function Analytics() {
   }, []);
 
   const { data: reservations = [] } = useQuery<Reservation[]>({
-    queryKey: ["/api/venues", venueId, "reservations"],
+    queryKey: ["/api/workspaces", workspaceId, "reservations"],
   });
   const { data: calls = [] } = useQuery<CallLog[]>({
-    queryKey: ["/api/venues", venueId, "calls"],
+    queryKey: ["/api/workspaces", workspaceId, "calls"],
   });
 
   const bookingStats = useMemo(() => {

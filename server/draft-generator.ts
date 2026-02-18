@@ -1,7 +1,7 @@
 import OpenAI from "openai";
 import { storage } from "./storage";
 import { batchProcess } from "./replit_integrations/batch/utils";
-import type { VenueBlogPost } from "@shared/schema";
+import type { WorkspaceBlogPost } from "@shared/schema";
 import { resolvePostImages } from "./image-resolver";
 
 const openai = new OpenAI({
@@ -99,18 +99,18 @@ The post should target the "${keyword}" keyword naturally throughout the content
 Write the full MDX content now.`;
 }
 
-export async function generateSingleDraft(postId: string): Promise<VenueBlogPost | null> {
-  const post = await storage.getVenueBlogPost(postId);
+export async function generateSingleDraft(postId: string): Promise<WorkspaceBlogPost | null> {
+  const post = await storage.getWorkspaceBlogPost(postId);
   if (!post || !post.primaryKeyword) return null;
 
-  await storage.updateVenueBlogPost(postId, {
+  await storage.updateWorkspaceBlogPost(postId, {
     generationStatus: "generating",
   });
 
   try {
     let venueName: string | undefined;
     try {
-      const venue = await storage.getVenue(post.venueId);
+      const venue = await storage.getWorkspace(post.workspaceId);
       venueName = venue?.name;
     } catch {}
 
@@ -135,7 +135,7 @@ export async function generateSingleDraft(postId: string): Promise<VenueBlogPost
 
     const mdxContent = response.choices[0]?.message?.content || "";
     if (!mdxContent || mdxContent.length < 500) {
-      await storage.updateVenueBlogPost(postId, {
+      await storage.updateWorkspaceBlogPost(postId, {
         generationStatus: "failed",
         qualityGateStatus: "fail",
         qualityFailReasons: ["LLM returned insufficient content"],
@@ -145,7 +145,7 @@ export async function generateSingleDraft(postId: string): Promise<VenueBlogPost
 
     const qualityResult = runQualityGate(mdxContent);
 
-    const updated = await storage.updateVenueBlogPost(postId, {
+    const updated = await storage.updateWorkspaceBlogPost(postId, {
       mdxContent,
       generationStatus: qualityResult.pass ? "generated" : "needs_review",
       qualityGateStatus: qualityResult.pass ? "pass" : "fail",
@@ -162,7 +162,7 @@ export async function generateSingleDraft(postId: string): Promise<VenueBlogPost
     return updated || null;
   } catch (err: any) {
     console.error(`[DraftGenerator] Failed to generate post ${postId}:`, err.message);
-    await storage.updateVenueBlogPost(postId, {
+    await storage.updateWorkspaceBlogPost(postId, {
       generationStatus: "failed",
       qualityGateStatus: "fail",
       qualityFailReasons: [`Generation error: ${err.message}`],
@@ -172,11 +172,11 @@ export async function generateSingleDraft(postId: string): Promise<VenueBlogPost
 }
 
 export async function generateCampaignDrafts(
-  venueId: string,
+  workspaceId: string,
   campaignId: string,
   onProgress?: (completed: number, total: number) => void
 ): Promise<{ generated: number; failed: number; needsReview: number }> {
-  const posts = await storage.getVenueBlogPostsByCampaign(venueId, campaignId);
+  const posts = await storage.getWorkspaceBlogPostsByCampaign(workspaceId, campaignId);
   const pending = posts.filter(p => p.generationStatus === "pending" || p.generationStatus === "failed");
 
   if (pending.length === 0) {
@@ -213,7 +213,7 @@ export async function generateCampaignDrafts(
 }
 
 export interface BulkCreateInput {
-  venueId: string;
+  workspaceId: string;
   campaignId: string;
   posts: Array<{
     title: string;
@@ -224,9 +224,9 @@ export interface BulkCreateInput {
   }>;
 }
 
-export async function bulkCreateDraftPosts(input: BulkCreateInput): Promise<VenueBlogPost[]> {
+export async function bulkCreateDraftPosts(input: BulkCreateInput): Promise<WorkspaceBlogPost[]> {
   const postsToCreate = input.posts.map((p) => ({
-    venueId: input.venueId,
+    workspaceId: input.workspaceId,
     slug: slugify(p.title),
     title: p.title,
     primaryKeyword: p.primaryKeyword,
@@ -240,5 +240,5 @@ export async function bulkCreateDraftPosts(input: BulkCreateInput): Promise<Venu
     mdxContent: "",
   }));
 
-  return storage.bulkCreateVenueBlogPosts(postsToCreate);
+  return storage.bulkCreateWorkspaceBlogPosts(postsToCreate);
 }

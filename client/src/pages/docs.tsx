@@ -174,11 +174,11 @@ export default function Docs() {
         <li>Voice mode toggle</li>
         <li>Quick actions: Make Reservation, View Menu, Hours</li>
         <li>"powered by Resto." footer</li>
-        <li>Widget Chat API: <code className="bg-gray-100 px-1 rounded">POST /api/widget/:venueId/chat</code> (public, rate-limited)</li>
+        <li>Widget Chat API: <code className="bg-gray-100 px-1 rounded">POST /api/widget/:workspaceId/chat</code> (public, rate-limited)</li>
       </ul>
 
       <h2 className="bg-amber-500 text-white p-3 rounded mt-8 text-xl font-bold">5. CLIENT DASHBOARD</h2>
-      <p className="mb-2"><strong>Access:</strong> /client-login &rarr; /select-venue &rarr; /:venueId/*</p>
+      <p className="mb-2"><strong>Access:</strong> /client-login &rarr; /select-venue &rarr; /:workspaceId/*</p>
       
       <h3 className="text-amber-500 border-b border-gray-300 pb-1 mt-6 font-semibold">Core Pages</h3>
       <table className="w-full border-collapse my-4">
@@ -186,13 +186,13 @@ export default function Docs() {
         <tbody>
           <tr><td className="border p-2">Login</td><td className="border p-2 font-mono text-sm">/client-login</td><td className="border p-2">Replit Auth (Google SSO)</td></tr>
           <tr><td className="border p-2">Venue Select</td><td className="border p-2 font-mono text-sm">/select-venue</td><td className="border p-2">Choose venue to manage</td></tr>
-          <tr><td className="border p-2">Today</td><td className="border p-2 font-mono text-sm">/:venueId/today</td><td className="border p-2">Today's bookings &amp; stats</td></tr>
-          <tr><td className="border p-2">Calendar</td><td className="border p-2 font-mono text-sm">/:venueId/calendar</td><td className="border p-2">Monthly booking view</td></tr>
-          <tr><td className="border p-2">Booking Detail</td><td className="border p-2 font-mono text-sm">/:venueId/bookings/:id</td><td className="border p-2">View/edit booking</td></tr>
-          <tr><td className="border p-2">Calls</td><td className="border p-2 font-mono text-sm">/:venueId/calls</td><td className="border p-2">AI call log list</td></tr>
-          <tr><td className="border p-2">Call Detail</td><td className="border p-2 font-mono text-sm">/:venueId/calls/:id</td><td className="border p-2">Transcript &amp; playback</td></tr>
-          <tr><td className="border p-2">Analytics</td><td className="border p-2 font-mono text-sm">/:venueId/analytics</td><td className="border p-2">Charts &amp; metrics</td></tr>
-          <tr><td className="border p-2">Export Data</td><td className="border p-2 font-mono text-sm">/:venueId/export-data</td><td className="border p-2">CSV downloads of booking/call data</td></tr>
+          <tr><td className="border p-2">Today</td><td className="border p-2 font-mono text-sm">/:workspaceId/today</td><td className="border p-2">Today's bookings &amp; stats</td></tr>
+          <tr><td className="border p-2">Calendar</td><td className="border p-2 font-mono text-sm">/:workspaceId/calendar</td><td className="border p-2">Monthly booking view</td></tr>
+          <tr><td className="border p-2">Booking Detail</td><td className="border p-2 font-mono text-sm">/:workspaceId/bookings/:id</td><td className="border p-2">View/edit booking</td></tr>
+          <tr><td className="border p-2">Calls</td><td className="border p-2 font-mono text-sm">/:workspaceId/calls</td><td className="border p-2">AI call log list</td></tr>
+          <tr><td className="border p-2">Call Detail</td><td className="border p-2 font-mono text-sm">/:workspaceId/calls/:id</td><td className="border p-2">Transcript &amp; playback</td></tr>
+          <tr><td className="border p-2">Analytics</td><td className="border p-2 font-mono text-sm">/:workspaceId/analytics</td><td className="border p-2">Charts &amp; metrics</td></tr>
+          <tr><td className="border p-2">Export Data</td><td className="border p-2 font-mono text-sm">/:workspaceId/export-data</td><td className="border p-2">CSV downloads of booking/call data</td></tr>
         </tbody>
       </table>
 
@@ -200,16 +200,16 @@ export default function Docs() {
       <table className="w-full border-collapse my-4">
         <thead><tr className="bg-gray-100"><th className="border p-2 text-left">Page</th><th className="border p-2 text-left">Route</th></tr></thead>
         <tbody>
-          <tr><td className="border p-2">Business Hours</td><td className="border p-2 font-mono text-sm">/:venueId/settings/hours</td></tr>
-          <tr><td className="border p-2">Closures</td><td className="border p-2 font-mono text-sm">/:venueId/settings/closures</td></tr>
-          <tr><td className="border p-2">Resources (Tables/Areas)</td><td className="border p-2 font-mono text-sm">/:venueId/settings/resources</td></tr>
-          <tr><td className="border p-2">Team Members</td><td className="border p-2 font-mono text-sm">/:venueId/settings/team</td></tr>
-          <tr><td className="border p-2">Train Widget</td><td className="border p-2 font-mono text-sm">/:venueId/settings/train-widget</td></tr>
-          <tr><td className="border p-2">Widget Embed Code</td><td className="border p-2 font-mono text-sm">/:venueId/settings/widget-code</td></tr>
-          <tr><td className="border p-2">Payments (Stripe/PayPal)</td><td className="border p-2 font-mono text-sm">/:venueId/settings/payments</td></tr>
-          <tr><td className="border p-2">Twilio Setup</td><td className="border p-2 font-mono text-sm">/:venueId/settings/twilio-setup</td></tr>
-          <tr><td className="border p-2">Twilio Voice</td><td className="border p-2 font-mono text-sm">/:venueId/settings/twilio-voice</td></tr>
-          <tr><td className="border p-2">Twilio SMS</td><td className="border p-2 font-mono text-sm">/:venueId/settings/twilio-sms</td></tr>
+          <tr><td className="border p-2">Business Hours</td><td className="border p-2 font-mono text-sm">/:workspaceId/settings/hours</td></tr>
+          <tr><td className="border p-2">Closures</td><td className="border p-2 font-mono text-sm">/:workspaceId/settings/closures</td></tr>
+          <tr><td className="border p-2">Resources (Tables/Areas)</td><td className="border p-2 font-mono text-sm">/:workspaceId/settings/resources</td></tr>
+          <tr><td className="border p-2">Team Members</td><td className="border p-2 font-mono text-sm">/:workspaceId/settings/team</td></tr>
+          <tr><td className="border p-2">Train Widget</td><td className="border p-2 font-mono text-sm">/:workspaceId/settings/train-widget</td></tr>
+          <tr><td className="border p-2">Widget Embed Code</td><td className="border p-2 font-mono text-sm">/:workspaceId/settings/widget-code</td></tr>
+          <tr><td className="border p-2">Payments (Stripe/PayPal)</td><td className="border p-2 font-mono text-sm">/:workspaceId/settings/payments</td></tr>
+          <tr><td className="border p-2">Twilio Setup</td><td className="border p-2 font-mono text-sm">/:workspaceId/settings/twilio-setup</td></tr>
+          <tr><td className="border p-2">Twilio Voice</td><td className="border p-2 font-mono text-sm">/:workspaceId/settings/twilio-voice</td></tr>
+          <tr><td className="border p-2">Twilio SMS</td><td className="border p-2 font-mono text-sm">/:workspaceId/settings/twilio-sms</td></tr>
         </tbody>
       </table>
 
@@ -217,13 +217,13 @@ export default function Docs() {
       <table className="w-full border-collapse my-4">
         <thead><tr className="bg-gray-100"><th className="border p-2 text-left">Provider</th><th className="border p-2 text-left">Route</th></tr></thead>
         <tbody>
-          <tr><td className="border p-2">OpenAI</td><td className="border p-2 font-mono text-sm">/:venueId/byok/openai</td></tr>
-          <tr><td className="border p-2">Anthropic</td><td className="border p-2 font-mono text-sm">/:venueId/byok/anthropic</td></tr>
-          <tr><td className="border p-2">Google AI</td><td className="border p-2 font-mono text-sm">/:venueId/byok/google</td></tr>
-          <tr><td className="border p-2">Grok</td><td className="border p-2 font-mono text-sm">/:venueId/byok/grok</td></tr>
-          <tr><td className="border p-2">Mistral</td><td className="border p-2 font-mono text-sm">/:venueId/byok/mistral</td></tr>
-          <tr><td className="border p-2">Cohere</td><td className="border p-2 font-mono text-sm">/:venueId/byok/cohere</td></tr>
-          <tr><td className="border p-2">Perplexity</td><td className="border p-2 font-mono text-sm">/:venueId/byok/perplexity</td></tr>
+          <tr><td className="border p-2">OpenAI</td><td className="border p-2 font-mono text-sm">/:workspaceId/byok/openai</td></tr>
+          <tr><td className="border p-2">Anthropic</td><td className="border p-2 font-mono text-sm">/:workspaceId/byok/anthropic</td></tr>
+          <tr><td className="border p-2">Google AI</td><td className="border p-2 font-mono text-sm">/:workspaceId/byok/google</td></tr>
+          <tr><td className="border p-2">Grok</td><td className="border p-2 font-mono text-sm">/:workspaceId/byok/grok</td></tr>
+          <tr><td className="border p-2">Mistral</td><td className="border p-2 font-mono text-sm">/:workspaceId/byok/mistral</td></tr>
+          <tr><td className="border p-2">Cohere</td><td className="border p-2 font-mono text-sm">/:workspaceId/byok/cohere</td></tr>
+          <tr><td className="border p-2">Perplexity</td><td className="border p-2 font-mono text-sm">/:workspaceId/byok/perplexity</td></tr>
         </tbody>
       </table>
 
@@ -231,9 +231,9 @@ export default function Docs() {
       <table className="w-full border-collapse my-4">
         <thead><tr className="bg-gray-100"><th className="border p-2 text-left">Page</th><th className="border p-2 text-left">Route</th><th className="border p-2 text-left">Function</th></tr></thead>
         <tbody>
-          <tr><td className="border p-2">Track Keywords</td><td className="border p-2 font-mono text-sm">/:venueId/rank-tracker/track-keywords</td><td className="border p-2">Keyword rank tracking with DataForSEO integration, free weekly scans, credit-based on-demand checks (250 keyword cap)</td></tr>
-          <tr><td className="border p-2">Local Search Grid</td><td className="border p-2 font-mono text-sm">/:venueId/rank-tracker/local-search-grid</td><td className="border p-2">5x5 geo-grid rank tracking, up to 25 keywords, Google Maps visibility</td></tr>
-          <tr><td className="border p-2">Google Search Console</td><td className="border p-2 font-mono text-sm">/:venueId/rank-tracker/google-search-console</td><td className="border p-2">GSC integration for search performance data</td></tr>
+          <tr><td className="border p-2">Track Keywords</td><td className="border p-2 font-mono text-sm">/:workspaceId/rank-tracker/track-keywords</td><td className="border p-2">Keyword rank tracking with DataForSEO integration, free weekly scans, credit-based on-demand checks (250 keyword cap)</td></tr>
+          <tr><td className="border p-2">Local Search Grid</td><td className="border p-2 font-mono text-sm">/:workspaceId/rank-tracker/local-search-grid</td><td className="border p-2">5x5 geo-grid rank tracking, up to 25 keywords, Google Maps visibility</td></tr>
+          <tr><td className="border p-2">Google Search Console</td><td className="border p-2 font-mono text-sm">/:workspaceId/rank-tracker/google-search-console</td><td className="border p-2">GSC integration for search performance data</td></tr>
         </tbody>
       </table>
 
@@ -241,9 +241,9 @@ export default function Docs() {
       <table className="w-full border-collapse my-4">
         <thead><tr className="bg-gray-100"><th className="border p-2 text-left">Page</th><th className="border p-2 text-left">Route</th></tr></thead>
         <tbody>
-          <tr><td className="border p-2">Room Types</td><td className="border p-2 font-mono text-sm">/:venueId/room-types</td></tr>
-          <tr><td className="border p-2">Room Inventory</td><td className="border p-2 font-mono text-sm">/:venueId/rooms</td></tr>
-          <tr><td className="border p-2">Room Bookings</td><td className="border p-2 font-mono text-sm">/:venueId/room-bookings</td></tr>
+          <tr><td className="border p-2">Room Types</td><td className="border p-2 font-mono text-sm">/:workspaceId/room-types</td></tr>
+          <tr><td className="border p-2">Room Inventory</td><td className="border p-2 font-mono text-sm">/:workspaceId/rooms</td></tr>
+          <tr><td className="border p-2">Room Bookings</td><td className="border p-2 font-mono text-sm">/:workspaceId/room-bookings</td></tr>
         </tbody>
       </table>
 
@@ -251,9 +251,9 @@ export default function Docs() {
       <table className="w-full border-collapse my-4">
         <thead><tr className="bg-gray-100"><th className="border p-2 text-left">Page</th><th className="border p-2 text-left">Route</th></tr></thead>
         <tbody>
-          <tr><td className="border p-2">Documentation &amp; Video Guides</td><td className="border p-2 font-mono text-sm">/:venueId/documentation</td></tr>
-          <tr><td className="border p-2">Support Tickets</td><td className="border p-2 font-mono text-sm">/:venueId/support</td></tr>
-          <tr><td className="border p-2">Website Change Requests</td><td className="border p-2 font-mono text-sm">/:venueId/website-changes</td></tr>
+          <tr><td className="border p-2">Documentation &amp; Video Guides</td><td className="border p-2 font-mono text-sm">/:workspaceId/documentation</td></tr>
+          <tr><td className="border p-2">Support Tickets</td><td className="border p-2 font-mono text-sm">/:workspaceId/support</td></tr>
+          <tr><td className="border p-2">Website Change Requests</td><td className="border p-2 font-mono text-sm">/:workspaceId/website-changes</td></tr>
         </tbody>
       </table>
       <p className="mt-2 text-sm text-gray-600">Floating live chat widget available on all dashboard pages for instant support.</p>
@@ -288,7 +288,7 @@ export default function Docs() {
         <li><strong>Voice:</strong> AI phone assistant with TwiML, speech recognition, BYOK AI providers, Amazon Polly TTS</li>
         <li><strong>SMS Inbound:</strong> Keyword processing (CANCEL, CONFIRM, STATUS, HOURS, HELP), automatic caller matching</li>
         <li><strong>SMS Outbound:</strong> Template variables for confirmation, reminder, cancellation messages</li>
-        <li><strong>Webhook:</strong> <code className="bg-gray-100 px-1 rounded">/api/twilio/connect/:venueId</code> for phone number configuration</li>
+        <li><strong>Webhook:</strong> <code className="bg-gray-100 px-1 rounded">/api/twilio/connect/:workspaceId</code> for phone number configuration</li>
         <li><strong>Call Flow:</strong> Greeting &rarr; Speech gathering &rarr; AI response &rarr; Reservation parsing</li>
       </ul>
 

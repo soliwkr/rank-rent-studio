@@ -13,7 +13,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 
 interface BusinessHour {
   id: number;
-  venueId: string;
+  workspaceId: string;
   dayOfWeek: number;
   openTime: string | null;
   closeTime: string | null;
@@ -33,12 +33,12 @@ const defaultHours = {
 };
 
 export default function SettingsHours() {
-  const { venueId } = useParams<{ venueId: string }>();
+  const { workspaceId } = useParams<{ workspaceId: string }>();
   const [hours, setHours] = useState(defaultHours);
   const { toast } = useToast();
 
   const { data: savedHours = [], isLoading } = useQuery<BusinessHour[]>({
-    queryKey: ["/api/venues", venueId, "hours"],
+    queryKey: ["/api/workspaces", workspaceId, "hours"],
   });
 
   useEffect(() => {
@@ -65,16 +65,16 @@ export default function SettingsHours() {
   const saveMutation = useMutation({
     mutationFn: () => {
       const hoursArray = days.map((day, index) => ({
-        venueId,
+        workspaceId,
         dayOfWeek: index,
         openTime: hours[day as keyof typeof hours].start,
         closeTime: hours[day as keyof typeof hours].end,
         isClosed: !hours[day as keyof typeof hours].open,
       }));
-      return apiRequest("PUT", `/api/venues/${venueId}/hours`, hoursArray);
+      return apiRequest("PUT", `/api/workspaces/${workspaceId}/hours`, hoursArray);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "hours"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "hours"] });
       toast({ title: "Hours saved", description: "Your business hours have been updated." });
     },
     onError: () => {

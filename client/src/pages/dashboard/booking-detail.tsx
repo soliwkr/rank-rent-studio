@@ -11,7 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 
 interface Reservation {
   id: string;
-  venueId: string;
+  workspaceId: string;
   guestName: string;
   guestEmail: string | null;
   guestPhone: string | null;
@@ -63,7 +63,7 @@ function getStatusBadge(status: string) {
 }
 
 export default function BookingDetail() {
-  const { venueId, bookingId } = useParams<{ venueId: string; bookingId: string }>();
+  const { workspaceId, bookingId } = useParams<{ workspaceId: string; bookingId: string }>();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -78,7 +78,7 @@ export default function BookingDetail() {
     mutationFn: () => apiRequest("PATCH", `/api/reservations/${bookingId}`, { status: "cancelled" }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/reservations", bookingId] });
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "reservations"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "reservations"] });
       toast({ title: "Booking cancelled" });
     },
   });
@@ -98,7 +98,7 @@ export default function BookingDetail() {
       <DashboardLayout>
         <div className="space-y-6">
           <div className="flex items-center gap-3 sm:gap-4">
-            <Link href={`/${venueId}/today`}>
+            <Link href={`/${workspaceId}/today`}>
               <Button variant="ghost" size="icon" data-testid="button-back">
                 <ArrowLeft className="w-5 h-5" />
               </Button>
@@ -129,7 +129,7 @@ export default function BookingDetail() {
     <DashboardLayout>
       <div className="space-y-6">
         <div className="flex items-center gap-3 sm:gap-4">
-          <Link href={`/${venueId}/today`}>
+          <Link href={`/${workspaceId}/today`}>
             <Button variant="ghost" size="icon" data-testid="button-back">
               <ArrowLeft className="w-5 h-5" />
             </Button>

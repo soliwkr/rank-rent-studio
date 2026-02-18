@@ -41,7 +41,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { useVenue } from "@/lib/venue-context";
+import { useWorkspace } from "@/lib/workspace-context";
 
 const topNavItems = [
   { title: "Today", icon: CalendarCheck, path: "/dashboard" },
@@ -79,7 +79,7 @@ const bottomNavItems = [
 
 export function ClientSidebar() {
   const [location] = useLocation();
-  const { venues, selectedVenue, selectVenue } = useVenue();
+  const { venues, selectedWorkspace, selectWorkspace } = useWorkspace();
 
   const isActive = (path: string) => {
     if (path === "/dashboard") return location === "/dashboard";
@@ -96,14 +96,14 @@ export function ClientSidebar() {
         <div className="flex items-center gap-2 px-2 py-1">
           <img src={logoImage} alt="indexFlow" className="h-6" />
           <span className="text-base font-semibold" data-testid="text-client-title">
-            {selectedVenue?.name ?? "indexFlow"}
+            {selectedWorkspace?.name ?? "indexFlow"}
           </span>
         </div>
         <Select
-          value={selectedVenue?.id ?? ""}
+          value={selectedWorkspace?.id ?? ""}
           onValueChange={(val) => {
             const venue = venues.find((v) => v.id === val) ?? null;
-            selectVenue(venue);
+            selectWorkspace(venue);
           }}
         >
           <SelectTrigger data-testid="select-client-venue" className="w-full">

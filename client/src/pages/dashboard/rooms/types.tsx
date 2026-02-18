@@ -3,7 +3,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useVenue } from "@/lib/venue-context";
+import { useWorkspace } from "@/lib/workspace-context";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,8 +28,8 @@ const roomTypeFormSchema = z.object({
 type RoomTypeFormValues = z.infer<typeof roomTypeFormSchema>;
 
 export default function RoomTypes() {
-  const { selectedVenue } = useVenue();
-  const venueId = selectedVenue?.id;
+  const { selectedWorkspace } = useWorkspace();
+  const workspaceId = selectedWorkspace?.id;
   const { toast } = useToast();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
@@ -40,14 +40,14 @@ export default function RoomTypes() {
   });
 
   const { data: roomTypes = [], isLoading } = useQuery<any[]>({
-    queryKey: [`/api/room-types?venueId=${venueId}`],
-    enabled: !!venueId,
+    queryKey: [`/api/room-types?workspaceId=${workspaceId}`],
+    enabled: !!workspaceId,
   });
 
   const createMutation = useMutation({
     mutationFn: async (values: RoomTypeFormValues) => {
       await apiRequest("POST", "/api/room-types", {
-        venueId,
+        workspaceId,
         name: values.name,
         description: values.description || undefined,
         basePrice: values.basePrice,
@@ -56,7 +56,7 @@ export default function RoomTypes() {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/room-types?venueId=${venueId}`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/room-types?workspaceId=${workspaceId}`] });
       setDialogOpen(false);
       form.reset();
       toast({ title: "Room type added" });
@@ -77,7 +77,7 @@ export default function RoomTypes() {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/room-types?venueId=${venueId}`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/room-types?workspaceId=${workspaceId}`] });
       setDialogOpen(false);
       setEditId(null);
       form.reset();
@@ -113,7 +113,7 @@ export default function RoomTypes() {
 
   const isPending = createMutation.isPending || editMutation.isPending;
 
-  if (!venueId) {
+  if (!workspaceId) {
     return <div className="p-6 text-muted-foreground" data-testid="no-venue-message">Please select a venue from the sidebar to manage room types.</div>;
   }
 

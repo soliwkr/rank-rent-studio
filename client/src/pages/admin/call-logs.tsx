@@ -1,32 +1,32 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useVenue } from "@/lib/venue-context";
+import { useWorkspace } from "@/lib/workspace-context";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PhoneCall } from "lucide-react";
-import type { CallLog, Venue } from "@shared/schema";
+import type { CallLog, Workspace } from "@shared/schema";
 import { AdminLayout } from "@/components/admin-layout";
 
 export default function AdminCallLogs() {
-  useVenue();
-  const [filterVenueId, setFilterVenueId] = useState<string>("all");
+  useWorkspace();
+  const [filterWorkspaceId, setFilterWorkspaceId] = useState<string>("all");
 
-  const { data: venues = [] } = useQuery<Venue[]>({
-    queryKey: ["/api/venues"],
+  const { data: venues = [] } = useQuery<Workspace[]>({
+    queryKey: ["/api/workspaces"],
   });
 
   const { data: logs = [], isLoading } = useQuery<CallLog[]>({
-    queryKey: ["/api/admin/call-logs"],
+    queryKey: ["/api/call-logs"],
   });
 
   const venueMap = new Map(venues.map((v) => [v.id, v]));
 
-  const filteredLogs = filterVenueId === "all"
+  const filteredLogs = filterWorkspaceId === "all"
     ? logs
-    : logs.filter((l) => l.venueId === filterVenueId);
+    : logs.filter((l) => l.workspaceId === filterWorkspaceId);
 
   return (
     <AdminLayout>
@@ -36,7 +36,7 @@ export default function AdminCallLogs() {
           <PhoneCall className="h-6 w-6" />
           <h1 className="text-2xl font-semibold" data-testid="page-title-call-logs">Call Logs</h1>
         </div>
-        <Select value={filterVenueId} onValueChange={setFilterVenueId}>
+        <Select value={filterWorkspaceId} onValueChange={setFilterWorkspaceId}>
           <SelectTrigger className="w-[200px]" data-testid="select-filter-venue">
             <SelectValue placeholder="Filter by venue" />
           </SelectTrigger>
@@ -52,7 +52,7 @@ export default function AdminCallLogs() {
       <Card>
         <CardHeader>
           <CardTitle>
-            {filterVenueId !== "all" ? `Call Logs - ${venueMap.get(filterVenueId)?.name}` : "All Call Logs"}
+            {filterWorkspaceId !== "all" ? `Call Logs - ${venueMap.get(filterWorkspaceId)?.name}` : "All Call Logs"}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -82,7 +82,7 @@ export default function AdminCallLogs() {
                 {filteredLogs.map((log) => (
                   <TableRow key={log.id} data-testid={`row-call-log-${log.id}`}>
                     <TableCell className="font-medium">
-                      {venueMap.get(log.venueId)?.name || log.venueId}
+                      {venueMap.get(log.workspaceId)?.name || log.workspaceId}
                     </TableCell>
                     <TableCell className="text-muted-foreground">{log.callerPhone || "-"}</TableCell>
                     <TableCell className="text-muted-foreground">{log.duration ? `${log.duration}s` : "-"}</TableCell>

@@ -146,11 +146,11 @@ function useSpeechSynthesis() {
 }
 
 interface AIWidgetProps {
-  venueId?: string;
+  workspaceId?: string;
   logoUrl?: string;
 }
 
-export function AIWidget({ venueId, logoUrl }: AIWidgetProps = {}) {
+export function AIWidget({ workspaceId, logoUrl }: AIWidgetProps = {}) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -209,7 +209,7 @@ export function AIWidget({ venueId, logoUrl }: AIWidgetProps = {}) {
     setInputText("");
     setIsTyping(true);
 
-    if (!venueId) {
+    if (!workspaceId) {
       setTimeout(() => {
         const randomResponse =
           mockResponses[Math.floor(Math.random() * mockResponses.length)];
@@ -237,7 +237,7 @@ export function AIWidget({ venueId, logoUrl }: AIWidgetProps = {}) {
           content: m.text,
         }));
 
-      const response = await fetch(`/api/widget/${venueId}/chat`, {
+      const response = await fetch(`/api/widget/${workspaceId}/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

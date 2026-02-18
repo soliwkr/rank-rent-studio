@@ -32,23 +32,23 @@ function normalizeTime(value: unknown): string {
   return t;
 }
 
-async function authorizeVenueAccess(req: Request, venueId: string): Promise<boolean> {
+async function authorizeVenueAccess(req: Request, workspaceId: string): Promise<boolean> {
   if (process.env.NODE_ENV !== "production") {
-    const venue = await storage.getVenue(venueId);
+    const venue = await storage.getWorkspace(workspaceId);
     return !!venue;
   }
   const userId = (req as any).user?.id;
   if (!userId) return false;
-  const venue = await storage.getVenue(venueId);
+  const venue = await storage.getWorkspace(workspaceId);
   if (!venue) return false;
   if (venue.ownerId === userId) return true;
-  const teamMember = await storage.getTeamMemberByUserAndVenue(userId, venueId);
+  const teamMember = await storage.getTeamMemberByUserAndWorkspace(userId, workspaceId);
   return !!teamMember;
 }
 
 import { 
   insertContactMessageSchema,
-  insertVenueSchema,
+  insertWorkspaceSchema,
   insertReservationSchema,
   insertBusinessHoursSchema,
   insertClosureSchema,
@@ -203,36 +203,36 @@ export async function registerRoutes(
   });
 
   // Support Tickets
-  app.get("/api/venues/:venueId/support-tickets", async (req, res) => {
+  app.get("/api/workspaces/:workspaceId/support-tickets", async (req, res) => {
     try {
-      const { venueId } = req.params;
+      const { workspaceId } = req.params;
       if (process.env.NODE_ENV === "production") {
         const userId = (req as any).user?.id;
         if (!userId) return res.status(401).json({ error: "Unauthorized" });
-        const authorized = await authorizeVenueAccess(req, venueId);
+        const authorized = await authorizeVenueAccess(req, workspaceId);
         if (!authorized) return res.status(403).json({ error: "Forbidden" });
       }
       
-      const tickets = await storage.getSupportTicketsByVenue(venueId);
+      const tickets = await storage.getSupportTicketsByWorkspace(workspaceId);
       res.json(tickets);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch tickets" });
     }
   });
 
-  app.post("/api/venues/:venueId/support-tickets", async (req, res) => {
+  app.post("/api/workspaces/:workspaceId/support-tickets", async (req, res) => {
     try {
-      const { venueId } = req.params;
+      const { workspaceId } = req.params;
       const userId = (req as any).user?.id || "dev-user";
       if (process.env.NODE_ENV === "production") {
         if (!userId || userId === "dev-user") return res.status(401).json({ error: "Unauthorized" });
-        const authorized = await authorizeVenueAccess(req, venueId);
+        const authorized = await authorizeVenueAccess(req, workspaceId);
         if (!authorized) return res.status(403).json({ error: "Forbidden" });
       }
 
       const validatedData = insertSupportTicketSchema.parse({
         ...req.body,
-        venueId,
+        workspaceId,
         userId,
         status: "open"
       });
@@ -275,42 +275,42 @@ export async function registerRoutes(
   });
 
   // Venues
-  app.get("/api/venues", async (req, res) => {
+  app.get("/api/workspaces", async (req, res) => {
     try {
       if (process.env.NODE_ENV !== "production") {
-        const venues = await storage.getVenues();
+        const venues = await storage.getWorkspaces();
         return res.json(venues);
       }
       const userId = (req as any).user?.id;
       if (!userId) return res.status(401).json({ error: "Unauthorized" });
-      const venues = await storage.getVenuesByOwner(userId);
+      const venues = await storage.getWorkspacesByOwner(userId);
       res.json(venues);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch venues" });
     }
   });
 
-  app.get("/api/venues/:id", async (req, res) => {
+  app.get("/api/workspaces/:id", async (req, res) => {
     try {
       if (!await authorizeVenueAccess(req, req.params.id)) {
         return res.status(403).json({ error: "Forbidden" });
       }
-      const venue = await storage.getVenue(req.params.id);
-      if (!venue) return res.status(404).json({ error: "Venue not found" });
+      const venue = await storage.getWorkspace(req.params.id);
+      if (!venue) return res.status(404).json({ error: "Workspace not found" });
       res.json(venue);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch venue" });
     }
   });
 
-  app.post("/api/venues", async (req, res) => {
+  app.post("/api/workspaces", async (req, res) => {
     try {
       const userId = (req as any).user?.id || "dev-user";
       if (process.env.NODE_ENV === "production" && (!userId || userId === "dev-user")) {
         return res.status(401).json({ error: "Unauthorized" });
       }
-      const validatedData = insertVenueSchema.parse({ ...req.body, ownerId: userId });
-      const venue = await storage.createVenue(validatedData);
+      const validatedData = insertWorkspaceSchema.parse({ ...req.body, ownerId: userId });
+      const venue = await storage.createWorkspace(validatedData);
       res.status(201).json(venue);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -320,26 +320,26 @@ export async function registerRoutes(
     }
   });
 
-  app.patch("/api/venues/:id", async (req, res) => {
+  app.patch("/api/workspaces/:id", async (req, res) => {
     try {
       if (!await authorizeVenueAccess(req, req.params.id)) {
         return res.status(403).json({ error: "Forbidden" });
       }
-      const venue = await storage.updateVenue(req.params.id, req.body);
-      if (!venue) return res.status(404).json({ error: "Venue not found" });
+      const venue = await storage.updateWorkspace(req.params.id, req.body);
+      if (!venue) return res.status(404).json({ error: "Workspace not found" });
       res.json(venue);
     } catch (error) {
       res.status(500).json({ error: "Failed to update venue" });
     }
   });
 
-  app.delete("/api/venues/:id", async (req, res) => {
+  app.delete("/api/workspaces/:id", async (req, res) => {
     try {
       if (!await authorizeVenueAccess(req, req.params.id)) {
         return res.status(403).json({ error: "Forbidden" });
       }
-      const deleted = await storage.deleteVenue(req.params.id);
-      if (!deleted) return res.status(404).json({ error: "Venue not found" });
+      const deleted = await storage.deleteWorkspace(req.params.id);
+      if (!deleted) return res.status(404).json({ error: "Workspace not found" });
       res.status(204).send();
     } catch (error) {
       res.status(500).json({ error: "Failed to delete venue" });
@@ -347,15 +347,15 @@ export async function registerRoutes(
   });
 
   // Reservations
-  app.get("/api/venues/:venueId/reservations", async (req, res) => {
+  app.get("/api/workspaces/:workspaceId/reservations", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const { date } = req.query;
       const reservations = date
-        ? await storage.getReservationsByDate(req.params.venueId, date as string)
-        : await storage.getReservations(req.params.venueId);
+        ? await storage.getReservationsByDate(req.params.workspaceId, date as string)
+        : await storage.getReservations(req.params.workspaceId);
       res.json(reservations);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch reservations" });
@@ -366,7 +366,7 @@ export async function registerRoutes(
     try {
       const reservation = await storage.getReservation(req.params.id);
       if (!reservation) return res.status(404).json({ error: "Reservation not found" });
-      if (!await authorizeVenueAccess(req, reservation.venueId)) {
+      if (!await authorizeVenueAccess(req, reservation.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       res.json(reservation);
@@ -375,14 +375,14 @@ export async function registerRoutes(
     }
   });
 
-  app.post("/api/venues/:venueId/reservations", async (req, res) => {
+  app.post("/api/workspaces/:workspaceId/reservations", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const validatedData = insertReservationSchema.parse({
         ...req.body,
-        venueId: req.params.venueId,
+        workspaceId: req.params.workspaceId,
         date: normalizeISODate(req.body.date),
         time: normalizeTime(req.body.time),
       });
@@ -400,7 +400,7 @@ export async function registerRoutes(
     try {
       const reservation = await storage.getReservation(req.params.id);
       if (!reservation) return res.status(404).json({ error: "Reservation not found" });
-      if (!await authorizeVenueAccess(req, reservation.venueId)) {
+      if (!await authorizeVenueAccess(req, reservation.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const updates = { ...req.body };
@@ -417,7 +417,7 @@ export async function registerRoutes(
     try {
       const reservation = await storage.getReservation(req.params.id);
       if (!reservation) return res.status(404).json({ error: "Reservation not found" });
-      if (!await authorizeVenueAccess(req, reservation.venueId)) {
+      if (!await authorizeVenueAccess(req, reservation.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       await storage.deleteReservation(req.params.id);
@@ -428,25 +428,25 @@ export async function registerRoutes(
   });
 
   // Business Hours
-  app.get("/api/venues/:venueId/hours", async (req, res) => {
+  app.get("/api/workspaces/:workspaceId/hours", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
-      const hours = await storage.getBusinessHours(req.params.venueId);
+      const hours = await storage.getBusinessHours(req.params.workspaceId);
       res.json(hours);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch business hours" });
     }
   });
 
-  app.put("/api/venues/:venueId/hours", async (req, res) => {
+  app.put("/api/workspaces/:workspaceId/hours", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const hoursArray = z.array(insertBusinessHoursSchema).parse(req.body);
-      const hours = await storage.setBusinessHours(req.params.venueId, hoursArray);
+      const hours = await storage.setBusinessHours(req.params.workspaceId, hoursArray);
       res.json(hours);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -457,26 +457,26 @@ export async function registerRoutes(
   });
 
   // Closures
-  app.get("/api/venues/:venueId/closures", async (req, res) => {
+  app.get("/api/workspaces/:workspaceId/closures", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
-      const closures = await storage.getClosures(req.params.venueId);
+      const closures = await storage.getClosures(req.params.workspaceId);
       res.json(closures);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch closures" });
     }
   });
 
-  app.post("/api/venues/:venueId/closures", async (req, res) => {
+  app.post("/api/workspaces/:workspaceId/closures", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const validatedData = insertClosureSchema.parse({
         ...req.body,
-        venueId: req.params.venueId,
+        workspaceId: req.params.workspaceId,
       });
       const closure = await storage.createClosure(validatedData);
       res.status(201).json(closure);
@@ -492,7 +492,7 @@ export async function registerRoutes(
     try {
       const closure = await storage.getClosure(parseInt(req.params.id));
       if (!closure) return res.status(404).json({ error: "Closure not found" });
-      if (!await authorizeVenueAccess(req, closure.venueId)) {
+      if (!await authorizeVenueAccess(req, closure.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       await storage.deleteClosure(parseInt(req.params.id));
@@ -503,26 +503,26 @@ export async function registerRoutes(
   });
 
   // Resources
-  app.get("/api/venues/:venueId/resources", async (req, res) => {
+  app.get("/api/workspaces/:workspaceId/resources", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
-      const resources = await storage.getResources(req.params.venueId);
+      const resources = await storage.getResources(req.params.workspaceId);
       res.json(resources);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch resources" });
     }
   });
 
-  app.post("/api/venues/:venueId/resources", async (req, res) => {
+  app.post("/api/workspaces/:workspaceId/resources", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const validatedData = insertResourceSchema.parse({
         ...req.body,
-        venueId: req.params.venueId,
+        workspaceId: req.params.workspaceId,
       });
       const resource = await storage.createResource(validatedData);
       res.status(201).json(resource);
@@ -538,7 +538,7 @@ export async function registerRoutes(
     try {
       const resource = await storage.getResource(req.params.id);
       if (!resource) return res.status(404).json({ error: "Resource not found" });
-      if (!await authorizeVenueAccess(req, resource.venueId)) {
+      if (!await authorizeVenueAccess(req, resource.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const updated = await storage.updateResource(req.params.id, req.body);
@@ -552,7 +552,7 @@ export async function registerRoutes(
     try {
       const resource = await storage.getResource(req.params.id);
       if (!resource) return res.status(404).json({ error: "Resource not found" });
-      if (!await authorizeVenueAccess(req, resource.venueId)) {
+      if (!await authorizeVenueAccess(req, resource.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       await storage.deleteResource(req.params.id);
@@ -563,26 +563,26 @@ export async function registerRoutes(
   });
 
   // Team Members
-  app.get("/api/venues/:venueId/team", async (req, res) => {
+  app.get("/api/workspaces/:workspaceId/team", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
-      const members = await storage.getTeamMembers(req.params.venueId);
+      const members = await storage.getTeamMembers(req.params.workspaceId);
       res.json(members);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch team members" });
     }
   });
 
-  app.post("/api/venues/:venueId/team", async (req, res) => {
+  app.post("/api/workspaces/:workspaceId/team", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const validatedData = insertTeamMemberSchema.parse({
         ...req.body,
-        venueId: req.params.venueId,
+        workspaceId: req.params.workspaceId,
       });
       const member = await storage.createTeamMember(validatedData);
       res.status(201).json(member);
@@ -598,7 +598,7 @@ export async function registerRoutes(
     try {
       const member = await storage.getTeamMember(parseInt(req.params.id));
       if (!member) return res.status(404).json({ error: "Team member not found" });
-      if (!await authorizeVenueAccess(req, member.venueId)) {
+      if (!await authorizeVenueAccess(req, member.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const updated = await storage.updateTeamMember(parseInt(req.params.id), req.body);
@@ -612,7 +612,7 @@ export async function registerRoutes(
     try {
       const member = await storage.getTeamMember(parseInt(req.params.id));
       if (!member) return res.status(404).json({ error: "Team member not found" });
-      if (!await authorizeVenueAccess(req, member.venueId)) {
+      if (!await authorizeVenueAccess(req, member.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       await storage.deleteTeamMember(parseInt(req.params.id));
@@ -623,26 +623,26 @@ export async function registerRoutes(
   });
 
   // Knowledge Base
-  app.get("/api/venues/:venueId/knowledge-base", async (req, res) => {
+  app.get("/api/workspaces/:workspaceId/knowledge-base", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
-      const items = await storage.getKnowledgeBaseItems(req.params.venueId);
+      const items = await storage.getKnowledgeBaseItems(req.params.workspaceId);
       res.json(items);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch knowledge base items" });
     }
   });
 
-  app.post("/api/venues/:venueId/knowledge-base", async (req, res) => {
+  app.post("/api/workspaces/:workspaceId/knowledge-base", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const validatedData = insertKnowledgeBaseItemSchema.parse({
         ...req.body,
-        venueId: req.params.venueId,
+        workspaceId: req.params.workspaceId,
       });
       const item = await storage.createKnowledgeBaseItem(validatedData);
       res.status(201).json(item);
@@ -658,7 +658,7 @@ export async function registerRoutes(
     try {
       const item = await storage.getKnowledgeBaseItem(req.params.id);
       if (!item) return res.status(404).json({ error: "Knowledge base item not found" });
-      if (!await authorizeVenueAccess(req, item.venueId)) {
+      if (!await authorizeVenueAccess(req, item.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const updated = await storage.updateKnowledgeBaseItem(req.params.id, req.body);
@@ -672,7 +672,7 @@ export async function registerRoutes(
     try {
       const item = await storage.getKnowledgeBaseItem(req.params.id);
       if (!item) return res.status(404).json({ error: "Knowledge base item not found" });
-      if (!await authorizeVenueAccess(req, item.venueId)) {
+      if (!await authorizeVenueAccess(req, item.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       await storage.deleteKnowledgeBaseItem(req.params.id);
@@ -683,12 +683,12 @@ export async function registerRoutes(
   });
 
   // Call Logs
-  app.get("/api/venues/:venueId/calls", async (req, res) => {
+  app.get("/api/workspaces/:workspaceId/calls", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
-      const logs = await storage.getCallLogs(req.params.venueId);
+      const logs = await storage.getCallLogs(req.params.workspaceId);
       res.json(logs);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch call logs" });
@@ -699,7 +699,7 @@ export async function registerRoutes(
     try {
       const log = await storage.getCallLog(req.params.id);
       if (!log) return res.status(404).json({ error: "Call log not found" });
-      if (!await authorizeVenueAccess(req, log.venueId)) {
+      if (!await authorizeVenueAccess(req, log.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       res.json(log);
@@ -709,26 +709,26 @@ export async function registerRoutes(
   });
 
   // Widget Settings
-  app.get("/api/venues/:venueId/widget-settings", async (req, res) => {
+  app.get("/api/workspaces/:workspaceId/widget-settings", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
-      const settings = await storage.getWidgetSettings(req.params.venueId);
+      const settings = await storage.getWidgetSettings(req.params.workspaceId);
       res.json(settings || {});
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch widget settings" });
     }
   });
 
-  app.put("/api/venues/:venueId/widget-settings", async (req, res) => {
+  app.put("/api/workspaces/:workspaceId/widget-settings", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const validatedData = insertWidgetSettingsSchema.parse({
         ...req.body,
-        venueId: req.params.venueId,
+        workspaceId: req.params.workspaceId,
       });
       const settings = await storage.upsertWidgetSettings(validatedData);
       res.json(settings);
@@ -741,12 +741,12 @@ export async function registerRoutes(
   });
 
   // Twilio Settings
-  app.get("/api/venues/:venueId/twilio-settings", async (req, res) => {
+  app.get("/api/workspaces/:workspaceId/twilio-settings", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
-      const settings = await storage.getTwilioSettings(req.params.venueId);
+      const settings = await storage.getTwilioSettings(req.params.workspaceId);
       if (settings) {
         res.json({ ...settings, authToken: settings.authToken ? "***" : null });
       } else {
@@ -757,14 +757,14 @@ export async function registerRoutes(
     }
   });
 
-  app.put("/api/venues/:venueId/twilio-settings", async (req, res) => {
+  app.put("/api/workspaces/:workspaceId/twilio-settings", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const validatedData = insertTwilioSettingsSchema.parse({
         ...req.body,
-        venueId: req.params.venueId,
+        workspaceId: req.params.workspaceId,
       });
       const settings = await storage.upsertTwilioSettings(validatedData);
       res.json(settings);
@@ -777,12 +777,12 @@ export async function registerRoutes(
   });
 
   // Payment Settings
-  app.get("/api/venues/:venueId/payment-settings", async (req, res) => {
+  app.get("/api/workspaces/:workspaceId/payment-settings", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
-      const settings = await storage.getPaymentSettings(req.params.venueId);
+      const settings = await storage.getPaymentSettings(req.params.workspaceId);
       if (settings) {
         res.json({
           ...settings,
@@ -797,14 +797,14 @@ export async function registerRoutes(
     }
   });
 
-  app.put("/api/venues/:venueId/payment-settings", async (req, res) => {
+  app.put("/api/workspaces/:workspaceId/payment-settings", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const validatedData = insertPaymentSettingsSchema.parse({
         ...req.body,
-        venueId: req.params.venueId,
+        workspaceId: req.params.workspaceId,
       });
       const settings = await storage.upsertPaymentSettings(validatedData);
       res.json(settings);
@@ -817,12 +817,12 @@ export async function registerRoutes(
   });
 
   // AI Provider Settings
-  app.get("/api/venues/:venueId/ai-providers", async (req, res) => {
+  app.get("/api/workspaces/:workspaceId/ai-providers", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
-      const settings = await storage.getAiProviderSettings(req.params.venueId);
+      const settings = await storage.getAiProviderSettings(req.params.workspaceId);
       const masked = settings.map((s) => ({
         ...s,
         apiKey: s.apiKey ? "***" : null,
@@ -833,14 +833,14 @@ export async function registerRoutes(
     }
   });
 
-  app.put("/api/venues/:venueId/ai-providers", async (req, res) => {
+  app.put("/api/workspaces/:workspaceId/ai-providers", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const validatedData = insertAiProviderSettingsSchema.parse({
         ...req.body,
-        venueId: req.params.venueId,
+        workspaceId: req.params.workspaceId,
       });
       const settings = await storage.upsertAiProviderSettings(validatedData);
       res.json(settings);
@@ -852,17 +852,9 @@ export async function registerRoutes(
     }
   });
 
-  // Admin auth middleware - protects all /api/admin/* routes in production
-  const requireAdminAuth = (req: any, res: any, next: any) => {
-    if (process.env.NODE_ENV === "production") {
-      const userId = req.user?.id;
-      if (!userId) return res.status(401).json({ error: "Unauthorized" });
-    }
-    next();
-  };
 
   // Admin Settings
-  app.get("/api/admin/settings/:key", requireAdminAuth, async (req, res) => {
+  app.get("/api/settings/:key", async (req, res) => {
     try {
       const setting = await storage.getAdminSetting(req.params.key);
       res.json(setting || {});
@@ -871,7 +863,7 @@ export async function registerRoutes(
     }
   });
 
-  app.put("/api/admin/settings/:key", requireAdminAuth, async (req, res) => {
+  app.put("/api/settings/:key", async (req, res) => {
     try {
       const setting = await storage.setAdminSetting(req.params.key, req.body.value);
       res.json(setting);
@@ -886,7 +878,7 @@ export async function registerRoutes(
     priority: z.enum(["low", "medium", "high", "urgent"]).optional()
   });
 
-  app.get("/api/admin/support-tickets", requireAdminAuth, async (req, res) => {
+  app.get("/api/support-tickets", async (req, res) => {
     try {
       const tickets = await storage.getAllSupportTickets();
       res.json(tickets);
@@ -895,7 +887,7 @@ export async function registerRoutes(
     }
   });
 
-  app.get("/api/admin/support-tickets/:id", requireAdminAuth, async (req, res) => {
+  app.get("/api/support-tickets/:id", async (req, res) => {
     try {
       
       const ticket = await storage.getSupportTicket(req.params.id);
@@ -908,7 +900,7 @@ export async function registerRoutes(
     }
   });
 
-  app.patch("/api/admin/support-tickets/:id", requireAdminAuth, async (req, res) => {
+  app.patch("/api/support-tickets/:id", async (req, res) => {
     try {
       
       const validatedData = adminTicketUpdateSchema.parse(req.body);
@@ -934,18 +926,18 @@ export async function registerRoutes(
   });
 
   // Admin aggregate endpoints (used by admin dashboard pages)
-  app.get("/api/admin/venues", requireAdminAuth, async (req, res) => {
+  app.get("/api/admin/venues", async (req, res) => {
     try {
-      const venues = await storage.getVenues();
+      const venues = await storage.getWorkspaces();
       res.json(venues);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch venues" });
     }
   });
 
-  app.get("/api/admin/call-logs", requireAdminAuth, async (req, res) => {
+  app.get("/api/admin/call-logs", async (req, res) => {
     try {
-      const venues = await storage.getVenues();
+      const venues = await storage.getWorkspaces();
       const allLogs: any[] = [];
       for (const venue of venues) {
         const logs = await storage.getCallLogs(venue.id);
@@ -962,9 +954,9 @@ export async function registerRoutes(
     }
   });
 
-  app.get("/api/admin/widget-settings", requireAdminAuth, async (req, res) => {
+  app.get("/api/admin/widget-settings", async (req, res) => {
     try {
-      const venues = await storage.getVenues();
+      const venues = await storage.getWorkspaces();
       const allSettings: any[] = [];
       for (const venue of venues) {
         const settings = await storage.getWidgetSettings(venue.id);
@@ -976,119 +968,119 @@ export async function registerRoutes(
     }
   });
 
-  app.get("/api/admin/blog/posts", requireAdminAuth, async (req, res) => {
+  app.get("/api/admin/blog/posts", async (req, res) => {
     try {
-      const venueId = req.query.venueId as string;
-      if (!venueId) return res.json([]);
-      const posts = await storage.getVenueBlogPosts(venueId);
+      const workspaceId = req.query.workspaceId as string;
+      if (!workspaceId) return res.json([]);
+      const posts = await storage.getWorkspaceBlogPosts(workspaceId);
       res.json(posts);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch blog posts" });
     }
   });
 
-  app.post("/api/admin/blog/posts", requireAdminAuth, async (req, res) => {
+  app.post("/api/admin/blog/posts", async (req, res) => {
     try {
-      const post = await storage.createVenueBlogPost(req.body);
+      const post = await storage.createWorkspaceBlogPost(req.body);
       res.json(post);
     } catch (error) {
       res.status(500).json({ error: "Failed to create blog post" });
     }
   });
 
-  app.put("/api/admin/blog/posts/:id", requireAdminAuth, async (req, res) => {
+  app.put("/api/admin/blog/posts/:id", async (req, res) => {
     try {
-      const post = await storage.updateVenueBlogPost(req.params.id, req.body);
+      const post = await storage.updateWorkspaceBlogPost(req.params.id, req.body);
       res.json(post);
     } catch (error) {
       res.status(500).json({ error: "Failed to update blog post" });
     }
   });
 
-  app.delete("/api/admin/blog/posts/:id", requireAdminAuth, async (req, res) => {
+  app.delete("/api/admin/blog/posts/:id", async (req, res) => {
     try {
-      await storage.deleteVenueBlogPost(req.params.id);
+      await storage.deleteWorkspaceBlogPost(req.params.id);
       res.json({ success: true });
     } catch (error) {
       res.status(500).json({ error: "Failed to delete blog post" });
     }
   });
 
-  app.post("/api/admin/blog/posts/:id/publish-now", requireAdminAuth, async (req, res) => {
+  app.post("/api/admin/blog/posts/:id/publish-now", async (req, res) => {
     try {
-      const post = await storage.updateVenueBlogPost(req.params.id, { status: "published", publishedAt: new Date() });
+      const post = await storage.updateWorkspaceBlogPost(req.params.id, { status: "published", publishedAt: new Date() });
       res.json(post);
     } catch (error) {
       res.status(500).json({ error: "Failed to publish post" });
     }
   });
 
-  app.post("/api/admin/blog/posts/:id/schedule", requireAdminAuth, async (req, res) => {
+  app.post("/api/admin/blog/posts/:id/schedule", async (req, res) => {
     try {
-      const post = await storage.updateVenueBlogPost(req.params.id, { status: "scheduled", publishAt: new Date(req.body.publishAt) });
+      const post = await storage.updateWorkspaceBlogPost(req.params.id, { status: "scheduled", publishAt: new Date(req.body.publishAt) });
       res.json(post);
     } catch (error) {
       res.status(500).json({ error: "Failed to schedule post" });
     }
   });
 
-  app.get("/api/admin/blog/posts/campaign/:venueId/:campaignId", requireAdminAuth, async (req, res) => {
+  app.get("/api/admin/blog/posts/campaign/:workspaceId/:campaignId", async (req, res) => {
     try {
-      const posts = await storage.getVenueBlogPostsByCampaign(req.params.venueId, req.params.campaignId);
+      const posts = await storage.getWorkspaceBlogPostsByCampaign(req.params.workspaceId, req.params.campaignId);
       res.json(posts);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch campaign posts" });
     }
   });
 
-  app.get("/api/admin/blog/domains", requireAdminAuth, async (req, res) => {
+  app.get("/api/admin/blog/domains", async (req, res) => {
     try {
-      const venueId = req.query.venueId as string;
-      if (!venueId) return res.json([]);
-      const domains = await storage.getVenueDomains(venueId);
+      const workspaceId = req.query.workspaceId as string;
+      if (!workspaceId) return res.json([]);
+      const domains = await storage.getWorkspaceDomains(workspaceId);
       res.json(domains);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch domains" });
     }
   });
 
-  app.post("/api/admin/blog/domains", requireAdminAuth, async (req, res) => {
+  app.post("/api/admin/blog/domains", async (req, res) => {
     try {
-      const domain = await storage.createVenueDomain(req.body);
+      const domain = await storage.createWorkspaceDomain(req.body);
       res.json(domain);
     } catch (error) {
       res.status(500).json({ error: "Failed to create domain" });
     }
   });
 
-  app.delete("/api/admin/blog/domains/:id", requireAdminAuth, async (req, res) => {
+  app.delete("/api/admin/blog/domains/:id", async (req, res) => {
     try {
-      await storage.deleteVenueDomain(req.params.id);
+      await storage.deleteWorkspaceDomain(req.params.id);
       res.json({ success: true });
     } catch (error) {
       res.status(500).json({ error: "Failed to delete domain" });
     }
   });
 
-  app.patch("/api/admin/blog/domains/:id", requireAdminAuth, async (req, res) => {
+  app.patch("/api/admin/blog/domains/:id", async (req, res) => {
     try {
-      const domain = await storage.updateVenueDomain(req.params.id, req.body);
+      const domain = await storage.updateWorkspaceDomain(req.params.id, req.body);
       res.json(domain);
     } catch (error) {
       res.status(500).json({ error: "Failed to update domain" });
     }
   });
 
-  app.get("/api/admin/blog/campaigns/:venueId", requireAdminAuth, async (req, res) => {
+  app.get("/api/admin/blog/campaigns/:workspaceId", async (req, res) => {
     try {
-      const campaigns = await storage.getVenueCampaigns(req.params.venueId);
+      const campaigns = await storage.getWorkspaceCampaigns(req.params.workspaceId);
       res.json(campaigns);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch campaigns" });
     }
   });
 
-  app.get("/api/admin/assets/search", requireAdminAuth, async (req, res) => {
+  app.get("/api/admin/assets/search", async (req, res) => {
     try {
       res.json([]);
     } catch (error) {
@@ -1096,7 +1088,7 @@ export async function registerRoutes(
     }
   });
 
-  app.post("/api/admin/assets/save", requireAdminAuth, async (req, res) => {
+  app.post("/api/admin/assets/save", async (req, res) => {
     try {
       res.json({ id: Date.now(), ...req.body });
     } catch (error) {
@@ -1104,12 +1096,12 @@ export async function registerRoutes(
     }
   });
 
-  app.post("/api/admin/blog/posts/bulk/create", requireAdminAuth, async (req, res) => {
+  app.post("/api/admin/blog/posts/bulk/create", async (req, res) => {
     try {
       const posts = req.body.posts || [];
       const created = [];
       for (const post of posts) {
-        const result = await storage.createVenueBlogPost(post);
+        const result = await storage.createWorkspaceBlogPost(post);
         created.push(result);
       }
       res.json(created);
@@ -1118,7 +1110,7 @@ export async function registerRoutes(
     }
   });
 
-  app.post("/api/admin/blog/posts/bulk/generate", requireAdminAuth, async (req, res) => {
+  app.post("/api/admin/blog/posts/bulk/generate", async (req, res) => {
     try {
       res.json({ message: "Content generation is not available in this environment" });
     } catch (error) {
@@ -1126,7 +1118,7 @@ export async function registerRoutes(
     }
   });
 
-  app.post("/api/admin/content/preview", requireAdminAuth, async (req, res) => {
+  app.post("/api/admin/content/preview", async (req, res) => {
     try {
       const mdx = req.body.mdx || "";
       if (!mdx.trim()) return res.json({ html: "", errors: [] });
@@ -1245,9 +1237,9 @@ export async function registerRoutes(
   // Old-style rank-keywords / grid-keywords endpoints (used by admin SEO pages)
   app.get("/api/rank-keywords", async (req, res) => {
     try {
-      const venueId = req.query.venueId as string;
-      if (!venueId) return res.json([]);
-      const keywords = await storage.getRankTrackerKeywords(venueId);
+      const workspaceId = req.query.workspaceId as string;
+      if (!workspaceId) return res.json([]);
+      const keywords = await storage.getRankTrackerKeywords(workspaceId);
       res.json(keywords);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch rank keywords" });
@@ -1256,8 +1248,8 @@ export async function registerRoutes(
 
   app.post("/api/rank-keywords", async (req, res) => {
     try {
-      const { venueId, keyword } = req.body;
-      const kws = await storage.addRankTrackerKeywords([{ venueId, keyword }]);
+      const { workspaceId, keyword } = req.body;
+      const kws = await storage.addRankTrackerKeywords([{ workspaceId, keyword }]);
       res.json(kws[0]);
     } catch (error) {
       res.status(500).json({ error: "Failed to add rank keyword" });
@@ -1275,9 +1267,9 @@ export async function registerRoutes(
 
   app.get("/api/rank-results", async (req, res) => {
     try {
-      const venueId = req.query.venueId as string;
-      if (!venueId) return res.json([]);
-      const results = await storage.getRankTrackerResults(venueId);
+      const workspaceId = req.query.workspaceId as string;
+      if (!workspaceId) return res.json([]);
+      const results = await storage.getRankTrackerResults(workspaceId);
       res.json(results);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch rank results" });
@@ -1286,9 +1278,9 @@ export async function registerRoutes(
 
   app.get("/api/grid-keywords", async (req, res) => {
     try {
-      const venueId = req.query.venueId as string;
-      if (!venueId) return res.json([]);
-      const keywords = await storage.getGridKeywords(venueId);
+      const workspaceId = req.query.workspaceId as string;
+      if (!workspaceId) return res.json([]);
+      const keywords = await storage.getGridKeywords(workspaceId);
       res.json(keywords);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch grid keywords" });
@@ -1297,8 +1289,8 @@ export async function registerRoutes(
 
   app.post("/api/grid-keywords", async (req, res) => {
     try {
-      const { venueId, keyword } = req.body;
-      const kws = await storage.addGridKeywords([{ venueId, keyword }]);
+      const { workspaceId, keyword } = req.body;
+      const kws = await storage.addGridKeywords([{ workspaceId, keyword }]);
       res.json(kws[0]);
     } catch (error) {
       res.status(500).json({ error: "Failed to add grid keyword" });
@@ -1316,11 +1308,11 @@ export async function registerRoutes(
 
   app.get("/api/grid-scan-results", async (req, res) => {
     try {
-      const venueId = req.query.venueId as string;
-      if (!venueId) return res.json([]);
-      const keywords = await storage.getGridKeywords(venueId);
+      const workspaceId = req.query.workspaceId as string;
+      if (!workspaceId) return res.json([]);
+      const keywords = await storage.getGridKeywords(workspaceId);
       if (keywords.length === 0) return res.json([]);
-      const results = await storage.getLatestGridScanResults(venueId, keywords[0].keyword);
+      const results = await storage.getLatestGridScanResults(workspaceId, keywords[0].keyword);
       res.json(results);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch grid scan results" });
@@ -1329,9 +1321,9 @@ export async function registerRoutes(
 
   app.get("/api/knowledge-base", async (req, res) => {
     try {
-      const venueId = req.query.venueId as string;
-      if (!venueId) return res.json([]);
-      const items = await storage.getKnowledgeBaseItems(venueId);
+      const workspaceId = req.query.workspaceId as string;
+      if (!workspaceId) return res.json([]);
+      const items = await storage.getKnowledgeBaseItems(workspaceId);
       res.json(items);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch knowledge base" });
@@ -1340,13 +1332,13 @@ export async function registerRoutes(
 
   app.get("/api/contact-messages", async (req, res) => {
     try {
-      const venueId = req.query.venueId as string;
-      if (venueId) {
-        if (!(await authorizeVenueAccess(req, venueId))) {
+      const workspaceId = req.query.workspaceId as string;
+      if (workspaceId) {
+        if (!(await authorizeVenueAccess(req, workspaceId))) {
           return res.status(403).json({ error: "Forbidden" });
         }
         const messages = await storage.getContactMessages();
-        return res.json(messages.filter((m: any) => m.venueId === venueId));
+        return res.json(messages.filter((m: any) => m.workspaceId === workspaceId));
       }
       if (process.env.NODE_ENV === "production") {
         return res.status(403).json({ error: "Forbidden" });
@@ -1360,17 +1352,17 @@ export async function registerRoutes(
 
   app.get("/api/reservations", async (req, res) => {
     try {
-      const venueId = req.query.venueId as string;
-      if (!venueId) return res.json([]);
-      if (!(await authorizeVenueAccess(req, venueId))) {
+      const workspaceId = req.query.workspaceId as string;
+      if (!workspaceId) return res.json([]);
+      if (!(await authorizeVenueAccess(req, workspaceId))) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const date = req.query.date as string;
       if (date) {
-        const reservations = await storage.getReservationsByDate(venueId, date);
+        const reservations = await storage.getReservationsByDate(workspaceId, date);
         return res.json(reservations);
       }
-      const reservations = await storage.getReservations(venueId);
+      const reservations = await storage.getReservations(workspaceId);
       res.json(reservations);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch reservations" });
@@ -1379,21 +1371,21 @@ export async function registerRoutes(
 
   app.get("/api/calls", async (req, res) => {
     try {
-      const venueId = req.query.venueId as string;
-      if (!venueId) return res.json([]);
-      if (!(await authorizeVenueAccess(req, venueId))) {
+      const workspaceId = req.query.workspaceId as string;
+      if (!workspaceId) return res.json([]);
+      if (!(await authorizeVenueAccess(req, workspaceId))) {
         return res.status(403).json({ error: "Forbidden" });
       }
-      const calls = await storage.getCallLogs(venueId);
+      const calls = await storage.getCallLogs(workspaceId);
       res.json(calls);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch calls" });
     }
   });
 
-  app.get("/api/admin/reservations", requireAdminAuth, async (req, res) => {
+  app.get("/api/admin/reservations", async (req, res) => {
     try {
-      const venues = await storage.getVenues();
+      const venues = await storage.getWorkspaces();
       const allReservations: any[] = [];
       for (const venue of venues) {
         const reservations = await storage.getReservations(venue.id);
@@ -1414,10 +1406,10 @@ export async function registerRoutes(
     try {
       const domain = req.query.domain as string;
       if (!domain) return res.json({ blogTemplate: "editorial", accentColor: null, accentForeground: null, posts: [] });
-      const domainRecord = await storage.getVenueDomainByDomain(domain);
+      const domainRecord = await storage.getWorkspaceDomainByDomain(domain);
       if (!domainRecord) return res.json({ blogTemplate: "editorial", accentColor: null, accentForeground: null, posts: [] });
-      const venue = await storage.getVenue(domainRecord.venueId);
-      const posts = await storage.getVenueBlogPosts(domainRecord.venueId, "published");
+      const venue = await storage.getWorkspace(domainRecord.workspaceId);
+      const posts = await storage.getWorkspaceBlogPosts(domainRecord.workspaceId, "published");
       res.json({
         blogTemplate: (venue as any)?.blogTemplate || "editorial",
         accentColor: (venue as any)?.accentColor || null,
@@ -1434,9 +1426,9 @@ export async function registerRoutes(
       const domain = req.query.domain as string;
       const slug = req.query.slug as string;
       if (!domain || !slug) return res.status(400).json({ error: "domain and slug required" });
-      const domainRecord = await storage.getVenueDomainByDomain(domain);
+      const domainRecord = await storage.getWorkspaceDomainByDomain(domain);
       if (!domainRecord) return res.status(404).json({ error: "Domain not found" });
-      const posts = await storage.getVenueBlogPosts(domainRecord.venueId, "published");
+      const posts = await storage.getWorkspaceBlogPosts(domainRecord.workspaceId, "published");
       const post = posts.find(p => p.slug === slug);
       if (!post) return res.status(404).json({ error: "Post not found" });
       res.json(post);
@@ -1446,25 +1438,25 @@ export async function registerRoutes(
   });
 
   // Room Types
-  app.get("/api/venues/:venueId/room-types", async (req, res) => {
+  app.get("/api/workspaces/:workspaceId/room-types", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
-      const roomTypes = await storage.getRoomTypes(req.params.venueId);
+      const roomTypes = await storage.getRoomTypes(req.params.workspaceId);
       res.json(roomTypes);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch room types" });
     }
   });
 
-  app.get("/api/venues/:venueId/room-types/:id", async (req, res) => {
+  app.get("/api/workspaces/:workspaceId/room-types/:id", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const roomType = await storage.getRoomType(req.params.id);
-      if (!roomType || roomType.venueId !== req.params.venueId) {
+      if (!roomType || roomType.workspaceId !== req.params.workspaceId) {
         return res.status(404).json({ error: "Room type not found" });
       }
       res.json(roomType);
@@ -1473,14 +1465,14 @@ export async function registerRoutes(
     }
   });
 
-  app.post("/api/venues/:venueId/room-types", async (req, res) => {
+  app.post("/api/workspaces/:workspaceId/room-types", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const validatedData = insertRoomTypeSchema.parse({
         ...req.body,
-        venueId: req.params.venueId,
+        workspaceId: req.params.workspaceId,
       });
       const roomType = await storage.createRoomType(validatedData);
       res.status(201).json(roomType);
@@ -1498,7 +1490,7 @@ export async function registerRoutes(
       if (!existing) {
         return res.status(404).json({ error: "Room type not found" });
       }
-      if (!await authorizeVenueAccess(req, existing.venueId)) {
+      if (!await authorizeVenueAccess(req, existing.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const validation = insertRoomTypeSchema.partial().safeParse(req.body);
@@ -1518,7 +1510,7 @@ export async function registerRoutes(
       if (!existing) {
         return res.status(404).json({ error: "Room type not found" });
       }
-      if (!await authorizeVenueAccess(req, existing.venueId)) {
+      if (!await authorizeVenueAccess(req, existing.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       await storage.deleteRoomType(req.params.id);
@@ -1529,25 +1521,25 @@ export async function registerRoutes(
   });
 
   // Rooms
-  app.get("/api/venues/:venueId/rooms", async (req, res) => {
+  app.get("/api/workspaces/:workspaceId/rooms", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
-      const rooms = await storage.getRooms(req.params.venueId);
+      const rooms = await storage.getRooms(req.params.workspaceId);
       res.json(rooms);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch rooms" });
     }
   });
 
-  app.get("/api/venues/:venueId/rooms/:id", async (req, res) => {
+  app.get("/api/workspaces/:workspaceId/rooms/:id", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const room = await storage.getRoom(req.params.id);
-      if (!room || room.venueId !== req.params.venueId) {
+      if (!room || room.workspaceId !== req.params.workspaceId) {
         return res.status(404).json({ error: "Room not found" });
       }
       res.json(room);
@@ -1556,14 +1548,14 @@ export async function registerRoutes(
     }
   });
 
-  app.post("/api/venues/:venueId/rooms", async (req, res) => {
+  app.post("/api/workspaces/:workspaceId/rooms", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const validatedData = insertRoomSchema.parse({
         ...req.body,
-        venueId: req.params.venueId,
+        workspaceId: req.params.workspaceId,
       });
       const room = await storage.createRoom(validatedData);
       res.status(201).json(room);
@@ -1581,7 +1573,7 @@ export async function registerRoutes(
       if (!existing) {
         return res.status(404).json({ error: "Room not found" });
       }
-      if (!await authorizeVenueAccess(req, existing.venueId)) {
+      if (!await authorizeVenueAccess(req, existing.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const validation = insertRoomSchema.partial().safeParse(req.body);
@@ -1601,7 +1593,7 @@ export async function registerRoutes(
       if (!existing) {
         return res.status(404).json({ error: "Room not found" });
       }
-      if (!await authorizeVenueAccess(req, existing.venueId)) {
+      if (!await authorizeVenueAccess(req, existing.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       await storage.deleteRoom(req.params.id);
@@ -1612,21 +1604,21 @@ export async function registerRoutes(
   });
 
   // Room Bookings
-  app.get("/api/venues/:venueId/room-bookings", async (req, res) => {
+  app.get("/api/workspaces/:workspaceId/room-bookings", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const { startDate, endDate } = req.query;
       let bookings;
       if (startDate && endDate) {
         bookings = await storage.getRoomBookingsByDateRange(
-          req.params.venueId,
+          req.params.workspaceId,
           normalizeISODate(startDate),
           normalizeISODate(endDate)
         );
       } else {
-        bookings = await storage.getRoomBookings(req.params.venueId);
+        bookings = await storage.getRoomBookings(req.params.workspaceId);
       }
       res.json(bookings);
     } catch (error) {
@@ -1640,7 +1632,7 @@ export async function registerRoutes(
       if (!booking) {
         return res.status(404).json({ error: "Room booking not found" });
       }
-      if (!await authorizeVenueAccess(req, booking.venueId)) {
+      if (!await authorizeVenueAccess(req, booking.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       res.json(booking);
@@ -1649,9 +1641,9 @@ export async function registerRoutes(
     }
   });
 
-  app.post("/api/venues/:venueId/room-bookings", async (req, res) => {
+  app.post("/api/workspaces/:workspaceId/room-bookings", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const checkIn = normalizeISODate(req.body.checkIn);
@@ -1663,7 +1655,7 @@ export async function registerRoutes(
       
       // Check for overlapping bookings on the same room
       const existingBookings = await storage.getRoomBookingsByDateRange(
-        req.params.venueId,
+        req.params.workspaceId,
         checkIn,
         checkOut
       );
@@ -1676,7 +1668,7 @@ export async function registerRoutes(
       
       const validatedData = insertRoomBookingSchema.parse({
         ...req.body,
-        venueId: req.params.venueId,
+        workspaceId: req.params.workspaceId,
         checkIn,
         checkOut,
       });
@@ -1699,7 +1691,7 @@ export async function registerRoutes(
       if (!existing) {
         return res.status(404).json({ error: "Room booking not found" });
       }
-      if (!await authorizeVenueAccess(req, existing.venueId)) {
+      if (!await authorizeVenueAccess(req, existing.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const validation = insertRoomBookingSchema.partial().safeParse(req.body);
@@ -1720,7 +1712,7 @@ export async function registerRoutes(
       }
       if (update.checkIn || update.checkOut || update.roomId) {
         const overlapping = await storage.getRoomBookingsByDateRange(
-          existing.venueId,
+          existing.workspaceId,
           newCheckIn,
           newCheckOut
         );
@@ -1754,7 +1746,7 @@ export async function registerRoutes(
       if (!existing) {
         return res.status(404).json({ error: "Room booking not found" });
       }
-      if (!await authorizeVenueAccess(req, existing.venueId)) {
+      if (!await authorizeVenueAccess(req, existing.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       await storage.deleteRoomBooking(req.params.id);
@@ -1765,21 +1757,21 @@ export async function registerRoutes(
   });
 
   // Website Change Requests
-  app.get("/api/venues/:venueId/website-changes", async (req, res) => {
+  app.get("/api/workspaces/:workspaceId/website-changes", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
-      const changes = await storage.getWebsiteChangeRequests(req.params.venueId);
+      const changes = await storage.getWebsiteChangeRequests(req.params.workspaceId);
       res.json(changes);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch website change requests" });
     }
   });
 
-  app.post("/api/venues/:venueId/website-changes", async (req, res) => {
+  app.post("/api/workspaces/:workspaceId/website-changes", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const userId = (req as any).user?.id || "anonymous";
@@ -1788,7 +1780,7 @@ export async function registerRoutes(
         return res.status(400).json({ error: "Description is required" });
       }
       const change = await storage.createWebsiteChangeRequest({
-        venueId: req.params.venueId,
+        workspaceId: req.params.workspaceId,
         userId,
         changeType: changeType || "text",
         description: description.trim(),
@@ -1801,9 +1793,9 @@ export async function registerRoutes(
     }
   });
 
-  app.patch("/api/venues/:venueId/website-changes/:id", async (req, res) => {
+  app.patch("/api/workspaces/:workspaceId/website-changes/:id", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const { status, adminNotes } = req.body;
@@ -1819,21 +1811,21 @@ export async function registerRoutes(
   });
 
   // Rank Tracker - Keywords
-  app.get("/api/venues/:venueId/rank-tracker/keywords", async (req, res) => {
+  app.get("/api/workspaces/:workspaceId/rank-tracker/keywords", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
-      const keywords = await storage.getRankTrackerKeywords(req.params.venueId);
+      const keywords = await storage.getRankTrackerKeywords(req.params.workspaceId);
       res.json(keywords);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch keywords" });
     }
   });
 
-  app.post("/api/venues/:venueId/rank-tracker/keywords", async (req, res) => {
+  app.post("/api/workspaces/:workspaceId/rank-tracker/keywords", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const { keywords } = req.body;
@@ -1846,7 +1838,7 @@ export async function registerRoutes(
         return res.status(400).json({ error: "No valid keywords provided" });
       }
       const MAX_KEYWORDS = 1000;
-      const existing = await storage.getRankTrackerKeywords(req.params.venueId);
+      const existing = await storage.getRankTrackerKeywords(req.params.workspaceId);
       const existingSet = new Set(existing.map(e => e.keyword.toLowerCase()));
       const newKeywords = cleaned.filter(k => !existingSet.has(k));
       if (newKeywords.length === 0) {
@@ -1855,7 +1847,7 @@ export async function registerRoutes(
       if (existing.length + newKeywords.length > MAX_KEYWORDS) {
         return res.status(400).json({ error: `Keyword limit exceeded. You have ${existing.length} keywords and can add up to ${MAX_KEYWORDS - existing.length} more (max ${MAX_KEYWORDS}).` });
       }
-      const items = newKeywords.map(k => ({ venueId: req.params.venueId, keyword: k }));
+      const items = newKeywords.map(k => ({ workspaceId: req.params.workspaceId, keyword: k }));
       const added = await storage.addRankTrackerKeywords(items);
       res.json({ added: added.length, keywords: added });
     } catch (error) {
@@ -1863,9 +1855,9 @@ export async function registerRoutes(
     }
   });
 
-  app.delete("/api/venues/:venueId/rank-tracker/keywords/:keywordId", async (req, res) => {
+  app.delete("/api/workspaces/:workspaceId/rank-tracker/keywords/:keywordId", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       await storage.deleteRankTrackerKeyword(parseInt(req.params.keywordId));
@@ -1875,12 +1867,12 @@ export async function registerRoutes(
     }
   });
 
-  app.delete("/api/venues/:venueId/rank-tracker/keywords", async (req, res) => {
+  app.delete("/api/workspaces/:workspaceId/rank-tracker/keywords", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
-      await storage.deleteAllRankTrackerKeywords(req.params.venueId);
+      await storage.deleteAllRankTrackerKeywords(req.params.workspaceId);
       res.json({ success: true });
     } catch (error) {
       res.status(500).json({ error: "Failed to clear keywords" });
@@ -1888,27 +1880,27 @@ export async function registerRoutes(
   });
 
   // Rank Tracker - Results
-  app.get("/api/venues/:venueId/rank-tracker/results", async (req, res) => {
+  app.get("/api/workspaces/:workspaceId/rank-tracker/results", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 20;
-      const data = await storage.getRankTrackerResults(req.params.venueId, page, limit);
+      const data = await storage.getRankTrackerResults(req.params.workspaceId, page, limit);
       res.json(data);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch results" });
     }
   });
 
-  app.get("/api/venues/:venueId/rank-tracker/latest", async (req, res) => {
+  app.get("/api/workspaces/:workspaceId/rank-tracker/latest", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
-      const results = await storage.getLatestRankTrackerResults(req.params.venueId);
-      const lastCheck = await storage.getLastRankCheckDate(req.params.venueId);
+      const results = await storage.getLatestRankTrackerResults(req.params.workspaceId);
+      const lastCheck = await storage.getLastRankCheckDate(req.params.workspaceId);
       res.json({ results, lastCheckedAt: lastCheck });
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch latest results" });
@@ -1916,13 +1908,13 @@ export async function registerRoutes(
   });
 
   // Rank Tracker - Check Rankings (weekly limit)
-  app.post("/api/venues/:venueId/rank-tracker/check", async (req, res) => {
+  app.post("/api/workspaces/:workspaceId/rank-tracker/check", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
 
-      const lastCheck = await storage.getLastRankCheckDate(req.params.venueId);
+      const lastCheck = await storage.getLastRankCheckDate(req.params.workspaceId);
       if (lastCheck) {
         const now = new Date();
         const lastCheckDate = new Date(lastCheck);
@@ -1942,12 +1934,12 @@ export async function registerRoutes(
         }
       }
 
-      const keywords = await storage.getRankTrackerKeywords(req.params.venueId);
+      const keywords = await storage.getRankTrackerKeywords(req.params.workspaceId);
       if (keywords.length === 0) {
         return res.status(400).json({ error: "No keywords to check. Add keywords first." });
       }
 
-      const venue = await storage.getVenue(req.params.venueId);
+      const venue = await storage.getWorkspace(req.params.workspaceId);
       const siteUrl = venue?.website || "";
       
       if (!siteUrl) {
@@ -1961,7 +1953,7 @@ export async function registerRoutes(
         return res.status(503).json({ error: "Rank tracking service not configured. Please contact support." });
       }
 
-      const previousResults = await storage.getLatestRankTrackerResults(req.params.venueId);
+      const previousResults = await storage.getLatestRankTrackerResults(req.params.workspaceId);
       const previousMap = new Map(previousResults.map(r => [r.keyword.toLowerCase(), r.position]));
 
       const checkedAt = new Date();
@@ -2011,7 +2003,7 @@ export async function registerRoutes(
               const prevPos = previousMap.get(kw.keyword.toLowerCase()) || null;
               
               resultItems.push({
-                venueId: req.params.venueId,
+                workspaceId: req.params.workspaceId,
                 keywordId: kw.id,
                 keyword: kw.keyword,
                 position: foundPosition,
@@ -2022,7 +2014,7 @@ export async function registerRoutes(
             } else {
               const prevPos = previousMap.get(kw.keyword.toLowerCase()) || null;
               resultItems.push({
-                venueId: req.params.venueId,
+                workspaceId: req.params.workspaceId,
                 keywordId: kw.id,
                 keyword: kw.keyword,
                 position: null,
@@ -2034,7 +2026,7 @@ export async function registerRoutes(
           } catch (err) {
             console.error(`DataForSEO error for keyword "${kw.keyword}":`, err);
             resultItems.push({
-              venueId: req.params.venueId,
+              workspaceId: req.params.workspaceId,
               keywordId: kw.id,
               keyword: kw.keyword,
               position: null,
@@ -2063,21 +2055,21 @@ export async function registerRoutes(
   });
 
   // Grid Keywords
-  app.get("/api/venues/:venueId/grid-keywords", async (req, res) => {
+  app.get("/api/workspaces/:workspaceId/grid-keywords", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
-      const keywords = await storage.getGridKeywords(req.params.venueId);
+      const keywords = await storage.getGridKeywords(req.params.workspaceId);
       res.json(keywords);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch grid keywords" });
     }
   });
 
-  app.post("/api/venues/:venueId/grid-keywords", async (req, res) => {
+  app.post("/api/workspaces/:workspaceId/grid-keywords", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const { keywords, gridSize, distance } = req.body;
@@ -2090,7 +2082,7 @@ export async function registerRoutes(
         return res.status(400).json({ error: "No valid keywords provided" });
       }
       const MAX_GRID_KEYWORDS = 25;
-      const existing = await storage.getGridKeywords(req.params.venueId);
+      const existing = await storage.getGridKeywords(req.params.workspaceId);
       const existingSet = new Set(existing.map(e => e.keyword.toLowerCase()));
       const newKeywords = cleaned.filter(k => !existingSet.has(k));
       if (newKeywords.length === 0) {
@@ -2100,7 +2092,7 @@ export async function registerRoutes(
         return res.status(400).json({ error: `Keyword limit exceeded. You have ${existing.length} keywords and can add up to ${MAX_GRID_KEYWORDS - existing.length} more (max ${MAX_GRID_KEYWORDS}).` });
       }
       const items = newKeywords.map(k => ({
-        venueId: req.params.venueId,
+        workspaceId: req.params.workspaceId,
         keyword: k,
         gridSize: gridSize ? parseInt(gridSize) : 5,
         distance: distance || "2.0",
@@ -2112,9 +2104,9 @@ export async function registerRoutes(
     }
   });
 
-  app.delete("/api/venues/:venueId/grid-keywords/:keywordId", async (req, res) => {
+  app.delete("/api/workspaces/:workspaceId/grid-keywords/:keywordId", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       await storage.deleteGridKeyword(parseInt(req.params.keywordId));
@@ -2124,12 +2116,12 @@ export async function registerRoutes(
     }
   });
 
-  app.delete("/api/venues/:venueId/grid-keywords", async (req, res) => {
+  app.delete("/api/workspaces/:workspaceId/grid-keywords", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
-      await storage.deleteAllGridKeywords(req.params.venueId);
+      await storage.deleteAllGridKeywords(req.params.workspaceId);
       res.json({ success: true });
     } catch (error) {
       res.status(500).json({ error: "Failed to clear grid keywords" });
@@ -2137,21 +2129,21 @@ export async function registerRoutes(
   });
 
   // Grid Refresh Credits
-  app.get("/api/venues/:venueId/grid-refresh-credits", async (req, res) => {
+  app.get("/api/workspaces/:workspaceId/grid-refresh-credits", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
-      const credits = await storage.getGridRefreshCredits(req.params.venueId);
+      const credits = await storage.getGridRefreshCredits(req.params.workspaceId);
       res.json(credits);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch grid refresh credits" });
     }
   });
 
-  app.post("/api/venues/:venueId/grid-refresh-credits/purchase", async (req, res) => {
+  app.post("/api/workspaces/:workspaceId/grid-refresh-credits/purchase", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const { amount } = req.body;
@@ -2159,19 +2151,19 @@ export async function registerRoutes(
       if (!amount || typeof amount !== "number" || !validPacks[amount]) {
         return res.status(400).json({ error: "Invalid credit pack. Choose 5 or 25 scans." });
       }
-      const credits = await storage.addGridRefreshCredits(req.params.venueId, amount, `Purchased ${validPacks[amount]}`);
+      const credits = await storage.addGridRefreshCredits(req.params.workspaceId, amount, `Purchased ${validPacks[amount]}`);
       res.json(credits);
     } catch (error) {
       res.status(500).json({ error: "Failed to purchase credits" });
     }
   });
 
-  app.post("/api/venues/:venueId/grid-refresh-credits/use", async (req, res) => {
+  app.post("/api/workspaces/:workspaceId/grid-refresh-credits/use", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
-      const result = await storage.useGridRefreshCredit(req.params.venueId);
+      const result = await storage.useGridRefreshCredit(req.params.workspaceId);
       if (!result.success) {
         return res.status(402).json({ error: "No credits remaining. Purchase additional scans to continue.", balance: 0 });
       }
@@ -2181,22 +2173,22 @@ export async function registerRoutes(
     }
   });
 
-  app.post("/api/venues/:venueId/grid-scan", async (req, res) => {
+  app.post("/api/workspaces/:workspaceId/grid-scan", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
 
-      const venue = await storage.getVenue(req.params.venueId);
+      const venue = await storage.getWorkspace(req.params.workspaceId);
       if (!venue) {
-        return res.status(404).json({ error: "Venue not found" });
+        return res.status(404).json({ error: "Workspace not found" });
       }
 
       if (!venue.latitude || !venue.longitude) {
-        return res.status(400).json({ error: "Venue has no coordinates set. Please update your venue address with latitude and longitude." });
+        return res.status(400).json({ error: "Workspace has no coordinates set. Please update your venue address with latitude and longitude." });
       }
 
-      const gridKeywordsList = await storage.getGridKeywords(req.params.venueId);
+      const gridKeywordsList = await storage.getGridKeywords(req.params.workspaceId);
       if (gridKeywordsList.length === 0) {
         return res.status(400).json({ error: "No grid keywords to scan. Add keywords first." });
       }
@@ -2303,7 +2295,7 @@ export async function registerRoutes(
               const result = await scanPoint(kw.keyword, point);
               if (result.error) totalErrors++;
               return {
-                venueId: req.params.venueId,
+                workspaceId: req.params.workspaceId,
                 keyword: kw.keyword,
                 gridSize,
                 gridIndex: point.index,
@@ -2332,36 +2324,36 @@ export async function registerRoutes(
     }
   });
 
-  app.get("/api/venues/:venueId/grid-scan-results/:keyword", async (req, res) => {
+  app.get("/api/workspaces/:workspaceId/grid-scan-results/:keyword", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
-      const results = await storage.getLatestGridScanResults(req.params.venueId, decodeURIComponent(req.params.keyword));
+      const results = await storage.getLatestGridScanResults(req.params.workspaceId, decodeURIComponent(req.params.keyword));
       res.json(results);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch grid scan results" });
     }
   });
 
-  app.get("/api/venues/:venueId/grid-scan-keywords", async (req, res) => {
+  app.get("/api/workspaces/:workspaceId/grid-scan-keywords", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
-      const keywords = await storage.getGridScanKeywords(req.params.venueId);
+      const keywords = await storage.getGridScanKeywords(req.params.workspaceId);
       res.json(keywords);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch scanned keywords" });
     }
   });
 
-  app.get("/api/venues/:venueId/grid-refresh-history", async (req, res) => {
+  app.get("/api/workspaces/:workspaceId/grid-refresh-history", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
-      const history = await storage.getGridRefreshHistory(req.params.venueId);
+      const history = await storage.getGridRefreshHistory(req.params.workspaceId);
       res.json(history);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch refresh history" });
@@ -2369,40 +2361,40 @@ export async function registerRoutes(
   });
 
   // Rank Tracker Credits
-  app.get("/api/venues/:venueId/rank-tracker-credits", async (req, res) => {
+  app.get("/api/workspaces/:workspaceId/rank-tracker-credits", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
-      const credits = await storage.getRankTrackerCredits(req.params.venueId);
+      const credits = await storage.getRankTrackerCredits(req.params.workspaceId);
       res.json(credits);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch rank tracker credits" });
     }
   });
 
-  app.post("/api/venues/:venueId/rank-tracker-credits/purchase", async (req, res) => {
+  app.post("/api/workspaces/:workspaceId/rank-tracker-credits/purchase", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const { amount } = req.body;
       if (!amount || typeof amount !== "number" || amount < 1) {
         return res.status(400).json({ error: "Valid amount is required" });
       }
-      const credits = await storage.addRankTrackerCredits(req.params.venueId, amount, `Purchased ${amount} rank check credits`);
+      const credits = await storage.addRankTrackerCredits(req.params.workspaceId, amount, `Purchased ${amount} rank check credits`);
       res.json(credits);
     } catch (error) {
       res.status(500).json({ error: "Failed to purchase credits" });
     }
   });
 
-  app.post("/api/venues/:venueId/rank-tracker-credits/use", async (req, res) => {
+  app.post("/api/workspaces/:workspaceId/rank-tracker-credits/use", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
-      const result = await storage.useRankTrackerCredit(req.params.venueId);
+      const result = await storage.useRankTrackerCredit(req.params.workspaceId);
       if (!result.success) {
         return res.status(402).json({ error: "No rank check credits remaining. Purchase more to continue.", balance: 0 });
       }
@@ -2412,12 +2404,12 @@ export async function registerRoutes(
     }
   });
 
-  app.get("/api/venues/:venueId/rank-tracker-history", async (req, res) => {
+  app.get("/api/workspaces/:workspaceId/rank-tracker-history", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
-      const history = await storage.getRankTrackerHistory(req.params.venueId);
+      const history = await storage.getRankTrackerHistory(req.params.workspaceId);
       res.json(history);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch rank tracker history" });
@@ -2425,27 +2417,27 @@ export async function registerRoutes(
   });
 
   // SEO Settings
-  app.get("/api/venues/:venueId/seo-settings", async (req, res) => {
+  app.get("/api/workspaces/:workspaceId/seo-settings", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
-      const settings = await storage.getSeoSettings(req.params.venueId);
+      const settings = await storage.getSeoSettings(req.params.workspaceId);
       res.json(settings);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch SEO settings" });
     }
   });
 
-  app.post("/api/venues/:venueId/seo-settings", async (req, res) => {
+  app.post("/api/workspaces/:workspaceId/seo-settings", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.venueId)) {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const { provider, apiKey, apiLogin, apiPassword, siteUrl, isConnected } = req.body;
       if (!provider) return res.status(400).json({ error: "Provider is required" });
       const settings = await storage.upsertSeoSettings({
-        venueId: req.params.venueId,
+        workspaceId: req.params.workspaceId,
         provider,
         apiKey: apiKey || null,
         apiLogin: apiLogin || null,
@@ -2463,9 +2455,9 @@ export async function registerRoutes(
   const WIDGET_RATE_LIMIT = 20;
   const WIDGET_RATE_WINDOW = 60 * 1000;
 
-  app.post("/api/widget/:venueId/chat", async (req, res) => {
+  app.post("/api/widget/:workspaceId/chat", async (req, res) => {
     try {
-      const { venueId } = req.params;
+      const { workspaceId } = req.params;
       const { message, history, sessionId, channel } = req.body;
 
       if (!message || typeof message !== "string" || message.trim().length === 0) {
@@ -2477,7 +2469,7 @@ export async function registerRoutes(
       }
 
       const clientIp = req.ip || req.socket.remoteAddress || "unknown";
-      const rateLimitKey = `${clientIp}:${venueId}`;
+      const rateLimitKey = `${clientIp}:${workspaceId}`;
       const now = Date.now();
       const rateEntry = widgetRateLimit.get(rateLimitKey);
 
@@ -2490,17 +2482,17 @@ export async function registerRoutes(
         widgetRateLimit.set(rateLimitKey, { count: 1, resetAt: now + WIDGET_RATE_WINDOW });
       }
 
-      const venue = await storage.getVenue(venueId);
+      const venue = await storage.getWorkspace(workspaceId);
       if (!venue) {
-        return res.status(404).json({ error: "Venue not found" });
+        return res.status(404).json({ error: "Workspace not found" });
       }
 
-      const widgetSettings = await storage.getWidgetSettings(venueId);
+      const widgetSettings = await storage.getWidgetSettings(workspaceId);
       if (widgetSettings && !widgetSettings.isEnabled) {
         return res.status(403).json({ error: "Widget is not enabled for this venue" });
       }
 
-      const knowledgeBase = await storage.getKnowledgeBaseItems(venueId);
+      const knowledgeBase = await storage.getKnowledgeBaseItems(workspaceId);
       const systemPrompt = buildWidgetSystemPrompt(
         venue.name,
         venue.type || "restaurant",
@@ -2520,14 +2512,14 @@ export async function registerRoutes(
         }
       }
 
-      const aiReply = await getAiResponse(venueId, systemPrompt, message.trim(), conversationHistory);
+      const aiReply = await getAiResponse(workspaceId, systemPrompt, message.trim(), conversationHistory);
 
       if (sessionId && typeof sessionId === "string") {
         try {
           const existingLog = await storage.updateWidgetChatLogMessageCount(sessionId);
           if (!existingLog) {
             await storage.createWidgetChatLog({
-              venueId,
+              workspaceId,
               sessionId,
               visitorIp: clientIp,
               messageCount: 1,

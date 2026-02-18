@@ -22,7 +22,7 @@ import { SiGoogle } from "react-icons/si";
 
 interface SeoSettings {
   id: number;
-  venueId: string;
+  workspaceId: string;
   provider: string;
   apiKey: string | null;
   siteUrl: string | null;
@@ -30,7 +30,7 @@ interface SeoSettings {
 }
 
 export default function GoogleSearchConsole() {
-  const { venueId } = useParams<{ venueId: string }>();
+  const { workspaceId } = useParams<{ workspaceId: string }>();
   const { toast } = useToast();
   const [siteUrl, setSiteUrl] = useState("");
   const [isConnected, setIsConnected] = useState(false);
@@ -41,7 +41,7 @@ export default function GoogleSearchConsole() {
   }, []);
 
   const { data: allSettings = [] } = useQuery<SeoSettings[]>({
-    queryKey: ["/api/venues", venueId, "seo-settings"],
+    queryKey: ["/api/workspaces", workspaceId, "seo-settings"],
   });
   const settings = allSettings.find(s => s.provider === "google_search_console");
 
@@ -54,7 +54,7 @@ export default function GoogleSearchConsole() {
 
   const saveMutation = useMutation({
     mutationFn: async () => {
-      return apiRequest("POST", `/api/venues/${venueId}/seo-settings`, {
+      return apiRequest("POST", `/api/workspaces/${workspaceId}/seo-settings`, {
         provider: "google_search_console",
         apiKey: "google-oauth-connected",
         siteUrl,
@@ -63,7 +63,7 @@ export default function GoogleSearchConsole() {
     },
     onSuccess: () => {
       setIsConnected(true);
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "seo-settings"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "seo-settings"] });
       toast({ title: "Connected", description: "Google Search Console connected successfully" });
     },
     onError: () => {
@@ -73,7 +73,7 @@ export default function GoogleSearchConsole() {
 
   const disconnectMutation = useMutation({
     mutationFn: async () => {
-      return apiRequest("POST", `/api/venues/${venueId}/seo-settings`, {
+      return apiRequest("POST", `/api/workspaces/${workspaceId}/seo-settings`, {
         provider: "google_search_console",
         apiKey: "",
         siteUrl: "",
@@ -83,7 +83,7 @@ export default function GoogleSearchConsole() {
     onSuccess: () => {
       setSiteUrl("");
       setIsConnected(false);
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "seo-settings"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "seo-settings"] });
       toast({ title: "Disconnected", description: "Google Search Console disconnected" });
     },
   });

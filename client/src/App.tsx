@@ -52,7 +52,7 @@ const AdminSeoAIVisibility = lazy(() => import("@/pages/admin/seo-ai-visibility"
 const AdminCallLogs = lazy(() => import("@/pages/admin/call-logs"));
 const AdminWidgetConfig = lazy(() => import("@/pages/admin/widget-config"));
 
-const SelectVenue = lazy(() => import("@/pages/dashboard/select-venue"));
+const SelectWorkspace = lazy(() => import("@/pages/dashboard/select-workspace"));
 const Today = lazy(() => import("@/pages/dashboard/today"));
 const CalendarView = lazy(() => import("@/pages/dashboard/calendar"));
 const BookingDetail = lazy(() => import("@/pages/dashboard/booking-detail"));
@@ -262,40 +262,40 @@ function Router() {
         <Route path="/admin/seo/ai-visibility">{() => <AdminRoute component={AdminSeoAIVisibility} permission="seo" />}</Route>
         <Route path="/admin/call-logs">{() => <AdminRoute component={AdminCallLogs} permission="calls" />}</Route>
         <Route path="/admin/widget-config">{() => <AdminRoute component={AdminWidgetConfig} permission="widgets" />}</Route>
-        <Route path="/select-venue" component={SelectVenue} />
-        <Route path="/:venueId/today" component={Today} />
-        <Route path="/:venueId/calendar" component={CalendarView} />
-        <Route path="/:venueId/bookings/:bookingId" component={BookingDetail} />
-        <Route path="/:venueId/calls" component={Calls} />
-        <Route path="/:venueId/calls/:callId" component={CallDetail} />
-        <Route path="/:venueId/analytics" component={Analytics} />
-        <Route path="/:venueId/settings/hours" component={SettingsHours} />
-        <Route path="/:venueId/settings/closures" component={SettingsClosures} />
-        <Route path="/:venueId/settings/resources" component={SettingsResources} />
-        <Route path="/:venueId/settings/team" component={SettingsTeam} />
-        <Route path="/:venueId/settings/train-widget" component={SettingsTrainWidget} />
-        <Route path="/:venueId/settings/widget-code" component={SettingsWidgetCode} />
-        <Route path="/:venueId/settings/payments" component={SettingsPayments} />
-        <Route path="/:venueId/settings/twilio-setup" component={SettingsTwilioSetup} />
-        <Route path="/:venueId/settings/twilio-voice" component={SettingsTwilioVoice} />
-        <Route path="/:venueId/settings/twilio-sms" component={SettingsTwilioSms} />
-        <Route path="/:venueId/byok/openai" component={ByokOpenai} />
-        <Route path="/:venueId/byok/grok" component={ByokGrok} />
-        <Route path="/:venueId/byok/anthropic" component={ByokAnthropic} />
-        <Route path="/:venueId/byok/google" component={ByokGoogle} />
-        <Route path="/:venueId/byok/mistral" component={ByokMistral} />
-        <Route path="/:venueId/byok/cohere" component={ByokCohere} />
-        <Route path="/:venueId/byok/perplexity" component={ByokPerplexity} />
-        <Route path="/:venueId/room-types" component={RoomTypes} />
-        <Route path="/:venueId/rooms" component={Rooms} />
-        <Route path="/:venueId/room-bookings" component={RoomBookings} />
-        <Route path="/:venueId/export-data" component={ExportData} />
-        <Route path="/:venueId/rank-tracker/google-search-console" component={GoogleSearchConsole} />
-        <Route path="/:venueId/rank-tracker/track-keywords" component={RankTracker} />
-        <Route path="/:venueId/rank-tracker/local-search-grid" component={DashboardLocalSearchGrid} />
-        <Route path="/:venueId/website-changes" component={WebsiteChanges} />
-        <Route path="/:venueId/documentation" component={Documentation} />
-        <Route path="/:venueId/support" component={Support} />
+        <Route path="/select-workspace" component={SelectWorkspace} />
+        <Route path="/:workspaceId/today" component={Today} />
+        <Route path="/:workspaceId/calendar" component={CalendarView} />
+        <Route path="/:workspaceId/bookings/:bookingId" component={BookingDetail} />
+        <Route path="/:workspaceId/calls" component={Calls} />
+        <Route path="/:workspaceId/calls/:callId" component={CallDetail} />
+        <Route path="/:workspaceId/analytics" component={Analytics} />
+        <Route path="/:workspaceId/settings/hours" component={SettingsHours} />
+        <Route path="/:workspaceId/settings/closures" component={SettingsClosures} />
+        <Route path="/:workspaceId/settings/resources" component={SettingsResources} />
+        <Route path="/:workspaceId/settings/team" component={SettingsTeam} />
+        <Route path="/:workspaceId/settings/train-widget" component={SettingsTrainWidget} />
+        <Route path="/:workspaceId/settings/widget-code" component={SettingsWidgetCode} />
+        <Route path="/:workspaceId/settings/payments" component={SettingsPayments} />
+        <Route path="/:workspaceId/settings/twilio-setup" component={SettingsTwilioSetup} />
+        <Route path="/:workspaceId/settings/twilio-voice" component={SettingsTwilioVoice} />
+        <Route path="/:workspaceId/settings/twilio-sms" component={SettingsTwilioSms} />
+        <Route path="/:workspaceId/byok/openai" component={ByokOpenai} />
+        <Route path="/:workspaceId/byok/grok" component={ByokGrok} />
+        <Route path="/:workspaceId/byok/anthropic" component={ByokAnthropic} />
+        <Route path="/:workspaceId/byok/google" component={ByokGoogle} />
+        <Route path="/:workspaceId/byok/mistral" component={ByokMistral} />
+        <Route path="/:workspaceId/byok/cohere" component={ByokCohere} />
+        <Route path="/:workspaceId/byok/perplexity" component={ByokPerplexity} />
+        <Route path="/:workspaceId/room-types" component={RoomTypes} />
+        <Route path="/:workspaceId/rooms" component={Rooms} />
+        <Route path="/:workspaceId/room-bookings" component={RoomBookings} />
+        <Route path="/:workspaceId/export-data" component={ExportData} />
+        <Route path="/:workspaceId/rank-tracker/google-search-console" component={GoogleSearchConsole} />
+        <Route path="/:workspaceId/rank-tracker/track-keywords" component={RankTracker} />
+        <Route path="/:workspaceId/rank-tracker/local-search-grid" component={DashboardLocalSearchGrid} />
+        <Route path="/:workspaceId/website-changes" component={WebsiteChanges} />
+        <Route path="/:workspaceId/documentation" component={Documentation} />
+        <Route path="/:workspaceId/support" component={Support} />
         
         <Route path="/preview/restaurant-bold" component={RestaurantBold} />
         <Route path="/preview/restaurant-vibrant" component={RestaurantVibrant} />
@@ -323,7 +323,7 @@ function Router() {
 function AppContent() {
   const [location] = useLocation();
   const isDashboard = location.startsWith("/client-login") || 
-                      location.startsWith("/select-venue") || 
+                      location.startsWith("/select-workspace") || 
                       location.startsWith("/preview/") ||
                       location.startsWith("/widget-demo") ||
                       location.startsWith("/demo-") ||

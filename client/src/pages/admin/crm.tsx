@@ -49,16 +49,16 @@ export default function AdminCrm() {
   });
 
   const { data: deals = [], isLoading } = useQuery<CrmDeal[]>({
-    queryKey: ["/api/admin/crm/deals"],
+    queryKey: ["/api/crm/deals"],
   });
 
   const createDealMutation = useMutation({
     mutationFn: async (data: any) => {
-      const res = await apiRequest("POST", "/api/admin/crm/deals", data);
+      const res = await apiRequest("POST", "/api/crm/deals", data);
       return res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/crm/deals"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/crm/deals"] });
       setShowAddDeal(false);
       setNewDeal({ businessName: "", contactName: "", contactEmail: "", contactPhone: "", businessType: "Restaurant", plan: "Complete Solution", source: "Website", notes: "" });
       toast({ title: "Deal added to pipeline" });
@@ -70,11 +70,11 @@ export default function AdminCrm() {
 
   const updateDealMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: any }) => {
-      const res = await apiRequest("PATCH", `/api/admin/crm/deals/${id}`, data);
+      const res = await apiRequest("PATCH", `/api/crm/deals/${id}`, data);
       return res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/crm/deals"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/crm/deals"] });
       setSelectedDeal(null);
       toast({ title: "Deal updated" });
     },
@@ -82,10 +82,10 @@ export default function AdminCrm() {
 
   const deleteDealMutation = useMutation({
     mutationFn: async (id: number) => {
-      await apiRequest("DELETE", `/api/admin/crm/deals/${id}`);
+      await apiRequest("DELETE", `/api/crm/deals/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/crm/deals"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/crm/deals"] });
       setSelectedDeal(null);
       toast({ title: "Deal deleted" });
     },

@@ -78,17 +78,17 @@ export default function AdminSupport() {
   const [selectedTicket, setSelectedTicket] = useState<SupportTicket | null>(null);
 
   const { data: tickets = [], isLoading } = useQuery<SupportTicket[]>({
-    queryKey: ["/api/admin/support-tickets"]
+    queryKey: ["/api/support-tickets"]
   });
 
   const updateTicket = useMutation({
     mutationFn: async ({ id, updates }: { id: string; updates: { status?: string; priority?: string } }) => {
-      const response = await apiRequest("PATCH", `/api/admin/support-tickets/${id}`, updates);
+      const response = await apiRequest("PATCH", `/api/support-tickets/${id}`, updates);
       return response.json();
     },
     onSuccess: () => {
       toast({ title: "Ticket Updated", description: "The ticket has been updated successfully." });
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/support-tickets"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/support-tickets"] });
     },
     onError: () => {
       toast({ title: "Update Failed", description: "Failed to update the ticket.", variant: "destructive" });
@@ -99,7 +99,7 @@ export default function AdminSupport() {
     const matchesSearch = 
       ticket.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
       ticket.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      ticket.venueId.toLowerCase().includes(searchQuery.toLowerCase());
+      ticket.workspaceId.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === "all" || ticket.status === statusFilter;
     const matchesPriority = priorityFilter === "all" || ticket.priority === priorityFilter;
     return matchesSearch && matchesStatus && matchesPriority;
@@ -256,7 +256,7 @@ export default function AdminSupport() {
                           {ticket.subject}
                         </TableCell>
                         <TableCell className="text-muted-foreground text-sm">
-                          {ticket.venueId.slice(0, 8)}...
+                          {ticket.workspaceId.slice(0, 8)}...
                         </TableCell>
                         <TableCell>
                           <Badge variant="outline" className="capitalize">
@@ -362,7 +362,7 @@ export default function AdminSupport() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="text-muted-foreground">Venue ID:</span>
-                    <p className="font-mono">{selectedTicket.venueId}</p>
+                    <p className="font-mono">{selectedTicket.workspaceId}</p>
                   </div>
                   <div>
                     <span className="text-muted-foreground">User ID:</span>

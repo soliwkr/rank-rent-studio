@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import indexFlowLogo from "@assets/image_1771351451425.png";
 
-interface Venue {
+interface Workspace {
   id: string;
   name: string;
   type: string;
@@ -20,12 +20,12 @@ interface Venue {
 
 const VENUES_PER_PAGE = 10;
 
-export default function SelectVenue() {
+export default function SelectWorkspace() {
   const [, setLocation] = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { data: venues = [], isLoading } = useQuery<Venue[]>({
+  const { data: workspaces = [], isLoading } = useQuery<Workspace[]>({
     queryKey: ["/api/workspaces"],
   });
 
@@ -39,15 +39,15 @@ export default function SelectVenue() {
   }, [setLocation]);
 
   const filteredVenues = useMemo(() => {
-    if (!searchQuery.trim()) return venues;
+    if (!searchQuery.trim()) return workspaces;
     const q = searchQuery.toLowerCase();
-    return venues.filter(v =>
+    return workspaces.filter(v =>
       v.name.toLowerCase().includes(q) ||
       v.address?.toLowerCase().includes(q) ||
       v.city?.toLowerCase().includes(q) ||
       v.type?.toLowerCase().includes(q)
     );
-  }, [venues, searchQuery]);
+  }, [workspaces, searchQuery]);
 
   const totalPages = Math.ceil(filteredVenues.length / VENUES_PER_PAGE);
   const paginatedVenues = filteredVenues.slice(
@@ -59,7 +59,7 @@ export default function SelectVenue() {
     setCurrentPage(1);
   }, [searchQuery]);
 
-  const handleSelectVenue = (workspaceId: string) => {
+  const handleSelectWorkspace = (workspaceId: string) => {
     localStorage.setItem("resto_current_venue", workspaceId);
     setLocation(`/${workspaceId}/today`);
   };
@@ -70,7 +70,7 @@ export default function SelectVenue() {
       cafe: "Cafe",
       bar: "Bar",
       hotel: "Hotel",
-      other: "Venue",
+      other: "Workspace",
     };
     return types[type] || type;
   };
@@ -79,17 +79,17 @@ export default function SelectVenue() {
     <div className="min-h-screen bg-muted/30 p-4">
       <div className="w-full max-w-2xl mx-auto pt-8">
         <div className="text-center mb-8">
-          <img src={indexFlowLogo} alt="indexFlow Venue Management Dashboard" className="h-16 mx-auto mb-4" />
+          <img src={indexFlowLogo} alt="indexFlow Workspace Management Dashboard" className="h-16 mx-auto mb-4" />
           <h1 className="text-2xl font-bold" data-testid="text-locations-title">My Locations</h1>
           <p className="text-muted-foreground">
-            {venues.length === 0
+            {workspaces.length === 0
               ? "You don't have any locations yet"
-              : `Managing ${venues.length} location${venues.length !== 1 ? "s" : ""}`
+              : `Managing ${workspaces.length} location${workspaces.length !== 1 ? "s" : ""}`
             }
           </p>
         </div>
 
-        {venues.length > 0 && (
+        {workspaces.length > 0 && (
           <div className="mb-4 flex items-center gap-3">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -98,18 +98,18 @@ export default function SelectVenue() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-9"
-                data-testid="input-search-venues"
+                data-testid="input-search-workspaces"
               />
             </div>
             <Badge variant="secondary" data-testid="badge-venue-count">
-              {filteredVenues.length} of {venues.length}
+              {filteredVenues.length} of {workspaces.length}
             </Badge>
           </div>
         )}
         
         <div className="space-y-3">
           {isLoading ? (
-            <div className="flex flex-col items-center justify-center py-12" data-testid="loading-venues">
+            <div className="flex flex-col items-center justify-center py-12" data-testid="loading-workspaces">
               <Loader2 className="w-8 h-8 animate-spin text-muted-foreground mb-3" />
               <p className="text-muted-foreground text-sm">Loading locations...</p>
             </div>
@@ -119,7 +119,7 @@ export default function SelectVenue() {
               <p className="text-muted-foreground">No locations match "{searchQuery}"</p>
             </div>
           ) : paginatedVenues.length === 0 ? (
-            <div className="text-center py-12" data-testid="empty-venues">
+            <div className="text-center py-12" data-testid="empty-workspaces">
               <Building2 className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
               <p className="text-muted-foreground">No locations found</p>
               <p className="text-muted-foreground text-sm mt-1">Contact us to add your first location.</p>
@@ -129,7 +129,7 @@ export default function SelectVenue() {
               <Card 
                 key={venue.id} 
                 className="cursor-pointer hover-elevate transition-all"
-                onClick={() => handleSelectVenue(venue.id)}
+                onClick={() => handleSelectWorkspace(venue.id)}
                 data-testid={`card-venue-${venue.id}`}
               >
                 <CardContent className="p-4 flex items-center justify-between gap-3">
@@ -158,7 +158,7 @@ export default function SelectVenue() {
         </div>
 
         {totalPages > 1 && (
-          <div className="flex items-center justify-between mt-6 px-1" data-testid="pagination-venues">
+          <div className="flex items-center justify-between mt-6 px-1" data-testid="pagination-workspaces">
             <Button
               variant="outline"
               size="sm"
@@ -185,7 +185,7 @@ export default function SelectVenue() {
           </div>
         )}
 
-        {venues.length > 0 && (
+        {workspaces.length > 0 && (
           <div className="mt-8 p-4 rounded-md border border-dashed text-center" data-testid="card-add-location">
             <Building2 className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
             <p className="text-sm font-medium mb-1">Need another location?</p>

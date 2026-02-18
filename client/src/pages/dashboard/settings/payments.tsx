@@ -15,7 +15,7 @@ import { SiStripe, SiPaypal } from "react-icons/si";
 
 interface PaymentSettings {
   id: number;
-  venueId: string;
+  workspaceId: string;
   stripePublishableKey: string | null;
   stripeSecretKey: string | null;
   stripeWebhookSecret: string | null;
@@ -26,7 +26,7 @@ interface PaymentSettings {
 }
 
 export default function SettingsPayments() {
-  const { venueId } = useParams<{ venueId: string }>();
+  const { workspaceId } = useParams<{ workspaceId: string }>();
   const { toast } = useToast();
 
   const [stripePk, setStripePk] = useState("");
@@ -38,7 +38,7 @@ export default function SettingsPayments() {
   const [paypalConnected, setPaypalConnected] = useState(false);
 
   const { data: settings } = useQuery<PaymentSettings>({
-    queryKey: ["/api/venues", venueId, "payment-settings"],
+    queryKey: ["/api/workspaces", workspaceId, "payment-settings"],
   });
 
   useEffect(() => {
@@ -59,7 +59,7 @@ export default function SettingsPayments() {
 
   const stripeMutation = useMutation({
     mutationFn: async () => {
-      await apiRequest("PUT", `/api/venues/${venueId}/payment-settings`, {
+      await apiRequest("PUT", `/api/workspaces/${workspaceId}/payment-settings`, {
         stripePublishableKey: stripePk || null,
         stripeSecretKey: stripeSk || null,
         stripeWebhookSecret: stripeWebhook || null,
@@ -67,7 +67,7 @@ export default function SettingsPayments() {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "payment-settings"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "payment-settings"] });
       toast({ title: "Stripe settings saved", description: "Your Stripe credentials have been updated." });
     },
     onError: (error: Error) => {
@@ -77,14 +77,14 @@ export default function SettingsPayments() {
 
   const paypalMutation = useMutation({
     mutationFn: async () => {
-      await apiRequest("PUT", `/api/venues/${venueId}/payment-settings`, {
+      await apiRequest("PUT", `/api/workspaces/${workspaceId}/payment-settings`, {
         paypalClientId: paypalClient || null,
         paypalClientSecret: paypalSecret || null,
         paypalConnected: !!(paypalClient && paypalSecret),
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "payment-settings"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "payment-settings"] });
       toast({ title: "PayPal settings saved", description: "Your PayPal credentials have been updated." });
     },
     onError: (error: Error) => {

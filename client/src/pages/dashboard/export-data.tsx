@@ -132,7 +132,7 @@ const exportTypes = [
 ];
 
 export default function ExportData() {
-  const { venueId } = useParams<{ venueId: string }>();
+  const { workspaceId } = useParams<{ workspaceId: string }>();
   const { toast } = useToast();
   const [dateRange, setDateRange] = useState("last-30");
   const [format, setFormat] = useState("csv");
@@ -143,29 +143,29 @@ export default function ExportData() {
     const date = new Date().toISOString().slice(0, 10);
     switch (typeId) {
       case "bookings":
-        return { endpoint: `/api/venues/${venueId}/reservations`, filename: `bookings_${date}.csv` };
+        return { endpoint: `/api/workspaces/${workspaceId}/reservations`, filename: `bookings_${date}.csv` };
       case "calls":
-        return { endpoint: `/api/venues/${venueId}/calls`, filename: `call_logs_${date}.csv` };
+        return { endpoint: `/api/workspaces/${workspaceId}/calls`, filename: `call_logs_${date}.csv` };
       case "rooms":
-        return { endpoint: `/api/venues/${venueId}/room-bookings`, filename: `room_bookings_${date}.csv` };
+        return { endpoint: `/api/workspaces/${workspaceId}/room-bookings`, filename: `room_bookings_${date}.csv` };
       case "analytics":
-        return { endpoint: `/api/venues/${venueId}/reservations`, filename: `analytics_${date}.csv` };
+        return { endpoint: `/api/workspaces/${workspaceId}/reservations`, filename: `analytics_${date}.csv` };
       case "rank-tracker":
-        return { endpoint: `/api/venues/${venueId}/rank-tracker/latest`, filename: `rank_tracker_${date}.csv` };
+        return { endpoint: `/api/workspaces/${workspaceId}/rank-tracker/latest`, filename: `rank_tracker_${date}.csv` };
       case "widget-chats":
-        return { endpoint: `/api/venues/${venueId}/widget-chat-logs`, filename: `widget_chats_${date}.csv` };
+        return { endpoint: `/api/workspaces/${workspaceId}/widget-chat-logs`, filename: `widget_chats_${date}.csv` };
       case "sms":
-        return { endpoint: `/api/venues/${venueId}/calls?type=sms`, filename: `sms_messages_${date}.csv` };
+        return { endpoint: `/api/workspaces/${workspaceId}/calls?type=sms`, filename: `sms_messages_${date}.csv` };
       case "team":
-        return { endpoint: `/api/venues/${venueId}/team`, filename: `team_members_${date}.csv` };
+        return { endpoint: `/api/workspaces/${workspaceId}/team`, filename: `team_members_${date}.csv` };
       case "knowledge-base":
-        return { endpoint: `/api/venues/${venueId}/knowledge-base`, filename: `knowledge_base_${date}.csv` };
+        return { endpoint: `/api/workspaces/${workspaceId}/knowledge-base`, filename: `knowledge_base_${date}.csv` };
       case "website-changes":
-        return { endpoint: `/api/venues/${venueId}/website-changes`, filename: `website_changes_${date}.csv` };
+        return { endpoint: `/api/workspaces/${workspaceId}/website-changes`, filename: `website_changes_${date}.csv` };
       case "contacts":
-        return { endpoint: `/api/venues/${venueId}/contact-messages`, filename: `contact_messages_${date}.csv` };
+        return { endpoint: `/api/workspaces/${workspaceId}/contact-messages`, filename: `contact_messages_${date}.csv` };
       case "closures":
-        return { endpoint: `/api/venues/${venueId}/closures`, filename: `closures_${date}.csv` };
+        return { endpoint: `/api/workspaces/${workspaceId}/closures`, filename: `closures_${date}.csv` };
       default:
         return { endpoint: "", filename: "" };
     }

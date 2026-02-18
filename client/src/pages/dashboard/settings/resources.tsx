@@ -12,7 +12,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 
 interface Resource {
   id: string;
-  venueId: string;
+  workspaceId: string;
   name: string;
   type: string;
   capacity: number;
@@ -22,7 +22,7 @@ interface Resource {
 }
 
 export default function SettingsResources() {
-  const { venueId } = useParams<{ venueId: string }>();
+  const { workspaceId } = useParams<{ workspaceId: string }>();
   const [newName, setNewName] = useState("");
   const [newCapacity, setNewCapacity] = useState("");
   const { toast } = useToast();
@@ -32,14 +32,14 @@ export default function SettingsResources() {
   }, []);
 
   const { data: resources = [], isLoading } = useQuery<Resource[]>({
-    queryKey: ["/api/venues", venueId, "resources"],
+    queryKey: ["/api/workspaces", workspaceId, "resources"],
   });
 
   const addMutation = useMutation({
     mutationFn: (data: { name: string; capacity: number; type: string }) =>
-      apiRequest("POST", `/api/venues/${venueId}/resources`, { ...data, venueId }),
+      apiRequest("POST", `/api/workspaces/${workspaceId}/resources`, { ...data, workspaceId }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "resources"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "resources"] });
       setNewName("");
       setNewCapacity("");
       toast({ title: "Resource added" });
@@ -52,7 +52,7 @@ export default function SettingsResources() {
   const deleteMutation = useMutation({
     mutationFn: (id: string) => apiRequest("DELETE", `/api/resources/${id}`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "resources"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "resources"] });
       toast({ title: "Resource removed" });
     },
   });

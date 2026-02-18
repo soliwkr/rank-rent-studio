@@ -556,8 +556,8 @@ const documentationData: DocCategory[] = [
 ];
 
 export default function Documentation() {
-  const [, params] = useRoute("/:venueId/documentation");
-  const venueId = params?.venueId;
+  const [, params] = useRoute("/:workspaceId/documentation");
+  const workspaceId = params?.workspaceId;
   const [selectedDoc, setSelectedDoc] = useState<DocItem | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [videoDialogOpen, setVideoDialogOpen] = useState(false);

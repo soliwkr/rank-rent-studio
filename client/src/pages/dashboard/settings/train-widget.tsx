@@ -67,7 +67,7 @@ type TestMessage = {
 
 interface KnowledgeBaseItem {
   id: string;
-  venueId: string;
+  workspaceId: string;
   type: string;
   category: string | null;
   title: string | null;
@@ -82,7 +82,7 @@ interface KnowledgeBaseItem {
 
 interface WidgetSettingsData {
   id: number;
-  venueId: string;
+  workspaceId: string;
   primaryColor: string;
   position: string;
   welcomeMessage: string | null;
@@ -93,7 +93,7 @@ interface WidgetSettingsData {
 
 interface TwilioSettingsData {
   id: number;
-  venueId: string;
+  workspaceId: string;
   accountSid: string | null;
   authToken: string | null;
   phoneNumber: string | null;
@@ -108,19 +108,19 @@ interface TwilioSettingsData {
 
 export default function SettingsTrainWidget() {
   const [, navigate] = useLocation();
-  const { venueId } = useParams<{ venueId: string }>();
+  const { workspaceId } = useParams<{ workspaceId: string }>();
   const { toast } = useToast();
 
   const { data: knowledgeBaseItems = [] } = useQuery<KnowledgeBaseItem[]>({
-    queryKey: ["/api/venues", venueId, "knowledge-base"],
+    queryKey: ["/api/workspaces", workspaceId, "knowledge-base"],
   });
 
   const { data: widgetSettingsData } = useQuery<WidgetSettingsData>({
-    queryKey: ["/api/venues", venueId, "widget-settings"],
+    queryKey: ["/api/workspaces", workspaceId, "widget-settings"],
   });
 
   const { data: twilioSettingsData } = useQuery<TwilioSettingsData>({
-    queryKey: ["/api/venues", venueId, "twilio-settings"],
+    queryKey: ["/api/workspaces", workspaceId, "twilio-settings"],
   });
 
   const [mainTab, setMainTab] = useState("knowledge");
@@ -158,23 +158,23 @@ export default function SettingsTrainWidget() {
 
   const addKnowledgeMutation = useMutation({
     mutationFn: (data: { type: string; category?: string; title?: string; content?: string; sourceUrl?: string; fileName?: string; fileType?: string; status: string }) =>
-      apiRequest("POST", `/api/venues/${venueId}/knowledge-base`, { ...data, venueId }),
+      apiRequest("POST", `/api/workspaces/${workspaceId}/knowledge-base`, { ...data, workspaceId }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "knowledge-base"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "knowledge-base"] });
     },
   });
 
   const deleteKnowledgeMutation = useMutation({
     mutationFn: (id: string) => apiRequest("DELETE", `/api/knowledge-base/${id}`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "knowledge-base"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "knowledge-base"] });
     },
   });
 
   const saveWidgetMutation = useMutation({
     mutationFn: () =>
-      apiRequest("PUT", `/api/venues/${venueId}/widget-settings`, {
-        venueId,
+      apiRequest("PUT", `/api/workspaces/${workspaceId}/widget-settings`, {
+        workspaceId,
         primaryColor: widgetColor,
         position: widgetPosition,
         welcomeMessage: widgetGreeting,
@@ -182,7 +182,7 @@ export default function SettingsTrainWidget() {
         isEnabled: true,
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "widget-settings"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "widget-settings"] });
       toast({ title: "Widget settings saved" });
     },
     onError: () => {
@@ -192,8 +192,8 @@ export default function SettingsTrainWidget() {
 
   const saveTwilioMutation = useMutation({
     mutationFn: () =>
-      apiRequest("PUT", `/api/venues/${venueId}/twilio-settings`, {
-        venueId,
+      apiRequest("PUT", `/api/workspaces/${workspaceId}/twilio-settings`, {
+        workspaceId,
         voicePersona,
         phoneGreeting: voiceGreeting,
         maxCallDuration: parseInt(maxCallDuration),
@@ -203,7 +203,7 @@ export default function SettingsTrainWidget() {
         isConnected: twilioConnected,
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "twilio-settings"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "twilio-settings"] });
       toast({ title: "Settings saved" });
     },
     onError: () => {
@@ -1048,7 +1048,7 @@ export default function SettingsTrainWidget() {
                         
                         <Button 
                           className="w-full" 
-                          onClick={() => navigate(`/${venueId}/settings/twilio-voice`)}
+                          onClick={() => navigate(`/${workspaceId}/settings/twilio-voice`)}
                           data-testid="button-connect-twilio"
                         >
                           <Phone className="w-4 h-4 mr-2" />
@@ -1228,7 +1228,7 @@ export default function SettingsTrainWidget() {
                         <Button 
                           variant="outline" 
                           className="w-full"
-                          onClick={() => navigate(`/${venueId}/settings/twilio-sms`)}
+                          onClick={() => navigate(`/${workspaceId}/settings/twilio-sms`)}
                           data-testid="button-connect-twilio-sms"
                         >
                           Connect Twilio Account

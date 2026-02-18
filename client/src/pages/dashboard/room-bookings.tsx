@@ -29,7 +29,7 @@ interface RoomType {
 
 interface RoomBooking {
   id: string;
-  venueId: string;
+  workspaceId: string;
   roomId: string;
   roomTypeId: string;
   guestName: string;
@@ -52,7 +52,7 @@ interface RoomBooking {
 }
 
 export default function RoomBookings() {
-  const { venueId } = useParams<{ venueId: string }>();
+  const { workspaceId } = useParams<{ workspaceId: string }>();
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -77,26 +77,26 @@ export default function RoomBookings() {
   }, []);
 
   const { data: bookings = [], isLoading } = useQuery<RoomBooking[]>({
-    queryKey: ["/api/venues", venueId, "room-bookings"],
+    queryKey: ["/api/workspaces", workspaceId, "room-bookings"],
   });
 
   const { data: rooms = [] } = useQuery<Room[]>({
-    queryKey: ["/api/venues", venueId, "rooms"],
+    queryKey: ["/api/workspaces", workspaceId, "rooms"],
   });
 
   const { data: roomTypes = [] } = useQuery<RoomType[]>({
-    queryKey: ["/api/venues", venueId, "room-types"],
+    queryKey: ["/api/workspaces", workspaceId, "room-types"],
   });
 
   const createMutation = useMutation({
     mutationFn: (data: typeof formData) =>
-      apiRequest("POST", `/api/venues/${venueId}/room-bookings`, {
+      apiRequest("POST", `/api/workspaces/${workspaceId}/room-bookings`, {
         ...data,
         adults: parseInt(data.adults),
         children: parseInt(data.children),
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "room-bookings"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "room-bookings"] });
       toast({ title: "Booking created", description: "The room booking has been added." });
       resetForm();
       setIsDialogOpen(false);
@@ -370,7 +370,7 @@ export default function RoomBookings() {
           <Card className="border-dashed">
             <CardContent className="p-6 text-center">
               <p className="text-muted-foreground">You need to create rooms before adding bookings.</p>
-              <Button variant="ghost" className="mt-2" onClick={() => window.location.href = `/${venueId}/rooms`}>
+              <Button variant="ghost" className="mt-2" onClick={() => window.location.href = `/${workspaceId}/rooms`}>
                 Go to Rooms
               </Button>
             </CardContent>
@@ -436,7 +436,7 @@ export default function RoomBookings() {
                       {booking.totalAmount && (
                         <p className="font-semibold">${booking.totalAmount}</p>
                       )}
-                      <Link href={`/${venueId}/room-bookings/${booking.id}`}>
+                      <Link href={`/${workspaceId}/room-bookings/${booking.id}`}>
                         <Button size="sm" variant="outline" className="gap-1" data-testid={`button-view-booking-${booking.id}`}>
                           <Eye className="w-3 h-3" />
                           View

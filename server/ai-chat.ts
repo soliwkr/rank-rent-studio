@@ -18,7 +18,7 @@ export function buildWidgetSystemPrompt(
 }
 
 export async function getAiResponse(
-  venueId: string,
+  workspaceId: string,
   systemPrompt: string,
   userMessage: string,
   conversationHistory: Array<{ role: string; content: string }>

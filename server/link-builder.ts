@@ -1,4 +1,4 @@
-import type { VenueBlogPost, InsertPostKeywordIndex } from "@shared/schema";
+import type { WorkspaceBlogPost, InsertPostKeywordIndex } from "@shared/schema";
 
 export interface KeywordEntry {
   keyword: string;
@@ -83,7 +83,7 @@ function generateNgrams(tokens: string[], n: number): string[] {
   return ngrams;
 }
 
-export function indexPostKeywords(post: VenueBlogPost): KeywordEntry[] {
+export function indexPostKeywords(post: WorkspaceBlogPost): KeywordEntry[] {
   const html = post.compiledHtml || post.mdxContent || "";
   const text = extractText(html);
   const tokens = tokenize(text);
@@ -147,12 +147,11 @@ export function indexPostKeywords(post: VenueBlogPost): KeywordEntry[] {
 
 export function keywordEntriesToInsertRecords(
   entries: KeywordEntry[],
-  venueId: string,
-  workspaceId?: string
+  workspaceId: string,
+  overrideWorkspaceId?: string
 ): InsertPostKeywordIndex[] {
   return entries.map((e) => ({
-    workspaceId: workspaceId || null,
-    venueId,
+    workspaceId: overrideWorkspaceId || workspaceId || null,
     postId: e.postId,
     keyword: e.keyword,
     slug: e.slug,
@@ -166,7 +165,7 @@ export function keywordEntriesToInsertRecords(
   }));
 }
 
-export function generateLinkSuggestions(posts: VenueBlogPost[]): LinkSuggestion[] {
+export function generateLinkSuggestions(posts: WorkspaceBlogPost[]): LinkSuggestion[] {
   const suggestions: LinkSuggestion[] = [];
   const postKeywords = new Map<string, KeywordEntry[]>();
 
@@ -224,8 +223,8 @@ export function generateLinkSuggestions(posts: VenueBlogPost[]): LinkSuggestion[
 
 function calculateLinkConfidence(
   kw: KeywordEntry,
-  source: VenueBlogPost,
-  target: VenueBlogPost
+  source: WorkspaceBlogPost,
+  target: WorkspaceBlogPost
 ): number {
   let confidence = 0.3;
 
@@ -243,7 +242,7 @@ function calculateLinkConfidence(
   return Math.min(confidence, 1.0);
 }
 
-function buildLinkReason(kw: KeywordEntry, target: VenueBlogPost): string {
+function buildLinkReason(kw: KeywordEntry, target: WorkspaceBlogPost): string {
   const parts: string[] = [];
   if (kw.inTitle) parts.push("keyword in target title");
   if (kw.frequency >= 3) parts.push(`appears ${kw.frequency}x in source`);
@@ -273,7 +272,7 @@ export function applyLink(
 }
 
 export function bulkAutoLink(
-  posts: VenueBlogPost[],
+  posts: WorkspaceBlogPost[],
   suggestions: LinkSuggestion[],
   maxLinksPerPost: number = 3
 ): { postId: string; updatedHtml: string; linksAdded: number }[] {
@@ -313,7 +312,7 @@ export function bulkAutoLink(
   return results;
 }
 
-export function generateOrphanReport(posts: VenueBlogPost[]): OrphanPost[] {
+export function generateOrphanReport(posts: WorkspaceBlogPost[]): OrphanPost[] {
   const inboundCount = new Map<string, number>();
   const outboundCount = new Map<string, number>();
   const slugToPostId = new Map<string, string>();
@@ -360,7 +359,7 @@ export function generateOrphanReport(posts: VenueBlogPost[]): OrphanPost[] {
 }
 
 export async function checkLinkHealth(
-  posts: VenueBlogPost[],
+  posts: WorkspaceBlogPost[],
   maxConcurrent: number = 5
 ): Promise<LinkHealthResult[]> {
   const results: LinkHealthResult[] = [];

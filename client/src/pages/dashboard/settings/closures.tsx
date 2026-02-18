@@ -12,14 +12,14 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 
 interface Closure {
   id: number;
-  venueId: string;
+  workspaceId: string;
   date: string;
   reason: string | null;
   createdAt: string;
 }
 
 export default function SettingsClosures() {
-  const { venueId } = useParams<{ venueId: string }>();
+  const { workspaceId } = useParams<{ workspaceId: string }>();
   const [newDate, setNewDate] = useState("");
   const [newReason, setNewReason] = useState("");
   const { toast } = useToast();
@@ -29,14 +29,14 @@ export default function SettingsClosures() {
   }, []);
 
   const { data: closures = [], isLoading } = useQuery<Closure[]>({
-    queryKey: ["/api/venues", venueId, "closures"],
+    queryKey: ["/api/workspaces", workspaceId, "closures"],
   });
 
   const addMutation = useMutation({
     mutationFn: (data: { date: string; reason: string }) =>
-      apiRequest("POST", `/api/venues/${venueId}/closures`, { ...data, venueId }),
+      apiRequest("POST", `/api/workspaces/${workspaceId}/closures`, { ...data, workspaceId }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "closures"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "closures"] });
       setNewDate("");
       setNewReason("");
       toast({
@@ -52,7 +52,7 @@ export default function SettingsClosures() {
   const deleteMutation = useMutation({
     mutationFn: (id: number) => apiRequest("DELETE", `/api/closures/${id}`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "closures"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "closures"] });
       toast({ title: "Closure removed" });
     },
   });

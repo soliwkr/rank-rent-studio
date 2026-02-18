@@ -57,16 +57,16 @@ const statusColors: Record<string, string> = {
 };
 
 export default function Support() {
-  const [, params] = useRoute("/:venueId/support");
-  const venueId = params?.venueId;
+  const [, params] = useRoute("/:workspaceId/support");
+  const workspaceId = params?.workspaceId;
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [showNewTicket, setShowNewTicket] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState<SupportTicket | null>(null);
 
   const { data: tickets = [], isLoading } = useQuery<SupportTicket[]>({
-    queryKey: ["/api/venues", venueId, "support-tickets"],
-    enabled: !!venueId
+    queryKey: ["/api/workspaces", workspaceId, "support-tickets"],
+    enabled: !!workspaceId
   });
 
   useEffect(() => {
@@ -85,7 +85,7 @@ export default function Support() {
 
   const submitTicket = useMutation({
     mutationFn: async (data: TicketFormData) => {
-      const response = await apiRequest("POST", `/api/venues/${venueId}/support-tickets`, data);
+      const response = await apiRequest("POST", `/api/workspaces/${workspaceId}/support-tickets`, data);
       return response.json();
     },
     onSuccess: () => {
@@ -93,7 +93,7 @@ export default function Support() {
         title: "Ticket Submitted",
         description: "We'll respond within 2-3 hours or next business day."
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/venues", venueId, "support-tickets"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workspaces", workspaceId, "support-tickets"] });
       form.reset();
       setShowNewTicket(false);
     },
@@ -417,7 +417,7 @@ export default function Support() {
                     </p>
                   </div>
                   <Button variant="outline" asChild>
-                    <a href={`/${venueId}/documentation`}>
+                    <a href={`/${workspaceId}/documentation`}>
                       View Documentation
                       <ExternalLink className="w-4 h-4 ml-2" />
                     </a>

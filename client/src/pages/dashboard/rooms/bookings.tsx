@@ -3,7 +3,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useVenue } from "@/lib/venue-context";
+import { useWorkspace } from "@/lib/workspace-context";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -39,8 +39,8 @@ function bookingStatusVariant(status: string) {
 }
 
 export default function RoomBookings() {
-  const { selectedVenue } = useVenue();
-  const venueId = selectedVenue?.id;
+  const { selectedWorkspace } = useWorkspace();
+  const workspaceId = selectedWorkspace?.id;
   const { toast } = useToast();
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -50,19 +50,19 @@ export default function RoomBookings() {
   });
 
   const { data: bookings = [], isLoading } = useQuery<any[]>({
-    queryKey: [`/api/room-bookings?venueId=${venueId}`],
-    enabled: !!venueId,
+    queryKey: [`/api/room-bookings?workspaceId=${workspaceId}`],
+    enabled: !!workspaceId,
   });
 
   const { data: rooms = [] } = useQuery<any[]>({
-    queryKey: [`/api/rooms?venueId=${venueId}`],
-    enabled: !!venueId,
+    queryKey: [`/api/rooms?workspaceId=${workspaceId}`],
+    enabled: !!workspaceId,
   });
 
   const createMutation = useMutation({
     mutationFn: async (values: BookingFormValues) => {
       await apiRequest("POST", "/api/room-bookings", {
-        venueId,
+        workspaceId,
         guestName: values.guestName,
         guestEmail: values.guestEmail || undefined,
         roomId: values.roomId,
@@ -72,7 +72,7 @@ export default function RoomBookings() {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/room-bookings?venueId=${venueId}`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/room-bookings?workspaceId=${workspaceId}`] });
       setDialogOpen(false);
       form.reset();
       toast({ title: "Booking created" });
@@ -87,7 +87,7 @@ export default function RoomBookings() {
       await apiRequest("PATCH", `/api/room-bookings/${id}`, { status });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/room-bookings?venueId=${venueId}`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/room-bookings?workspaceId=${workspaceId}`] });
       toast({ title: "Booking status updated" });
     },
     onError: (err: Error) => {
@@ -95,7 +95,7 @@ export default function RoomBookings() {
     },
   });
 
-  if (!venueId) {
+  if (!workspaceId) {
     return <div className="p-6 text-muted-foreground" data-testid="no-venue-message">Please select a venue from the sidebar to manage room bookings.</div>;
   }
 

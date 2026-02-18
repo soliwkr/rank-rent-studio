@@ -56,7 +56,7 @@ import {
 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import type { VenueBlogPost, Venue, VenueDomain, Invoice, InvoiceLineItem, ContentReport } from "@shared/schema";
+import type { WorkspaceBlogPost, Workspace, WorkspaceDomain, Invoice, InvoiceLineItem, ContentReport } from "@shared/schema";
 
 const VENUE_PAGE_SIZE = 50;
 
@@ -80,7 +80,6 @@ function adminFetch(url: string, options?: RequestInit) {
     headers: {
       ...(options?.headers || {}),
       "Content-Type": "application/json",
-      "x-admin-role": "super_admin",
     },
     credentials: "include",
   });
@@ -99,20 +98,20 @@ async function adminApi(method: string, url: string, data?: any) {
 }
 
 function PostsList({
-  venueId,
+  workspaceId,
   onEdit,
   onNew,
   onBulkGenerate,
 }: {
-  venueId: string;
-  onEdit: (post: VenueBlogPost) => void;
+  workspaceId: string;
+  onEdit: (post: WorkspaceBlogPost) => void;
   onNew: () => void;
   onBulkGenerate: () => void;
 }) {
-  const { data: posts = [], isLoading } = useQuery<VenueBlogPost[]>({
-    queryKey: ["/api/admin/blog/posts", venueId],
-    queryFn: () => adminApi("GET", `/api/admin/blog/posts?venueId=${venueId}`),
-    enabled: !!venueId,
+  const { data: posts = [], isLoading } = useQuery<WorkspaceBlogPost[]>({
+    queryKey: ["/api/blog/posts", workspaceId],
+    queryFn: () => adminApi("GET", `/api/blog/posts?workspaceId=${workspaceId}`),
+    enabled: !!workspaceId,
   });
 
   const statusColors: Record<string, "default" | "secondary" | "outline"> = {
@@ -227,7 +226,7 @@ function ImageSearchPanel({
     if (!query.trim()) return;
     setSearching(true);
     try {
-      const data = await adminApi("GET", `/api/admin/assets/search?source=${source}&q=${encodeURIComponent(query)}`);
+      const data = await adminApi("GET", `/api/assets/search?source=${source}&q=${encodeURIComponent(query)}`);
       setResults(data);
     } catch (err: any) {
       toast({ title: "Search failed", description: err.message, variant: "destructive" });
@@ -238,7 +237,7 @@ function ImageSearchPanel({
 
   const saveAndInsert = async (item: any) => {
     try {
-      const asset = await adminApi("POST", "/api/admin/assets/save", {
+      const asset = await adminApi("POST", "/api/assets/save", {
         source: item.source,
         sourceAssetId: item.source_asset_id,
         originalUrl: item.full_url,
@@ -371,7 +370,7 @@ function ImagePlaceholdersManager({
     const source = searchSources[idx] || "pexels";
     setSearchingIdx(idx);
     try {
-      const data = await adminApi("GET", `/api/admin/assets/search?source=${source}&q=${encodeURIComponent(q)}`);
+      const data = await adminApi("GET", `/api/assets/search?source=${source}&q=${encodeURIComponent(q)}`);
       setSearchResults((prev) => ({ ...prev, [idx]: data }));
     } catch (err: any) {
       toast({ title: "Search failed", description: err.message, variant: "destructive" });
@@ -384,7 +383,7 @@ function ImagePlaceholdersManager({
     const ph = placeholders[idx];
     if (!ph) return;
     try {
-      const asset = await adminApi("POST", "/api/admin/assets/save", {
+      const asset = await adminApi("POST", "/api/assets/save", {
         source: item.source,
         sourceAssetId: item.source_asset_id,
         originalUrl: item.full_url,
@@ -426,7 +425,7 @@ function ImagePlaceholdersManager({
     }
     setProcessing(true);
     try {
-      const data = await adminApi("POST", `/api/admin/blog/posts/${postId}/process-images`);
+      const data = await adminApi("POST", `/api/blog/posts/${postId}/process-images`);
       if (data.images && data.images.length > 0) {
         setPlaceholders((prev) =>
           prev.map((p, i) => ({
@@ -480,7 +479,7 @@ function ImagePlaceholdersManager({
             }
           : { src: "", alt: "", caption: "" }
       );
-      const data = await adminApi("POST", `/api/admin/blog/posts/${postId}/apply-images`, { images });
+      const data = await adminApi("POST", `/api/blog/posts/${postId}/apply-images`, { images });
       if (data.post?.mdxContent) {
         onMdxUpdate(data.post.mdxContent);
         setPlaceholders([]);
@@ -679,11 +678,11 @@ function ImagePlaceholdersManager({
 
 function PostEditor({
   post,
-  venueId,
+  workspaceId,
   onBack,
 }: {
-  post: VenueBlogPost | null;
-  venueId: string;
+  post: WorkspaceBlogPost | null;
+  workspaceId: string;
   onBack: () => void;
 }) {
   const { toast } = useToast();
@@ -708,10 +707,10 @@ function PostEditor({
   const [schemaJsonEditing, setSchemaJsonEditing] = useState(false);
   const [schemaJsonDraft, setSchemaJsonDraft] = useState("");
 
-  const { data: editorDomains = [] } = useQuery<VenueDomain[]>({
-    queryKey: ["/api/admin/blog/domains", venueId],
-    queryFn: () => adminApi("GET", `/api/admin/blog/domains?venueId=${venueId}`),
-    enabled: !!venueId,
+  const { data: editorDomains = [] } = useQuery<WorkspaceDomain[]>({
+    queryKey: ["/api/blog/domains", workspaceId],
+    queryFn: () => adminApi("GET", `/api/blog/domains?workspaceId=${workspaceId}`),
+    enabled: !!workspaceId,
   });
   const primaryDomain = editorDomains.find((d) => d.isPrimary) || editorDomains[0];
   const accentColor = primaryDomain?.accentColor || undefined;
@@ -735,7 +734,7 @@ function PostEditor({
       return;
     }
     try {
-      const result = await adminApi("POST", "/api/admin/content/preview", { mdx: content });
+      const result = await adminApi("POST", "/api/content/preview", { mdx: content });
       setPreviewHtml(result.html || "");
       setPreviewErrors(result.errors || []);
     } catch {
@@ -750,15 +749,15 @@ function PostEditor({
 
   const saveMutation = useMutation({
     mutationFn: async () => {
-      const data = { venueId, title, slug, description, category, tags, mdxContent, status: post?.status || "draft" };
+      const data = { workspaceId, title, slug, description, category, tags, mdxContent, status: post?.status || "draft" };
       if (post?.id) {
-        return adminApi("PUT", `/api/admin/blog/posts/${post.id}`, data);
+        return adminApi("PUT", `/api/blog/posts/${post.id}`, data);
       }
-      return adminApi("POST", "/api/admin/blog/posts", data);
+      return adminApi("POST", "/api/blog/posts", data);
     },
     onSuccess: () => {
       toast({ title: "Saved" });
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/blog/posts", venueId] });
+      queryClient.invalidateQueries({ queryKey: ["/api/blog/posts", workspaceId] });
     },
     onError: (err: Error) => {
       toast({ title: "Save failed", description: err.message, variant: "destructive" });
@@ -768,19 +767,19 @@ function PostEditor({
   const publishMutation = useMutation({
     mutationFn: async () => {
       if (!post?.id) {
-        const created = await adminApi("POST", "/api/admin/blog/posts", {
-          venueId, title, slug, description, category, tags, mdxContent, status: "draft",
+        const created = await adminApi("POST", "/api/blog/posts", {
+          workspaceId, title, slug, description, category, tags, mdxContent, status: "draft",
         });
-        return adminApi("POST", `/api/admin/blog/posts/${created.id}/publish-now`);
+        return adminApi("POST", `/api/blog/posts/${created.id}/publish-now`);
       }
-      await adminApi("PUT", `/api/admin/blog/posts/${post.id}`, {
-        venueId, title, slug, description, category, tags, mdxContent,
+      await adminApi("PUT", `/api/blog/posts/${post.id}`, {
+        workspaceId, title, slug, description, category, tags, mdxContent,
       });
-      return adminApi("POST", `/api/admin/blog/posts/${post.id}/publish-now`);
+      return adminApi("POST", `/api/blog/posts/${post.id}/publish-now`);
     },
     onSuccess: () => {
       toast({ title: "Published" });
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/blog/posts", venueId] });
+      queryClient.invalidateQueries({ queryKey: ["/api/blog/posts", workspaceId] });
       onBack();
     },
     onError: (err: Error) => {
@@ -793,22 +792,22 @@ function PostEditor({
       if (!scheduleDate) throw new Error("Select a date and time");
       let postId = post?.id;
       if (!postId) {
-        const created = await adminApi("POST", "/api/admin/blog/posts", {
-          venueId, title, slug, description, category, tags, mdxContent, status: "draft",
+        const created = await adminApi("POST", "/api/blog/posts", {
+          workspaceId, title, slug, description, category, tags, mdxContent, status: "draft",
         });
         postId = created.id;
       } else {
-        await adminApi("PUT", `/api/admin/blog/posts/${postId}`, {
-          venueId, title, slug, description, category, tags, mdxContent,
+        await adminApi("PUT", `/api/blog/posts/${postId}`, {
+          workspaceId, title, slug, description, category, tags, mdxContent,
         });
       }
-      return adminApi("POST", `/api/admin/blog/posts/${postId}/schedule`, {
+      return adminApi("POST", `/api/blog/posts/${postId}/schedule`, {
         publish_at: new Date(scheduleDate).toISOString(),
       });
     },
     onSuccess: () => {
       toast({ title: "Scheduled" });
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/blog/posts", venueId] });
+      queryClient.invalidateQueries({ queryKey: ["/api/blog/posts", workspaceId] });
       onBack();
     },
     onError: (err: Error) => {
@@ -817,10 +816,10 @@ function PostEditor({
   });
 
   const deleteMutation = useMutation({
-    mutationFn: () => adminApi("DELETE", `/api/admin/blog/posts/${post?.id}`),
+    mutationFn: () => adminApi("DELETE", `/api/blog/posts/${post?.id}`),
     onSuccess: () => {
       toast({ title: "Deleted" });
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/blog/posts", venueId] });
+      queryClient.invalidateQueries({ queryKey: ["/api/blog/posts", workspaceId] });
       onBack();
     },
     onError: (err: Error) => {
@@ -989,7 +988,7 @@ function PostEditor({
                       return;
                     }
                     try {
-                      const result = await adminApi("POST", `/api/admin/blog/posts/${post.id}/schema/override`, { schemaType: val });
+                      const result = await adminApi("POST", `/api/blog/posts/${post.id}/schema/override`, { schemaType: val });
                       setSchemaType(result.schemaType);
                       setSchemaJson(result.schemaJson);
                       setSchemaAutoDetected(false);
@@ -1027,7 +1026,7 @@ function PostEditor({
                     }
                     setSchemaDetecting(true);
                     try {
-                      const result = await adminApi("POST", `/api/admin/blog/posts/${post.id}/schema/detect`);
+                      const result = await adminApi("POST", `/api/blog/posts/${post.id}/schema/detect`);
                       setSchemaType(result.schemaType);
                       setSchemaJson(result.schemaJson);
                       setSchemaAutoDetected(true);
@@ -1096,7 +1095,7 @@ function PostEditor({
                           if (!post?.id) return;
                           try {
                             const parsed = JSON.parse(schemaJsonDraft);
-                            const result = await adminApi("POST", `/api/admin/blog/posts/${post.id}/schema/edit-json`, { schemaJson: parsed });
+                            const result = await adminApi("POST", `/api/blog/posts/${post.id}/schema/edit-json`, { schemaJson: parsed });
                             setSchemaType(result.schemaType);
                             setSchemaJson(result.schemaJson);
                             setSchemaAutoDetected(false);
@@ -1366,12 +1365,12 @@ interface BulkPostEntry {
 }
 
 function BulkGenerateModal({
-  venueId,
+  workspaceId,
   open,
   onOpenChange,
   onCreated,
 }: {
-  venueId: string;
+  workspaceId: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onCreated: (campaignId: string) => void;
@@ -1486,12 +1485,12 @@ function BulkGenerateModal({
     }
     setCreating(true);
     try {
-      const result = await adminApi("POST", "/api/admin/blog/posts/bulk/create", {
-        venueId,
+      const result = await adminApi("POST", "/api/blog/posts/bulk/create", {
+        workspaceId,
         posts: validEntries,
       });
       toast({ title: `Created ${result.posts.length} draft posts` });
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/blog/posts", venueId] });
+      queryClient.invalidateQueries({ queryKey: ["/api/blog/posts", workspaceId] });
       onOpenChange(false);
       onCreated(result.campaignId);
     } catch (err: any) {
@@ -1616,21 +1615,21 @@ function BulkGenerateModal({
 }
 
 function DraftQueue({
-  venueId,
+  workspaceId,
   campaignId,
   onEdit,
 }: {
-  venueId: string;
+  workspaceId: string;
   campaignId: string;
-  onEdit: (post: VenueBlogPost) => void;
+  onEdit: (post: WorkspaceBlogPost) => void;
 }) {
   const { toast } = useToast();
   const [generating, setGenerating] = useState(false);
   const [progress, setProgress] = useState({ completed: 0, total: 0 });
 
-  const { data: posts = [], isLoading, refetch } = useQuery<VenueBlogPost[]>({
-    queryKey: ["/api/admin/blog/posts/campaign", venueId, campaignId],
-    queryFn: () => adminApi("GET", `/api/admin/blog/posts/campaign/${venueId}/${campaignId}`),
+  const { data: posts = [], isLoading, refetch } = useQuery<WorkspaceBlogPost[]>({
+    queryKey: ["/api/blog/posts/campaign", workspaceId, campaignId],
+    queryFn: () => adminApi("GET", `/api/blog/posts/campaign/${workspaceId}/${campaignId}`),
     refetchInterval: generating ? 5000 : false,
   });
 
@@ -1638,9 +1637,9 @@ function DraftQueue({
     setGenerating(true);
     setProgress({ completed: 0, total: posts.filter(p => p.generationStatus === "pending" || p.generationStatus === "failed").length });
     try {
-      const res = await adminFetch("/api/admin/blog/posts/bulk/generate", {
+      const res = await adminFetch("/api/blog/posts/bulk/generate", {
         method: "POST",
-        body: JSON.stringify({ venueId, campaignId }),
+        body: JSON.stringify({ workspaceId, campaignId }),
       });
 
       if (!res.ok) {
@@ -1685,11 +1684,11 @@ function DraftQueue({
 
   const regenerateMutation = useMutation({
     mutationFn: async (postId: string) => {
-      return adminApi("POST", `/api/admin/blog/posts/${postId}/regenerate`);
+      return adminApi("POST", `/api/blog/posts/${postId}/regenerate`);
     },
     onSuccess: () => {
       refetch();
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/blog/posts", venueId] });
+      queryClient.invalidateQueries({ queryKey: ["/api/blog/posts", workspaceId] });
       toast({ title: "Regeneration complete" });
     },
     onError: (err: Error) => {
@@ -1699,13 +1698,13 @@ function DraftQueue({
 
   const approveMutation = useMutation({
     mutationFn: async ({ postId, publishAt }: { postId: string; publishAt?: string }) => {
-      return adminApi("POST", `/api/admin/blog/posts/${postId}/approve-and-schedule`, {
+      return adminApi("POST", `/api/blog/posts/${postId}/approve-and-schedule`, {
         publish_at: publishAt || undefined,
       });
     },
     onSuccess: () => {
       refetch();
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/blog/posts", venueId] });
+      queryClient.invalidateQueries({ queryKey: ["/api/blog/posts", workspaceId] });
       toast({ title: "Post approved" });
     },
     onError: (err: Error) => {
@@ -2410,22 +2409,22 @@ function TemplatePreview({
   );
 }
 
-function DomainManager({ venueId }: { venueId: string }) {
+function DomainManager({ workspaceId }: { workspaceId: string }) {
   const { toast } = useToast();
   const [newDomain, setNewDomain] = useState("");
 
-  const { data: domains = [], isLoading } = useQuery<VenueDomain[]>({
-    queryKey: ["/api/admin/blog/domains", venueId],
-    queryFn: () => adminApi("GET", `/api/admin/blog/domains?venueId=${venueId}`),
-    enabled: !!venueId,
+  const { data: domains = [], isLoading } = useQuery<WorkspaceDomain[]>({
+    queryKey: ["/api/blog/domains", workspaceId],
+    queryFn: () => adminApi("GET", `/api/blog/domains?workspaceId=${workspaceId}`),
+    enabled: !!workspaceId,
   });
 
   const addMutation = useMutation({
-    mutationFn: () => adminApi("POST", "/api/admin/blog/domains", { venueId, domain: newDomain.trim().toLowerCase() }),
+    mutationFn: () => adminApi("POST", "/api/blog/domains", { workspaceId, domain: newDomain.trim().toLowerCase() }),
     onSuccess: () => {
       setNewDomain("");
       toast({ title: "Domain added" });
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/blog/domains", venueId] });
+      queryClient.invalidateQueries({ queryKey: ["/api/blog/domains", workspaceId] });
     },
     onError: (err: Error) => {
       toast({ title: "Failed to add domain", description: err.message, variant: "destructive" });
@@ -2433,10 +2432,10 @@ function DomainManager({ venueId }: { venueId: string }) {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => adminApi("DELETE", `/api/admin/blog/domains/${id}`),
+    mutationFn: (id: string) => adminApi("DELETE", `/api/blog/domains/${id}`),
     onSuccess: () => {
       toast({ title: "Domain removed" });
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/blog/domains", venueId] });
+      queryClient.invalidateQueries({ queryKey: ["/api/blog/domains", workspaceId] });
     },
     onError: (err: Error) => {
       toast({ title: "Failed to remove domain", description: err.message, variant: "destructive" });
@@ -2445,10 +2444,10 @@ function DomainManager({ venueId }: { venueId: string }) {
 
   const templateMutation = useMutation({
     mutationFn: ({ id, blogTemplate }: { id: string; blogTemplate: string }) =>
-      adminApi("PATCH", `/api/admin/blog/domains/${id}`, { blogTemplate }),
+      adminApi("PATCH", `/api/blog/domains/${id}`, { blogTemplate }),
     onSuccess: () => {
       toast({ title: "Template updated" });
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/blog/domains", venueId] });
+      queryClient.invalidateQueries({ queryKey: ["/api/blog/domains", workspaceId] });
     },
     onError: (err: Error) => {
       toast({ title: "Failed to update template", description: err.message, variant: "destructive" });
@@ -2457,10 +2456,10 @@ function DomainManager({ venueId }: { venueId: string }) {
 
   const accentMutation = useMutation({
     mutationFn: ({ id, accentColor, accentForeground }: { id: string; accentColor: string | null; accentForeground: string | null }) =>
-      adminApi("PATCH", `/api/admin/blog/domains/${id}`, { accentColor, accentForeground }),
+      adminApi("PATCH", `/api/blog/domains/${id}`, { accentColor, accentForeground }),
     onSuccess: () => {
       toast({ title: "Accent colours updated" });
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/blog/domains", venueId] });
+      queryClient.invalidateQueries({ queryKey: ["/api/blog/domains", workspaceId] });
     },
     onError: (err: Error) => {
       toast({ title: "Failed to update accent colours", description: err.message, variant: "destructive" });
@@ -2562,11 +2561,11 @@ interface CampaignSummary {
   statuses: Record<string, number>;
 }
 
-function CampaignHistory({ venueId, onSelect }: { venueId: string; onSelect: (campaignId: string) => void }) {
+function CampaignHistory({ workspaceId, onSelect }: { workspaceId: string; onSelect: (campaignId: string) => void }) {
   const { data: campaigns = [], isLoading } = useQuery<CampaignSummary[]>({
-    queryKey: ["/api/admin/blog/campaigns", venueId],
-    queryFn: () => adminApi("GET", `/api/admin/blog/campaigns/${venueId}`),
-    enabled: !!venueId,
+    queryKey: ["/api/blog/campaigns", workspaceId],
+    queryFn: () => adminApi("GET", `/api/blog/campaigns/${workspaceId}`),
+    enabled: !!workspaceId,
   });
 
   if (isLoading) {
@@ -2620,11 +2619,11 @@ function CampaignHistory({ venueId, onSelect }: { venueId: string; onSelect: (ca
 
 function VenueCombobox({
   venues,
-  selectedVenueId,
+  selectedWorkspaceId,
   onSelect,
 }: {
   venues: Venue[];
-  selectedVenueId: string;
+  selectedWorkspaceId: string;
   onSelect: (id: string) => void;
 }) {
   const [open, setOpen] = useState(false);
@@ -2644,7 +2643,7 @@ function VenueCombobox({
 
   const totalPages = Math.ceil(filtered.length / VENUE_PAGE_SIZE);
   const paged = filtered.slice(page * VENUE_PAGE_SIZE, (page + 1) * VENUE_PAGE_SIZE);
-  const selectedVenue = venues.find((v) => v.id === selectedVenueId);
+  const selectedWorkspace = venues.find((v) => v.id === selectedWorkspaceId);
 
   useEffect(() => {
     setPage(0);
@@ -2663,7 +2662,7 @@ function VenueCombobox({
           <div className="flex items-center gap-2 min-w-0">
             <Building2 className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
             <span className="truncate">
-              {selectedVenue ? selectedVenue.name : "Select a venue..."}
+              {selectedWorkspace ? selectedWorkspace.name : "Select a venue..."}
             </span>
           </div>
           <ChevronsUpDown className="h-4 w-4 flex-shrink-0 opacity-50" />
@@ -2690,7 +2689,7 @@ function VenueCombobox({
                   }}
                   data-testid={`button-venue-${restoVenue.id}`}
                 >
-                  <Check className={`h-4 w-4 mr-2 ${selectedVenueId === restoVenue.id ? "opacity-100" : "opacity-0"}`} />
+                  <Check className={`h-4 w-4 mr-2 ${selectedWorkspaceId === restoVenue.id ? "opacity-100" : "opacity-0"}`} />
                   <div className="min-w-0 flex-1">
                     <div className="font-medium truncate">{restoVenue.name}</div>
                     <div className="text-xs text-muted-foreground">{restoVenue.type}</div>
@@ -2712,7 +2711,7 @@ function VenueCombobox({
                   }}
                   data-testid={`button-venue-${v.id}`}
                 >
-                  <Check className={`h-4 w-4 mr-2 ${selectedVenueId === v.id ? "opacity-100" : "opacity-0"}`} />
+                  <Check className={`h-4 w-4 mr-2 ${selectedWorkspaceId === v.id ? "opacity-100" : "opacity-0"}`} />
                   <div className="min-w-0 flex-1">
                     <div className="truncate">{v.name}</div>
                     <div className="text-xs text-muted-foreground">{v.type}</div>
@@ -2761,15 +2760,15 @@ function InvoicesTab({ workspaceId }: { workspaceId: string }) {
   const [isCreating, setIsCreating] = useState(false);
 
   const { data: invoicesList = [], isLoading } = useQuery<Invoice[]>({
-    queryKey: ["/api/admin/invoices", workspaceId],
-    queryFn: () => adminApi("GET", `/api/admin/invoices?workspaceId=${workspaceId}`),
+    queryKey: ["/api/invoices", workspaceId],
+    queryFn: () => adminApi("GET", `/api/invoices?workspaceId=${workspaceId}`),
     enabled: !!workspaceId,
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: any) => adminApi("POST", "/api/admin/invoices", data),
+    mutationFn: (data: any) => adminApi("POST", "/api/invoices", data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/invoices"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/invoices"] });
       setIsCreating(false);
       toast({ title: "Invoice created" });
     },
@@ -2777,9 +2776,9 @@ function InvoicesTab({ workspaceId }: { workspaceId: string }) {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: any }) => adminApi("PATCH", `/api/admin/invoices/${id}`, data),
+    mutationFn: ({ id, data }: { id: number; data: any }) => adminApi("PATCH", `/api/invoices/${id}`, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/invoices"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/invoices"] });
       setEditingInvoice(null);
       toast({ title: "Invoice updated" });
     },
@@ -2787,9 +2786,9 @@ function InvoicesTab({ workspaceId }: { workspaceId: string }) {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => adminApi("DELETE", `/api/admin/invoices/${id}`),
+    mutationFn: (id: number) => adminApi("DELETE", `/api/invoices/${id}`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/invoices"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/invoices"] });
       toast({ title: "Invoice deleted" });
     },
     onError: (err: any) => toast({ title: "Error", description: err.message, variant: "destructive" }),
@@ -3004,15 +3003,15 @@ function ReportsTab({ workspaceId }: { workspaceId: string }) {
   const [isCreating, setIsCreating] = useState(false);
 
   const { data: reportsList = [], isLoading } = useQuery<ContentReport[]>({
-    queryKey: ["/api/admin/content-reports", workspaceId],
-    queryFn: () => adminApi("GET", `/api/admin/content-reports?workspaceId=${workspaceId}`),
+    queryKey: ["/api/content-reports", workspaceId],
+    queryFn: () => adminApi("GET", `/api/content-reports?workspaceId=${workspaceId}`),
     enabled: !!workspaceId,
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: any) => adminApi("POST", "/api/admin/content-reports", data),
+    mutationFn: (data: any) => adminApi("POST", "/api/content-reports", data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/content-reports"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/content-reports"] });
       setIsCreating(false);
       toast({ title: "Report created" });
     },
@@ -3020,9 +3019,9 @@ function ReportsTab({ workspaceId }: { workspaceId: string }) {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => adminApi("DELETE", `/api/admin/content-reports/${id}`),
+    mutationFn: (id: number) => adminApi("DELETE", `/api/content-reports/${id}`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/content-reports"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/content-reports"] });
       toast({ title: "Report deleted" });
     },
     onError: (err: any) => toast({ title: "Error", description: err.message, variant: "destructive" }),
@@ -3190,27 +3189,27 @@ function ReportForm({ workspaceId, onSubmit, isPending }: {
 }
 
 export default function AdminContent() {
-  const [selectedVenueId, setSelectedVenueId] = useState("resto-platform");
-  const [editingPost, setEditingPost] = useState<VenueBlogPost | null | "new">(null);
+  const [selectedWorkspaceId, setSelectedWorkspaceId] = useState("resto-platform");
+  const [editingPost, setEditingPost] = useState<WorkspaceBlogPost | null | "new">(null);
   const [bulkModalOpen, setBulkModalOpen] = useState(false);
   const [activeCampaignId, setActiveCampaignId] = useState<string | null>(null);
   const [activeView, setActiveView] = useState<"posts" | "domains" | "campaigns">("posts");
   const [guideOpen, setGuideOpen] = useState(false);
 
   const { data: venues = [] } = useQuery<Venue[]>({
-    queryKey: ["/api/admin/venues"],
-    queryFn: () => adminApi("GET", "/api/admin/venues"),
+    queryKey: ["/api/workspaces"],
+    queryFn: () => adminApi("GET", "/api/workspaces"),
   });
 
   useEffect(() => {
-    if (venues.length > 0 && !venues.find((v) => v.id === selectedVenueId)) {
+    if (venues.length > 0 && !venues.find((v) => v.id === selectedWorkspaceId)) {
       const resto = venues.find((v) => v.id === "resto-platform");
-      setSelectedVenueId(resto ? resto.id : venues[0].id);
+      setSelectedWorkspaceId(resto ? resto.id : venues[0].id);
     }
-  }, [venues, selectedVenueId]);
+  }, [venues, selectedWorkspaceId]);
 
-  const selectedVenue = venues.find((v) => v.id === selectedVenueId);
-  const hasValidVenue = selectedVenue !== undefined;
+  const selectedWorkspace = venues.find((v) => v.id === selectedWorkspaceId);
+  const hasValidVenue = selectedWorkspace !== undefined;
 
   return (
     <AdminLayout>
@@ -3256,9 +3255,9 @@ export default function AdminContent() {
       <div className="mb-6 max-w-md">
         <VenueCombobox
           venues={venues}
-          selectedVenueId={selectedVenueId}
+          selectedWorkspaceId={selectedWorkspaceId}
           onSelect={(id) => {
-            setSelectedVenueId(id);
+            setSelectedWorkspaceId(id);
             setActiveCampaignId(null);
             setEditingPost(null);
           }}
@@ -3268,7 +3267,7 @@ export default function AdminContent() {
       {editingPost !== null && hasValidVenue ? (
         <PostEditor
           post={editingPost === "new" ? null : editingPost}
-          venueId={selectedVenueId}
+          workspaceId={selectedWorkspaceId}
           onBack={() => {
             setEditingPost(null);
           }}
@@ -3280,7 +3279,7 @@ export default function AdminContent() {
               <ArrowLeft className="h-4 w-4 mr-2" /> Back
             </Button>
             <DraftQueue
-              venueId={selectedVenueId}
+              workspaceId={selectedWorkspaceId}
               campaignId={activeCampaignId}
               onEdit={(post) => setEditingPost(post)}
             />
@@ -3312,7 +3311,7 @@ export default function AdminContent() {
 
             <TabsContent value="posts">
               <PostsList
-                venueId={selectedVenueId}
+                workspaceId={selectedWorkspaceId}
                 onEdit={(post) => setEditingPost(post)}
                 onNew={() => setEditingPost("new")}
                 onBulkGenerate={() => setBulkModalOpen(true)}
@@ -3326,22 +3325,22 @@ export default function AdminContent() {
                   <p className="text-sm text-muted-foreground">Browse past bulk generation campaigns</p>
                 </div>
                 <CampaignHistory
-                  venueId={selectedVenueId}
+                  workspaceId={selectedWorkspaceId}
                   onSelect={(id) => setActiveCampaignId(id)}
                 />
               </div>
             </TabsContent>
 
             <TabsContent value="domains">
-              <DomainManager venueId={selectedVenueId} />
+              <DomainManager workspaceId={selectedWorkspaceId} />
             </TabsContent>
 
             <TabsContent value="invoices">
-              <InvoicesTab workspaceId={selectedVenueId} />
+              <InvoicesTab workspaceId={selectedWorkspaceId} />
             </TabsContent>
 
             <TabsContent value="reports">
-              <ReportsTab workspaceId={selectedVenueId} />
+              <ReportsTab workspaceId={selectedWorkspaceId} />
             </TabsContent>
           </Tabs>
         )
@@ -3357,7 +3356,7 @@ export default function AdminContent() {
 
       {hasValidVenue && (
         <BulkGenerateModal
-          venueId={selectedVenueId}
+          workspaceId={selectedWorkspaceId}
           open={bulkModalOpen}
           onOpenChange={setBulkModalOpen}
           onCreated={(campaignId) => setActiveCampaignId(campaignId)}

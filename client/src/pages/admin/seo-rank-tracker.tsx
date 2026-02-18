@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useVenue } from "@/lib/venue-context";
+import { useWorkspace } from "@/lib/workspace-context";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -14,14 +14,14 @@ import { AdminLayout } from "@/components/admin-layout";
 
 interface RankKeyword {
   id: number;
-  venueId: string;
+  workspaceId: string;
   keyword: string;
   createdAt: string | null;
 }
 
 interface RankResult {
   id: number;
-  venueId: string;
+  workspaceId: string;
   keywordId: number;
   keyword: string;
   position: number | null;
@@ -32,25 +32,25 @@ interface RankResult {
 }
 
 export default function AdminRankTracker() {
-  const { selectedVenue } = useVenue();
+  const { selectedWorkspace } = useWorkspace();
   const { toast } = useToast();
   const [newKeyword, setNewKeyword] = useState("");
 
-  const venueId = selectedVenue?.id;
+  const workspaceId = selectedWorkspace?.id;
 
   const { data: keywords = [], isLoading: kwLoading } = useQuery<RankKeyword[]>({
-    queryKey: ["/api/rank-keywords", `?venueId=${venueId}`],
-    enabled: !!venueId,
+    queryKey: ["/api/rank-keywords", `?workspaceId=${workspaceId}`],
+    enabled: !!workspaceId,
   });
 
   const { data: results = [], isLoading: resultsLoading } = useQuery<RankResult[]>({
-    queryKey: ["/api/rank-results", `?venueId=${venueId}`],
-    enabled: !!venueId,
+    queryKey: ["/api/rank-results", `?workspaceId=${workspaceId}`],
+    enabled: !!workspaceId,
   });
 
   const addMutation = useMutation({
     mutationFn: async (keyword: string) => {
-      const res = await apiRequest("POST", "/api/rank-keywords", { venueId, keyword });
+      const res = await apiRequest("POST", "/api/rank-keywords", { workspaceId, keyword });
       return res.json();
     },
     onSuccess: () => {
@@ -83,7 +83,7 @@ export default function AdminRankTracker() {
         </h1>
       </div>
 
-      {!selectedVenue ? (
+      {!selectedWorkspace ? (
         <Card>
           <CardContent className="py-8">
             <p className="text-muted-foreground text-center" data-testid="no-venue-selected">
@@ -95,7 +95,7 @@ export default function AdminRankTracker() {
         <>
           <Card>
             <CardHeader>
-              <CardTitle>Keywords - {selectedVenue.name}</CardTitle>
+              <CardTitle>Keywords - {selectedWorkspace.name}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <form

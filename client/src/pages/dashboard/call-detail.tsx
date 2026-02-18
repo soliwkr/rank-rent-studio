@@ -9,7 +9,7 @@ import { DashboardLayout } from "@/components/dashboard-layout";
 
 interface CallLog {
   id: string;
-  venueId: string;
+  workspaceId: string;
   twilioSid: string | null;
   callerPhone: string | null;
   duration: number | null;
@@ -22,7 +22,7 @@ interface CallLog {
 }
 
 export default function CallDetail() {
-  const { venueId, callId } = useParams<{ venueId: string; callId: string }>();
+  const { workspaceId, callId } = useParams<{ workspaceId: string; callId: string }>();
 
   const { data: call, isLoading } = useQuery<CallLog>({
     queryKey: ["/api/calls", callId],
@@ -85,7 +85,7 @@ export default function CallDetail() {
       <DashboardLayout>
         <div className="space-y-6">
           <div className="flex items-center gap-4">
-            <Link href={`/${venueId}/calls`}>
+            <Link href={`/${workspaceId}/calls`}>
               <Button variant="ghost" size="icon" data-testid="button-back">
                 <ArrowLeft className="w-5 h-5" />
               </Button>
@@ -104,7 +104,7 @@ export default function CallDetail() {
     <DashboardLayout>
       <div className="space-y-6">
         <div className="flex items-center gap-4">
-          <Link href={`/${venueId}/calls`}>
+          <Link href={`/${workspaceId}/calls`}>
             <Button variant="ghost" size="icon" data-testid="button-back">
               <ArrowLeft className="w-5 h-5" />
             </Button>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useVenue } from "@/lib/venue-context";
+import { useWorkspace } from "@/lib/workspace-context";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -30,17 +30,17 @@ interface ExportCategory {
 const exportCategories: ExportCategory[] = [
   {
     name: "Venues",
-    endpoint: "/api/venues",
+    endpoint: "/api/workspaces",
     icon: Building2,
     headers: ["ID", "Name", "Type", "Plan", "Status", "Phone", "Email", "Address"],
     rowMapper: (v) => [String(v.id), String(v.name), String(v.type), String(v.plan), String(v.status), String(v.phone || ""), String(v.email || ""), String(v.address || "")],
   },
   {
     name: "Reservations",
-    endpoint: "/api/admin/reservations",
+    endpoint: "/api/reservations",
     icon: CalendarCheck,
     headers: ["ID", "Venue ID", "Guest Name", "Email", "Phone", "Party Size", "Date", "Time", "Status"],
-    rowMapper: (r) => [String(r.id), String(r.venueId), String(r.guestName), String(r.guestEmail || ""), String(r.guestPhone || ""), String(r.partySize), String(r.date), String(r.time), String(r.status || "")],
+    rowMapper: (r) => [String(r.id), String(r.workspaceId), String(r.guestName), String(r.guestEmail || ""), String(r.guestPhone || ""), String(r.partySize), String(r.date), String(r.time), String(r.status || "")],
   },
   {
     name: "Contact Messages",
@@ -51,15 +51,15 @@ const exportCategories: ExportCategory[] = [
   },
   {
     name: "Support Tickets",
-    endpoint: "/api/admin/support-tickets",
+    endpoint: "/api/support-tickets",
     icon: LifeBuoy,
     headers: ["ID", "Venue ID", "Subject", "Category", "Priority", "Status", "Date"],
-    rowMapper: (t) => [String(t.id), String(t.venueId), String(t.subject), String(t.category), String(t.priority), String(t.status), String(t.createdAt || "")],
+    rowMapper: (t) => [String(t.id), String(t.workspaceId), String(t.subject), String(t.category), String(t.priority), String(t.status), String(t.createdAt || "")],
   },
 ];
 
 export default function AdminExport() {
-  useVenue();
+  useWorkspace();
   const { toast } = useToast();
   const [loadingCategory, setLoadingCategory] = useState<string | null>(null);
 

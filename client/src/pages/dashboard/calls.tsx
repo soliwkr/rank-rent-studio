@@ -8,7 +8,7 @@ import { DashboardLayout } from "@/components/dashboard-layout";
 
 interface CallLog {
   id: string;
-  venueId: string;
+  workspaceId: string;
   twilioSid: string | null;
   callerPhone: string | null;
   duration: number | null;
@@ -46,14 +46,14 @@ function formatRelativeDate(dateStr: string): string {
 }
 
 export default function Calls() {
-  const { venueId } = useParams<{ venueId: string }>();
+  const { workspaceId } = useParams<{ workspaceId: string }>();
 
   useEffect(() => {
     document.title = "Calls - Resto Dashboard";
   }, []);
 
   const { data: calls = [], isLoading } = useQuery<CallLog[]>({
-    queryKey: ["/api/venues", venueId, "calls"],
+    queryKey: ["/api/workspaces", workspaceId, "calls"],
   });
 
   const totalCalls = calls.length;
@@ -143,7 +143,7 @@ export default function Calls() {
                   const date = formatRelativeDate(call.createdAt);
                   const time = formatTime(call.createdAt);
                   return (
-                    <Link key={call.id} href={`/${venueId}/calls/${call.id}`}>
+                    <Link key={call.id} href={`/${workspaceId}/calls/${call.id}`}>
                       <div
                         className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 rounded-lg border hover-elevate cursor-pointer gap-3"
                         data-testid={`call-${call.id}`}

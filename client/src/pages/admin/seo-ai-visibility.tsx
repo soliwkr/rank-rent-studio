@@ -1,10 +1,10 @@
-import { useVenue } from "@/lib/venue-context";
+import { useWorkspace } from "@/lib/workspace-context";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bot } from "lucide-react";
 import { AdminLayout } from "@/components/admin-layout";
 
 export default function AdminAIVisibility() {
-  useVenue();
+  useWorkspace();
 
   return (
     <AdminLayout>

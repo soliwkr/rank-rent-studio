@@ -22,7 +22,7 @@ import {
 
 interface TwilioSettingsData {
   id: number;
-  venueId: string;
+  workspaceId: string;
   accountSid: string | null;
   authToken: string | null;
   phoneNumber: string | null;
@@ -37,21 +37,21 @@ interface TwilioSettingsData {
 
 interface AiProviderData {
   id: number;
-  venueId: string;
+  workspaceId: string;
   provider: string;
   apiKey: string | null;
   isEnabled: boolean;
 }
 
 export default function SettingsTwilioSetup() {
-  const { venueId } = useParams<{ venueId: string }>();
+  const { workspaceId } = useParams<{ workspaceId: string }>();
 
   const { data: settings } = useQuery<TwilioSettingsData>({
-    queryKey: ["/api/venues", venueId, "twilio-settings"],
+    queryKey: ["/api/workspaces", workspaceId, "twilio-settings"],
   });
 
   const { data: aiProviders } = useQuery<AiProviderData[]>({
-    queryKey: ["/api/venues", venueId, "ai-providers"],
+    queryKey: ["/api/workspaces", workspaceId, "ai-providers"],
   });
 
   useEffect(() => {
@@ -130,7 +130,7 @@ export default function SettingsTwilioSetup() {
       ],
       action: {
         label: "Configure Voice",
-        href: `/${venueId}/settings/twilio-voice`,
+        href: `/${workspaceId}/settings/twilio-voice`,
         external: false,
       },
     },
@@ -148,7 +148,7 @@ export default function SettingsTwilioSetup() {
       ],
       action: {
         label: "Configure AI Provider",
-        href: `/${venueId}/byok/openai`,
+        href: `/${workspaceId}/byok/openai`,
         external: false,
       },
     },
@@ -166,7 +166,7 @@ export default function SettingsTwilioSetup() {
       ],
       action: {
         label: "Voice Settings",
-        href: `/${venueId}/settings/twilio-voice`,
+        href: `/${workspaceId}/settings/twilio-voice`,
         external: false,
       },
     },
@@ -268,25 +268,25 @@ export default function SettingsTwilioSetup() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                <Link href={`/${venueId}/settings/twilio-voice`}>
+                <Link href={`/${workspaceId}/settings/twilio-voice`}>
                   <Button variant="ghost" className="w-full justify-start gap-3" data-testid="link-twilio-voice">
                     <PhoneCall className="w-4 h-4" />
                     Voice Settings
                   </Button>
                 </Link>
-                <Link href={`/${venueId}/settings/twilio-sms`}>
+                <Link href={`/${workspaceId}/settings/twilio-sms`}>
                   <Button variant="ghost" className="w-full justify-start gap-3" data-testid="link-twilio-sms">
                     <MessageCircle className="w-4 h-4" />
                     SMS Settings
                   </Button>
                 </Link>
-                <Link href={`/${venueId}/calls`}>
+                <Link href={`/${workspaceId}/calls`}>
                   <Button variant="ghost" className="w-full justify-start gap-3" data-testid="link-call-logs">
                     <Phone className="w-4 h-4" />
                     Call Logs
                   </Button>
                 </Link>
-                <Link href={`/${venueId}/byok/openai`}>
+                <Link href={`/${workspaceId}/byok/openai`}>
                   <Button variant="ghost" className="w-full justify-start gap-3" data-testid="link-ai-provider">
                     <Bot className="w-4 h-4" />
                     AI Provider (BYOK)

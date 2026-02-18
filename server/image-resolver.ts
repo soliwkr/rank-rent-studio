@@ -102,7 +102,7 @@ async function searchWithFallback(query: string, index: number): Promise<StockRe
   return results[pickIdx];
 }
 
-async function saveStockAsset(item: StockResult, postId?: string, venueId?: string): Promise<string> {
+async function saveStockAsset(item: StockResult, postId?: string, workspaceId?: string): Promise<string> {
   const asset = await storage.createContentAsset({
     source: item.source,
     sourceAssetId: item.source_asset_id,
@@ -115,13 +115,13 @@ async function saveStockAsset(item: StockResult, postId?: string, venueId?: stri
     type: "blog_image",
     licenseNote: item.license_note,
     postId: postId || null,
-    venueId: venueId || null,
+    workspaceId: workspaceId || null,
   });
   return asset.publicUrl || asset.originalUrl;
 }
 
 export async function resolvePostImages(postId: string): Promise<{ resolved: number; failed: number }> {
-  const post = await storage.getVenueBlogPost(postId);
+  const post = await storage.getWorkspaceBlogPost(postId);
   if (!post || !post.mdxContent) return { resolved: 0, failed: 0 };
 
   const promptRegex = /<BlogImage\s+prompt="([^"]+)"\s*\/>/g;
@@ -187,7 +187,7 @@ ${placeholders.map((p, i) => `${i + 1}. "${p.prompt}"`).join("\n")}`;
     const stockResult = await searchWithFallback(searchQuery, i);
 
     if (stockResult) {
-      const url = await saveStockAsset(stockResult, postId, post.venueId);
+      const url = await saveStockAsset(stockResult, postId, post.workspaceId);
       resolvedImages.push({
         src: url,
         alt: meta.alt || searchQuery,
@@ -245,7 +245,7 @@ ${placeholders.map((p, i) => `${i + 1}. "${p.prompt}"`).join("\n")}`;
 
   const { html } = await compileMdxToHtml(updatedMdx);
 
-  await storage.updateVenueBlogPost(postId, {
+  await storage.updateWorkspaceBlogPost(postId, {
     mdxContent: updatedMdx,
     compiledHtml: html,
   });
