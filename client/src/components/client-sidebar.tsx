@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import {
   LayoutDashboard,
+  File,
   PhoneCall,
   BarChart3,
   Download,
@@ -125,6 +126,7 @@ const navGroups: NavGroup[] = [
     collapsible: true,
     items: [
       { title: "Posts", path: "/content/posts", icon: FileText },
+      { title: "Pages", path: "/content/pages", icon: File },
       { title: "Campaigns", path: "/content/campaigns", icon: Megaphone },
       { title: "Domains", path: "/content/domains", icon: Globe },
     ],
