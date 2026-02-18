@@ -63,6 +63,12 @@ import {
   type InsertContentAssetUsage,
   type ContentCampaign,
   type InsertContentCampaign,
+  type CrmContact,
+  type InsertCrmContact,
+  type CrmPipelineStage,
+  type InsertCrmPipelineStage,
+  type CrmDeal,
+  type InsertCrmDeal,
   contactMessages,
   venues,
   reservations,
@@ -98,6 +104,9 @@ import {
   contentAssets,
   contentAssetUsage,
   contentCampaigns,
+  crmContacts,
+  crmPipelineStages,
+  crmDeals,
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 import { db } from "./db";
@@ -246,6 +255,20 @@ export interface IStorage {
   createContentAsset(asset: InsertContentAsset): Promise<ContentAsset>;
   createContentAssetUsage(usage: InsertContentAssetUsage): Promise<ContentAssetUsage>;
   getContentAssetUsage(postId: string): Promise<ContentAssetUsage[]>;
+  getCrmContacts(workspaceId?: string): Promise<CrmContact[]>;
+  getCrmContact(id: number): Promise<CrmContact | undefined>;
+  createCrmContact(data: InsertCrmContact): Promise<CrmContact>;
+  updateCrmContact(id: number, data: Partial<InsertCrmContact>): Promise<CrmContact | undefined>;
+  deleteCrmContact(id: number): Promise<boolean>;
+  getCrmPipelineStages(workspaceId?: string): Promise<CrmPipelineStage[]>;
+  createCrmPipelineStage(data: InsertCrmPipelineStage): Promise<CrmPipelineStage>;
+  updateCrmPipelineStage(id: number, data: Partial<InsertCrmPipelineStage>): Promise<CrmPipelineStage | undefined>;
+  deleteCrmPipelineStage(id: number): Promise<boolean>;
+  getCrmDeals(workspaceId?: string): Promise<CrmDeal[]>;
+  getCrmDeal(id: number): Promise<CrmDeal | undefined>;
+  createCrmDeal(data: InsertCrmDeal): Promise<CrmDeal>;
+  updateCrmDeal(id: number, data: Partial<InsertCrmDeal>): Promise<CrmDeal | undefined>;
+  deleteCrmDeal(id: number): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
@@ -1319,6 +1342,69 @@ export class MemStorage implements IStorage {
   async getContentAssetUsage(postId: string): Promise<ContentAssetUsage[]> {
     return this.contentAssetUsageList.filter(u => u.postId === postId);
   }
+
+  private crmContactsMap: Map<number, CrmContact> = new Map();
+  private crmContactIdCounter = 1;
+  private crmPipelineStagesMap: Map<number, CrmPipelineStage> = new Map();
+  private crmStageIdCounter = 1;
+  private crmDealsMap: Map<number, CrmDeal> = new Map();
+  private crmDealIdCounter = 1;
+
+  async getCrmContacts(workspaceId?: string): Promise<CrmContact[]> {
+    const all = Array.from(this.crmContactsMap.values());
+    return workspaceId ? all.filter(c => c.workspaceId === workspaceId) : all;
+  }
+  async getCrmContact(id: number): Promise<CrmContact | undefined> { return this.crmContactsMap.get(id); }
+  async createCrmContact(data: InsertCrmContact): Promise<CrmContact> {
+    const record: CrmContact = { ...data, id: this.crmContactIdCounter++, workspaceId: data.workspaceId ?? null, email: data.email ?? null, phone: data.phone ?? null, company: data.company ?? null, title: data.title ?? null, source: data.source ?? "manual", status: data.status ?? "active", notes: data.notes ?? null, tags: data.tags ?? null, lastContactedAt: data.lastContactedAt ?? null, createdAt: new Date(), updatedAt: new Date() };
+    this.crmContactsMap.set(record.id, record);
+    return record;
+  }
+  async updateCrmContact(id: number, data: Partial<InsertCrmContact>): Promise<CrmContact | undefined> {
+    const existing = this.crmContactsMap.get(id);
+    if (!existing) return undefined;
+    const updated = { ...existing, ...data, updatedAt: new Date() };
+    this.crmContactsMap.set(id, updated);
+    return updated;
+  }
+  async deleteCrmContact(id: number): Promise<boolean> { return this.crmContactsMap.delete(id); }
+
+  async getCrmPipelineStages(workspaceId?: string): Promise<CrmPipelineStage[]> {
+    const all = Array.from(this.crmPipelineStagesMap.values());
+    return workspaceId ? all.filter(s => s.workspaceId === workspaceId) : all;
+  }
+  async createCrmPipelineStage(data: InsertCrmPipelineStage): Promise<CrmPipelineStage> {
+    const record: CrmPipelineStage = { ...data, id: this.crmStageIdCounter++, workspaceId: data.workspaceId ?? null, color: data.color ?? "#3b82f6", createdAt: new Date() };
+    this.crmPipelineStagesMap.set(record.id, record);
+    return record;
+  }
+  async updateCrmPipelineStage(id: number, data: Partial<InsertCrmPipelineStage>): Promise<CrmPipelineStage | undefined> {
+    const existing = this.crmPipelineStagesMap.get(id);
+    if (!existing) return undefined;
+    const updated = { ...existing, ...data };
+    this.crmPipelineStagesMap.set(id, updated);
+    return updated;
+  }
+  async deleteCrmPipelineStage(id: number): Promise<boolean> { return this.crmPipelineStagesMap.delete(id); }
+
+  async getCrmDeals(workspaceId?: string): Promise<CrmDeal[]> {
+    const all = Array.from(this.crmDealsMap.values());
+    return workspaceId ? all.filter(d => d.workspaceId === workspaceId) : all;
+  }
+  async getCrmDeal(id: number): Promise<CrmDeal | undefined> { return this.crmDealsMap.get(id); }
+  async createCrmDeal(data: InsertCrmDeal): Promise<CrmDeal> {
+    const record: CrmDeal = { ...data, id: this.crmDealIdCounter++, workspaceId: data.workspaceId ?? null, contactId: data.contactId ?? null, stageId: data.stageId ?? null, value: data.value ?? "0", currency: data.currency ?? "USD", stage: data.stage ?? "lead", priority: data.priority ?? "medium", assignedTo: data.assignedTo ?? null, businessName: data.businessName ?? null, businessType: data.businessType ?? null, contactName: data.contactName ?? null, contactEmail: data.contactEmail ?? null, contactPhone: data.contactPhone ?? null, plan: data.plan ?? null, source: data.source ?? null, lastActivity: data.lastActivity ?? null, nextFollowUp: data.nextFollowUp ?? null, notes: data.notes ?? null, closedAt: data.closedAt ?? null, expectedCloseDate: data.expectedCloseDate ?? null, createdAt: new Date(), updatedAt: new Date() };
+    this.crmDealsMap.set(record.id, record);
+    return record;
+  }
+  async updateCrmDeal(id: number, data: Partial<InsertCrmDeal>): Promise<CrmDeal | undefined> {
+    const existing = this.crmDealsMap.get(id);
+    if (!existing) return undefined;
+    const updated = { ...existing, ...data, updatedAt: new Date() };
+    this.crmDealsMap.set(id, updated);
+    return updated;
+  }
+  async deleteCrmDeal(id: number): Promise<boolean> { return this.crmDealsMap.delete(id); }
 }
 
 export class DbStorage implements IStorage {
@@ -2139,6 +2225,65 @@ export class DbStorage implements IStorage {
   }
   async getContentAssetUsage(postId: string): Promise<ContentAssetUsage[]> {
     return db!.select().from(contentAssetUsage).where(eq(contentAssetUsage.postId, postId));
+  }
+
+  async getCrmContacts(workspaceId?: string): Promise<CrmContact[]> {
+    if (workspaceId) return db!.select().from(crmContacts).where(eq(crmContacts.workspaceId, workspaceId)).orderBy(desc(crmContacts.createdAt));
+    return db!.select().from(crmContacts).orderBy(desc(crmContacts.createdAt));
+  }
+  async getCrmContact(id: number): Promise<CrmContact | undefined> {
+    const [row] = await db!.select().from(crmContacts).where(eq(crmContacts.id, id));
+    return row;
+  }
+  async createCrmContact(data: InsertCrmContact): Promise<CrmContact> {
+    const [row] = await db!.insert(crmContacts).values(data).returning();
+    return row;
+  }
+  async updateCrmContact(id: number, data: Partial<InsertCrmContact>): Promise<CrmContact | undefined> {
+    const [row] = await db!.update(crmContacts).set({ ...data, updatedAt: new Date() }).where(eq(crmContacts.id, id)).returning();
+    return row;
+  }
+  async deleteCrmContact(id: number): Promise<boolean> {
+    const result = await db!.delete(crmContacts).where(eq(crmContacts.id, id)).returning();
+    return result.length > 0;
+  }
+
+  async getCrmPipelineStages(workspaceId?: string): Promise<CrmPipelineStage[]> {
+    if (workspaceId) return db!.select().from(crmPipelineStages).where(eq(crmPipelineStages.workspaceId, workspaceId)).orderBy(asc(crmPipelineStages.position));
+    return db!.select().from(crmPipelineStages).orderBy(asc(crmPipelineStages.position));
+  }
+  async createCrmPipelineStage(data: InsertCrmPipelineStage): Promise<CrmPipelineStage> {
+    const [row] = await db!.insert(crmPipelineStages).values(data).returning();
+    return row;
+  }
+  async updateCrmPipelineStage(id: number, data: Partial<InsertCrmPipelineStage>): Promise<CrmPipelineStage | undefined> {
+    const [row] = await db!.update(crmPipelineStages).set(data).where(eq(crmPipelineStages.id, id)).returning();
+    return row;
+  }
+  async deleteCrmPipelineStage(id: number): Promise<boolean> {
+    const result = await db!.delete(crmPipelineStages).where(eq(crmPipelineStages.id, id)).returning();
+    return result.length > 0;
+  }
+
+  async getCrmDeals(workspaceId?: string): Promise<CrmDeal[]> {
+    if (workspaceId) return db!.select().from(crmDeals).where(eq(crmDeals.workspaceId, workspaceId)).orderBy(desc(crmDeals.createdAt));
+    return db!.select().from(crmDeals).orderBy(desc(crmDeals.createdAt));
+  }
+  async getCrmDeal(id: number): Promise<CrmDeal | undefined> {
+    const [row] = await db!.select().from(crmDeals).where(eq(crmDeals.id, id));
+    return row;
+  }
+  async createCrmDeal(data: InsertCrmDeal): Promise<CrmDeal> {
+    const [row] = await db!.insert(crmDeals).values(data).returning();
+    return row;
+  }
+  async updateCrmDeal(id: number, data: Partial<InsertCrmDeal>): Promise<CrmDeal | undefined> {
+    const [row] = await db!.update(crmDeals).set({ ...data, updatedAt: new Date() }).where(eq(crmDeals.id, id)).returning();
+    return row;
+  }
+  async deleteCrmDeal(id: number): Promise<boolean> {
+    const result = await db!.delete(crmDeals).where(eq(crmDeals.id, id)).returning();
+    return result.length > 0;
   }
 }
 

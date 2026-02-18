@@ -1,11 +1,11 @@
 import { useState } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import {
   Plus, Search, Users, Target, Presentation, CheckCircle2,
-  Building2, Phone, Mail, Calendar, DollarSign, ArrowRight,
-  MoreVertical, Clock, MessageSquare, ChevronDown
+  Phone, Mail, Calendar, Clock, Loader2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
@@ -13,26 +13,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { AdminLayout } from "@/components/admin-layout";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
+import type { CrmDeal } from "@shared/schema";
 
 type PipelineStage = "lead" | "demo" | "proposal" | "closed";
-
-interface Deal {
-  id: number;
-  businessName: string;
-  contactName: string;
-  contactEmail: string;
-  contactPhone: string;
-  businessType: string;
-  plan: string;
-  value: number;
-  stage: PipelineStage;
-  assignedTo: string;
-  lastActivity: string;
-  nextFollowUp: string;
-  notes: string;
-  source: string;
-  createdAt: string;
-}
 
 const stageConfig: Record<PipelineStage, { label: string; icon: typeof Users; color: string; bg: string; border: string }> = {
   lead: { label: "Leads", icon: Users, color: "text-blue-500", bg: "bg-blue-500/10 dark:bg-blue-500/20", border: "border-blue-500/30" },
@@ -43,26 +28,12 @@ const stageConfig: Record<PipelineStage, { label: string; icon: typeof Users; co
 
 const stages: PipelineStage[] = ["lead", "demo", "proposal", "closed"];
 
-const initialDeals: Deal[] = [
-  { id: 1, businessName: "Sakura Sushi Bar", contactName: "Yuki Tanaka", contactEmail: "yuki@sakurasushi.com", contactPhone: "+1 (555) 234-5678", businessType: "Restaurant", plan: "Complete Solution", value: 299, stage: "lead", assignedTo: "Maria Garcia", lastActivity: "Called, left voicemail", nextFollowUp: "Feb 16, 2026", notes: "Interested in website + booking system", source: "Google Ads", createdAt: "Feb 12, 2026" },
-  { id: 2, businessName: "The Rustic Table", contactName: "Mike Johnson", contactEmail: "mike@rustictable.com", contactPhone: "+1 (555) 345-6789", businessType: "Restaurant", plan: "Complete Solution", value: 299, stage: "lead", assignedTo: "David Chen", lastActivity: "Email sent with info pack", nextFollowUp: "Feb 17, 2026", notes: "Found us through a referral", source: "Referral", createdAt: "Feb 13, 2026" },
-  { id: 3, businessName: "Beachside Bar & Grill", contactName: "Sarah Lopez", contactEmail: "sarah@beachsidebar.com", contactPhone: "+1 (555) 456-7890", businessType: "Bar", plan: "Widget Only", value: 149, stage: "lead", assignedTo: "Maria Garcia", lastActivity: "Initial contact form submitted", nextFollowUp: "Feb 15, 2026", notes: "Small bar, interested in widget only", source: "Website", createdAt: "Feb 14, 2026" },
-  { id: 4, businessName: "Grand Hotel Melbourne", contactName: "James Wright", contactEmail: "james@grandhotelmelb.com", contactPhone: "+1 (555) 567-8901", businessType: "Hotel", plan: "Complete Solution", value: 299, stage: "demo", assignedTo: "Maria Garcia", lastActivity: "Demo scheduled for Feb 18", nextFollowUp: "Feb 18, 2026", notes: "3 locations, interested in multi-location plan", source: "LinkedIn", createdAt: "Feb 8, 2026" },
-  { id: 5, businessName: "Café Noir", contactName: "Pierre Dubois", contactEmail: "pierre@cafenoir.com", contactPhone: "+1 (555) 678-9012", businessType: "Cafe", plan: "Complete Solution", value: 299, stage: "demo", assignedTo: "David Chen", lastActivity: "Demo completed, positive response", nextFollowUp: "Feb 16, 2026", notes: "Wants to see competitor comparison", source: "Google Ads", createdAt: "Feb 5, 2026" },
-  { id: 6, businessName: "Sunset Lounge", contactName: "Emma Davis", contactEmail: "emma@sunsetlounge.com", contactPhone: "+1 (555) 789-0123", businessType: "Bar", plan: "Widget Only", value: 149, stage: "demo", assignedTo: "David Chen", lastActivity: "Demo rescheduled to Feb 19", nextFollowUp: "Feb 19, 2026", notes: "Busy season, needs flexible scheduling", source: "Referral", createdAt: "Feb 3, 2026" },
-  { id: 7, businessName: "La Dolce Vita", contactName: "Marco Rossi", contactEmail: "marco@ladolcevita.com", contactPhone: "+1 (555) 890-1234", businessType: "Restaurant", plan: "Complete Solution", value: 299, stage: "proposal", assignedTo: "Maria Garcia", lastActivity: "Proposal sent, awaiting review", nextFollowUp: "Feb 17, 2026", notes: "Wants custom website design", source: "Website", createdAt: "Jan 28, 2026" },
-  { id: 8, businessName: "Skyline Rooftop", contactName: "Alex Turner", contactEmail: "alex@skylinerooftop.com", contactPhone: "+1 (555) 901-2345", businessType: "Bar", plan: "Complete Solution", value: 299, stage: "proposal", assignedTo: "David Chen", lastActivity: "Negotiating pricing, may need discount", nextFollowUp: "Feb 16, 2026", notes: "Budget conscious, considering competitors", source: "Google Ads", createdAt: "Jan 25, 2026" },
-  { id: 9, businessName: "Harbor View Hotel", contactName: "Lisa Chen", contactEmail: "lisa@harborview.com", contactPhone: "+1 (555) 012-3456", businessType: "Hotel", plan: "Complete Solution", value: 349, stage: "proposal", assignedTo: "Maria Garcia", lastActivity: "Custom proposal with multi-location pricing", nextFollowUp: "Feb 18, 2026", notes: "2 locations, wants bundled deal", source: "LinkedIn", createdAt: "Jan 20, 2026" },
-  { id: 10, businessName: "The Olive Garden Bistro", contactName: "Tony Moretti", contactEmail: "tony@olivegardenbistro.com", contactPhone: "+1 (555) 123-4567", businessType: "Restaurant", plan: "Complete Solution", value: 299, stage: "closed", assignedTo: "Maria Garcia", lastActivity: "Contract signed, onboarding started", nextFollowUp: "-", notes: "Happy with demo, quick close", source: "Referral", createdAt: "Jan 10, 2026" },
-  { id: 11, businessName: "Moonlight Café", contactName: "Anna Park", contactEmail: "anna@moonlightcafe.com", contactPhone: "+1 (555) 234-5679", businessType: "Cafe", plan: "Widget Only", value: 149, stage: "closed", assignedTo: "David Chen", lastActivity: "Widget installed, live on website", nextFollowUp: "-", notes: "Started with widget, may upgrade later", source: "Google Ads", createdAt: "Jan 8, 2026" },
-];
-
 export default function AdminCrm() {
-  const [deals, setDeals] = useState<Deal[]>(initialDeals);
+  const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterAssignee, setFilterAssignee] = useState("all");
   const [filterSource, setFilterSource] = useState("all");
-  const [selectedDeal, setSelectedDeal] = useState<Deal | null>(null);
+  const [selectedDeal, setSelectedDeal] = useState<CrmDeal | null>(null);
   const [showAddDeal, setShowAddDeal] = useState(false);
   const [viewMode, setViewMode] = useState<"board" | "list">("board");
 
@@ -77,40 +48,98 @@ export default function AdminCrm() {
     notes: "",
   });
 
-  const filteredDeals = deals.filter(d => {
+  const { data: deals = [], isLoading } = useQuery<CrmDeal[]>({
+    queryKey: ["/api/admin/crm/deals"],
+  });
+
+  const createDealMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const res = await apiRequest("POST", "/api/admin/crm/deals", data);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/crm/deals"] });
+      setShowAddDeal(false);
+      setNewDeal({ businessName: "", contactName: "", contactEmail: "", contactPhone: "", businessType: "Restaurant", plan: "Complete Solution", source: "Website", notes: "" });
+      toast({ title: "Deal added to pipeline" });
+    },
+    onError: (err: any) => {
+      toast({ title: "Failed to create deal", description: err.message, variant: "destructive" });
+    },
+  });
+
+  const updateDealMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: number; data: any }) => {
+      const res = await apiRequest("PATCH", `/api/admin/crm/deals/${id}`, data);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/crm/deals"] });
+      setSelectedDeal(null);
+      toast({ title: "Deal updated" });
+    },
+  });
+
+  const deleteDealMutation = useMutation({
+    mutationFn: async (id: number) => {
+      await apiRequest("DELETE", `/api/admin/crm/deals/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/crm/deals"] });
+      setSelectedDeal(null);
+      toast({ title: "Deal deleted" });
+    },
+  });
+
+  const filteredDeals = deals.filter((d: CrmDeal) => {
     const matchesSearch = !searchQuery ||
-      d.businessName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      d.contactName.toLowerCase().includes(searchQuery.toLowerCase());
+      (d.businessName ?? "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (d.contactName ?? "").toLowerCase().includes(searchQuery.toLowerCase());
     const matchesAssignee = filterAssignee === "all" || d.assignedTo === filterAssignee;
     const matchesSource = filterSource === "all" || d.source === filterSource;
     return matchesSearch && matchesAssignee && matchesSource;
   });
 
-  const getStageDeals = (stage: PipelineStage) => filteredDeals.filter(d => d.stage === stage);
-  const getStageValue = (stage: PipelineStage) => getStageDeals(stage).reduce((sum, d) => sum + d.value, 0);
+  const getStageDeals = (stage: PipelineStage) => filteredDeals.filter((d: CrmDeal) => d.stage === stage);
+  const getStageValue = (stage: PipelineStage) => getStageDeals(stage).reduce((sum, d) => sum + Number(d.value || 0), 0);
 
   const moveDeal = (dealId: number, newStage: PipelineStage) => {
-    setDeals(prev => prev.map(d => d.id === dealId ? { ...d, stage: newStage } : d));
-    setSelectedDeal(null);
+    updateDealMutation.mutate({ id: dealId, data: { stage: newStage } });
   };
 
   const handleAddDeal = () => {
-    const deal: Deal = {
-      id: deals.length + 1,
-      ...newDeal,
-      value: newDeal.plan === "Complete Solution" ? 299 : 149,
+    const value = newDeal.plan === "Complete Solution" ? "299" : "149";
+    createDealMutation.mutate({
+      title: newDeal.businessName,
+      businessName: newDeal.businessName,
+      contactName: newDeal.contactName,
+      contactEmail: newDeal.contactEmail,
+      contactPhone: newDeal.contactPhone,
+      businessType: newDeal.businessType,
+      plan: newDeal.plan,
+      source: newDeal.source,
+      notes: newDeal.notes,
+      value,
       stage: "lead",
       assignedTo: "Maria Garcia",
       lastActivity: "Just created",
       nextFollowUp: "TBD",
-      createdAt: "Feb 15, 2026",
-    };
-    setDeals(prev => [...prev, deal]);
-    setShowAddDeal(false);
-    setNewDeal({ businessName: "", contactName: "", contactEmail: "", contactPhone: "", businessType: "Restaurant", plan: "Complete Solution", source: "Website", notes: "" });
+    });
   };
 
-  const totalPipelineValue = filteredDeals.reduce((sum, d) => sum + d.value, 0);
+  const assignees = [...new Set(deals.map((d: CrmDeal) => d.assignedTo).filter(Boolean))];
+  const sources = [...new Set(deals.map((d: CrmDeal) => d.source).filter(Boolean))];
+  const totalPipelineValue = filteredDeals.reduce((sum, d) => sum + Number(d.value || 0), 0);
+
+  if (isLoading) {
+    return (
+      <AdminLayout>
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout>
@@ -184,8 +213,9 @@ export default function AdminCrm() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Reps</SelectItem>
-              <SelectItem value="Maria Garcia">Maria Garcia</SelectItem>
-              <SelectItem value="David Chen">David Chen</SelectItem>
+              {assignees.map(a => (
+                <SelectItem key={a} value={a!}>{a}</SelectItem>
+              ))}
             </SelectContent>
           </Select>
           <Select value={filterSource} onValueChange={setFilterSource}>
@@ -194,10 +224,9 @@ export default function AdminCrm() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Sources</SelectItem>
-              <SelectItem value="Website">Website</SelectItem>
-              <SelectItem value="Google Ads">Google Ads</SelectItem>
-              <SelectItem value="LinkedIn">LinkedIn</SelectItem>
-              <SelectItem value="Referral">Referral</SelectItem>
+              {sources.map(s => (
+                <SelectItem key={s} value={s!}>{s}</SelectItem>
+              ))}
             </SelectContent>
           </Select>
           <div className="text-sm text-muted-foreground">
@@ -233,7 +262,7 @@ export default function AdminCrm() {
                           </div>
                           <p className="text-xs text-muted-foreground">{deal.contactName}</p>
                           <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
-                            <span>${deal.value}/mo</span>
+                            <span>${Number(deal.value || 0)}/mo</span>
                             <span>{deal.plan}</span>
                           </div>
                           <div className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -276,7 +305,7 @@ export default function AdminCrm() {
                   </thead>
                   <tbody>
                     {filteredDeals.map(deal => {
-                      const config = stageConfig[deal.stage];
+                      const config = stageConfig[(deal.stage as PipelineStage) || "lead"];
                       return (
                         <tr
                           key={deal.id}
@@ -302,7 +331,7 @@ export default function AdminCrm() {
                             </Badge>
                           </td>
                           <td className="p-3 text-sm">{deal.plan}</td>
-                          <td className="p-3 text-sm">${deal.value}/mo</td>
+                          <td className="p-3 text-sm">${Number(deal.value || 0)}/mo</td>
                           <td className="p-3 text-sm text-muted-foreground">{deal.assignedTo}</td>
                           <td className="p-3 text-sm text-muted-foreground whitespace-nowrap">{deal.nextFollowUp}</td>
                           <td className="p-3">
@@ -333,15 +362,21 @@ export default function AdminCrm() {
                   </div>
                   <div className="space-y-1">
                     <p className="text-xs text-muted-foreground">Value</p>
-                    <p className="text-sm font-medium">${selectedDeal.value}/mo</p>
+                    <p className="text-sm font-medium">${Number(selectedDeal.value || 0)}/mo</p>
                   </div>
                   <div className="space-y-1">
                     <p className="text-xs text-muted-foreground">Email</p>
-                    <p className="text-sm">{selectedDeal.contactEmail}</p>
+                    <div className="flex items-center gap-1">
+                      <Mail className="w-3 h-3 text-muted-foreground" />
+                      <p className="text-sm">{selectedDeal.contactEmail}</p>
+                    </div>
                   </div>
                   <div className="space-y-1">
                     <p className="text-xs text-muted-foreground">Phone</p>
-                    <p className="text-sm">{selectedDeal.contactPhone}</p>
+                    <div className="flex items-center gap-1">
+                      <Phone className="w-3 h-3 text-muted-foreground" />
+                      <p className="text-sm">{selectedDeal.contactPhone}</p>
+                    </div>
                   </div>
                   <div className="space-y-1">
                     <p className="text-xs text-muted-foreground">Source</p>
@@ -353,7 +388,7 @@ export default function AdminCrm() {
                   </div>
                   <div className="space-y-1">
                     <p className="text-xs text-muted-foreground">Created</p>
-                    <p className="text-sm">{selectedDeal.createdAt}</p>
+                    <p className="text-sm">{selectedDeal.createdAt ? new Date(selectedDeal.createdAt).toLocaleDateString() : "-"}</p>
                   </div>
                   <div className="space-y-1">
                     <p className="text-xs text-muted-foreground">Next Follow Up</p>
@@ -383,6 +418,7 @@ export default function AdminCrm() {
                           variant="outline"
                           size="sm"
                           onClick={() => moveDeal(selectedDeal.id, stage)}
+                          disabled={updateDealMutation.isPending}
                           data-testid={`button-move-${stage}`}
                         >
                           <Icon className={`w-3.5 h-3.5 mr-1.5 ${config.color}`} />
@@ -391,6 +427,19 @@ export default function AdminCrm() {
                       );
                     })}
                   </div>
+                </div>
+
+                <div className="flex justify-end pt-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-destructive"
+                    onClick={() => deleteDealMutation.mutate(selectedDeal.id)}
+                    disabled={deleteDealMutation.isPending}
+                    data-testid="button-delete-deal"
+                  >
+                    Delete Deal
+                  </Button>
                 </div>
               </div>
             )}
@@ -503,10 +552,10 @@ export default function AdminCrm() {
               </Button>
               <Button
                 onClick={handleAddDeal}
-                disabled={!newDeal.businessName || !newDeal.contactName}
+                disabled={!newDeal.businessName || !newDeal.contactName || createDealMutation.isPending}
                 data-testid="button-save-deal"
               >
-                <Plus className="w-4 h-4 mr-2" />
+                {createDealMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
                 Add to Pipeline
               </Button>
             </DialogFooter>

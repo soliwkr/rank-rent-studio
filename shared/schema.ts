@@ -1088,3 +1088,102 @@ export const insertContentAssetUsageSchema = createInsertSchema(contentAssetUsag
 });
 export type InsertContentAssetUsage = z.infer<typeof insertContentAssetUsageSchema>;
 export type ContentAssetUsage = typeof contentAssetUsage.$inferSelect;
+
+export const crmContacts = pgTable(
+  "crm_contacts",
+  {
+    id: serial("id").primaryKey(),
+    workspaceId: varchar("workspace_id", { length: 36 }),
+    name: text("name").notNull(),
+    email: text("email"),
+    phone: text("phone"),
+    company: text("company"),
+    title: text("title"),
+    source: text("source").default("manual"),
+    status: text("status").default("active"),
+    notes: text("notes"),
+    tags: text("tags").array(),
+    lastContactedAt: timestamp("last_contacted_at"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (t) => [
+    index("crm_contacts_workspace_idx").on(t.workspaceId),
+    index("crm_contacts_email_idx").on(t.email),
+    index("crm_contacts_status_idx").on(t.status),
+  ]
+);
+
+export const insertCrmContactSchema = createInsertSchema(crmContacts).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+export type InsertCrmContact = z.infer<typeof insertCrmContactSchema>;
+export type CrmContact = typeof crmContacts.$inferSelect;
+
+export const crmPipelineStages = pgTable(
+  "crm_pipeline_stages",
+  {
+    id: serial("id").primaryKey(),
+    workspaceId: varchar("workspace_id", { length: 36 }),
+    name: text("name").notNull(),
+    slug: text("slug").notNull(),
+    color: text("color").default("#3b82f6"),
+    position: integer("position").notNull().default(0),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (t) => [
+    index("crm_pipeline_stages_workspace_idx").on(t.workspaceId),
+  ]
+);
+
+export const insertCrmPipelineStageSchema = createInsertSchema(crmPipelineStages).omit({
+  id: true,
+  createdAt: true,
+});
+export type InsertCrmPipelineStage = z.infer<typeof insertCrmPipelineStageSchema>;
+export type CrmPipelineStage = typeof crmPipelineStages.$inferSelect;
+
+export const crmDeals = pgTable(
+  "crm_deals",
+  {
+    id: serial("id").primaryKey(),
+    workspaceId: varchar("workspace_id", { length: 36 }),
+    contactId: integer("contact_id").references(() => crmContacts.id, { onDelete: "set null" }),
+    stageId: integer("stage_id").references(() => crmPipelineStages.id, { onDelete: "set null" }),
+    title: text("title").notNull(),
+    value: decimal("value", { precision: 12, scale: 2 }).default("0"),
+    currency: text("currency").default("USD"),
+    stage: text("stage").default("lead"),
+    priority: text("priority").default("medium"),
+    assignedTo: text("assigned_to"),
+    businessName: text("business_name"),
+    businessType: text("business_type"),
+    contactName: text("contact_name"),
+    contactEmail: text("contact_email"),
+    contactPhone: text("contact_phone"),
+    plan: text("plan"),
+    source: text("source"),
+    lastActivity: text("last_activity"),
+    nextFollowUp: text("next_follow_up"),
+    notes: text("notes"),
+    closedAt: timestamp("closed_at"),
+    expectedCloseDate: date("expected_close_date"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (t) => [
+    index("crm_deals_workspace_idx").on(t.workspaceId),
+    index("crm_deals_stage_idx").on(t.stage),
+    index("crm_deals_contact_idx").on(t.contactId),
+  ]
+);
+
+export const insertCrmDealSchema = createInsertSchema(crmDeals).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+export type InsertCrmDeal = z.infer<typeof insertCrmDealSchema>;
+export type CrmDeal = typeof crmDeals.$inferSelect;
