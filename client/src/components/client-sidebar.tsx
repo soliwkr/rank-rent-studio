@@ -3,34 +3,40 @@ import { Link, useLocation } from "wouter";
 import {
   LayoutDashboard,
   FileText,
+  FileIcon,
   Megaphone,
-  ImageIcon,
+  Globe,
+  Link as LinkIcon,
+  HeartPulse,
   RefreshCw,
+  ClipboardList,
+  Receipt,
   TrendingUp,
   MapPin,
-  Search,
-  Code2,
-  Link as LinkIcon,
-  Globe,
   Monitor,
+  PhoneCall,
+  Mic,
+  MessageCircle,
+  Activity,
+  Code,
   Kanban,
   Contact,
   BarChart3,
-  MessageSquare,
+  Download,
   Brain,
-  Code,
-  Settings,
-  Users,
-  Key,
-  Phone,
+  Cpu,
+  ImageIcon,
   CreditCard,
-  Coins,
+  Phone,
+  Sparkles,
   BookOpen,
+  Users,
+  Palette,
+  Wallet,
+  ListChecks,
   LifeBuoy,
+  HelpCircle,
   ChevronDown,
-  Sun,
-  Moon,
-  LogOut,
 } from "lucide-react";
 import {
   Sidebar,
@@ -56,9 +62,6 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { useWorkspace } from "@/lib/workspace-context";
 import type { LucideIcon } from "lucide-react";
 
@@ -70,84 +73,102 @@ interface NavItem {
 
 interface NavGroup {
   label: string;
-  prefix: string;
   items: NavItem[];
 }
 
 const navGroups: NavGroup[] = [
   {
-    label: "Overview",
-    prefix: "/today",
+    label: "Dashboard",
     items: [
-      { title: "Dashboard", path: "/today", icon: LayoutDashboard },
+      { title: "Overview", path: "/today", icon: LayoutDashboard },
     ],
   },
   {
-    label: "Content",
-    prefix: "/content",
+    label: "Content Engine",
     items: [
       { title: "Posts", path: "/content/posts", icon: FileText },
+      { title: "Pages", path: "/content/pages", icon: FileIcon },
       { title: "Campaigns", path: "/content/campaigns", icon: Megaphone },
-      { title: "Media Library", path: "/content/domains", icon: ImageIcon },
-      { title: "CMS Sync", path: "/seo/cms", icon: RefreshCw },
+      { title: "Domains", path: "/content/domains", icon: Globe },
     ],
   },
   {
     label: "SEO",
-    prefix: "/seo",
     items: [
-      { title: "Rank Tracker", path: "/rank-tracker/track-keywords", icon: TrendingUp },
+      { title: "Links", path: "/seo/links", icon: LinkIcon },
+      { title: "Health", path: "/seo/health", icon: HeartPulse },
+      { title: "CMS", path: "/seo/cms", icon: RefreshCw },
+      { title: "Reports", path: "/seo/reports", icon: ClipboardList },
+      { title: "Invoices", path: "/seo/invoices", icon: Receipt },
+    ],
+  },
+  {
+    label: "Rank Tracker",
+    items: [
+      { title: "Track Keywords", path: "/rank-tracker/track-keywords", icon: TrendingUp },
       { title: "Local Search Grid", path: "/rank-tracker/local-search-grid", icon: MapPin },
-      { title: "Site Audit", path: "/seo/health", icon: Search },
-      { title: "Schema Markup", path: "/seo/links", icon: Code2 },
-      { title: "Link Builder", path: "/seo/reports", icon: LinkIcon },
-      { title: "Site Profile", path: "/content/pages", icon: Globe },
-      { title: "Search Console", path: "/rank-tracker/google-search-console", icon: Monitor },
+      { title: "Google Search Console", path: "/rank-tracker/google-search-console", icon: Monitor },
+    ],
+  },
+  {
+    label: "Twilio",
+    items: [
+      { title: "Call Logs", path: "/twilio/call-logs", icon: PhoneCall },
+      { title: "Voice Settings", path: "/twilio/voice", icon: Mic },
+      { title: "SMS Settings", path: "/twilio/sms", icon: MessageCircle },
+    ],
+  },
+  {
+    label: "Widget",
+    items: [
+      { title: "Monitoring", path: "/widget/monitoring", icon: Activity },
+      { title: "Widget Code", path: "/widget/code", icon: Code },
     ],
   },
   {
     label: "CRM",
-    prefix: "/crm",
     items: [
       { title: "Pipeline", path: "/crm/pipeline", icon: Kanban },
       { title: "Contacts", path: "/crm/contacts", icon: Contact },
     ],
   },
   {
-    label: "Business",
-    prefix: "/business",
+    label: "Analytics",
     items: [
-      { title: "Invoices", path: "/seo/invoices", icon: FileText },
-      { title: "Reports", path: "/analytics/overview", icon: BarChart3 },
+      { title: "Overview", path: "/analytics/overview", icon: BarChart3 },
+      { title: "Export Data", path: "/analytics/export", icon: Download },
     ],
   },
   {
-    label: "Widget",
-    prefix: "/widget",
+    label: "Connections",
     items: [
-      { title: "Chat Widget", path: "/widget/monitoring", icon: MessageSquare },
-      { title: "Training Data", path: "/ai-training/knowledge-base", icon: Brain },
-      { title: "Embed Code", path: "/widget/code", icon: Code },
+      { title: "AI Providers", path: "/connections/ai-providers", icon: Sparkles },
+      { title: "Image Banks", path: "/connections/image-banks", icon: ImageIcon },
+      { title: "Payments", path: "/connections/payments", icon: CreditCard },
+      { title: "Twilio Account", path: "/connections/twilio", icon: Phone },
+    ],
+  },
+  {
+    label: "AI Training",
+    items: [
+      { title: "Knowledge Base", path: "/ai-training/knowledge-base", icon: Brain },
+      { title: "Channels", path: "/ai-training/channels", icon: Cpu },
     ],
   },
   {
     label: "Settings",
-    prefix: "/settings",
     items: [
-      { title: "General", path: "/settings/white-label", icon: Settings },
-      { title: "Team", path: "/settings/team", icon: Users },
-      { title: "API Keys (BYOK)", path: "/connections/ai-providers", icon: Key },
-      { title: "Twilio", path: "/connections/twilio", icon: Phone },
-      { title: "Payments", path: "/connections/payments", icon: CreditCard },
-      { title: "Credits", path: "/settings/billing", icon: Coins },
+      { title: "Team & Invites", path: "/settings/team", icon: Users },
+      { title: "White Label", path: "/settings/white-label", icon: Palette },
+      { title: "Billing & Usage", path: "/settings/billing", icon: Wallet },
+      { title: "Setup Guide", path: "/settings/setup-guide", icon: ListChecks },
     ],
   },
   {
-    label: "Help",
-    prefix: "/support",
+    label: "Support",
     items: [
       { title: "Documentation", path: "/support/documentation", icon: BookOpen },
-      { title: "Support", path: "/support/tickets", icon: LifeBuoy },
+      { title: "Support Tickets", path: "/support/tickets", icon: LifeBuoy },
     ],
   },
 ];
@@ -160,34 +181,13 @@ export function ClientSidebar() {
 
   const isActive = (path: string) => {
     const fullPath = `${base}${path}`;
-    if (path.endsWith("/today")) return location === fullPath;
+    if (path === "/today") return location === fullPath;
     return location.startsWith(fullPath);
   };
 
   const isGroupActive = (group: NavGroup) => {
     return group.items.some((item) => isActive(item.path));
   };
-
-  const [isDark, setIsDark] = useState(() => {
-    try {
-      const saved = localStorage.getItem("indexflow_theme");
-      if (saved) return saved === "dark";
-      return document.documentElement.classList.contains("dark");
-    } catch {
-      return false;
-    }
-  });
-
-  useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-    try {
-      localStorage.setItem("indexflow_theme", isDark ? "dark" : "light");
-    } catch {}
-  }, [isDark]);
 
   return (
     <Sidebar>
@@ -224,7 +224,7 @@ export function ClientSidebar() {
       <SidebarContent>
         {navGroups.map((group) => (
           <SidebarGroup key={group.label}>
-            <Collapsible defaultOpen={isGroupActive(group)} className="group/collapsible">
+            <Collapsible defaultOpen={isGroupActive(group) || group.label === "Dashboard"} className="group/collapsible">
               <CollapsibleTrigger asChild>
                 <SidebarGroupLabel className="cursor-pointer" data-testid={`group-${group.label.toLowerCase().replace(/\s+/g, "-")}`}>
                   {group.label}
@@ -257,43 +257,7 @@ export function ClientSidebar() {
         ))}
       </SidebarContent>
 
-      <SidebarFooter>
-        <Separator className="bg-sidebar-border" />
-        <div className="flex items-center gap-2 px-1 py-1">
-          <Avatar className="h-8 w-8">
-            <AvatarFallback className="bg-sidebar-accent text-sidebar-accent-foreground text-xs">
-              {selectedWorkspace?.name?.charAt(0)?.toUpperCase() ?? "W"}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col min-w-0 flex-1">
-            <span className="text-xs font-medium truncate text-sidebar-foreground" data-testid="text-footer-workspace">
-              {selectedWorkspace?.name ?? "Workspace"}
-            </span>
-            <span className="text-[10px] text-sidebar-foreground/60" data-testid="text-footer-role">
-              Owner
-            </span>
-          </div>
-        </div>
-        <div className="flex items-center gap-1 justify-between flex-wrap">
-          <Button
-            size="icon"
-            variant="ghost"
-            onClick={() => setIsDark(!isDark)}
-            className="text-sidebar-foreground"
-            data-testid="button-theme-toggle"
-          >
-            {isDark ? <Sun /> : <Moon />}
-          </Button>
-          <Button
-            size="icon"
-            variant="ghost"
-            className="text-sidebar-foreground"
-            data-testid="button-logout"
-          >
-            <LogOut />
-          </Button>
-        </div>
-      </SidebarFooter>
+      <SidebarFooter />
     </Sidebar>
   );
 }
