@@ -145,9 +145,9 @@ function PostsTab({ workspaceId }: { workspaceId: string }) {
     setEditorSlug(post.slug || "");
     setEditorCategory(post.category || "");
     setEditorType(post.schemaType || "Standard Article");
-    setEditorDescription(post.metaDescription || "");
+    setEditorDescription(post.description || "");
     setEditorTags(post.tags || []);
-    setEditorContent(post.content || "");
+    setEditorContent(post.mdxContent || "");
     setEditorSubTab("editor");
     setView("editor");
   };
@@ -168,9 +168,9 @@ function PostsTab({ workspaceId }: { workspaceId: string }) {
       slug: editorSlug || editorTitle.toLowerCase().replace(/\s+/g, "-"),
       category: editorCategory,
       schemaType: editorType,
-      metaDescription: editorDescription,
+      description: editorDescription,
       tags: editorTags,
-      content: editorContent,
+      mdxContent: editorContent,
       status: "draft",
     };
     if (selectedPost) {
@@ -195,9 +195,9 @@ function PostsTab({ workspaceId }: { workspaceId: string }) {
         slug: editorSlug || editorTitle.toLowerCase().replace(/\s+/g, "-"),
         category: editorCategory,
         schemaType: editorType,
-        metaDescription: editorDescription,
+        description: editorDescription,
         tags: editorTags,
-        content: editorContent,
+        mdxContent: editorContent,
         status: "published",
       };
       createMutation.mutate(data);
@@ -857,16 +857,10 @@ function SeoTab({ workspaceId }: { workspaceId: string }) {
 
   const { data: profile } = useQuery<any>({ queryKey: [`/api/admin/seo/profile/${workspaceId}`] });
 
-  useState(() => {
-    if (profile) {
-      setDestUrl(profile.destinationUrl || "");
-      setBrandTerms(profile.brandTerms || "");
-      setMaxInternal(String(profile.maxInternalLinks || 4));
-      setMaxExternal(String(profile.maxExternalLinks || 2));
-      setCtaText(profile.ctaText || "");
-      setCtaUrl(profile.ctaUrl || "");
-    }
-  });
+  const loaded = profile && destUrl === "" && profile.siteUrl;
+  if (loaded) {
+    setDestUrl(profile.siteUrl || "");
+  }
 
   const saveMutation = useMutation({
     mutationFn: (data: any) => apiRequest("POST", `/api/admin/seo/profile`, data),
