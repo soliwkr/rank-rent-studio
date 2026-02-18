@@ -186,7 +186,7 @@ export default function Home() {
   const [currentVenueIndex, setCurrentVenueIndex] = useState(0);
 
   useEffect(() => {
-    document.title = "indexFlow - Managed Booking & Website Platform for Hospitality";
+    document.title = "indexFlow - All-in-One SEO & Content Platform for Agencies";
   }, []);
 
   useEffect(() => {
@@ -231,36 +231,44 @@ export default function Home() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32 text-center">
           <div className="inline-block backdrop-blur-sm bg-black/15 rounded-2xl px-4 py-6 sm:px-8 sm:py-10 lg:px-12 lg:py-14 mx-2">
             <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold leading-tight mb-6 text-white">
-              One SEO tool to<br className="hidden sm:block" />
+              Stop Paying for 10 SEO Tools<br className="hidden sm:block" />
               <span className="sm:hidden"> </span>
-              <span className="bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">rule them all.</span>
+              <span className="bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">That Don't Talk to Each Other</span>
             </h1>
+            <div className="max-w-3xl mx-auto mb-6 space-y-1">
+              <p className="text-[14px] sm:text-base lg:text-lg text-white/90 drop-shadow-lg">
+                Create Posts & Pages · On-Page SEO Audits · Automated Schema
+              </p>
+              <p className="text-[14px] sm:text-base lg:text-lg text-white/90 drop-shadow-lg">
+                Google, GSC & AI search (OpenAI · Gemini · Perplexity)
+              </p>
+              <p className="text-[14px] sm:text-base lg:text-lg text-white/90 drop-shadow-lg">
+                Smart Internal Linking · Client Reports · Rank Tracking
+              </p>
+              <p className="text-[14px] sm:text-base lg:text-lg text-white/90 drop-shadow-lg">
+                Local SEO Grid · CRM & Pipeline · Stripe & PayPal
+              </p>
+              <p className="text-[14px] sm:text-base lg:text-lg text-white/90 drop-shadow-lg">
+                White-Label · BYOK · Twilio Voice & SMS Widget
+              </p>
+            </div>
             <p className="text-[15px] sm:text-lg lg:text-xl max-w-3xl mx-auto mb-4 font-semibold text-white drop-shadow-lg">
-              Why juggle 10 different platforms<br />
-              when one does it all?
+              Whitelabel infrastructure · You handle clients
             </p>
-            <p className="text-[15px] sm:text-lg lg:text-xl max-w-3xl mx-auto mb-4">
-              <span className="text-white/90 drop-shadow-lg">Create content. Track rankings. Generate leads.</span><br />
-              <span className="text-white/90 drop-shadow-lg">Push to any LLM or CMS. Resell to your clients.</span><br />
-              <span className="text-white/90 drop-shadow-lg">All from one AI-powered platform.</span>
-            </p>
-            <p className="inline-block mb-8 font-bold text-[17px] sm:text-xl lg:text-2xl bg-gradient-to-r from-yellow-300 via-orange-400 to-pink-500 bg-clip-text text-transparent drop-shadow-lg animate-[pulse_5s_ease-in-out_infinite]">
-              Agencies · SaaS · Ecommerce · Local Business
-            </p>
-            <div className="flex items-center justify-center gap-2 sm:gap-4">
+            <div className="flex items-center justify-center gap-2 sm:gap-4 mb-4">
               <Link href="/contact">
                 <Button size="default" className="gap-2 sm:text-base text-sm sm:px-4 px-3" data-testid="button-hero-demo">
                   Get Started <ArrowRight className="w-4 h-4" />
                 </Button>
               </Link>
-              <Link href="/templates">
+              <Link href="/pricing">
                 <Button size="default" variant="outline" className="bg-white/10 border-white/30 text-white hover:bg-white/20 sm:text-base text-sm sm:px-4 px-3" data-testid="button-hero-templates">
-                  <span className="italic">from</span> <span className="font-bold">$99</span> p/mo
+                  <span className="italic">from</span> <span className="font-bold">$99</span>/month
                 </Button>
               </Link>
             </div>
-            <p className="mt-6 text-[13px] sm:text-sm font-medium bg-gradient-to-r from-white via-white/90 to-white/70 bg-clip-text text-transparent drop-shadow-lg">
-              IndexFlow handles infrastructure & agencies handle client relationships.
+            <p className="inline-block font-bold text-[17px] sm:text-xl lg:text-2xl bg-gradient-to-r from-yellow-300 via-orange-400 to-pink-500 bg-clip-text text-transparent drop-shadow-lg animate-[pulse_5s_ease-in-out_infinite]">
+              Agencies · SaaS · Ecommerce · Local Businesses · Solo Founders
             </p>
           </div>
         </div>
