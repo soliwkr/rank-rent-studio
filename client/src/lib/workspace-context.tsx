@@ -19,9 +19,18 @@ const WorkspaceContext = createContext<WorkspaceContextType>({
 
 const STORAGE_KEY = "indexflow_workspace_id";
 
+const RESERVED_PATHS = [
+  "admin", "select-workspace", "preview", "api",
+  "how-it-works", "solutions", "platform", "pricing", "blog", "templates",
+  "contact", "book-demo", "faq", "about", "privacy", "terms", "docs",
+  "comparisons", "features", "locations", "portfolio", "testimonials",
+  "case-studies", "widget-demo", "client-login", "dev",
+  "demo-sms", "demo-email", "demo-reminder", "demo-cms", "demo-chat",
+];
+
 function getWorkspaceIdFromPath(path: string): string | null {
   const segments = path.split("/").filter(Boolean);
-  if (segments.length >= 1 && !["admin", "select-workspace", "preview", "api"].includes(segments[0])) {
+  if (segments.length >= 2 && !RESERVED_PATHS.includes(segments[0])) {
     return segments[0];
   }
   return null;
