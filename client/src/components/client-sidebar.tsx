@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import logoImage from "@assets/image_1771330330596.png";
+import logoImage from "@assets/indexFlow_cloud_LOGO_1771386094646.png";
 import {
   LayoutDashboard,
   FileText,
@@ -152,10 +152,10 @@ export function ClientSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
-        <div className="flex items-center gap-2 px-2 py-1">
-          <img src={logoImage} alt="indexFlow" className="h-6" />
-          <span className="text-base font-semibold" data-testid="text-client-title">
-            {selectedWorkspace?.name ?? "indexFlow"}
+        <div className="flex flex-col gap-1.5 px-2 py-1">
+          <img src={logoImage} alt="indexFlow" className="h-7 w-auto object-contain object-left" />
+          <span className="text-xs font-medium text-muted-foreground truncate" data-testid="text-client-title">
+            {selectedWorkspace?.name ?? "Select a workspace"}
           </span>
         </div>
         <Select
