@@ -165,10 +165,10 @@ export function ClientSidebar() {
             selectWorkspace(workspace);
           }}
         >
-          <SelectTrigger data-testid="select-workspace" className="w-full">
+          <SelectTrigger data-testid="select-workspace" className="w-full bg-sidebar border-sidebar-border text-sidebar-foreground text-xs h-8">
             <SelectValue placeholder="Select workspace" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="max-h-64">
             {workspaces.map((workspace) => (
               <SelectItem
                 key={workspace.id}
