@@ -153,7 +153,7 @@ export function ClientSidebar() {
     <Sidebar>
       <SidebarHeader>
         <div className="flex flex-col gap-1.5 px-2 py-1">
-          <img src={logoImage} alt="indexFlow" className="h-7 w-auto object-contain object-left" />
+          <img src={logoImage} alt="indexFlow" className="w-full max-w-[140px] h-auto object-contain object-left" />
           <span className="text-xs font-medium text-muted-foreground truncate" data-testid="text-client-title">
             {selectedWorkspace?.name ?? "Select a workspace"}
           </span>
