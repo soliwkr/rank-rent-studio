@@ -1,10 +1,25 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 
 export default function ConnectionsPayments() {
+  const { toast } = useToast();
+  const [stripeKey, setStripeKey] = useState("sk_live_••••••••••••");
+  const [paypalClientId, setPaypalClientId] = useState("");
+  const [paypalSecret, setPaypalSecret] = useState("");
+
+  const handleSave = (provider: string) => {
+    toast({ title: "Settings Saved", description: `${provider} configuration has been saved.` });
+  };
+
+  const handleTest = (provider: string) => {
+    toast({ title: "Connection Test", description: `${provider} connection tested successfully!` });
+  };
+
   return (
     <div className="p-6 space-y-6">
       <h1 className="text-2xl font-bold" data-testid="text-page-title">Payment Connections</h1>
@@ -18,7 +33,7 @@ export default function ConnectionsPayments() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label>API Key</Label>
-              <Input type="password" defaultValue="sk_live_••••••••••••" data-testid="input-stripe-api-key" />
+              <Input type="password" value={stripeKey} onChange={(e) => setStripeKey(e.target.value)} data-testid="input-stripe-api-key" />
             </div>
 
             <div className="space-y-2">
@@ -29,8 +44,8 @@ export default function ConnectionsPayments() {
             </div>
 
             <div className="flex items-center gap-2 flex-wrap">
-              <Button size="sm" data-testid="button-save-stripe">Save</Button>
-              <Button variant="outline" size="sm" data-testid="button-test-stripe">Test Connection</Button>
+              <Button size="sm" data-testid="button-save-stripe" onClick={() => handleSave("Stripe")}>Save</Button>
+              <Button variant="outline" size="sm" data-testid="button-test-stripe" onClick={() => handleTest("Stripe")}>Test Connection</Button>
             </div>
           </CardContent>
         </Card>
@@ -43,17 +58,17 @@ export default function ConnectionsPayments() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label>Client ID</Label>
-              <Input placeholder="Enter PayPal Client ID" data-testid="input-paypal-client-id" />
+              <Input placeholder="Enter PayPal Client ID" value={paypalClientId} onChange={(e) => setPaypalClientId(e.target.value)} data-testid="input-paypal-client-id" />
             </div>
 
             <div className="space-y-2">
               <Label>Secret</Label>
-              <Input type="password" placeholder="Enter PayPal Secret" data-testid="input-paypal-secret" />
+              <Input type="password" placeholder="Enter PayPal Secret" value={paypalSecret} onChange={(e) => setPaypalSecret(e.target.value)} data-testid="input-paypal-secret" />
             </div>
 
             <div className="flex items-center gap-2 flex-wrap">
-              <Button size="sm" data-testid="button-save-paypal">Save</Button>
-              <Button variant="outline" size="sm" data-testid="button-test-paypal">Test Connection</Button>
+              <Button size="sm" data-testid="button-save-paypal" onClick={() => handleSave("PayPal")}>Save</Button>
+              <Button variant="outline" size="sm" data-testid="button-test-paypal" onClick={() => handleTest("PayPal")}>Test Connection</Button>
             </div>
           </CardContent>
         </Card>

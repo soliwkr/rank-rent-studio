@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Download, FileText, Search, Users, Receipt, BarChart3 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const exportOptions = [
   { id: "content", title: "Content", description: "Export all posts and pages", icon: FileText },
@@ -14,6 +16,23 @@ const exportOptions = [
 ];
 
 export default function AnalyticsExport() {
+  const { toast } = useToast();
+  const [formats, setFormats] = useState<Record<string, string>>(
+    Object.fromEntries(exportOptions.map((o) => [o.id, "csv"]))
+  );
+
+  const handleExport = (optId: string, title: string) => {
+    const format = formats[optId] || "csv";
+    toast({
+      title: "Export Started",
+      description: `Exporting ${title} data as ${format.toUpperCase()}. Your download will begin shortly.`,
+    });
+  };
+
+  const handleFormatChange = (optId: string, value: string) => {
+    setFormats((prev) => ({ ...prev, [optId]: value }));
+  };
+
   return (
     <div className="p-6 space-y-6">
       <h1 className="text-2xl font-bold" data-testid="text-page-title">Export Data</h1>
@@ -32,7 +51,7 @@ export default function AnalyticsExport() {
 
               <div className="space-y-2">
                 <Label>Format</Label>
-                <Select defaultValue="csv">
+                <Select value={formats[opt.id]} onValueChange={(v) => handleFormatChange(opt.id, v)}>
                   <SelectTrigger data-testid={`select-format-${opt.id}`}>
                     <SelectValue />
                   </SelectTrigger>
@@ -51,7 +70,7 @@ export default function AnalyticsExport() {
                 </div>
               </div>
 
-              <Button className="w-full" data-testid={`button-export-${opt.id}`}>
+              <Button className="w-full" data-testid={`button-export-${opt.id}`} onClick={() => handleExport(opt.id, opt.title)}>
                 <Download className="w-4 h-4 mr-2" />
                 Export
               </Button>

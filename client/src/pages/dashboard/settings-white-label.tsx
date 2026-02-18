@@ -1,11 +1,21 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Info, Upload } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function SettingsWhiteLabel() {
+  const { toast } = useToast();
+
+  const [brandName, setBrandName] = useState("My Agency");
+  const [primaryColor, setPrimaryColor] = useState("#3B82F6");
+  const [customDomain, setCustomDomain] = useState("app.myagency.com");
+  const [supportEmail, setSupportEmail] = useState("support@myagency.com");
+  const [customLogin, setCustomLogin] = useState(false);
+
   return (
     <div className="p-6 space-y-6">
       <h1 className="text-2xl font-bold" data-testid="text-page-title">White Label</h1>
@@ -26,12 +36,16 @@ export default function SettingsWhiteLabel() {
         <CardContent className="space-y-6">
           <div className="space-y-2">
             <Label>Brand Name</Label>
-            <Input defaultValue="My Agency" data-testid="input-brand-name" />
+            <Input value={brandName} onChange={(e) => setBrandName(e.target.value)} data-testid="input-brand-name" />
           </div>
 
           <div className="space-y-2">
             <Label>Logo</Label>
-            <div className="border-2 border-dashed rounded-md p-6 text-center cursor-pointer" data-testid="upload-logo">
+            <div
+              className="border-2 border-dashed rounded-md p-6 text-center cursor-pointer"
+              data-testid="upload-logo"
+              onClick={() => toast({ title: "Upload logo", description: "Logo upload dialog would open here" })}
+            >
               <Upload className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
               <p className="text-sm text-muted-foreground">Click to upload or drag and drop</p>
               <p className="text-xs text-muted-foreground">PNG, JPG up to 2MB</p>
@@ -40,7 +54,11 @@ export default function SettingsWhiteLabel() {
 
           <div className="space-y-2">
             <Label>Favicon</Label>
-            <div className="border-2 border-dashed rounded-md p-6 text-center cursor-pointer" data-testid="upload-favicon">
+            <div
+              className="border-2 border-dashed rounded-md p-6 text-center cursor-pointer"
+              data-testid="upload-favicon"
+              onClick={() => toast({ title: "Upload favicon", description: "Favicon upload dialog would open here" })}
+            >
               <Upload className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
               <p className="text-sm text-muted-foreground">Click to upload favicon</p>
               <p className="text-xs text-muted-foreground">ICO, PNG 32x32 or 16x16</p>
@@ -49,12 +67,12 @@ export default function SettingsWhiteLabel() {
 
           <div className="space-y-2">
             <Label>Primary Color</Label>
-            <Input defaultValue="#3B82F6" data-testid="input-primary-color" />
+            <Input value={primaryColor} onChange={(e) => setPrimaryColor(e.target.value)} data-testid="input-primary-color" />
           </div>
 
           <div className="space-y-2">
             <Label>Custom Domain</Label>
-            <Input defaultValue="app.myagency.com" data-testid="input-custom-domain" />
+            <Input value={customDomain} onChange={(e) => setCustomDomain(e.target.value)} data-testid="input-custom-domain" />
             <div className="p-3 rounded-md bg-muted/50 text-xs text-muted-foreground space-y-1" data-testid="text-dns-instructions">
               <p className="font-medium">DNS Configuration:</p>
               <p>Add a CNAME record pointing to: cname.indexflow.cloud</p>
@@ -64,7 +82,7 @@ export default function SettingsWhiteLabel() {
 
           <div className="space-y-2">
             <Label>Support Email</Label>
-            <Input type="email" defaultValue="support@myagency.com" data-testid="input-support-email" />
+            <Input type="email" value={supportEmail} onChange={(e) => setSupportEmail(e.target.value)} data-testid="input-support-email" />
           </div>
 
           <div className="flex items-center justify-between gap-4 flex-wrap">
@@ -72,12 +90,23 @@ export default function SettingsWhiteLabel() {
               <Label htmlFor="custom-login">Custom Login Page</Label>
               <p className="text-xs text-muted-foreground">Use your branding on the login page</p>
             </div>
-            <Switch id="custom-login" data-testid="switch-custom-login" />
+            <Switch id="custom-login" checked={customLogin} onCheckedChange={setCustomLogin} data-testid="switch-custom-login" />
           </div>
 
           <div className="flex items-center gap-3 flex-wrap">
-            <Button data-testid="button-save-white-label">Save</Button>
-            <Button variant="outline" data-testid="button-preview">Preview</Button>
+            <Button
+              data-testid="button-save-white-label"
+              onClick={() => toast({ title: "White label settings saved", description: "Your branding configuration has been updated" })}
+            >
+              Save
+            </Button>
+            <Button
+              variant="outline"
+              data-testid="button-preview"
+              onClick={() => toast({ title: "Preview mode", description: "Opening preview of your white label branding..." })}
+            >
+              Preview
+            </Button>
           </div>
         </CardContent>
       </Card>

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -5,9 +6,26 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 import { Phone } from "lucide-react";
 
 export default function TwilioVoice() {
+  const { toast } = useToast();
+
+  const [greeting, setGreeting] = useState("Hello, thank you for calling! I'm your AI assistant. How can I help you today?");
+  const [voice, setVoice] = useState("alloy");
+  const [language, setLanguage] = useState("en");
+  const [forwardingNumber, setForwardingNumber] = useState("+1 (555) 111-2222");
+  const [businessHoursOnly, setBusinessHoursOnly] = useState(true);
+
+  const handleSave = () => {
+    toast({ title: "Settings saved", description: "Voice settings have been saved successfully." });
+  };
+
+  const handleTestCall = () => {
+    toast({ title: "Test call initiated", description: "A test call is being placed to your forwarding number." });
+  };
+
   return (
     <div className="p-6 space-y-6">
       <h1 className="text-2xl font-bold" data-testid="text-page-title">Voice Settings</h1>
@@ -21,7 +39,8 @@ export default function TwilioVoice() {
             <Label htmlFor="greeting">Greeting Message</Label>
             <Textarea
               id="greeting"
-              defaultValue="Hello, thank you for calling! I'm your AI assistant. How can I help you today?"
+              value={greeting}
+              onChange={(e) => setGreeting(e.target.value)}
               className="min-h-[100px]"
               data-testid="textarea-greeting"
             />
@@ -29,7 +48,7 @@ export default function TwilioVoice() {
 
           <div className="space-y-2">
             <Label htmlFor="voice">Voice Selection</Label>
-            <Select defaultValue="alloy">
+            <Select value={voice} onValueChange={setVoice}>
               <SelectTrigger data-testid="select-voice">
                 <SelectValue placeholder="Select voice" />
               </SelectTrigger>
@@ -46,7 +65,7 @@ export default function TwilioVoice() {
 
           <div className="space-y-2">
             <Label htmlFor="language">Language</Label>
-            <Select defaultValue="en">
+            <Select value={language} onValueChange={setLanguage}>
               <SelectTrigger data-testid="select-language">
                 <SelectValue placeholder="Select language" />
               </SelectTrigger>
@@ -66,7 +85,8 @@ export default function TwilioVoice() {
               id="forwarding"
               type="tel"
               placeholder="+1 (555) 000-0000"
-              defaultValue="+1 (555) 111-2222"
+              value={forwardingNumber}
+              onChange={(e) => setForwardingNumber(e.target.value)}
               data-testid="input-forwarding-number"
             />
           </div>
@@ -76,12 +96,17 @@ export default function TwilioVoice() {
               <Label htmlFor="business-hours">Business Hours Only</Label>
               <p className="text-xs text-muted-foreground">Only accept calls during configured business hours</p>
             </div>
-            <Switch id="business-hours" defaultChecked data-testid="switch-business-hours" />
+            <Switch
+              id="business-hours"
+              checked={businessHoursOnly}
+              onCheckedChange={setBusinessHoursOnly}
+              data-testid="switch-business-hours"
+            />
           </div>
 
           <div className="flex items-center gap-3 flex-wrap">
-            <Button data-testid="button-save-voice">Save</Button>
-            <Button variant="outline" data-testid="button-test-call">
+            <Button data-testid="button-save-voice" onClick={handleSave}>Save</Button>
+            <Button variant="outline" data-testid="button-test-call" onClick={handleTestCall}>
               <Phone className="w-4 h-4 mr-2" />
               Test Call
             </Button>

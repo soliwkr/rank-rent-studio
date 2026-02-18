@@ -1,17 +1,30 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Info } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
-const imageProviders = [
+const initialProviders = [
   { id: "unsplash", name: "Unsplash", connected: true, usage: "245 downloads this month", status: "Connected" },
   { id: "pexels", name: "Pexels", connected: true, usage: "132 downloads this month", status: "Connected" },
   { id: "pixabay", name: "Pixabay", connected: false, usage: "No usage", status: "Not Connected" },
 ];
 
 export default function ConnectionsImages() {
+  const { toast } = useToast();
+  const [imageProviders] = useState(initialProviders);
+
+  const handleSave = (providerName: string) => {
+    toast({ title: "Settings Saved", description: `${providerName} API key has been saved.` });
+  };
+
+  const handleTest = (providerName: string) => {
+    toast({ title: "Connection Test", description: `${providerName} connection tested successfully!` });
+  };
+
   return (
     <div className="p-6 space-y-6">
       <h1 className="text-2xl font-bold" data-testid="text-page-title">Image Banks</h1>
@@ -46,8 +59,8 @@ export default function ConnectionsImages() {
               <p className="text-xs text-muted-foreground" data-testid={`text-usage-${p.id}`}>{p.usage}</p>
 
               <div className="flex items-center gap-2 flex-wrap">
-                <Button size="sm" data-testid={`button-save-${p.id}`}>Save</Button>
-                <Button variant="outline" size="sm" data-testid={`button-test-${p.id}`}>Test</Button>
+                <Button size="sm" data-testid={`button-save-${p.id}`} onClick={() => handleSave(p.name)}>Save</Button>
+                <Button variant="outline" size="sm" data-testid={`button-test-${p.id}`} onClick={() => handleTest(p.name)}>Test</Button>
               </div>
             </CardContent>
           </Card>

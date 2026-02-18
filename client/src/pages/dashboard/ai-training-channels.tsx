@@ -1,11 +1,23 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { MessageSquare, Phone } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function AiTrainingChannels() {
+  const { toast } = useToast();
+
+  const [widgetActive, setWidgetActive] = useState(true);
+  const [widgetPersonality, setWidgetPersonality] = useState("professional");
+  const [widgetResponseLength, setWidgetResponseLength] = useState("balanced");
+
+  const [twilioActive, setTwilioActive] = useState(true);
+  const [twilioPersonality, setTwilioPersonality] = useState("professional");
+  const [twilioSmsStyle, setTwilioSmsStyle] = useState("concise");
+
   return (
     <div className="p-6 space-y-6">
       <h1 className="text-2xl font-bold" data-testid="text-page-title">AI Channels</h1>
@@ -21,12 +33,17 @@ export default function AiTrainingChannels() {
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between gap-4 flex-wrap">
               <Label htmlFor="widget-active">Active</Label>
-              <Switch id="widget-active" defaultChecked data-testid="switch-widget-active" />
+              <Switch
+                id="widget-active"
+                checked={widgetActive}
+                onCheckedChange={setWidgetActive}
+                data-testid="switch-widget-active"
+              />
             </div>
 
             <div className="space-y-2">
               <Label>Personality</Label>
-              <Select defaultValue="professional">
+              <Select value={widgetPersonality} onValueChange={setWidgetPersonality}>
                 <SelectTrigger data-testid="select-widget-personality">
                   <SelectValue />
                 </SelectTrigger>
@@ -40,7 +57,7 @@ export default function AiTrainingChannels() {
 
             <div className="space-y-2">
               <Label>Response Length</Label>
-              <Select defaultValue="balanced">
+              <Select value={widgetResponseLength} onValueChange={setWidgetResponseLength}>
                 <SelectTrigger data-testid="select-widget-response-length">
                   <SelectValue />
                 </SelectTrigger>
@@ -52,7 +69,12 @@ export default function AiTrainingChannels() {
               </Select>
             </div>
 
-            <Button data-testid="button-save-widget-channel">Save</Button>
+            <Button
+              data-testid="button-save-widget-channel"
+              onClick={() => toast({ title: "Widget channel saved", description: `Active: ${widgetActive ? "Yes" : "No"}, Personality: ${widgetPersonality}, Length: ${widgetResponseLength}` })}
+            >
+              Save
+            </Button>
           </CardContent>
         </Card>
 
@@ -66,12 +88,17 @@ export default function AiTrainingChannels() {
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between gap-4 flex-wrap">
               <Label htmlFor="twilio-active">Active</Label>
-              <Switch id="twilio-active" defaultChecked data-testid="switch-twilio-active" />
+              <Switch
+                id="twilio-active"
+                checked={twilioActive}
+                onCheckedChange={setTwilioActive}
+                data-testid="switch-twilio-active"
+              />
             </div>
 
             <div className="space-y-2">
               <Label>Voice Personality</Label>
-              <Select defaultValue="professional">
+              <Select value={twilioPersonality} onValueChange={setTwilioPersonality}>
                 <SelectTrigger data-testid="select-twilio-personality">
                   <SelectValue />
                 </SelectTrigger>
@@ -85,7 +112,7 @@ export default function AiTrainingChannels() {
 
             <div className="space-y-2">
               <Label>SMS Response Style</Label>
-              <Select defaultValue="concise">
+              <Select value={twilioSmsStyle} onValueChange={setTwilioSmsStyle}>
                 <SelectTrigger data-testid="select-twilio-sms-style">
                   <SelectValue />
                 </SelectTrigger>
@@ -97,7 +124,12 @@ export default function AiTrainingChannels() {
               </Select>
             </div>
 
-            <Button data-testid="button-save-twilio-channel">Save</Button>
+            <Button
+              data-testid="button-save-twilio-channel"
+              onClick={() => toast({ title: "Twilio channel saved", description: `Active: ${twilioActive ? "Yes" : "No"}, Personality: ${twilioPersonality}, SMS Style: ${twilioSmsStyle}` })}
+            >
+              Save
+            </Button>
           </CardContent>
         </Card>
       </div>

@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Search, BookOpen, FileEdit, BarChart3, Target, Users, Receipt, MessageSquare, Code, HelpCircle } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const categories = [
   { id: "getting-started", title: "Getting Started", description: "Learn the basics and set up your account", articles: 8, icon: BookOpen },
@@ -15,18 +17,37 @@ const categories = [
 ];
 
 export default function SupportDocs() {
+  const { toast } = useToast();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filtered = categories.filter((cat) =>
+    cat.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    cat.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="p-6 space-y-6">
       <h1 className="text-2xl font-bold" data-testid="text-page-title">Documentation</h1>
 
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-        <Input placeholder="Search documentation..." className="pl-10" data-testid="input-search-docs" />
+        <Input
+          placeholder="Search documentation..."
+          className="pl-10"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          data-testid="input-search-docs"
+        />
       </div>
 
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-        {categories.map((cat) => (
-          <Card key={cat.id} className="hover-elevate cursor-pointer" data-testid={`card-category-${cat.id}`}>
+        {filtered.map((cat) => (
+          <Card
+            key={cat.id}
+            className="hover-elevate cursor-pointer"
+            data-testid={`card-category-${cat.id}`}
+            onClick={() => toast({ title: `Opening ${cat.title}...`, description: `Browsing ${cat.articles} articles` })}
+          >
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
                 <cat.icon className="w-5 h-5 text-muted-foreground" />

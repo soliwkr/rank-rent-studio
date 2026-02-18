@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -5,8 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Info } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
-const providers = [
+const initialProviders = [
   { id: "openai", name: "OpenAI", models: ["GPT-4o", "GPT-4", "GPT-3.5 Turbo"], connected: true, lastTested: "2026-02-18" },
   { id: "grok", name: "Grok", models: ["Grok-2", "Grok-1"], connected: false, lastTested: null },
   { id: "anthropic", name: "Anthropic", models: ["Claude 3.5 Sonnet", "Claude 3 Opus", "Claude 3 Haiku"], connected: true, lastTested: "2026-02-17" },
@@ -17,6 +19,17 @@ const providers = [
 ];
 
 export default function ConnectionsAi() {
+  const { toast } = useToast();
+  const [providers] = useState(initialProviders);
+
+  const handleSave = (providerName: string) => {
+    toast({ title: "Settings Saved", description: `${providerName} configuration has been saved.` });
+  };
+
+  const handleTest = (providerName: string) => {
+    toast({ title: "Connection Test", description: `Testing ${providerName} connection... Success!` });
+  };
+
   return (
     <div className="p-6 space-y-6">
       <h1 className="text-2xl font-bold" data-testid="text-page-title">AI Providers (BYOK)</h1>
@@ -65,8 +78,8 @@ export default function ConnectionsAi() {
               )}
 
               <div className="flex items-center gap-2 flex-wrap">
-                <Button size="sm" data-testid={`button-save-${p.id}`}>Save</Button>
-                <Button variant="outline" size="sm" data-testid={`button-test-${p.id}`}>Test</Button>
+                <Button size="sm" data-testid={`button-save-${p.id}`} onClick={() => handleSave(p.name)}>Save</Button>
+                <Button variant="outline" size="sm" data-testid={`button-test-${p.id}`} onClick={() => handleTest(p.name)}>Test</Button>
               </div>
 
               {p.lastTested && (

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Eye, Users, TrendingDown, Clock } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { useToast } from "@/hooks/use-toast";
 
 const chartData = [
   { date: "Feb 1", views: 820 },
@@ -36,7 +37,13 @@ const trafficSources = [
 const dateRanges = ["7d", "28d", "3mo"];
 
 export default function AnalyticsOverview() {
+  const { toast } = useToast();
   const [dateRange, setDateRange] = useState("28d");
+
+  const handleDateRangeChange = (range: string) => {
+    setDateRange(range);
+    toast({ title: "Date Range Updated", description: `Showing analytics for the last ${range}.` });
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -48,7 +55,7 @@ export default function AnalyticsOverview() {
             key={r}
             variant={dateRange === r ? "default" : "outline"}
             size="sm"
-            onClick={() => setDateRange(r)}
+            onClick={() => handleDateRangeChange(r)}
             data-testid={`button-range-${r}`}
           >
             {r}

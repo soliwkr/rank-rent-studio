@@ -1,8 +1,15 @@
+import { useState } from "react";
 import { useWorkspace } from "@/lib/workspace-context";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Save, FileText, CheckCircle, Type, Image, Search, Target, TrendingUp, DollarSign, Clock, AlertTriangle } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
+import { Save, FileText, CheckCircle, Type, Image, Search, Target, TrendingUp, DollarSign, Clock, AlertTriangle, Download } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 const categoryData = [
@@ -48,18 +55,46 @@ function StatCard({ icon: Icon, label, value, testId }: StatCardProps) {
 
 export default function SeoReports() {
   const { selectedWorkspace } = useWorkspace();
+  const { toast } = useToast();
+  const [activeTab, setActiveTab] = useState("content");
+  const [saveReportOpen, setSaveReportOpen] = useState(false);
+  const [reportName, setReportName] = useState("");
+  const [reportDescription, setReportDescription] = useState("");
+  const [reportFormat, setReportFormat] = useState("pdf");
+
+  const handleSaveReport = () => {
+    if (!reportName) {
+      toast({ title: "Error", description: "Please enter a report name.", variant: "destructive" });
+      return;
+    }
+    setSaveReportOpen(false);
+    setReportName("");
+    setReportDescription("");
+    setReportFormat("pdf");
+    toast({ title: "Report Saved", description: `"${reportName}" has been saved successfully.` });
+  };
+
+  const handleExport = () => {
+    toast({ title: "Export Started", description: `Report is being exported as ${reportFormat.toUpperCase()}. Download will begin shortly.` });
+  };
 
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <h1 className="text-2xl font-bold" data-testid="text-page-title">Reports</h1>
-        <Button variant="outline" data-testid="button-save-report">
-          <Save className="w-4 h-4 mr-2" />
-          Save Report
-        </Button>
+        <div className="flex items-center gap-2 flex-wrap">
+          <Button variant="outline" onClick={handleExport} data-testid="button-export-report">
+            <Download className="w-4 h-4 mr-2" />
+            Export
+          </Button>
+          <Button variant="outline" onClick={() => setSaveReportOpen(true)} data-testid="button-save-report">
+            <Save className="w-4 h-4 mr-2" />
+            Save Report
+          </Button>
+        </div>
       </div>
 
-      <Tabs defaultValue="content" data-testid="tabs-reports">
+      <Tabs value={activeTab} onValueChange={setActiveTab} data-testid="tabs-reports">
         <TabsList>
           <TabsTrigger value="content" data-testid="tab-content">Content</TabsTrigger>
           <TabsTrigger value="seo" data-testid="tab-seo">SEO</TabsTrigger>
@@ -131,6 +166,41 @@ export default function SeoReports() {
           </div>
         </TabsContent>
       </Tabs>
+
+      <Dialog open={saveReportOpen} onOpenChange={setSaveReportOpen}>
+        <DialogContent data-testid="dialog-save-report">
+          <DialogHeader>
+            <DialogTitle>Save Report</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="report-name">Report Name</Label>
+              <Input id="report-name" value={reportName} onChange={(e) => setReportName(e.target.value)} placeholder="Monthly SEO Report" data-testid="input-report-name" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="report-description">Description</Label>
+              <Textarea id="report-description" value={reportDescription} onChange={(e) => setReportDescription(e.target.value)} placeholder="Brief description of this report..." data-testid="input-report-description" />
+            </div>
+            <div className="space-y-2">
+              <Label>Format</Label>
+              <Select value={reportFormat} onValueChange={setReportFormat}>
+                <SelectTrigger data-testid="select-report-format">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="pdf">PDF</SelectItem>
+                  <SelectItem value="csv">CSV</SelectItem>
+                  <SelectItem value="xlsx">Excel (XLSX)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSaveReportOpen(false)} data-testid="button-cancel-save-report">Cancel</Button>
+            <Button onClick={handleSaveReport} data-testid="button-confirm-save-report">Save</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

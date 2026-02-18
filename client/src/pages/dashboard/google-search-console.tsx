@@ -3,7 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { MousePointerClick, Eye, TrendingUp, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+import { MousePointerClick, Eye, TrendingUp, ArrowUpDown, ArrowUp, ArrowDown, Search } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
 const chartData = [
@@ -19,7 +21,7 @@ const chartData = [
   { date: "Feb 18", clicks: 520, impressions: 9900 },
 ];
 
-const topQueries = [
+const initialQueries = [
   { id: 1, query: "content management platform", clicks: 2840, impressions: 52000, ctr: "5.5%", position: 6.2, change: 1.3 },
   { id: 2, query: "seo tools for agencies", clicks: 2210, impressions: 48000, ctr: "4.6%", position: 7.8, change: -0.5 },
   { id: 3, query: "rank tracking software", clicks: 1890, impressions: 41000, ctr: "4.6%", position: 9.1, change: 2.1 },
@@ -30,8 +32,20 @@ const topQueries = [
 const dateRanges = ["7d", "28d", "3mo", "6mo", "12mo"];
 
 export default function GoogleSearchConsole() {
-  const [connected] = useState(true);
+  const { toast } = useToast();
+  const [connected, setConnected] = useState(true);
   const [dateRange, setDateRange] = useState("28d");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [topQueries] = useState(initialQueries);
+
+  const filteredQueries = topQueries.filter((q) =>
+    q.query.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleConnect = () => {
+    setConnected(true);
+    toast({ title: "Connected", description: "Google Search Console has been connected successfully." });
+  };
 
   if (!connected) {
     return (
@@ -40,7 +54,7 @@ export default function GoogleSearchConsole() {
         <Card>
           <CardContent className="p-6 text-center space-y-4">
             <p className="text-muted-foreground">Connect your Google Search Console account to view search performance data, top queries, and indexing status.</p>
-            <Button data-testid="button-connect-gsc">Connect GSC</Button>
+            <Button data-testid="button-connect-gsc" onClick={handleConnect}>Connect GSC</Button>
           </CardContent>
         </Card>
       </div>
@@ -57,7 +71,10 @@ export default function GoogleSearchConsole() {
             key={r}
             variant={dateRange === r ? "default" : "outline"}
             size="sm"
-            onClick={() => setDateRange(r)}
+            onClick={() => {
+              setDateRange(r);
+              toast({ title: "Date range updated", description: `Showing data for the last ${r}.` });
+            }}
             data-testid={`button-range-${r}`}
           >
             {r}
@@ -135,8 +152,18 @@ export default function GoogleSearchConsole() {
       </Card>
 
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between gap-2">
           <CardTitle>Top Queries</CardTitle>
+          <div className="relative">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder="Search queries..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-8 w-[200px]"
+              data-testid="input-search-queries"
+            />
+          </div>
         </CardHeader>
         <CardContent>
           <Table>
@@ -151,7 +178,7 @@ export default function GoogleSearchConsole() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {topQueries.map((q) => (
+              {filteredQueries.map((q) => (
                 <TableRow key={q.id} data-testid={`row-query-${q.id}`}>
                   <TableCell className="font-medium" data-testid={`text-query-${q.id}`}>{q.query}</TableCell>
                   <TableCell>{q.clicks.toLocaleString()}</TableCell>
