@@ -141,7 +141,7 @@ export default function Today() {
 
   return (
     <ClientLayout>
-      <div className="-m-6 p-4 min-h-[calc(100vh-3rem)] flex flex-col gap-3">
+      <div className="-m-6 p-3 min-h-[calc(100vh-3rem)] flex flex-col gap-3">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <div>
             <h1 className="text-lg font-semibold tracking-tight" data-testid="text-page-title">
