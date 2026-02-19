@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { Building2, ChevronRight, Loader2, Plus, MapPin, Search, ChevronLeft, ChevronsLeft, ChevronsRight } from "lucide-react";
+import { Building2, ChevronRight, Loader2, MapPin, Search, ChevronLeft, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -252,21 +252,6 @@ export default function SelectWorkspace() {
           </p>
         )}
 
-        {workspaces.length > 0 && (
-          <div className="mt-8 p-4 rounded-md border border-dashed text-center" data-testid="card-add-workspace">
-            <Building2 className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-            <p className="text-sm font-medium mb-1">Need another workspace?</p>
-            <p className="text-xs text-muted-foreground mb-3">
-              Add unlimited workspaces for just $25/month each
-            </p>
-            <a href="/contact">
-              <Button variant="outline" size="sm" data-testid="button-add-workspace">
-                <Plus className="w-4 h-4 mr-1" />
-                Add Workspace
-              </Button>
-            </a>
-          </div>
-        )}
       </div>
     </div>
   );
