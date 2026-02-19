@@ -53,29 +53,7 @@ export function registerContentRoutes(app: Express) {
     if (!requireSuperAdmin(req, res)) return;
     try {
       const workspaces = await storage.getWorkspaces();
-      const restoWorkspace = {
-        id: "resto-platform",
-        shardId: 0,
-        ownerId: "system",
-        name: "Resto.Restaurant",
-        type: "platform",
-        address: null,
-        city: null,
-        state: null,
-        postalCode: null,
-        country: null,
-        phone: null,
-        email: null,
-        website: "https://resto.restaurant",
-        latitude: null,
-        longitude: null,
-        timezone: "UTC",
-        plan: "complete",
-        status: "active",
-        createdAt: new Date("2024-01-01"),
-        updatedAt: new Date(),
-      };
-      res.json([restoWorkspace, ...workspaces]);
+      res.json(workspaces);
     } catch (err: any) {
       res.status(500).json({ error: err.message });
     }
