@@ -234,10 +234,10 @@ export default function Home() {
         <div className="absolute inset-0 bg-black/15 z-[1]" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32 text-center">
           <div className="inline-block backdrop-blur-sm bg-black/15 rounded-2xl px-4 py-6 sm:px-8 sm:py-10 lg:px-12 lg:py-14 mx-2">
-            <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold leading-tight mb-2 text-white">
+            <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold leading-tight mb-2 bg-gradient-to-r from-white via-white/95 to-white/80 bg-clip-text text-transparent drop-shadow-lg">
               Still Paying for 10+ SEO Tools
             </h1>
-            <p className="text-2xl sm:text-3xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
+            <p className="text-xl sm:text-2xl lg:text-3xl font-bold mb-6 bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
               IndexFlow
             </p>
             <div className="max-w-3xl mx-auto mb-6 space-y-1">
