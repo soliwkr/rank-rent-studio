@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { Building2, ChevronRight, Loader2, Plus, MapPin, Search, ChevronLeft } from "lucide-react";
+import { Building2, ChevronRight, Loader2, Plus, MapPin, Search, ChevronLeft, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,7 +18,7 @@ interface Workspace {
   status: string;
 }
 
-const WORKSPACES_PER_PAGE = 10;
+const WORKSPACES_PER_PAGE = 6;
 
 export default function SelectWorkspace() {
   const [, setLocation] = useLocation();
@@ -152,31 +152,60 @@ export default function SelectWorkspace() {
         </div>
 
         {totalPages > 1 && (
-          <div className="flex items-center justify-between mt-6 px-1" data-testid="pagination-workspaces">
+          <div className="flex items-center justify-center gap-1 mt-6" data-testid="pagination-workspaces">
             <Button
               variant="outline"
-              size="sm"
+              size="icon"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(1)}
+              data-testid="button-first-page"
+            >
+              <ChevronsLeft className="w-4 h-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
               disabled={currentPage === 1}
               onClick={() => setCurrentPage(p => p - 1)}
               data-testid="button-prev-page"
             >
-              <ChevronLeft className="w-4 h-4 mr-1" />
-              Previous
+              <ChevronLeft className="w-4 h-4" />
             </Button>
-            <span className="text-sm text-muted-foreground" data-testid="text-page-info">
-              Page {currentPage} of {totalPages}
-            </span>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <Button
+                key={page}
+                variant={page === currentPage ? "default" : "outline"}
+                size="icon"
+                onClick={() => setCurrentPage(page)}
+                data-testid={`button-page-${page}`}
+              >
+                {page}
+              </Button>
+            ))}
             <Button
               variant="outline"
-              size="sm"
+              size="icon"
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage(p => p + 1)}
               data-testid="button-next-page"
             >
-              Next
-              <ChevronRight className="w-4 h-4 ml-1" />
+              <ChevronRight className="w-4 h-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(totalPages)}
+              data-testid="button-last-page"
+            >
+              <ChevronsRight className="w-4 h-4" />
             </Button>
           </div>
+        )}
+        {totalPages > 1 && (
+          <p className="text-center text-xs text-muted-foreground mt-2" data-testid="text-page-info">
+            Showing {(currentPage - 1) * WORKSPACES_PER_PAGE + 1}–{Math.min(currentPage * WORKSPACES_PER_PAGE, filteredWorkspaces.length)} of {filteredWorkspaces.length} workspaces
+          </p>
         )}
 
         {workspaces.length > 0 && (
