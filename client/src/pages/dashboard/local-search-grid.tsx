@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { ClientLayout } from "@/components/client-layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,7 +44,7 @@ export default function DashboardLocalSearchGrid() {
   };
 
   return (
-    <ClientLayout>
+    <>
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-serif italic font-semibold" data-testid="text-page-title">Local Search Grid</h1>
@@ -151,6 +150,6 @@ export default function DashboardLocalSearchGrid() {
           </CardContent>
         </Card>
       </div>
-    </ClientLayout>
+    </>
   );
 }

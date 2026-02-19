@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { ClientLayout } from "@/components/client-layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -29,7 +28,7 @@ export default function TwilioCallLogs() {
   });
 
   return (
-    <ClientLayout>
+    <>
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-serif italic font-semibold" data-testid="text-page-title">Call Logs</h1>
@@ -106,6 +105,6 @@ export default function TwilioCallLogs() {
           </CardContent>
         </Card>
       </div>
-    </ClientLayout>
+    </>
   );
 }

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { ClientLayout } from "@/components/client-layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -32,7 +31,7 @@ export default function WidgetCode() {
   };
 
   return (
-    <ClientLayout>
+    <>
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-serif italic font-semibold" data-testid="text-page-title">Widget Code</h1>
@@ -105,6 +104,6 @@ export default function WidgetCode() {
           </CardContent>
         </Card>
       </div>
-    </ClientLayout>
+    </>
   );
 }

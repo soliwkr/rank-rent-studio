@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { ClientLayout } from "@/components/client-layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -54,7 +53,7 @@ export default function SupportTickets() {
   };
 
   return (
-    <ClientLayout>
+    <>
       <div className="space-y-6">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
@@ -197,6 +196,6 @@ export default function SupportTickets() {
           </DialogContent>
         </Dialog>
       </div>
-    </ClientLayout>
+    </>
   );
 }

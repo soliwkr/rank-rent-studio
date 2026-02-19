@@ -1,4 +1,3 @@
-import { ClientLayout } from "@/components/client-layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -140,7 +139,7 @@ export default function Today() {
   const workspaceName = selectedWorkspace?.name || "Your Workspace";
 
   return (
-    <ClientLayout>
+    <>
       <div className="-m-6 p-3 min-h-[calc(100vh-3rem)] flex flex-col gap-3">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <div>
@@ -317,6 +316,6 @@ export default function Today() {
           </div>
         </div>
       </div>
-    </ClientLayout>
+    </>
   );
 }

@@ -1,4 +1,3 @@
-import { ClientLayout } from "@/components/client-layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { ChevronRight } from "lucide-react";
 
@@ -82,7 +81,7 @@ const sections = [
 
 export default function Documentation() {
   return (
-    <ClientLayout>
+    <>
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-serif italic font-semibold" data-testid="text-page-title">Documentation</h1>
@@ -117,6 +116,6 @@ export default function Documentation() {
           ))}
         </div>
       </div>
-    </ClientLayout>
+    </>
   );
 }
