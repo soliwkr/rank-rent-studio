@@ -275,7 +275,7 @@ export function ClientSidebar() {
           <SidebarGroup key={group.label} className="py-0">
             {group.collapsible ? (
               <Collapsible
-                defaultOpen={isGroupActive(group)}
+                defaultOpen={false}
                 className="group/collapsible"
               >
                 <SidebarGroupLabel asChild>
