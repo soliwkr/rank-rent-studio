@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "wouter";
 import { useWorkspace } from "@/lib/workspace-context";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -109,6 +110,7 @@ const statusVariant = (status: string) => {
 type Post = typeof initialPosts[number];
 
 export default function ContentPosts() {
+  const [, navigate] = useLocation();
   const { selectedWorkspace } = useWorkspace();
   const { toast } = useToast();
   const [posts, setPosts] = useState(initialPosts);
@@ -327,7 +329,7 @@ export default function ContentPosts() {
                   <TableCell className="font-medium max-w-[300px] truncate" data-testid={`text-post-title-${post.id}`}>
                     <button
                       className="text-left hover:text-sidebar-primary hover:underline transition-colors cursor-pointer"
-                      onClick={() => handlePreview(post)}
+                      onClick={() => navigate(`/${selectedWorkspace?.id}/content-engine?tab=posts`)}
                       data-testid={`link-post-title-${post.id}`}
                     >
                       {post.title}
