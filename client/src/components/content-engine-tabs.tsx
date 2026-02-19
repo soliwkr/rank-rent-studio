@@ -35,18 +35,18 @@ export function ContentEngineTabs() {
         const fullPath = `/${wsId}${tab.path}`;
         const isActive = location === fullPath;
         return (
-          <Link key={tab.path} href={fullPath}>
-            <a
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md whitespace-nowrap transition-colors ${
-                isActive
-                  ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
-              }`}
-              data-testid={`tab-${tab.title.toLowerCase().replace(/\s+/g, "-")}`}
-            >
-              <tab.icon className="w-3.5 h-3.5" />
-              {tab.title}
-            </a>
+          <Link
+            key={tab.path}
+            href={fullPath}
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md whitespace-nowrap transition-colors ${
+              isActive
+                ? "bg-sidebar-primary text-sidebar-primary-foreground"
+                : "text-muted-foreground hover:text-foreground hover:bg-muted"
+            }`}
+            data-testid={`tab-${tab.title.toLowerCase().replace(/\s+/g, "-")}`}
+          >
+            <tab.icon className="w-3.5 h-3.5" />
+            {tab.title}
           </Link>
         );
       })}

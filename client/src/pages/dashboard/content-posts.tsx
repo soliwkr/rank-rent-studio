@@ -327,7 +327,7 @@ export default function ContentPosts() {
                   <TableCell className="font-medium max-w-[300px] truncate" data-testid={`text-post-title-${post.id}`}>
                     <button
                       className="text-left hover:text-sidebar-primary hover:underline transition-colors cursor-pointer"
-                      onClick={() => handleEdit(post)}
+                      onClick={() => handlePreview(post)}
                       data-testid={`link-post-title-${post.id}`}
                     >
                       {post.title}
