@@ -20,9 +20,19 @@ interface Workspace {
 
 const WORKSPACES_PER_PAGE = 6;
 
+const TYPE_FILTERS = [
+  { value: "all", label: "All" },
+  { value: "agency", label: "Agency" },
+  { value: "solo-founder", label: "Solo Founder" },
+  { value: "local-business", label: "Local Business" },
+  { value: "enterprise", label: "Enterprise" },
+  { value: "white-label", label: "White Label" },
+] as const;
+
 export default function SelectWorkspace() {
   const [, setLocation] = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
+  const [typeFilter, setTypeFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
 
   const { data: workspaces = [], isLoading } = useQuery<Workspace[]>({
@@ -34,15 +44,26 @@ export default function SelectWorkspace() {
   }, []);
 
   const filteredWorkspaces = useMemo(() => {
-    if (!searchQuery.trim()) return workspaces;
-    const q = searchQuery.toLowerCase();
-    return workspaces.filter(v =>
-      v.name.toLowerCase().includes(q) ||
-      v.address?.toLowerCase().includes(q) ||
-      v.city?.toLowerCase().includes(q) ||
-      v.type?.toLowerCase().includes(q)
-    );
-  }, [workspaces, searchQuery]);
+    let result = workspaces;
+    if (typeFilter !== "all") {
+      result = result.filter(v => v.type === typeFilter);
+    }
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(v =>
+        v.name.toLowerCase().includes(q) ||
+        v.address?.toLowerCase().includes(q) ||
+        v.city?.toLowerCase().includes(q) ||
+        v.type?.toLowerCase().includes(q)
+      );
+    }
+    return result;
+  }, [workspaces, searchQuery, typeFilter]);
+
+  const availableTypes = useMemo(() => {
+    const types = new Set(workspaces.map(w => w.type));
+    return TYPE_FILTERS.filter(f => f.value === "all" || types.has(f.value));
+  }, [workspaces]);
 
   const totalPages = Math.ceil(filteredWorkspaces.length / WORKSPACES_PER_PAGE);
   const paginatedWorkspaces = filteredWorkspaces.slice(
@@ -52,7 +73,7 @@ export default function SelectWorkspace() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery]);
+  }, [searchQuery, typeFilter]);
 
   const handleSelectWorkspace = (workspaceId: string) => {
     localStorage.setItem("indexflow_workspace_id", workspaceId);
@@ -84,20 +105,37 @@ export default function SelectWorkspace() {
         </div>
 
         {workspaces.length > 0 && (
-          <div className="mb-4 flex items-center gap-3">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder="Search workspaces..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9"
-                data-testid="input-search-workspaces"
-              />
+          <div className="mb-4 space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search workspaces..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9"
+                  data-testid="input-search-workspaces"
+                />
+              </div>
+              <Badge variant="secondary" data-testid="badge-workspace-count">
+                {filteredWorkspaces.length} of {workspaces.length}
+              </Badge>
             </div>
-            <Badge variant="secondary" data-testid="badge-workspace-count">
-              {filteredWorkspaces.length} of {workspaces.length}
-            </Badge>
+            {availableTypes.length > 2 && (
+              <div className="flex items-center gap-1.5 flex-wrap" data-testid="filter-workspace-types">
+                {availableTypes.map((filter) => (
+                  <Button
+                    key={filter.value}
+                    variant={typeFilter === filter.value ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setTypeFilter(filter.value)}
+                    data-testid={`button-filter-${filter.value}`}
+                  >
+                    {filter.label}
+                  </Button>
+                ))}
+              </div>
+            )}
           </div>
         )}
         
@@ -107,10 +145,16 @@ export default function SelectWorkspace() {
               <Loader2 className="w-8 h-8 animate-spin text-muted-foreground mb-3" />
               <p className="text-muted-foreground text-sm">Loading workspaces...</p>
             </div>
-          ) : paginatedWorkspaces.length === 0 && searchQuery ? (
+          ) : paginatedWorkspaces.length === 0 && (searchQuery || typeFilter !== "all") ? (
             <div className="text-center py-12" data-testid="no-search-results">
               <Search className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-              <p className="text-muted-foreground">No workspaces match "{searchQuery}"</p>
+              <p className="text-muted-foreground">
+                {searchQuery && typeFilter !== "all"
+                  ? `No ${getWorkspaceTypeLabel(typeFilter)} workspaces match "${searchQuery}"`
+                  : searchQuery
+                    ? `No workspaces match "${searchQuery}"`
+                    : `No ${getWorkspaceTypeLabel(typeFilter)} workspaces found`}
+              </p>
             </div>
           ) : paginatedWorkspaces.length === 0 ? (
             <div className="text-center py-12" data-testid="empty-workspaces">
