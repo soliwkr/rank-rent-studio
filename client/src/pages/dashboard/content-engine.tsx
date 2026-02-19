@@ -69,6 +69,54 @@ function PostsTab({ workspaceId }: { workspaceId: string }) {
   const [selectedPost, setSelectedPost] = useState<any>(null);
   const [bulkRows, setBulkRows] = useState([{ title: "", keyword: "", intent: "Informational", funnel: "TOFU", type: "Standard" }]);
 
+  const handleDownloadTemplate = () => {
+    const csv = "Title,Primary Keyword,Intent,Funnel,Type\nExample Post Title,target keyword,Informational,TOFU,Standard\n";
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "bulk-posts-template.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleUploadCSV = () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".csv";
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const text = ev.target?.result as string;
+        const lines = text.split("\n").filter(l => l.trim());
+        if (lines.length < 2) {
+          toast({ title: "Empty CSV", description: "No data rows found", variant: "destructive" });
+          return;
+        }
+        const rows = lines.slice(1).map(line => {
+          const cols = line.split(",").map(c => c.trim().replace(/^"|"$/g, ""));
+          return {
+            title: cols[0] || "",
+            keyword: cols[1] || "",
+            intent: cols[2] || "Informational",
+            funnel: cols[3] || "TOFU",
+            type: cols[4] || "Standard",
+          };
+        }).filter(r => r.title);
+        if (rows.length === 0) {
+          toast({ title: "No valid rows", description: "CSV rows need at least a title", variant: "destructive" });
+          return;
+        }
+        setBulkRows(rows);
+        toast({ title: `Loaded ${rows.length} rows from CSV` });
+      };
+      reader.readAsText(file);
+    };
+    input.click();
+  };
+
   const [editorTitle, setEditorTitle] = useState("");
   const [editorSlug, setEditorSlug] = useState("");
   const [editorCategory, setEditorCategory] = useState("");
@@ -519,11 +567,11 @@ function PostsTab({ workspaceId }: { workspaceId: string }) {
               <Plus className="h-4 w-4 mr-1" />
               Add Row
             </Button>
-            <Button variant="outline" size="sm" data-testid="button-upload-csv">
+            <Button variant="outline" size="sm" onClick={handleUploadCSV} data-testid="button-upload-csv">
               <Upload className="h-4 w-4 mr-1" />
               Upload CSV
             </Button>
-            <Button variant="outline" size="sm" data-testid="button-download-template">
+            <Button variant="outline" size="sm" onClick={handleDownloadTemplate} data-testid="button-download-template">
               <Download className="h-4 w-4 mr-1" />
               Download Template
             </Button>
