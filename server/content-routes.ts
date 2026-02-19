@@ -511,9 +511,7 @@ ${placeholders.map((p, i) => `${i + 1}. "${p.prompt}"`).join("\n")}`;
     if (!requireSuperAdmin(req, res)) return;
     try {
       const data = bulkCreateSchema.parse(req.body);
-      const campaignId = randomUUID();
-      await storage.createContentCampaign({
-        id: campaignId,
+      const campaign = await storage.createContentCampaign({
         workspaceId: data.workspaceId,
         name: `Bulk ${new Date().toISOString().slice(0, 10)}`,
         status: "active",
@@ -521,10 +519,10 @@ ${placeholders.map((p, i) => `${i + 1}. "${p.prompt}"`).join("\n")}`;
       });
       const posts = await bulkCreateDraftPosts({
         workspaceId: data.workspaceId,
-        campaignId,
+        campaignId: campaign.id,
         posts: data.posts,
       });
-      res.status(201).json({ campaignId, posts });
+      res.status(201).json({ campaignId: campaign.id, posts });
     } catch (err: any) {
       res.status(400).json({ error: err.message });
     }
