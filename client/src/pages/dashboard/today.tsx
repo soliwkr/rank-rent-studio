@@ -1,12 +1,8 @@
 import { ClientLayout } from "@/components/client-layout";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   FileText,
-  Search,
-  MessageSquare,
-  LifeBuoy,
   ArrowRight,
   BarChart3,
   Settings,
@@ -19,93 +15,153 @@ import {
   AlertCircle,
   ArrowUpRight,
   ArrowDownRight,
+  MessageSquare,
+  PhoneCall,
+  Users,
+  Brain,
+  Megaphone,
+  LifeBuoy,
+  Search,
+  Activity,
+  Receipt,
+  MapPin,
 } from "lucide-react";
 import { Link } from "wouter";
 import { useWorkspace } from "@/lib/workspace-context";
 
-const stats = [
+type Trend = "up" | "down" | "neutral";
+
+const stats: Array<{
+  label: string;
+  value: string;
+  change: string;
+  changeLabel: string;
+  trend: Trend;
+  icon: typeof FileText;
+  color: string;
+  module: string;
+}> = [
   {
-    label: "Total Posts",
+    label: "Content Posts",
     value: "24",
-    icon: FileText,
     change: "+3",
     changeLabel: "this week",
-    trend: "up" as const,
+    trend: "up",
+    icon: FileText,
     color: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
-    iconColor: "text-blue-500",
+    module: "Content Engine",
   },
   {
-    label: "Active Keywords",
+    label: "Active Campaigns",
+    value: "4",
+    change: "+1",
+    changeLabel: "new",
+    trend: "up",
+    icon: Megaphone,
+    color: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400",
+    module: "Content Engine",
+  },
+  {
+    label: "Keywords Tracked",
     value: "142",
-    icon: Search,
     change: "+12",
-    changeLabel: "tracked",
-    trend: "up" as const,
+    changeLabel: "this month",
+    trend: "up",
+    icon: TrendingUp,
     color: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
-    iconColor: "text-emerald-500",
+    module: "Rank Tracker",
+  },
+  {
+    label: "Grid Locations",
+    value: "8",
+    change: "3",
+    changeLabel: "scanned today",
+    trend: "neutral",
+    icon: MapPin,
+    color: "bg-teal-500/10 text-teal-600 dark:text-teal-400",
+    module: "Local Search Grid",
+  },
+  {
+    label: "CRM Contacts",
+    value: "63",
+    change: "+5",
+    changeLabel: "this week",
+    trend: "up",
+    icon: Users,
+    color: "bg-violet-500/10 text-violet-600 dark:text-violet-400",
+    module: "CRM",
+  },
+  {
+    label: "Pipeline Deals",
+    value: "12",
+    change: "$34.2k",
+    changeLabel: "pipeline value",
+    trend: "up",
+    icon: Receipt,
+    color: "bg-purple-500/10 text-purple-600 dark:text-purple-400",
+    module: "CRM",
   },
   {
     label: "Widget Chats",
     value: "38",
-    icon: MessageSquare,
     change: "7",
     changeLabel: "last 7 days",
-    trend: "neutral" as const,
-    color: "bg-violet-500/10 text-violet-600 dark:text-violet-400",
-    iconColor: "text-violet-500",
+    trend: "neutral",
+    icon: MessageSquare,
+    color: "bg-sky-500/10 text-sky-600 dark:text-sky-400",
+    module: "AI Widget",
   },
   {
-    label: "Support Tickets",
-    value: "2",
-    icon: LifeBuoy,
-    change: "1",
-    changeLabel: "open",
-    trend: "down" as const,
+    label: "AI Calls Handled",
+    value: "156",
+    change: "+23",
+    changeLabel: "this month",
+    trend: "up",
+    icon: PhoneCall,
+    color: "bg-cyan-500/10 text-cyan-600 dark:text-cyan-400",
+    module: "Twilio",
+  },
+  {
+    label: "Knowledge Items",
+    value: "18",
+    change: "+2",
+    changeLabel: "added",
+    trend: "up",
+    icon: Brain,
+    color: "bg-fuchsia-500/10 text-fuchsia-600 dark:text-fuchsia-400",
+    module: "AI Training",
+  },
+  {
+    label: "SEO Score",
+    value: "87",
+    change: "+4",
+    changeLabel: "pts this month",
+    trend: "up",
+    icon: Search,
     color: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
-    iconColor: "text-amber-500",
+    module: "SEO Health",
   },
 ];
 
 const recentActivity = [
-  {
-    action: "Published blog post",
-    detail: "10 Best SEO Strategies for 2026",
-    time: "2 hours ago",
-    status: "success" as const,
-  },
-  {
-    action: "Keyword rank improved",
-    detail: "\"seo agency\" moved to position #3",
-    time: "5 hours ago",
-    status: "success" as const,
-  },
-  {
-    action: "Widget chat completed",
-    detail: "Customer inquiry about pricing",
-    time: "Yesterday",
-    status: "info" as const,
-  },
-  {
-    action: "Support ticket resolved",
-    detail: "TKT-1021: Webhook configuration",
-    time: "2 days ago",
-    status: "success" as const,
-  },
-  {
-    action: "New keyword added",
-    detail: "\"local seo services\" added to tracker",
-    time: "3 days ago",
-    status: "info" as const,
-  },
+  { action: "Blog post published", detail: "10 Best SEO Strategies for 2026", time: "2h ago", status: "success" as const },
+  { action: "Keyword rank improved", detail: "\"seo agency\" moved to #3", time: "5h ago", status: "success" as const },
+  { action: "CRM deal updated", detail: "Acme Corp moved to Negotiation stage", time: "8h ago", status: "info" as const },
+  { action: "Widget chat completed", detail: "Customer inquiry about pricing", time: "1d ago", status: "info" as const },
+  { action: "Campaign draft generated", detail: "Q1 Content Blitz — 12 posts created", time: "1d ago", status: "success" as const },
+  { action: "AI call handled", detail: "Inbound call routed to voicemail", time: "2d ago", status: "info" as const },
+  { action: "Support ticket resolved", detail: "TKT-1021: Webhook configuration", time: "2d ago", status: "success" as const },
 ];
 
 const quickLinks = [
-  { label: "Content Engine", description: "Create & manage posts", href: "content/posts", icon: FileText, iconColor: "text-blue-500" },
+  { label: "Content Engine", description: "Create & manage posts", href: "content-engine?tab=posts", icon: FileText, iconColor: "text-blue-500" },
   { label: "Rank Tracker", description: "Track keyword positions", href: "rank-tracker/track-keywords", icon: BarChart3, iconColor: "text-emerald-500" },
-  { label: "Knowledge Base", description: "Train your AI assistant", href: "ai-training/knowledge-base", icon: BookOpen, iconColor: "text-violet-500" },
-  { label: "SEO Health", description: "Audit your site", href: "seo/health", icon: Globe, iconColor: "text-amber-500" },
-  { label: "Support Center", description: "Get help & resources", href: "support/tickets", icon: LifeBuoy, iconColor: "text-rose-500" },
-  { label: "Settings", description: "Configure workspace", href: "settings/setup-guide", icon: Settings, iconColor: "text-slate-500" },
+  { label: "CRM Pipeline", description: "Manage deals & contacts", href: "crm/pipeline", icon: Users, iconColor: "text-violet-500" },
+  { label: "AI Widget", description: "Monitor chat interactions", href: "widget/monitoring", icon: Activity, iconColor: "text-sky-500" },
+  { label: "Twilio Voice", description: "Call logs & settings", href: "twilio/call-logs", icon: PhoneCall, iconColor: "text-cyan-500" },
+  { label: "Knowledge Base", description: "Train your AI assistant", href: "ai-training/knowledge-base", icon: Brain, iconColor: "text-fuchsia-500" },
+  { label: "Analytics", description: "Performance overview", href: "analytics/overview", icon: BarChart3, iconColor: "text-amber-500" },
+  { label: "Settings", description: "Setup & configuration", href: "settings/setup-guide", icon: Settings, iconColor: "text-slate-500" },
 ];
 
 function getStatusIcon(status: string) {
@@ -135,38 +191,37 @@ export default function Today() {
               {workspaceName} &mdash; at a glance
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="gap-1.5" data-testid="badge-last-updated">
-              <Clock className="w-3 h-3" />
-              Updated just now
-            </Badge>
-          </div>
+          <Badge variant="outline" className="gap-1.5" data-testid="badge-last-updated">
+            <Clock className="w-3 h-3" />
+            Updated just now
+          </Badge>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           {stats.map((stat) => (
             <Card key={stat.label} data-testid={`card-stat-${stat.label.toLowerCase().replace(/\s+/g, "-")}`}>
-              <CardContent className="p-5">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="space-y-2">
-                    <p className="text-sm text-muted-foreground font-medium" data-testid={`text-stat-label-${stat.label.toLowerCase().replace(/\s+/g, "-")}`}>
-                      {stat.label}
-                    </p>
-                    <p className="text-3xl font-bold tracking-tight" data-testid={`text-stat-value-${stat.label.toLowerCase().replace(/\s+/g, "-")}`}>
-                      {stat.value}
-                    </p>
-                    <div className="flex items-center gap-1.5">
-                      {stat.trend === "up" && <ArrowUpRight className="w-3.5 h-3.5 text-emerald-500" />}
-                      {stat.trend === "down" && <ArrowDownRight className="w-3.5 h-3.5 text-rose-500" />}
-                      <span className={`text-xs font-medium ${stat.trend === "up" ? "text-emerald-600 dark:text-emerald-400" : stat.trend === "down" ? "text-rose-600 dark:text-rose-400" : "text-muted-foreground"}`}>
-                        {stat.change}
-                      </span>
-                      <span className="text-xs text-muted-foreground">{stat.changeLabel}</span>
-                    </div>
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between gap-1 mb-2">
+                  <div className={`p-1.5 rounded-md ${stat.color}`}>
+                    <stat.icon className="w-3.5 h-3.5" />
                   </div>
-                  <div className={`p-2.5 rounded-lg ${stat.color}`}>
-                    <stat.icon className="w-5 h-5" />
-                  </div>
+                  <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider truncate">
+                    {stat.module}
+                  </span>
+                </div>
+                <p className="text-2xl font-bold tracking-tight" data-testid={`text-stat-value-${stat.label.toLowerCase().replace(/\s+/g, "-")}`}>
+                  {stat.value}
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5 truncate" data-testid={`text-stat-label-${stat.label.toLowerCase().replace(/\s+/g, "-")}`}>
+                  {stat.label}
+                </p>
+                <div className="flex items-center gap-1 mt-2">
+                  {stat.trend === "up" && <ArrowUpRight className="w-3 h-3 text-emerald-500" />}
+                  {stat.trend === "down" && <ArrowDownRight className="w-3 h-3 text-rose-500" />}
+                  <span className={`text-[11px] font-medium ${stat.trend === "up" ? "text-emerald-600 dark:text-emerald-400" : stat.trend === "down" ? "text-rose-600 dark:text-rose-400" : "text-muted-foreground"}`}>
+                    {stat.change}
+                  </span>
+                  <span className="text-[11px] text-muted-foreground truncate">{stat.changeLabel}</span>
                 </div>
               </CardContent>
             </Card>
@@ -176,17 +231,17 @@ export default function Today() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <Card className="lg:col-span-2" data-testid="card-recent-activity">
             <CardContent className="p-5">
-              <div className="flex items-center justify-between gap-2 mb-5">
+              <div className="flex items-center justify-between gap-2 mb-4">
                 <h2 className="font-semibold" data-testid="text-recent-activity-title">Recent Activity</h2>
                 <Badge variant="secondary" data-testid="badge-activity-count">
                   {recentActivity.length} events
                 </Badge>
               </div>
-              <div className="space-y-1">
+              <div className="space-y-0.5">
                 {recentActivity.map((item, index) => (
                   <div
                     key={index}
-                    className="flex items-center gap-3 py-2.5 px-2 rounded-md hover-elevate"
+                    className="flex items-center gap-3 py-2 px-2 rounded-md hover-elevate"
                     data-testid={`activity-item-${index}`}
                   >
                     {getStatusIcon(item.status)}
@@ -209,17 +264,17 @@ export default function Today() {
 
           <Card data-testid="card-quick-links">
             <CardContent className="p-5">
-              <div className="flex items-center justify-between gap-2 mb-5">
+              <div className="flex items-center justify-between gap-2 mb-4">
                 <h2 className="font-semibold" data-testid="text-quick-links-title">Quick Links</h2>
-                <TrendingUp className="w-4 h-4 text-muted-foreground" />
+                <Globe className="w-4 h-4 text-muted-foreground" />
               </div>
-              <div className="space-y-1">
+              <div className="space-y-0.5">
                 {quickLinks.map((link) => {
                   const basePath = selectedWorkspace ? `/${selectedWorkspace.id}/${link.href}` : `/${link.href}`;
                   return (
                     <Link key={link.href} href={basePath}>
                       <div
-                        className="flex items-center gap-3 py-2.5 px-2 rounded-md hover-elevate cursor-pointer"
+                        className="flex items-center gap-3 py-2 px-2 rounded-md hover-elevate cursor-pointer"
                         data-testid={`link-${link.label.toLowerCase().replace(/\s+/g, "-")}`}
                       >
                         <link.icon className={`w-4 h-4 ${link.iconColor} shrink-0`} />
@@ -227,7 +282,7 @@ export default function Today() {
                           <p className="text-sm font-medium">{link.label}</p>
                           <p className="text-xs text-muted-foreground">{link.description}</p>
                         </div>
-                        <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0" />
+                        <ArrowRight className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                       </div>
                     </Link>
                   );
