@@ -35,7 +35,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Plus, Layers, Search, MoreHorizontal, Pencil, Eye, Copy, FileDown, Trash2 } from "lucide-react";
+import { Plus, Layers, Search, MoreHorizontal, Pencil, Eye, Copy, FileDown, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 import { ContentEngineTabs } from "@/components/content-engine-tabs";
 
 const initialPosts = [
@@ -139,6 +139,9 @@ export default function ContentPosts() {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deletePost, setDeletePost] = useState<Post | null>(null);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const postsPerPage = 10;
+
   const filtered = posts.filter((p) => {
     if (search && !p.title.toLowerCase().includes(search.toLowerCase())) return false;
     if (statusFilter !== "all" && p.status !== statusFilter) return false;
@@ -146,6 +149,10 @@ export default function ContentPosts() {
     if (schemaFilter !== "all" && p.schema !== schemaFilter) return false;
     return true;
   });
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / postsPerPage));
+  const safeCurrentPage = Math.min(currentPage, totalPages);
+  const paginatedPosts = filtered.slice((safeCurrentPage - 1) * postsPerPage, safeCurrentPage * postsPerPage);
 
   const categories = Array.from(new Set(posts.map((p) => p.category)));
   const schemas = Array.from(new Set(posts.map((p) => p.schema)));
@@ -315,10 +322,16 @@ export default function ContentPosts() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filtered.map((post) => (
+              {paginatedPosts.map((post) => (
                 <TableRow key={post.id} data-testid={`row-post-${post.id}`}>
                   <TableCell className="font-medium max-w-[300px] truncate" data-testid={`text-post-title-${post.id}`}>
-                    {post.title}
+                    <button
+                      className="text-left hover:text-sidebar-primary hover:underline transition-colors cursor-pointer"
+                      onClick={() => handlePreview(post)}
+                      data-testid={`link-post-title-${post.id}`}
+                    >
+                      {post.title}
+                    </button>
                   </TableCell>
                   <TableCell data-testid={`text-post-category-${post.id}`}>{post.category}</TableCell>
                   <TableCell>
@@ -377,6 +390,43 @@ export default function ContentPosts() {
           </Table>
         </CardContent>
       </Card>
+
+      <div className="flex items-center justify-between gap-4 flex-wrap" data-testid="pagination-posts">
+        <p className="text-sm text-muted-foreground">
+          Showing {filtered.length === 0 ? 0 : (safeCurrentPage - 1) * postsPerPage + 1}–{Math.min(safeCurrentPage * postsPerPage, filtered.length)} of {filtered.length} posts
+        </p>
+        <div className="flex items-center gap-1">
+          <Button
+            variant="outline"
+            size="icon"
+            disabled={safeCurrentPage <= 1}
+            onClick={() => setCurrentPage(safeCurrentPage - 1)}
+            data-testid="button-prev-page"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </Button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <Button
+              key={page}
+              variant={page === safeCurrentPage ? "default" : "outline"}
+              size="icon"
+              onClick={() => setCurrentPage(page)}
+              data-testid={`button-page-${page}`}
+            >
+              {page}
+            </Button>
+          ))}
+          <Button
+            variant="outline"
+            size="icon"
+            disabled={safeCurrentPage >= totalPages}
+            onClick={() => setCurrentPage(safeCurrentPage + 1)}
+            data-testid="button-next-page"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </Button>
+        </div>
+      </div>
 
       <Dialog open={newPostOpen} onOpenChange={setNewPostOpen}>
         <DialogContent data-testid="dialog-new-post">
