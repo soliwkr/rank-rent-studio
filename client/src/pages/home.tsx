@@ -260,6 +260,7 @@ export default function Home() {
                 Twilio Voice · SMS · Website Widget (AI) · Books appt. 24/7
               </p>
             </div>
+            <div className="mx-auto w-32 sm:w-40 lg:w-52 h-[2px] rounded-full bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 mb-4" />
             <p className="text-[15px] sm:text-lg lg:text-xl max-w-3xl mx-auto mb-4 font-semibold text-white drop-shadow-lg">
               Whitelabel infrastructure · You handle clients
             </p>
