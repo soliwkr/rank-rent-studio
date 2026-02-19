@@ -21,7 +21,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Pencil, Search, Trash2 } from "lucide-react";
+import { Plus, Pencil, Search, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 import { ContentEngineTabs } from "@/components/content-engine-tabs";
 
 const initialPages = [
@@ -58,6 +58,9 @@ export default function ContentPages() {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deletePage, setDeletePage] = useState<Page | null>(null);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const pagesPerPage = 10;
+
   const types = Array.from(new Set(pages.map((p) => p.type)));
 
   const filtered = pages.filter((p) => {
@@ -65,6 +68,10 @@ export default function ContentPages() {
     if (typeFilter !== "all" && p.type !== typeFilter) return false;
     return true;
   });
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pagesPerPage));
+  const safeCurrentPage = Math.min(currentPage, totalPages);
+  const paginatedPages = filtered.slice((safeCurrentPage - 1) * pagesPerPage, safeCurrentPage * pagesPerPage);
 
   const handleAddPage = () => {
     if (!addTitle.trim()) return;
@@ -167,9 +174,17 @@ export default function ContentPages() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filtered.map((page) => (
+              {paginatedPages.map((page) => (
                 <TableRow key={page.id} data-testid={`row-page-${page.id}`}>
-                  <TableCell className="font-medium" data-testid={`text-page-title-${page.id}`}>{page.title}</TableCell>
+                  <TableCell className="font-medium" data-testid={`text-page-title-${page.id}`}>
+                    <button
+                      className="text-left hover:text-sidebar-primary hover:underline transition-colors cursor-pointer"
+                      onClick={() => handleEdit(page)}
+                      data-testid={`link-page-title-${page.id}`}
+                    >
+                      {page.title}
+                    </button>
+                  </TableCell>
                   <TableCell className="text-muted-foreground" data-testid={`text-page-url-${page.id}`}>{page.url}</TableCell>
                   <TableCell>
                     <Badge variant="secondary" data-testid={`badge-page-type-${page.id}`}>{page.type}</Badge>
@@ -195,6 +210,43 @@ export default function ContentPages() {
           </Table>
         </CardContent>
       </Card>
+
+      <div className="flex items-center justify-between gap-4 flex-wrap" data-testid="pagination-pages">
+        <p className="text-sm text-muted-foreground">
+          Showing {filtered.length === 0 ? 0 : (safeCurrentPage - 1) * pagesPerPage + 1}–{Math.min(safeCurrentPage * pagesPerPage, filtered.length)} of {filtered.length} pages
+        </p>
+        <div className="flex items-center gap-1">
+          <Button
+            variant="outline"
+            size="icon"
+            disabled={safeCurrentPage <= 1}
+            onClick={() => setCurrentPage(safeCurrentPage - 1)}
+            data-testid="button-prev-page"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </Button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((pg) => (
+            <Button
+              key={pg}
+              variant={pg === safeCurrentPage ? "default" : "outline"}
+              size="icon"
+              onClick={() => setCurrentPage(pg)}
+              data-testid={`button-page-${pg}`}
+            >
+              {pg}
+            </Button>
+          ))}
+          <Button
+            variant="outline"
+            size="icon"
+            disabled={safeCurrentPage >= totalPages}
+            onClick={() => setCurrentPage(safeCurrentPage + 1)}
+            data-testid="button-next-page"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </Button>
+        </div>
+      </div>
 
       <Dialog open={addOpen} onOpenChange={setAddOpen}>
         <DialogContent data-testid="dialog-add-page">
