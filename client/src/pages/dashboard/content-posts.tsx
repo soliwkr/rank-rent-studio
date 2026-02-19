@@ -329,7 +329,7 @@ export default function ContentPosts() {
                   <TableCell className="font-medium max-w-[300px] truncate" data-testid={`text-post-title-${post.id}`}>
                     <button
                       className="text-left hover:text-sidebar-primary hover:underline transition-colors cursor-pointer"
-                      onClick={() => navigate(`/${selectedWorkspace?.id}/content-engine?tab=posts`)}
+                      onClick={() => navigate(`/${selectedWorkspace?.id}/content/posts/${post.id}/edit`)}
                       data-testid={`link-post-title-${post.id}`}
                     >
                       {post.title}
@@ -363,7 +363,7 @@ export default function ContentPosts() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem data-testid={`action-edit-${post.id}`} onClick={() => handleEdit(post)}>
+                        <DropdownMenuItem data-testid={`action-edit-${post.id}`} onClick={() => navigate(`/${selectedWorkspace?.id}/content/posts/${post.id}/edit`)}>
                           <Pencil className="w-4 h-4 mr-2" />
                           Edit
                         </DropdownMenuItem>
