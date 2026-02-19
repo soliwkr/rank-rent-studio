@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "wouter";
 import { ArrowRight, Star, CheckCircle, Globe, BarChart3, Zap, Users, FileText, Link2, Layers, Target, PenTool, Shield, Repeat, Search, DollarSign, Eye, ClipboardList, Key } from "lucide-react";
+import indexFlowLogo from "@assets/image_1771351451425.png";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -237,9 +238,7 @@ export default function Home() {
             <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold leading-tight mb-2 bg-gradient-to-r from-white via-white/95 to-white/80 bg-clip-text text-transparent drop-shadow-lg">
               Still Paying for 10+ SEO Tools
             </h1>
-            <p className="text-xl sm:text-2xl lg:text-3xl font-bold mb-6 bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
-              IndexFlow
-            </p>
+            <img src={indexFlowLogo} alt="IndexFlow" className="h-10 sm:h-12 lg:h-14 mx-auto mb-6 drop-shadow-lg" data-testid="hero-logo" />
             <div className="max-w-3xl mx-auto mb-6 space-y-1">
               <p className="text-[14px] sm:text-base lg:text-lg text-white/90 drop-shadow-lg">
                 Create Posts & Pages · On-Page SEO Audits · Automated Schema
