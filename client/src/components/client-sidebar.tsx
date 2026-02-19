@@ -38,7 +38,6 @@ import {
   LinkIcon,
   RefreshCw,
   ClipboardList,
-  Receipt,
   TrendingUp,
   MapPin,
   Monitor,
@@ -119,7 +118,6 @@ const navGroups: NavGroup[] = [
       { title: "Links", path: "/seo/links", icon: LinkIcon },
       { title: "CMS", path: "/seo/cms", icon: RefreshCw },
       { title: "Reports", path: "/seo/reports", icon: ClipboardList },
-      { title: "Invoices", path: "/seo/invoices", icon: Receipt },
     ],
   },
   {

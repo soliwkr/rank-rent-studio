@@ -40,7 +40,6 @@ const AdminPlatformSeoKeywords = lazy(() => import("@/pages/admin/platform-seo-k
 const AdminPlatformSeoApi = lazy(() => import("@/pages/admin/platform-seo-api"));
 const AdminBillingSubscriptions = lazy(() => import("@/pages/admin/billing-subscriptions"));
 const AdminBillingRevenue = lazy(() => import("@/pages/admin/billing-revenue"));
-const AdminBillingInvoices = lazy(() => import("@/pages/admin/billing-invoices"));
 const AdminBillingPayouts = lazy(() => import("@/pages/admin/billing-payouts"));
 const AdminSystemApiKeys = lazy(() => import("@/pages/admin/system-api-keys"));
 const AdminSystemTwilio = lazy(() => import("@/pages/admin/system-twilio"));
@@ -93,7 +92,6 @@ const SeoLinks = lazy(() => import("@/pages/dashboard/seo-links"));
 const SeoHealth = lazy(() => import("@/pages/dashboard/seo-health"));
 const SeoCms = lazy(() => import("@/pages/dashboard/seo-cms"));
 const SeoReports = lazy(() => import("@/pages/dashboard/seo-reports"));
-const SeoInvoices = lazy(() => import("@/pages/dashboard/seo-invoices"));
 const ContentEngine = lazy(() => import("@/pages/dashboard/content-engine"));
 const PostEditor = lazy(() => import("@/pages/dashboard/post-editor"));
 
@@ -346,7 +344,6 @@ function Router() {
         <Route path="/admin/platform-seo/api-usage">{() => <AdminRoute component={AdminPlatformSeoApi} permission="*" />}</Route>
         <Route path="/admin/billing/subscriptions">{() => <AdminRoute component={AdminBillingSubscriptions} permission="*" />}</Route>
         <Route path="/admin/billing/revenue">{() => <AdminRoute component={AdminBillingRevenue} permission="*" />}</Route>
-        <Route path="/admin/billing/invoices">{() => <AdminRoute component={AdminBillingInvoices} permission="*" />}</Route>
         <Route path="/admin/billing/payouts">{() => <AdminRoute component={AdminBillingPayouts} permission="*" />}</Route>
         <Route path="/admin/system/api-keys">{() => <AdminRoute component={AdminSystemApiKeys} permission="*" />}</Route>
         <Route path="/admin/system/twilio">{() => <AdminRoute component={AdminSystemTwilio} permission="*" />}</Route>
@@ -407,7 +404,6 @@ function Router() {
         <Route path="/:workspaceId/seo/health">{() => <ClientRoute component={SeoHealth} />}</Route>
         <Route path="/:workspaceId/seo/cms">{() => <ClientRoute component={SeoCms} />}</Route>
         <Route path="/:workspaceId/seo/reports">{() => <ClientRoute component={SeoReports} />}</Route>
-        <Route path="/:workspaceId/seo/invoices">{() => <ClientRoute component={SeoInvoices} />}</Route>
 
         {/* Rank Tracker */}
         <Route path="/:workspaceId/rank-tracker/track-keywords">{() => <ClientRoute component={RankTracker} />}</Route>

@@ -784,13 +784,16 @@ export async function registerRoutes(
       }
       const settings = await storage.getPaymentSettings(req.params.workspaceId);
       if (settings) {
-        res.json({
+        const masked = {
           ...settings,
           stripeSecretKey: settings.stripeSecretKey ? "***" : null,
+          stripePublishableKey: settings.stripePublishableKey || null,
           paypalClientSecret: settings.paypalClientSecret ? "***" : null,
-        });
+          paypalClientId: settings.paypalClientId || null,
+        };
+        res.json(masked);
       } else {
-        res.json({});
+        res.json(null);
       }
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch payment settings" });
@@ -802,16 +805,73 @@ export async function registerRoutes(
       if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
-      const validatedData = insertPaymentSettingsSchema.parse({
-        ...req.body,
-        workspaceId: req.params.workspaceId,
-      });
-      const settings = await storage.upsertPaymentSettings(validatedData);
-      res.json(settings);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ error: "Invalid payment settings", details: error.errors });
+      const { provider, ...credentials } = req.body;
+      const validProviders = ["stripe", "paypal", "disconnect-stripe", "disconnect-paypal"];
+      if (!provider || !validProviders.includes(provider)) {
+        return res.status(400).json({ error: "Invalid provider. Must be one of: stripe, paypal, disconnect-stripe, disconnect-paypal" });
       }
+      if (provider === "stripe" && (!credentials.stripePublishableKey || !credentials.stripeSecretKey)) {
+        return res.status(400).json({ error: "Stripe requires both publishableKey and secretKey" });
+      }
+      if (provider === "paypal" && (!credentials.paypalClientId || !credentials.paypalClientSecret)) {
+        return res.status(400).json({ error: "PayPal requires both clientId and clientSecret" });
+      }
+      const existing = await storage.getPaymentSettings(req.params.workspaceId);
+
+      let data: any = {
+        workspaceId: req.params.workspaceId,
+      };
+
+      if (provider === "stripe") {
+        data.stripePublishableKey = credentials.stripePublishableKey;
+        data.stripeSecretKey = credentials.stripeSecretKey;
+        data.stripeConnected = true;
+        if (existing) {
+          data.paypalClientId = existing.paypalClientId;
+          data.paypalClientSecret = existing.paypalClientSecret;
+          data.paypalConnected = existing.paypalConnected;
+        }
+      } else if (provider === "paypal") {
+        data.paypalClientId = credentials.paypalClientId;
+        data.paypalClientSecret = credentials.paypalClientSecret;
+        data.paypalConnected = true;
+        if (existing) {
+          data.stripePublishableKey = existing.stripePublishableKey;
+          data.stripeSecretKey = existing.stripeSecretKey;
+          data.stripeConnected = existing.stripeConnected;
+        }
+      } else if (provider === "disconnect-stripe") {
+        data = {
+          ...data,
+          stripePublishableKey: null,
+          stripeSecretKey: null,
+          stripeConnected: false,
+          paypalClientId: existing?.paypalClientId || null,
+          paypalClientSecret: existing?.paypalClientSecret || null,
+          paypalConnected: existing?.paypalConnected || false,
+        };
+      } else if (provider === "disconnect-paypal") {
+        data = {
+          ...data,
+          stripePublishableKey: existing?.stripePublishableKey || null,
+          stripeSecretKey: existing?.stripeSecretKey || null,
+          stripeConnected: existing?.stripeConnected || false,
+          paypalClientId: null,
+          paypalClientSecret: null,
+          paypalConnected: false,
+        };
+      }
+
+      const settings = await storage.upsertPaymentSettings(data);
+      const masked = {
+        ...settings,
+        stripeSecretKey: settings.stripeSecretKey ? "***" : null,
+        stripePublishableKey: settings.stripePublishableKey || null,
+        paypalClientSecret: settings.paypalClientSecret ? "***" : null,
+        paypalClientId: settings.paypalClientId || null,
+      };
+      res.json(masked);
+    } catch (error) {
       res.status(500).json({ error: "Failed to update payment settings" });
     }
   });
