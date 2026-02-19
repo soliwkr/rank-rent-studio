@@ -272,9 +272,9 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="mx-auto w-32 sm:w-40 lg:w-52 h-[2px] rounded-full bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 mt-2 mb-8" />
+            <div className="mx-auto w-32 sm:w-40 lg:w-52 h-[2px] rounded-full bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 mt-2 mb-16" />
 
-            <div className="flex flex-col items-center justify-center space-y-6">
+            <div className="flex flex-col items-center justify-center space-y-10">
               <p className="text-[15px] sm:text-lg lg:text-xl max-w-3xl font-semibold text-white drop-shadow-lg">
                 White-Label Infrastructure from Day One
               </p>
