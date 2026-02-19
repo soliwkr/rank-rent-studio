@@ -232,7 +232,7 @@ export function ClientSidebar() {
     <Sidebar>
       <SidebarHeader>
         <div className="flex items-center justify-between px-3 py-2">
-          <img src={indexFlowLogo} alt="indexFlow" className="h-7" data-testid="img-client-logo" />
+          <img src={indexFlowLogo} alt="indexFlow" className="h-14" data-testid="img-client-logo" />
           <SidebarTrigger className="text-sidebar-foreground" data-testid="button-client-sidebar-toggle" />
         </div>
         <div className="px-2 pb-1">
