@@ -290,13 +290,31 @@ export async function registerRoutes(
           maxWorkspaces: planTier.maxWorkspaces === Infinity ? null : planTier.maxWorkspaces,
           maxUsers: planTier.maxUsers === Infinity ? null : planTier.maxUsers,
           maxDomains: planTier.maxDomains === Infinity ? null : planTier.maxDomains,
+          aiPostsPerWorkspacePerMonth: planTier.aiPostsPerWorkspacePerMonth,
         },
         features: {
-          whiteLabel: planTier.whiteLabel,
+          contentEngine: planTier.contentEngine,
+          rankTracker: planTier.rankTracker,
+          localSearchGrid: planTier.localSearchGrid,
+          googleSearchConsole: planTier.googleSearchConsole,
+          crmPipeline: planTier.crmPipeline,
+          twilioSmsVoice: planTier.twilioSmsVoice,
+          websiteWidget: planTier.websiteWidget,
+          cmsIntegration: planTier.cmsIntegration,
+          linkBuilder: planTier.linkBuilder,
+          postValidator: planTier.postValidator,
+          onPageAuditor: planTier.onPageAuditor,
+          siteProfiler: planTier.siteProfiler,
+          schemaMarkup: planTier.schemaMarkup,
+          invoicing: planTier.invoicing,
+          linkHealth: planTier.linkHealth,
+          byok: planTier.byok,
+          multiLanguage: planTier.multiLanguage,
           customDomain: planTier.customDomain,
-          teamRoles: planTier.teamRoles,
           bulkCampaigns: planTier.bulkCampaigns,
           contentModeration: planTier.contentModeration,
+          whiteLabel: planTier.whiteLabel,
+          teamRoles: planTier.teamRoles,
           apiAccess: planTier.apiAccess,
           ssoSaml: planTier.ssoSaml,
         },
@@ -1111,6 +1129,25 @@ export async function registerRoutes(
 
   app.post("/api/admin/blog/posts", async (req, res) => {
     try {
+      const workspaceId = req.body.workspaceId;
+      if (workspaceId) {
+        const workspace = await storage.getWorkspace(workspaceId);
+        const ownerId = workspace?.ownerId || (req as any).user?.id || "dev-user";
+        const owner = await storage.getUser(ownerId);
+        const planTier = getPlanTier(owner?.plan || "solo");
+        const postsThisMonth = await storage.countBlogPostsThisMonth(workspaceId);
+
+        if (postsThisMonth >= planTier.aiPostsPerWorkspacePerMonth) {
+          return res.status(403).json({
+            error: "ai_post_limit_reached",
+            message: `This workspace has reached its limit of ${planTier.aiPostsPerWorkspacePerMonth} AI posts this month. The limit resets on the 1st of next month.`,
+            currentCount: postsThisMonth,
+            maxAllowed: planTier.aiPostsPerWorkspacePerMonth,
+            plan: planTier.id,
+          });
+        }
+      }
+
       const post = await storage.createWorkspaceBlogPost(req.body);
       res.json(post);
     } catch (error) {
@@ -1229,6 +1266,37 @@ export async function registerRoutes(
   app.post("/api/admin/blog/posts/bulk/create", async (req, res) => {
     try {
       const posts = req.body.posts || [];
+      if (posts.length > 0 && posts[0].workspaceId) {
+        const workspaceId = posts[0].workspaceId;
+        const workspace = await storage.getWorkspace(workspaceId);
+        const ownerId = workspace?.ownerId || (req as any).user?.id || "dev-user";
+        const owner = await storage.getUser(ownerId);
+        const planTier = getPlanTier(owner?.plan || "solo");
+        const postsThisMonth = await storage.countBlogPostsThisMonth(workspaceId);
+        const remaining = planTier.aiPostsPerWorkspacePerMonth - postsThisMonth;
+
+        if (remaining <= 0) {
+          return res.status(403).json({
+            error: "ai_post_limit_reached",
+            message: `This workspace has reached its limit of ${planTier.aiPostsPerWorkspacePerMonth} AI posts this month. The limit resets on the 1st of next month.`,
+            currentCount: postsThisMonth,
+            maxAllowed: planTier.aiPostsPerWorkspacePerMonth,
+            plan: planTier.id,
+          });
+        }
+
+        if (posts.length > remaining) {
+          return res.status(403).json({
+            error: "ai_post_limit_exceeded",
+            message: `You can only create ${remaining} more post${remaining === 1 ? "" : "s"} this month (${postsThisMonth}/${planTier.aiPostsPerWorkspacePerMonth} used). Please reduce the batch size.`,
+            currentCount: postsThisMonth,
+            maxAllowed: planTier.aiPostsPerWorkspacePerMonth,
+            remaining,
+            plan: planTier.id,
+          });
+        }
+      }
+
       const created = [];
       for (const post of posts) {
         const result = await storage.createWorkspaceBlogPost(post);

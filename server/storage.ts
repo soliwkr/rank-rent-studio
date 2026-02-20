@@ -261,6 +261,7 @@ export interface IStorage {
   updateWorkspaceDomain(id: string, data: Partial<Pick<WorkspaceDomain, "domain" | "blogTemplate" | "isPrimary" | "accentColor" | "accentForeground">>): Promise<WorkspaceDomain | undefined>;
   deleteWorkspaceDomain(id: string): Promise<boolean>;
   // Workspace Blog Posts
+  countBlogPostsThisMonth(workspaceId: string): Promise<number>;
   getWorkspaceBlogPosts(workspaceId: string, status?: string): Promise<WorkspaceBlogPost[]>;
   getWorkspaceBlogPost(id: string): Promise<WorkspaceBlogPost | undefined>;
   getWorkspaceBlogPostBySlug(workspaceId: string, slug: string): Promise<WorkspaceBlogPost | undefined>;
@@ -1329,6 +1330,14 @@ export class MemStorage implements IStorage {
     return this.workspaceDomainsMap.delete(id);
   }
 
+  async countBlogPostsThisMonth(workspaceId: string): Promise<number> {
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    return Array.from(this.workspaceBlogPostsMap.values()).filter(
+      (p) => p.workspaceId === workspaceId && p.createdAt && p.createdAt >= startOfMonth
+    ).length;
+  }
+
   async getWorkspaceBlogPosts(workspaceId: string, status?: string): Promise<WorkspaceBlogPost[]> {
     return Array.from(this.workspaceBlogPostsMap.values()).filter(p => p.workspaceId === workspaceId && (!status || p.status === status)).sort((a, b) => ((b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0)));
   }
@@ -2298,6 +2307,19 @@ export class DbStorage implements IStorage {
 
       return deleted.length > 0;
     });
+  }
+
+  async countBlogPostsThisMonth(workspaceId: string): Promise<number> {
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const result = await db!
+      .select({ count: sql<number>`count(*)::int` })
+      .from(workspaceBlogPosts)
+      .where(and(
+        eq(workspaceBlogPosts.workspaceId, workspaceId),
+        lte(sql`${startOfMonth}`, workspaceBlogPosts.createdAt)
+      ));
+    return result[0]?.count ?? 0;
   }
 
   async getWorkspaceBlogPosts(workspaceId: string, status?: string): Promise<WorkspaceBlogPost[]> {
