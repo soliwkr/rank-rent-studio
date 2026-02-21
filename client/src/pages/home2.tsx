@@ -17,7 +17,7 @@ function HeroVideo() {
 
   return (
     <div className="absolute inset-0 w-full h-full overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-green-950 to-slate-900" />
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-sky-950 to-slate-900" />
       {showVideo && (
         <div className="absolute inset-0" style={{ padding: "56.25% 0 0 0", position: "relative" }}>
           <iframe
