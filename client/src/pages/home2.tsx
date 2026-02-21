@@ -372,7 +372,7 @@ export default function Home2() {
 
         <div className="relative z-10 flex flex-col items-center">
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-primary/30 to-sky-400/30 border border-sky-300/40 text-sky-200 px-4 py-1.5 rounded-full text-xs font-bold tracking-wide mb-9 animate-[pulse_4s_ease-in-out_infinite] backdrop-blur-sm shadow-lg shadow-sky-400/20" data-testid="hero-badge">
-            <span className="w-1.5 h-1.5 bg-red-500 rounded-full" />
+            <span className="w-1.5 h-1.5 bg-primary rounded-full" />
             40+ SEO Tools · One Platform · Zero Middlemen
           </div>
 
@@ -441,7 +441,7 @@ export default function Home2() {
       <section className="py-20 lg:py-24 bg-gradient-to-br from-background via-accent/5 to-background" data-testid="dashboard-section">
         <div className="max-w-6xl mx-auto px-6 sm:px-12">
           <FadeIn>
-            <p className="text-xs font-bold tracking-[3px] uppercase text-red-500 mb-4">The Platform</p>
+            <p className="text-xs font-bold tracking-[3px] uppercase text-primary mb-4">The Platform</p>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight mb-5">
               Everything in <em className="text-muted-foreground/50 italic">one dashboard.</em>
             </h2>
@@ -495,7 +495,7 @@ export default function Home2() {
       <section className="py-20 lg:py-24 bg-accent/20" data-testid="pain-section">
         <div className="max-w-6xl mx-auto px-6 sm:px-12">
           <FadeIn>
-            <p className="text-xs font-bold tracking-[3px] uppercase text-red-500 mb-4">The Pain Problem</p>
+            <p className="text-xs font-bold tracking-[3px] uppercase text-primary mb-4">The Pain Problem</p>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight mb-5">Sound familiar?</h2>
             <p className="text-lg text-muted-foreground max-w-xl mb-14 leading-relaxed">Most agencies waste hours every day dealing with these problems. There's a better way.</p>
           </FadeIn>
@@ -517,7 +517,7 @@ export default function Home2() {
       <section className="py-20 lg:py-24" data-testid="solution-section">
         <div className="max-w-6xl mx-auto px-6 sm:px-12">
           <FadeIn>
-            <p className="text-xs font-bold tracking-[3px] uppercase text-red-500 mb-4">The Solution</p>
+            <p className="text-xs font-bold tracking-[3px] uppercase text-primary mb-4">The Solution</p>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight mb-5">
               One platform, <em className="text-muted-foreground/50 italic">everything connected.</em>
             </h2>
@@ -549,7 +549,7 @@ export default function Home2() {
       <section className="py-20 lg:py-24 bg-accent/20" id="tools" data-testid="tools-section">
         <div className="max-w-6xl mx-auto px-6 sm:px-12">
           <FadeIn>
-            <p className="text-xs font-bold tracking-[3px] uppercase text-red-500 mb-4">Everything In The Box</p>
+            <p className="text-xs font-bold tracking-[3px] uppercase text-primary mb-4">Everything In The Box</p>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight mb-5">
               40+ tools. <em className="text-muted-foreground/50 italic">One subscription.</em>
             </h2>
@@ -588,7 +588,7 @@ export default function Home2() {
       <section className="py-20 lg:py-24" data-testid="replace-section">
         <div className="max-w-6xl mx-auto px-6 sm:px-12">
           <FadeIn>
-            <p className="text-xs font-bold tracking-[3px] uppercase text-red-500 mb-4">What You Replace</p>
+            <p className="text-xs font-bold tracking-[3px] uppercase text-primary mb-4">What You Replace</p>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight mb-5">
               One login <em className="text-muted-foreground/50 italic">instead of eleven.</em>
             </h2>
@@ -615,7 +615,7 @@ export default function Home2() {
       <section className="py-20 lg:py-24 bg-accent/20" data-testid="serve-section">
         <div className="max-w-6xl mx-auto px-6 sm:px-12">
           <FadeIn>
-            <p className="text-xs font-bold tracking-[3px] uppercase text-red-500 mb-4">Who We Serve</p>
+            <p className="text-xs font-bold tracking-[3px] uppercase text-primary mb-4">Who We Serve</p>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight mb-5">
               Built for agencies <em className="text-muted-foreground/50 italic">& teams.</em>
             </h2>
@@ -639,7 +639,7 @@ export default function Home2() {
       <section className="py-20 lg:py-24" data-testid="steps-section">
         <div className="max-w-6xl mx-auto px-6 sm:px-12">
           <FadeIn>
-            <p className="text-xs font-bold tracking-[3px] uppercase text-red-500 mb-4">Pipeline</p>
+            <p className="text-xs font-bold tracking-[3px] uppercase text-primary mb-4">Pipeline</p>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight mb-5">
               How IndexFlow <em className="text-muted-foreground/50 italic">works.</em>
             </h2>
@@ -665,7 +665,7 @@ export default function Home2() {
       <section className="py-20 lg:py-24 bg-accent/20" data-testid="lifecycle-section">
         <div className="max-w-6xl mx-auto px-6 sm:px-12">
           <FadeIn>
-            <p className="text-xs font-bold tracking-[3px] uppercase text-red-500 mb-4">End-to-End</p>
+            <p className="text-xs font-bold tracking-[3px] uppercase text-primary mb-4">End-to-End</p>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight mb-5">
               The complete <em className="text-muted-foreground/50 italic">content lifecycle.</em>
             </h2>
@@ -716,7 +716,7 @@ export default function Home2() {
       <section className="py-20 lg:py-24" id="compare" data-testid="why-section">
         <div className="max-w-6xl mx-auto px-6 sm:px-12">
           <FadeIn>
-            <p className="text-xs font-bold tracking-[3px] uppercase text-red-500 mb-4">Why Choose IndexFlow</p>
+            <p className="text-xs font-bold tracking-[3px] uppercase text-primary mb-4">Why Choose IndexFlow</p>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight mb-5">
               The agency <em className="text-muted-foreground/50 italic">operating system.</em>
             </h2>
@@ -736,7 +736,7 @@ export default function Home2() {
 
           {/* COMPARE */}
           <FadeIn className="mt-20">
-            <p className="text-xs font-bold tracking-[3px] uppercase text-red-500 mb-4">The Honest Comparison</p>
+            <p className="text-xs font-bold tracking-[3px] uppercase text-primary mb-4">The Honest Comparison</p>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight mb-5">
               Not a competitor. <em className="text-muted-foreground/50 italic">A correction.</em>
             </h2>
@@ -779,7 +779,7 @@ export default function Home2() {
       <section className="py-20 lg:py-24 bg-accent/20" data-testid="testimonials-section">
         <div className="max-w-6xl mx-auto px-6 sm:px-12">
           <FadeIn>
-            <p className="text-xs font-bold tracking-[3px] uppercase text-red-500 mb-4">Results</p>
+            <p className="text-xs font-bold tracking-[3px] uppercase text-primary mb-4">Results</p>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight mb-14">
               What our clients <em className="text-muted-foreground/50 italic">say.</em>
             </h2>
@@ -805,7 +805,7 @@ export default function Home2() {
       <section className="py-20 lg:py-24" id="pricing" data-testid="pricing-section">
         <div className="max-w-6xl mx-auto px-6 sm:px-12">
           <FadeIn>
-            <p className="text-xs font-bold tracking-[3px] uppercase text-red-500 mb-4">Simple Pricing</p>
+            <p className="text-xs font-bold tracking-[3px] uppercase text-primary mb-4">Simple Pricing</p>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight mb-5">
               Plans that scale <em className="text-muted-foreground/50 italic">with you.</em>
             </h2>
@@ -855,7 +855,7 @@ export default function Home2() {
       <section className="py-20 lg:py-24 bg-accent/20" id="faq" data-testid="faq-section">
         <div className="max-w-6xl mx-auto px-6 sm:px-12">
           <FadeIn>
-            <p className="text-xs font-bold tracking-[3px] uppercase text-red-500 mb-4">FAQ</p>
+            <p className="text-xs font-bold tracking-[3px] uppercase text-primary mb-4">FAQ</p>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight mb-5">
               Common <em className="text-muted-foreground/50 italic">questions.</em>
             </h2>
