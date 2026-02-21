@@ -409,12 +409,12 @@ export default function Home2() {
           <div className="bg-black/20 backdrop-blur-md rounded-2xl px-4 sm:px-14 py-6 sm:py-14 w-full max-w-4xl">
             {/* Hero Stats Slim Strip - Top */}
             <FadeIn className="mb-3 sm:mb-6 w-full">
-              <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-3 sm:px-6 py-1 sm:py-2 shadow-lg inline-block mx-auto" data-testid="hero-stats-slim">
-                <div className="flex items-center justify-center gap-x-1.5 sm:gap-x-4 text-[8px] sm:text-xs font-bold tracking-wider sm:tracking-widest text-white/90 whitespace-nowrap uppercase">
+              <div className="bg-gradient-to-r from-sky-500 via-blue-500 to-indigo-500 rounded-full px-3 sm:px-6 py-1 sm:py-2 shadow-[0_4px_20px_rgba(234,179,8,0.35)] inline-block mx-auto" data-testid="hero-stats-slim">
+                <div className="flex items-center justify-center gap-x-1.5 sm:gap-x-4 text-[8px] sm:text-xs font-bold tracking-wider sm:tracking-widest text-white whitespace-nowrap uppercase">
                   <span>40+ SEO Tools</span>
-                  <span className="text-white/20">●</span>
+                  <span className="text-white/40">●</span>
                   <span>One Platform</span>
-                  <span className="text-white/20">●</span>
+                  <span className="text-white/40">●</span>
                   <span>Zero Middlemen</span>
                 </div>
               </div>
