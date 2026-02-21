@@ -413,11 +413,11 @@ export default function Home2() {
               <span className="text-white/40">Not your tools.</span>
             </h1>
 
-            <p className="text-[13px] sm:text-xl text-white/70 max-w-xl mb-6 sm:mb-10 leading-snug sm:leading-relaxed font-light mx-auto" data-testid="hero-sub">
+            <p className="text-[13px] sm:text-xl text-white/70 max-w-xl mb-4 sm:mb-6 leading-snug sm:leading-relaxed font-light mx-auto" data-testid="hero-sub">
               <strong className="text-white font-semibold">White Label Agency operating system</strong><br />built for solo founders and agency owners.
             </p>
 
-            <div className="flex flex-row items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-5">
+            <div className="flex flex-row items-center justify-center gap-2 sm:gap-3 mb-2 sm:mb-3">
               <Link href="/contact">
                 <Button size="default" className="text-xs sm:text-base px-3 sm:px-8 py-2 sm:py-4 shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all hover:-translate-y-0.5 font-bold" data-testid="btn-hero-trial">
                   30 Day Trial $1
@@ -429,7 +429,7 @@ export default function Home2() {
                 </Button>
               </Link>
             </div>
-            <p className="text-[9px] sm:text-xs text-white font-medium mb-4 sm:mb-6" data-testid="hero-note">No contracts · No setup fees · Cancel anytime</p>
+            <p className="text-[9px] sm:text-xs text-white font-medium mb-3 sm:mb-5" data-testid="hero-note">No contracts · No setup fees · Cancel anytime</p>
 
             <FadeIn className="w-full">
               <div className="relative inline-block mx-auto group" data-testid="hero-stats-slim">
