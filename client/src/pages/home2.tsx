@@ -394,33 +394,6 @@ function FAQItem({ q, a }: { q: string; a: string }) {
   );
 }
 
-function CustomCursor() {
-  const cursorRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const move = (e: MouseEvent) => {
-      if (cursorRef.current) {
-        cursorRef.current.style.left = `${e.clientX}px`;
-        cursorRef.current.style.top = `${e.clientY}px`;
-      }
-    };
-    window.addEventListener("mousemove", move);
-    return () => window.removeEventListener("mousemove", move);
-  }, []);
-
-  return (
-    <div
-      ref={cursorRef}
-      className="pointer-events-none fixed z-[9999] -translate-x-1/2 -translate-y-1/2 hidden sm:block"
-      style={{ left: -100, top: -100 }}
-    >
-      <div className="w-8 h-8 rounded-full border border-white/40 flex items-center justify-center">
-        <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
-      </div>
-    </div>
-  );
-}
-
 export default function Home2() {
   useEffect(() => {
     document.title = "IndexFlow — The Agency Operating System";
@@ -428,8 +401,6 @@ export default function Home2() {
 
   return (
     <Layout>
-      <div className="custom-cursor-page">
-      <CustomCursor />
       <SEO {...seoData.home} structuredData={combinedHomeSchema} />
 
       {/* HERO */}
@@ -1002,11 +973,7 @@ export default function Home2() {
           from { transform: translateX(0); }
           to { transform: translateX(-50%); }
         }
-        @media (min-width: 640px) {
-          .custom-cursor-page, .custom-cursor-page * { cursor: none !important; }
-        }
       `}</style>
-      </div>
     </Layout>
   );
 }
