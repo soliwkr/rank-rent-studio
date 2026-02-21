@@ -406,7 +406,7 @@ export default function Home2() {
       <SEO {...seoData.home} structuredData={combinedHomeSchema} />
 
       {/* HERO */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 sm:px-12 py-32 overflow-hidden" data-testid="hero-section">
+      <section className="relative flex flex-col items-center justify-center text-center px-6 sm:px-12 py-24 sm:py-32 overflow-hidden" data-testid="hero-section">
         <HeroVideo />
 
         <div className="relative z-10 flex flex-col items-center">
