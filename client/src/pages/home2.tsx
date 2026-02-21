@@ -371,8 +371,8 @@ export default function Home2() {
         <HeroVideo />
 
         <div className="relative z-10 flex flex-col items-center">
-          <div className="inline-flex items-center gap-2 bg-primary/20 border border-primary/40 text-white px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide mb-9 backdrop-blur-sm" data-testid="hero-badge">
-            <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-yellow-500 border border-yellow-300/50 text-black px-4 py-1.5 rounded-full text-xs font-bold tracking-wide mb-9 animate-pulse shadow-lg shadow-yellow-400/30" data-testid="hero-badge">
+            <span className="w-1.5 h-1.5 bg-red-500 rounded-full" />
             40+ SEO Tools · One Platform · Zero Middlemen
           </div>
 
