@@ -8,6 +8,7 @@ import { Layout } from "@/components/layout";
 import { PageSubNav } from "@/components/page-sub-nav";
 import { CMSPartners } from "@/components/cms-partners";
 import { SEO, seoData, serviceSchema, howToSchema } from "@/components/seo";
+import { colorShadows } from "@/lib/color-shadows";
 
 const aboutSections = [
   { id: "explainer", label: "Watch" },
@@ -185,8 +186,8 @@ export default function About() {
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {steps.map((step) => (
-              <Card key={step.number} className="hover-elevate relative">
+            {steps.map((step, i) => (
+              <Card key={step.number} className={`hover-elevate relative hover:-translate-y-1 transition-all ${colorShadows[i % colorShadows.length]}`}>
                 <CardContent className="p-6 text-center">
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-gray-500 flex items-center justify-center text-white font-bold text-sm">
                     {step.number}
@@ -213,8 +214,8 @@ export default function About() {
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {included.map((item) => (
-              <Card key={item.title} className="hover-elevate">
+            {included.map((item, i) => (
+              <Card key={item.title} className={`hover-elevate hover:-translate-y-1 transition-all ${colorShadows[i % colorShadows.length]}`}>
                 <CardContent className="p-6 text-center">
                   <div className={`w-14 h-14 rounded-full ${item.bgColor} flex items-center justify-center mx-auto mb-4 ${item.shadow}`}>
                     <item.icon className={`w-7 h-7 ${item.color}`} />
@@ -238,8 +239,8 @@ export default function About() {
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {benefits.map((benefit) => (
-              <Card key={benefit.title} className="hover-elevate">
+            {benefits.map((benefit, i) => (
+              <Card key={benefit.title} className={`hover-elevate hover:-translate-y-1 transition-all ${colorShadows[i % colorShadows.length]}`}>
                 <CardContent className="p-6 text-center">
                   <div className={`w-14 h-14 rounded-full ${benefit.bgColor} flex items-center justify-center mx-auto mb-4`}>
                     <benefit.icon className={`w-7 h-7 ${benefit.color}`} />
@@ -260,8 +261,8 @@ export default function About() {
             <h2 className="text-3xl font-bold mb-4">Transparent Pricing</h2>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {pricing.map((item) => (
-              <Card key={item.label} className="hover-elevate">
+            {pricing.map((item, i) => (
+              <Card key={item.label} className={`hover-elevate hover:-translate-y-1 transition-all ${colorShadows[i % colorShadows.length]}`}>
                 <CardContent className="p-6 text-center">
                   <div className={`w-14 h-14 rounded-full ${item.bgColor} flex items-center justify-center mx-auto mb-4 ${item.shadow}`}>
                     <item.icon className={`w-7 h-7 ${item.color}`} />

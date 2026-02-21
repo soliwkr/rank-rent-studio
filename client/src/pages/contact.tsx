@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { Layout } from "@/components/layout";
 import { SEO, seoData } from "@/components/seo";
+import { colorShadows } from "@/lib/color-shadows";
 
 const timeSlots = [
   "9:00 AM", "9:30 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM",
@@ -434,8 +435,8 @@ export default function Contact() {
             </div>
 
             <div className="space-y-6">
-              {contactInfo.map((info) => (
-                <Card key={info.title}>
+              {contactInfo.map((info, i) => (
+                <Card key={info.title} className={`hover:-translate-y-1 transition-all ${colorShadows[i % colorShadows.length]}`}>
                   <CardContent className="p-4 flex items-start gap-4">
                     <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
                       <info.icon className="w-5 h-5 text-primary" />

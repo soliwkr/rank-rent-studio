@@ -2,6 +2,7 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star } from "lucide-react";
+import { colorShadows } from "@/lib/color-shadows";
 
 const testimonials = [
   { name: "Sarah Mitchell", business: "Apex Digital Marketing", role: "Founder", text: "We replaced 8 separate tools with IndexFlow and doubled our team's output while cutting costs by 60%. It's the all-in-one platform we always wanted.", rating: 5 },
@@ -25,7 +26,7 @@ export default function Testimonials() {
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {testimonials.map((t, i) => (
-                <Card key={i} className="hover-elevate" data-testid={`card-testimonial-${i}`}>
+                <Card key={i} className={`hover-elevate hover:-translate-y-1 transition-all ${colorShadows[i % colorShadows.length]}`} data-testid={`card-testimonial-${i}`}>
                   <CardContent className="p-6">
                     <div className="flex gap-1 mb-3">
                       {Array.from({ length: t.rating }).map((_, j) => (

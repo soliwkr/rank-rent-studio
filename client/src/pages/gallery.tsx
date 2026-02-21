@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Layout } from "@/components/layout";
 import { SEO, seoData } from "@/components/seo";
+import { colorShadows } from "@/lib/color-shadows";
 
 function getPreviewUrl(category: string, style: string): string {
   return `/preview/${category.slice(0, -1)}-${style}`;
@@ -319,12 +320,12 @@ export default function Gallery() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredItems.map((item) => {
+            {filteredItems.map((item, i) => {
               const styleConfig = styleColors[item.style as keyof typeof styleColors];
               return (
                 <Card
                   key={item.id}
-                  className="group overflow-hidden hover-elevate border-0 shadow-lg"
+                  className={`group overflow-hidden hover-elevate border-0 hover:-translate-y-1 transition-all ${colorShadows[i % colorShadows.length]}`}
                   data-testid={`portfolio-item-${item.id}`}
                 >
                   <div 

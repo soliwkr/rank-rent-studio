@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Layout } from "@/components/layout";
 import { SEO } from "@/components/seo";
+import { colorShadows } from "@/lib/color-shadows";
 
 interface CaseStudy {
   slug: string;
@@ -152,7 +153,7 @@ function CaseStudyCard({ study, index }: { study: CaseStudy; index: number }) {
   const CategoryIcon = config.icon;
 
   return (
-    <Card className="overflow-visible" data-testid={`card-case-study-${index}`}>
+    <Card className={`overflow-visible hover:-translate-y-1 transition-all ${colorShadows[index % colorShadows.length]}`} data-testid={`card-case-study-${index}`}>
       <CardContent className="p-0">
         <div
           className="cursor-pointer"
@@ -328,7 +329,7 @@ export default function CaseStudies() {
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {heroStats.map((stat, i) => (
-              <Card key={i}>
+              <Card key={i} className={`hover:-translate-y-1 transition-all ${colorShadows[i % colorShadows.length]}`}>
                 <CardContent className="p-4 sm:p-5 text-center">
                   <div className="text-2xl sm:text-3xl font-black bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent" data-testid={`text-hero-stat-${i}`}>
                     {stat.value}

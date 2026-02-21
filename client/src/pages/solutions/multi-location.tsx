@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Layout } from "@/components/layout";
 import { SEO, seoData } from "@/components/seo";
+import { colorShadows } from "@/lib/color-shadows";
 
 const challenges = [
   {
@@ -144,8 +145,8 @@ export default function WhiteLabelResellersSolution() {
             </p>
           </div>
           <div className="grid sm:grid-cols-3 gap-6">
-            {challenges.map((challenge) => (
-              <Card key={challenge.title} className="hover-elevate" data-testid={`card-challenge-${challenge.title.toLowerCase().replace(/\s+/g, "-")}`}>
+            {challenges.map((challenge, i) => (
+              <Card key={challenge.title} className={`hover-elevate hover:-translate-y-1 transition-all ${colorShadows[i % colorShadows.length]}`} data-testid={`card-challenge-${challenge.title.toLowerCase().replace(/\s+/g, "-")}`}>
                 <CardContent className="p-6 text-center">
                   <div className={`w-14 h-14 rounded-full ${challenge.bgColor} flex items-center justify-center mx-auto mb-4`}>
                     <challenge.icon className={`w-7 h-7 ${challenge.color}`} />
@@ -172,8 +173,8 @@ export default function WhiteLabelResellersSolution() {
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((feature) => (
-              <Card key={feature.title} className="hover-elevate" data-testid={`card-feature-${feature.title.toLowerCase().replace(/\s+/g, "-")}`}>
+            {features.map((feature, i) => (
+              <Card key={feature.title} className={`hover-elevate hover:-translate-y-1 transition-all ${colorShadows[i % colorShadows.length]}`} data-testid={`card-feature-${feature.title.toLowerCase().replace(/\s+/g, "-")}`}>
                 <CardContent className="p-6 text-center">
                   <div className={`w-14 h-14 rounded-full ${feature.bgColor} flex items-center justify-center mx-auto mb-4`}>
                     <feature.icon className={`w-7 h-7 ${feature.color}`} />
@@ -200,8 +201,8 @@ export default function WhiteLabelResellersSolution() {
             </p>
           </div>
           <div className="grid sm:grid-cols-3 gap-6">
-            {differentiators.map((diff) => (
-              <Card key={diff.title} className="hover-elevate" data-testid={`card-diff-${diff.title.toLowerCase().replace(/\s+/g, "-")}`}>
+            {differentiators.map((diff, i) => (
+              <Card key={diff.title} className={`hover-elevate hover:-translate-y-1 transition-all ${colorShadows[i % colorShadows.length]}`} data-testid={`card-diff-${diff.title.toLowerCase().replace(/\s+/g, "-")}`}>
                 <CardContent className="p-6 flex flex-col items-center text-center">
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                     <diff.icon className="w-6 h-6 text-primary" />

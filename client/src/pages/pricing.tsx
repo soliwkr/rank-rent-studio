@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Layout } from "@/components/layout";
 import { PageSubNav } from "@/components/page-sub-nav";
 import { SEO, seoData } from "@/components/seo";
+import { colorShadows } from "@/lib/color-shadows";
 
 const pricingSections = [
   { id: "plans", label: "Plans" },
@@ -206,10 +207,10 @@ export default function Pricing() {
             </div>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto items-start">
-              {plans.map((plan) => (
+              {plans.map((plan, i) => (
                 <Card
                   key={plan.name}
-                  className={`relative overflow-visible ${plan.highlight ? "shadow-[0_0_30px_rgba(59,130,246,0.25)]" : ""}`}
+                  className={`relative overflow-visible hover:-translate-y-1 transition-all ${colorShadows[i % colorShadows.length]} ${plan.highlight ? "shadow-[0_0_30px_rgba(59,130,246,0.25)]" : ""}`}
                   data-testid={`card-pricing-${plan.name.toLowerCase().replace(/\s+/g, "-")}`}
                 >
                   {plan.highlight && (
@@ -362,7 +363,7 @@ export default function Pricing() {
             </div>
             <div className="space-y-4">
               {faqs.map((faq, i) => (
-                <Card key={i} data-testid={`card-faq-${i}`}>
+                <Card key={i} className={`hover:-translate-y-1 transition-all ${colorShadows[i % colorShadows.length]}`} data-testid={`card-faq-${i}`}>
                   <CardContent className="p-5">
                     <h3 className="font-semibold mb-2">{faq.q}</h3>
                     <p className="text-sm text-muted-foreground">{faq.a}</p>
