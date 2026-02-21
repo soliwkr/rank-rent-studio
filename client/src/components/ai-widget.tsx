@@ -506,7 +506,7 @@ export function AIWidget({ workspaceId, logoUrl }: AIWidgetProps = {}) {
                     data-testid="button-quick-consultation"
                   >
                     <Calendar className="w-4 h-4 text-black" />
-                    <span className="bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-400 bg-clip-text text-transparent font-semibold">Talk2us</span>
+                    <span className="bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-400 bg-clip-text text-transparent font-semibold">Talk<em className="font-bold not-italic text-red-500" style={{ WebkitTextFillColor: 'unset' }}>2</em>us</span>
                   </Button>
                   <Button
                     onClick={handleMenu}
@@ -608,7 +608,7 @@ export function AIWidget({ workspaceId, logoUrl }: AIWidgetProps = {}) {
               data-testid="button-closed-consultation"
             >
               <Calendar className="w-4 h-4 text-black" />
-              <span className="bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-400 bg-clip-text text-transparent font-semibold">Talk2us</span>
+              <span className="bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-400 bg-clip-text text-transparent font-semibold">Talk<em className="font-bold not-italic text-red-500" style={{ WebkitTextFillColor: 'unset' }}>2</em>us</span>
             </button>
           )}
           <Button
