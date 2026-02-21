@@ -427,7 +427,7 @@ export default function Home2() {
             </h1>
 
             <p className="text-sm sm:text-xl text-white/70 max-w-xl mb-6 sm:mb-10 leading-relaxed font-light mx-auto" data-testid="hero-sub">
-              <strong className="text-white font-semibold">White Label Agency OS</strong> for solo founders and agency owners done feeding margin to platforms. <strong className="font-semibold bg-gradient-to-r from-yellow-300 to-yellow-500 bg-clip-text text-transparent">One login. 40+ tools.</strong> Your brand.
+              <strong className="text-white font-semibold">White Label Agency operating system</strong> built for solo founders and agency owners who are done feeding margin to platforms that take a cut of everything. <strong className="font-semibold bg-gradient-to-r from-yellow-300 to-yellow-500 bg-clip-text text-transparent">One login. 40+ tools.</strong> Your brand.
             </p>
 
             <div className="flex flex-row items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-5">
