@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { Link } from "wouter";
-import { ArrowRight, Check, X, ChevronDown, FolderOpen, ClipboardList, BarChart3, Link2, FileText, Key, PenTool, Search, Rocket, Users, Receipt, Tag, Globe, Settings, Lock, Plug, Bot, TrendingUp, Megaphone, Laptop, RefreshCw, Wrench, Layers, ShieldCheck } from "lucide-react";
+import { ArrowRight, Check, X, ChevronDown, FolderOpen, ClipboardList, BarChart3, Link2, FileText, Key, PenTool, Search, Rocket, Users, Receipt, Tag, Globe, Settings, Lock, Plug, Bot, TrendingUp, Megaphone, Laptop, RefreshCw, Wrench, Layers, ShieldCheck, Phone } from "lucide-react";
 import indexFlowLogo from "@assets/image_1771351451425.webp";
 import clientDashImg from "@assets/client_dash_1771696909138.webp";
 import { colorShadows } from "@/lib/color-shadows";
@@ -424,8 +424,8 @@ export default function Home2() {
                 </Button>
               </Link>
               <Link href="#tools">
-                <Button size="default" variant="outline" className="text-xs sm:text-base px-3 sm:px-8 py-2 sm:py-4 border-white/30 text-white bg-white/15 backdrop-blur-sm hover:bg-white/25 hover:border-white/50" data-testid="btn-hero-tools">
-                  → Discovery Call
+                <Button size="default" variant="outline" className="text-xs sm:text-base px-3 sm:px-8 py-2 sm:py-4 border-white/30 text-white bg-white/15 backdrop-blur-sm hover:bg-white/25 hover:border-white/50 gap-1.5" data-testid="btn-hero-tools">
+                  <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Discovery Call
                 </Button>
               </Link>
             </div>
