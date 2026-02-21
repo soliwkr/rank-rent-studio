@@ -236,7 +236,7 @@ export default function Home() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32 text-center">
           <div className="inline-block backdrop-blur-sm bg-black/15 rounded-2xl px-4 py-6 sm:px-8 sm:py-10 lg:px-12 lg:py-14 mx-2">
             <p className="text-sm sm:text-base lg:text-lg font-medium text-white/80 tracking-widest uppercase drop-shadow-lg mb-4" data-testid="hero-tagline">
-              30+ SEO Tools · One Platform · Zero Middlemen
+              40+ SEO Tools · One Platform · Zero Middlemen
             </p>
 
             <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold leading-tight mb-1 bg-gradient-to-r from-white via-white/95 to-white/80 bg-clip-text text-transparent drop-shadow-lg">
@@ -251,7 +251,10 @@ export default function Home() {
 
             <div className="max-w-3xl mx-auto mb-8">
               <p className="text-[14px] sm:text-base lg:text-lg text-white/90 drop-shadow-lg leading-relaxed">
-                IndexFlow is the white label SEO platform built for solo founders and agency owners who are done feeding margin to platforms that take a cut of everything. One login. 30+ tools. Your brand. Your price. Your profit.
+                White label SEO platform built for solo founders and agency owners who are done feeding margin to platforms that take a cut of everything.
+              </p>
+              <p className="text-[14px] sm:text-base lg:text-lg text-white/90 drop-shadow-lg leading-relaxed mt-2">
+                One login. 40+ tools. Your brand. Your price. Your profit.
               </p>
             </div>
 
@@ -259,18 +262,18 @@ export default function Home() {
               <div className="flex items-center justify-center gap-2 sm:gap-4">
                 <Link href="/contact">
                   <Button size="default" className="gap-2 sm:text-base text-sm sm:px-6 px-4 py-3" data-testid="button-hero-trial">
-                    Start 30-Day Free Trial <ArrowRight className="w-4 h-4" />
+                    Start 30-Day Free Trial $1 <ArrowRight className="w-4 h-4" />
                   </Button>
                 </Link>
                 <Link href="/platform/content-engine">
                   <Button size="default" variant="outline" className="bg-white/10 border-white/30 text-white hover:bg-white/20 sm:text-base text-sm sm:px-6 px-4 py-3" data-testid="button-hero-tools">
-                    See All 30+ Tools
+                    See All 40+ Tools
                   </Button>
                 </Link>
               </div>
 
               <p className="text-xs sm:text-sm text-white/60 drop-shadow-lg">
-                No credit card required · Cancel anytime · Pro tier trial by default
+                Credit card required · Cancel anytime · Pro tier trial by default
               </p>
             </div>
           </div>
