@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useLocation } from "wouter";
 import { Menu, X, LogIn, ArrowRight, ChevronDown, FileText, Search, TrendingUp, Grid3X3, Code, Link2, ClipboardCheck, Layout, Users, Receipt, Bot, Palette, Briefcase, Building2, Rocket, User, Globe, Mail, Handshake, GraduationCap, BookOpen, HelpCircle, Newspaper, BarChart3, Radio, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import indexFlowLogo from "@assets/image_1771351451425.png";
+import indexFlowLogo from "@assets/image_1771351451425.webp";
 
 const featureItems = [
   { href: "/platform/content-engine", label: "Content Engine", icon: FileText, desc: "AI-powered blog & content creation" },

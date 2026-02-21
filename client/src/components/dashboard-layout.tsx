@@ -9,7 +9,7 @@ import {
   Home, ChevronRight, Menu, Bot, Code, Key, MessageSquare
 } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
-import indexFlowLogo from "@assets/image_1771351451425.png";
+import indexFlowLogo from "@assets/image_1771351451425.webp";
 import { useState } from "react";
 
 const navSections = [

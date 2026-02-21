@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Home, ArrowRight, Phone, Calendar, HelpCircle } from "lucide-react";
 import { Layout } from "@/components/layout";
 import { SEO } from "@/components/seo";
-import indexFlowLogo from "@assets/image_1771351451425.png";
+import indexFlowLogo from "@assets/image_1771351451425.webp";
 
 const quickLinks = [
   { href: "/", label: "Home", icon: Home, description: "Back to homepage" },

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { CheckCircle2, Calendar, Clock, Users, MapPin } from "lucide-react";
-import indexFlowLogo from "@assets/image_1771351451425.png";
+import indexFlowLogo from "@assets/image_1771351451425.webp";
 
 export default function DemoSmsConfirmation() {
   useEffect(() => {

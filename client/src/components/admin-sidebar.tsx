@@ -27,7 +27,7 @@ import {
   SidebarHeader,
   SidebarFooter,
 } from "@/components/ui/sidebar";
-import indexFlowLogo from "@assets/image_1771351451425.png";
+import indexFlowLogo from "@assets/image_1771351451425.webp";
 
 interface NavItem {
   title: string;

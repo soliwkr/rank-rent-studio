@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import logoImage from "@assets/image_1771330330596.png";
+import logoImage from "@assets/image_1771330330596.webp";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";

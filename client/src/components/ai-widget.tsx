@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { MessageCircle, X, Mic, MicOff, Send, Bot, User, Calendar, Paperclip, Volume2, VolumeX, Loader2, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import indexFlowLogo from "@assets/image_1771351451425.png";
+import indexFlowLogo from "@assets/image_1771351451425.webp";
 
 interface Message {
   id: number;

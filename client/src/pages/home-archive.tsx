@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "wouter";
 import { ArrowRight, Star, CheckCircle, Globe, BarChart3, Zap, Users, FileText, Link2, Layers, Target, PenTool, Shield, Repeat, Search, DollarSign, Eye, ClipboardList, Key } from "lucide-react";
-import indexFlowLogo from "@assets/image_1771351451425.png";
+import indexFlowLogo from "@assets/image_1771351451425.webp";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";

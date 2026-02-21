@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { SiWordpress, SiWix, SiShopify, SiGhost, SiSquarespace, SiWebflow, SiDrupal, SiJoomla, SiMagento, SiBigcommerce } from "react-icons/si";
-import indexFlowLogo from "@assets/image_1771351451425.png";
+import indexFlowLogo from "@assets/image_1771351451425.webp";
 
 const cmsPartners = [
   { name: "WordPress", icon: SiWordpress, color: "#21759B" },

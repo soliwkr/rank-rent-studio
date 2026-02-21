@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Bell, Calendar, Clock, Users, MapPin, CheckCircle2 } from "lucide-react";
-import indexFlowLogo from "@assets/image_1771351451425.png";
+import indexFlowLogo from "@assets/image_1771351451425.webp";
 
 export default function DemoReminder() {
   useEffect(() => {

@@ -1,8 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import { Link } from "wouter";
 import { ArrowRight, Check, X, ChevronDown, FolderOpen, ClipboardList, BarChart3, Link2, FileText, Key, PenTool, Search, Rocket, Users, Receipt, Tag, Globe, Settings, Lock, Plug, Bot, TrendingUp, Megaphone, Laptop, RefreshCw } from "lucide-react";
-import indexFlowLogo from "@assets/image_1771351451425.png";
-import clientDashImg from "@assets/client_dash_1771696909138.png";
+import indexFlowLogo from "@assets/image_1771351451425.webp";
+import clientDashImg from "@assets/client_dash_1771696909138.webp";
 import { colorShadows } from "@/lib/color-shadows";
 import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/layout";
@@ -18,8 +18,8 @@ function HeroVideo() {
   }, []);
 
   return (
-    <div className="absolute inset-0 w-full h-full overflow-hidden">
-      <div className="absolute inset-0 bg-accent/20" />
+    <div className="absolute inset-0 w-full h-full overflow-hidden bg-slate-900">
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" />
       {showVideo && (
         <div className="absolute inset-0" style={{ padding: "56.25% 0 0 0", position: "relative" }}>
           <iframe
@@ -28,7 +28,7 @@ function HeroVideo() {
             frameBorder="0"
             allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
             referrerPolicy="strict-origin-when-cross-origin"
-            style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: "177.78vh", minWidth: "100%", height: "56.25vw", minHeight: "100%", border: 0 }}
+            style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: "177.78vh", minWidth: "100%", height: "56.25vw", minHeight: "100%", border: 0, background: "#0f172a" }}
             title="indexFlow"
             data-testid="hero-video"
           />

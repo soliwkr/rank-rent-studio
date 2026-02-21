@@ -1,7 +1,7 @@
 import { useLocation, Link } from "wouter";
 import { useState, useEffect } from "react";
 import { useWorkspace } from "@/lib/workspace-context";
-import indexFlowLogo from "@assets/image_1771351451425.png";
+import indexFlowLogo from "@assets/image_1771351451425.webp";
 import { Button } from "@/components/ui/button";
 import {
   Collapsible,

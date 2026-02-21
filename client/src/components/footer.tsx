@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { SiLinkedin, SiX, SiGithub } from "react-icons/si";
-import indexFlowLogo from "@assets/image_1771351451425.png";
+import indexFlowLogo from "@assets/image_1771351451425.webp";
 
 const productLinks = [
   { href: "/platform/content-engine", label: "Features" },
