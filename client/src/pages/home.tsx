@@ -235,71 +235,42 @@ export default function Home() {
         <div className="absolute inset-0 bg-black/15 z-[1]" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32 text-center">
           <div className="inline-block backdrop-blur-sm bg-black/15 rounded-2xl px-4 py-6 sm:px-8 sm:py-10 lg:px-12 lg:py-14 mx-2">
-            <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold leading-tight mb-1 bg-gradient-to-r from-white via-white/95 to-white/80 bg-clip-text text-transparent drop-shadow-lg">
-              Still Paying for 10+ SEO, Content & Local Tools?
-            </h1>
-            <div className="mx-auto w-32 sm:w-40 lg:w-52 h-[2px] rounded-full bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 mt-5" />
-            <img src={indexFlowLogo} alt="IndexFlow" className="h-7 sm:h-8 lg:h-10 mx-auto mt-8 mb-6 drop-shadow-lg" data-testid="hero-logo" />
-
-            <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold text-white drop-shadow-lg mb-2">
-              Build, Optimise & Deploy SEO-Ready Content Infrastructure
-            </h2>
-            <p className="text-[14px] sm:text-base lg:text-lg text-white/90 drop-shadow-lg mb-4">
-              Generate Posts & Pages · Run On-Page Audits · Automated Schema
+            <p className="text-sm sm:text-base lg:text-lg font-medium text-white/80 tracking-widest uppercase drop-shadow-lg mb-4" data-testid="hero-tagline">
+              30+ SEO Tools · One Platform · Zero Middlemen
             </p>
 
-            <div className="max-w-3xl mx-auto mb-5 space-y-3">
-              <p className="text-[14px] sm:text-base lg:text-lg text-white/90 drop-shadow-lg">
-                Deploy Directly to Any Domain via<br />
-                <span className="font-semibold text-white">GitHub → Cloudflare</span> (No CMS Required)
-              </p>
+            <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold leading-tight mb-1 bg-gradient-to-r from-white via-white/95 to-white/80 bg-clip-text text-transparent drop-shadow-lg">
+              The revenue chain<br />belongs to you.
+            </h1>
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-white/70 drop-shadow-lg mt-2 mb-6">
+              Not your tools.
+            </h2>
 
-              <p className="text-[14px] sm:text-base lg:text-lg text-white/90 drop-shadow-lg">
-                Optimised for <span className="font-semibold text-white">Google + AI Search</span><br />
-                (OpenAI · Gemini · Perplexity) — Bring Your Own Keys
-              </p>
+            <div className="mx-auto w-32 sm:w-40 lg:w-52 h-[2px] rounded-full bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 mb-6" />
+            <img src={indexFlowLogo} alt="IndexFlow" className="h-7 sm:h-8 lg:h-10 mx-auto mb-6 drop-shadow-lg" data-testid="hero-logo" />
 
-              <p className="text-[14px] sm:text-base lg:text-lg text-white/90 drop-shadow-lg">
-                Smart Internal Linking · Rank Tracking<br />
-                5×5 Local Search Grid · GSC Data Ingestion<br />
-                Lead → Booking Attribution
-              </p>
-
-              <p className="text-[14px] sm:text-base lg:text-lg text-white/90 drop-shadow-lg">
-                Built-In CRM Funnel · Stripe & PayPal Billing<br />
-                AI Voice, SMS & Website Widget<br />
-                Book Appointments 24/7
+            <div className="max-w-3xl mx-auto mb-8">
+              <p className="text-[14px] sm:text-base lg:text-lg text-white/90 drop-shadow-lg leading-relaxed">
+                IndexFlow is the white label SEO platform built for solo founders and agency owners who are done feeding margin to platforms that take a cut of everything. One login. 30+ tools. Your brand. Your price. Your profit.
               </p>
             </div>
 
-            <div className="mx-auto w-32 sm:w-40 lg:w-52 h-[2px] rounded-full bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 mt-2 mb-16" />
-
-            <div className="flex flex-col items-center justify-center space-y-10">
-              <p className="text-[15px] sm:text-lg lg:text-xl max-w-3xl font-semibold text-white drop-shadow-lg">
-                White-Label Infrastructure from Day One
-              </p>
-
-              <p className="text-[14px] sm:text-base lg:text-lg text-white/80 drop-shadow-lg">
-                Run it for your own growth<br />
-                <span className="italic">or</span><br />
-                Resell it to unlimited client domains
-              </p>
-
+            <div className="flex flex-col items-center justify-center space-y-5">
               <div className="flex items-center justify-center gap-2 sm:gap-4">
                 <Link href="/contact">
-                  <Button size="default" className="gap-2 sm:text-base text-sm sm:px-4 px-3" data-testid="button-hero-demo">
-                    Get Started <ArrowRight className="w-4 h-4" />
+                  <Button size="default" className="gap-2 sm:text-base text-sm sm:px-6 px-4 py-3" data-testid="button-hero-trial">
+                    Start 30-Day Free Trial <ArrowRight className="w-4 h-4" />
                   </Button>
                 </Link>
-                <Link href="/pricing">
-                  <Button size="default" variant="outline" className="bg-white/10 border-white/30 text-white hover:bg-white/20 sm:text-base text-sm sm:px-4 px-3" data-testid="button-hero-templates">
-                    <span className="italic">from</span> <span className="font-bold">$99</span>/month
+                <Link href="/platform/content-engine">
+                  <Button size="default" variant="outline" className="bg-white/10 border-white/30 text-white hover:bg-white/20 sm:text-base text-sm sm:px-6 px-4 py-3" data-testid="button-hero-tools">
+                    See All 30+ Tools
                   </Button>
                 </Link>
               </div>
 
-              <p className="inline-block font-bold text-[17px] sm:text-xl lg:text-2xl bg-gradient-to-r from-yellow-300 via-orange-400 to-pink-500 bg-clip-text text-transparent drop-shadow-lg animate-[pulse_5s_ease-in-out_infinite]">
-                For Agencies · SaaS Platforms · Ecommerce · Multi-Location Brands · Solo Operators
+              <p className="text-xs sm:text-sm text-white/60 drop-shadow-lg">
+                No credit card required · Cancel anytime · Pro tier trial by default
               </p>
             </div>
           </div>
