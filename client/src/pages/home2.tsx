@@ -568,7 +568,7 @@ export default function Home2() {
               </h2>
               <div className="overflow-hidden mt-10">
                 <div className="flex gap-12 animate-[marquee_20s_linear_infinite] whitespace-nowrap">
-                  {[...Array(2)].flatMap((_, setIndex) => [
+                  {[...Array(4)].flatMap((_, setIndex) => [
                     <SiWordpress key={`wp-${setIndex}`} className="w-8 h-8 flex-shrink-0 opacity-40 grayscale" />,
                     <SiShopify key={`sh-${setIndex}`} className="w-8 h-8 flex-shrink-0 opacity-40 grayscale" />,
                     <SiSquarespace key={`sq-${setIndex}`} className="w-8 h-8 flex-shrink-0 opacity-40 grayscale" />,
