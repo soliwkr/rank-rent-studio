@@ -371,7 +371,7 @@ export default function Home2() {
         <HeroVideo />
 
         <div className="relative z-10 flex flex-col items-center">
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-400/30 to-amber-500/30 border border-amber-300/40 text-amber-200 px-4 py-1.5 rounded-full text-xs font-bold tracking-wide mb-9 animate-[pulse_4s_ease-in-out_infinite] backdrop-blur-sm shadow-lg shadow-amber-400/20" data-testid="hero-badge">
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-primary/30 to-sky-400/30 border border-sky-300/40 text-sky-200 px-4 py-1.5 rounded-full text-xs font-bold tracking-wide mb-9 animate-[pulse_4s_ease-in-out_infinite] backdrop-blur-sm shadow-lg shadow-sky-400/20" data-testid="hero-badge">
             <span className="w-1.5 h-1.5 bg-red-500 rounded-full" />
             40+ SEO Tools · One Platform · Zero Middlemen
           </div>
@@ -384,7 +384,7 @@ export default function Home2() {
             </h1>
 
             <p className="text-lg sm:text-xl text-white/70 max-w-xl mb-10 leading-relaxed font-light mx-auto" data-testid="hero-sub">
-              IndexFlow is the <strong className="text-white font-semibold">white label agency operating system</strong> built for solo founders and agency owners who are done feeding margin to platforms that take a cut of everything. <strong className="font-semibold bg-gradient-to-r from-amber-300 to-amber-500 bg-clip-text text-transparent">One login. 40+ tools.</strong> Your brand. Your price. Your profit.
+              IndexFlow is the <strong className="text-white font-semibold">white label agency operating system</strong> built for solo founders and agency owners who are done feeding margin to platforms that take a cut of everything. <strong className="font-semibold bg-gradient-to-r from-sky-300 to-primary bg-clip-text text-transparent">One login. 40+ tools.</strong> Your brand. Your price. Your profit.
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-3 mb-5">
