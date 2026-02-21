@@ -10,6 +10,7 @@ import { ClientLayout } from "@/components/client-layout";
 
 const NotFound = lazy(() => import("@/pages/not-found"));
 const Home = lazy(() => import("@/pages/home"));
+const Home2 = lazy(() => import("@/pages/home2"));
 const AIWidget = lazy(() => import("@/components/ai-widget").then(m => ({ default: m.AIWidget })));
 
 const About = lazy(() => import("@/pages/about"));
@@ -255,6 +256,7 @@ function Router() {
     <Suspense fallback={<div className="flex items-center justify-center min-h-screen bg-background"><div className="flex flex-col items-center gap-3"><div className="h-8 w-8 animate-spin rounded-full border-4 border-muted border-t-primary" /><p className="text-sm text-muted-foreground">Loading...</p></div></div>}>
       <Switch>
         <Route path="/" component={Home} />
+        <Route path="/home2" component={Home2} />
         <Route path="/how-it-works" component={About} />
         <Route path="/solutions/seo-agencies" component={SolutionsRestaurants} />
         <Route path="/solutions/content-agencies" component={SolutionsCafes} />
