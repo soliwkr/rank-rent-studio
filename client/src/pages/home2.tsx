@@ -452,7 +452,7 @@ export default function Home2() {
         </div>
       </section>
 
-      <section className="py-20 lg:py-24 bg-gradient-to-br from-background via-accent/5 to-background" data-testid="dashboard-section">
+      <section className="pt-10 sm:pt-14 pb-20 lg:pb-24 bg-gradient-to-br from-background via-accent/5 to-background" data-testid="dashboard-section">
         <div className="max-w-6xl mx-auto px-6 sm:px-12">
           <FadeIn>
             <p className="text-xs font-bold tracking-[3px] uppercase text-primary mb-4">The Platform</p>
