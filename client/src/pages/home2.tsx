@@ -3,8 +3,9 @@ import { Link } from "wouter";
 import { ArrowRight, Check, X, ChevronDown, FolderOpen, ClipboardList, BarChart3, Link2, FileText, Key, PenTool, Search, Rocket, Users, Receipt, Tag, Globe, Settings, Lock, Plug, Bot, TrendingUp, Megaphone, Laptop, RefreshCw, Wrench, Layers, ShieldCheck, Phone } from "lucide-react";
 import indexFlowLogo from "@assets/image_1771351451425.webp";
 import clientDashImg from "@assets/client_dash_1771696909138.webp";
+import wixLogo from "@assets/image_1771707999263.png";
 import { colorShadows } from "@/lib/color-shadows";
-import { SiWordpress, SiShopify, SiSquarespace, SiWix, SiWebflow, SiGhost } from "react-icons/si";
+import { SiWordpress, SiShopify, SiSquarespace, SiWebflow, SiGhost } from "react-icons/si";
 import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/layout";
 import { SEO, seoData, combinedHomeSchema } from "@/components/seo";
@@ -570,7 +571,7 @@ export default function Home2() {
                   { name: "WordPress", icon: <SiWordpress className="w-6 h-6 mx-auto mb-2" style={{ color: "#21759B" }} /> },
                   { name: "Shopify", icon: <SiShopify className="w-6 h-6 mx-auto mb-2" style={{ color: "#96BF48" }} /> },
                   { name: "Squarespace", icon: <SiSquarespace className="w-6 h-6 mx-auto mb-2" style={{ color: "#222222" }} /> },
-                  { name: "Wix", icon: <SiWix className="w-6 h-6 mx-auto mb-2" style={{ color: "#0C6EFC" }} /> },
+                  { name: "Wix", icon: <img src={wixLogo} alt="Wix" className="w-6 h-6 mx-auto mb-2 object-contain" /> },
                   { name: "Webflow", icon: <SiWebflow className="w-6 h-6 mx-auto mb-2" style={{ color: "#4353FF" }} /> },
                   { name: "Ghost", icon: <SiGhost className="w-6 h-6 mx-auto mb-2" style={{ color: "#15171A" }} /> },
                 ].map((cms, i) => (
