@@ -665,14 +665,22 @@ export default function Home2() {
             <p className="text-lg text-muted-foreground max-w-xl mb-14 leading-relaxed">Whether you're a solo freelancer or a 50-person agency — IndexFlow scales with you.</p>
           </FadeIn>
           <FadeIn>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {serveCards.map((c, i) => (
-                <div key={i} className="bg-card border border-border rounded-xl p-7 text-center hover:border-primary/40 hover:shadow-md transition-all flex flex-col items-center" data-testid={`serve-card-${i}`}>
-                  <span className="mb-3 block">{c.icon}</span>
-                  <h3 className="font-bold text-base mb-2">{c.title}</h3>
-                  <p className="text-xs text-muted-foreground leading-relaxed">{c.desc}</p>
-                </div>
-              ))}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {serveCards.map((c, i) => {
+                const shadows = [
+                  "shadow-[0_8px_30px_-4px_rgba(234,179,8,0.35)]",
+                  "shadow-[0_8px_30px_-4px_rgba(59,130,246,0.35)]",
+                  "shadow-[0_8px_30px_-4px_rgba(34,197,94,0.35)]",
+                  "shadow-[0_8px_30px_-4px_rgba(168,85,247,0.35)]",
+                ];
+                return (
+                  <div key={i} className={`bg-card border border-border rounded-xl p-7 text-center hover:-translate-y-1 transition-all flex flex-col items-center ${shadows[i % shadows.length]}`} data-testid={`serve-card-${i}`}>
+                    <span className="mb-3 block">{c.icon}</span>
+                    <h3 className="font-bold text-base mb-2">{c.title}</h3>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{c.desc}</p>
+                  </div>
+                );
+              })}
             </div>
           </FadeIn>
         </div>
