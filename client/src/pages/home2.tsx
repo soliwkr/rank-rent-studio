@@ -454,8 +454,8 @@ export default function Home2() {
                 </Button>
               </Link>
             </div>
-            <p className="text-[9px] sm:text-xs text-white/50" data-testid="hero-note">No contracts · No setup fees · Cancel anytime</p>
-            <p className="text-[10px] sm:text-sm text-white/60 italic mt-1.5 sm:mt-3" data-testid="hero-strapline">Try the full platform & tell us what you think? — then choose your plan.</p>
+            <p className="text-[9px] sm:text-xs text-white font-medium" data-testid="hero-note">No contracts · No setup fees · Cancel anytime</p>
+            <p className="text-[10px] sm:text-sm text-white italic mt-1.5 sm:mt-3" data-testid="hero-strapline">Try the full platform & tell us what you think? — then choose your plan.</p>
           </div>
         </div>
       </section>
