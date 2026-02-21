@@ -659,7 +659,7 @@ export default function Home2() {
           <FadeIn>
             <p className="text-xs font-bold tracking-[3px] uppercase text-primary mb-4">Who We Serve</p>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight mb-5">
-              Built for agencies <em className="text-muted-foreground/50 italic">& teams.</em>
+              Built for agencies <em className="text-muted-foreground/50 italic">& solo teams.</em>
             </h2>
             <p className="text-lg text-muted-foreground max-w-xl mb-14 leading-relaxed">Whether you're a solo freelancer or a 50-person agency — IndexFlow scales with you.</p>
           </FadeIn>
