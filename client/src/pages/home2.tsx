@@ -420,7 +420,7 @@ export default function Home2() {
               </div>
             </FadeIn>
 
-            <h1 className="text-[1.65rem] sm:text-5xl lg:text-7xl font-extrabold leading-[1.15] sm:leading-none tracking-tight max-w-4xl mb-4 sm:mb-7 text-white" data-testid="hero-heading">
+            <h1 className="text-[1.5rem] sm:text-5xl lg:text-7xl font-extrabold leading-[1.1] sm:leading-none tracking-tight max-w-4xl mb-4 sm:mb-7 text-white" data-testid="hero-heading">
               The revenue chain<br />
               <span className="bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-500 bg-clip-text text-transparent">belongs to you.</span><br />
               <span className="text-white/40">Not your tools.</span>
