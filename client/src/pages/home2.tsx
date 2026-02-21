@@ -409,13 +409,25 @@ export default function Home2() {
           <div className="bg-black/20 backdrop-blur-md rounded-2xl px-4 sm:px-14 py-6 sm:py-14 w-full max-w-4xl">
             {/* Hero Stats Slim Strip - Top */}
             <FadeIn className="mb-3 sm:mb-6 w-full">
-              <div className="bg-gradient-to-r from-sky-500 via-blue-500 to-indigo-500 rounded-full px-3 sm:px-6 py-1 sm:py-2 shadow-[0_4px_20px_rgba(234,179,8,0.35)] inline-block mx-auto" data-testid="hero-stats-slim">
-                <div className="flex items-center justify-center gap-x-1.5 sm:gap-x-4 text-[8px] sm:text-xs font-bold tracking-wider sm:tracking-widest text-white whitespace-nowrap uppercase">
-                  <span>40+ SEO Tools</span>
-                  <span className="text-white/40">●</span>
-                  <span>One Platform</span>
-                  <span className="text-white/40">●</span>
-                  <span>Zero Middlemen</span>
+              <div className="relative inline-block mx-auto group" data-testid="hero-stats-slim">
+                <div className="absolute -inset-1 bg-gradient-to-r from-yellow-400/30 via-sky-400/20 to-indigo-400/30 rounded-full blur-lg animate-pulse" />
+                <div className="relative bg-gradient-to-r from-sky-500/90 via-blue-600/90 to-indigo-600/90 border border-white/15 rounded-full px-4 sm:px-8 py-1.5 sm:py-2.5 shadow-[0_6px_24px_rgba(234,179,8,0.30),0_2px_8px_rgba(56,189,248,0.25)]">
+                  <div className="flex items-center justify-center gap-x-2 sm:gap-x-5 text-[9px] sm:text-[13px] font-semibold tracking-wider sm:tracking-[0.15em] text-white whitespace-nowrap uppercase">
+                    <span className="flex items-center gap-1 sm:gap-1.5">
+                      <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-yellow-400 shadow-[0_0_6px_rgba(250,204,21,0.6)]" />
+                      40+ SEO Tools
+                    </span>
+                    <span className="text-white/20 text-[6px] sm:text-[8px]">|</span>
+                    <span className="flex items-center gap-1 sm:gap-1.5">
+                      <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-sky-300 shadow-[0_0_6px_rgba(125,211,252,0.6)]" />
+                      One Platform
+                    </span>
+                    <span className="text-white/20 text-[6px] sm:text-[8px]">|</span>
+                    <span className="flex items-center gap-1 sm:gap-1.5">
+                      <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.6)]" />
+                      Zero Middlemen
+                    </span>
+                  </div>
                 </div>
               </div>
             </FadeIn>
