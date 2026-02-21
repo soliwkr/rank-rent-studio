@@ -410,11 +410,6 @@ export default function Home2() {
         <HeroVideo />
 
         <div className="relative z-10 flex flex-col items-center">
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-primary/30 to-sky-400/30 border border-sky-300/40 text-sky-200 px-4 py-1.5 rounded-full text-xs font-bold tracking-wide mb-9 animate-[pulse_4s_ease-in-out_infinite] backdrop-blur-sm shadow-lg shadow-sky-400/20" data-testid="hero-badge">
-            <span className="w-1.5 h-1.5 bg-primary rounded-full" />
-            40+ SEO Tools · One Platform · Zero Middlemen
-          </div>
-
           <div className="bg-black/40 backdrop-blur-md rounded-2xl px-8 sm:px-14 py-10 sm:py-14">
             <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold leading-none tracking-tight max-w-4xl mb-7 text-white" data-testid="hero-heading">
               The revenue chain<br />
