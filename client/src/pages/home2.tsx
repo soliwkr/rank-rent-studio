@@ -514,15 +514,15 @@ export default function Home2() {
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight mb-5 text-slate-400">Sound familiar?</h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-14">
               {[
-                { label: "Content Platforms", value: "+++" },
-                { label: "Rank Tracker Costs", value: "$$" },
-                { label: "Local Grid Search", value: "$$ cost" },
-                { label: "Reporting Tools", value: "+ $$ p/mo" },
-                { label: "Agency Overheads", value: "+ $$" },
+                { label: "Content Platforms", value: "+++", color: "text-rose-500", bgColor: "bg-rose-500/10", border: "border-rose-500/20" },
+                { label: "Rank Tracker Costs", value: "$$", color: "text-blue-500", bgColor: "bg-blue-500/10", border: "border-blue-500/20" },
+                { label: "Local Grid Search", value: "$$ cost", color: "text-emerald-500", bgColor: "bg-emerald-500/10", border: "border-emerald-500/20" },
+                { label: "Reporting Tools", value: "+ $$ p/mo", color: "text-amber-500", bgColor: "bg-amber-500/10", border: "border-amber-500/20" },
+                { label: "Agency Overheads", value: "+ $$", color: "text-violet-500", bgColor: "bg-violet-500/10", border: "border-violet-500/20" },
               ].map((item, idx) => (
-                <div key={idx} className="bg-slate-800/20 backdrop-blur-sm border border-slate-700/30 rounded-lg p-3 sm:p-4 text-center group hover:border-slate-600/50 transition-colors">
-                  <p className="text-[10px] sm:text-xs text-slate-500 uppercase tracking-wider mb-1 group-hover:text-slate-400 transition-colors">{item.label}</p>
-                  <p className="text-sm sm:text-lg font-mono text-slate-400 group-hover:text-slate-300 transition-colors">{item.value}</p>
+                <div key={idx} className={`${item.bgColor} backdrop-blur-sm border ${item.border} rounded-xl p-4 sm:p-6 text-center group hover:scale-[1.02] transition-all duration-300`}>
+                  <p className="text-[10px] sm:text-xs text-slate-400 uppercase tracking-widest mb-3 font-semibold">{item.label}</p>
+                  <p className={`text-lg sm:text-2xl font-mono ${item.color} font-bold tracking-tighter`}>{item.value}</p>
                 </div>
               ))}
             </div>
