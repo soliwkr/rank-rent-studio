@@ -1,5 +1,6 @@
 import { Link } from "wouter";
-import { Check, ArrowRight, Users, Layers, Building2, Crown, Zap, PenTool, Search, BarChart3, UsersRound, Bot, Link2, PieChart, Settings } from "lucide-react";
+import { Check, ArrowRight, Users, Layers, Building2, Crown, Zap, PenTool, Search, BarChart3, UsersRound, Bot, Link2, PieChart, Settings, FileText, MessageSquare } from "lucide-react";
+import { SiSemrush, SiHubspot, SiIntercom, SiQuickbooks } from "react-icons/si";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -199,15 +200,15 @@ const toolCategories = [
   },
 ];
 
-const replacements = [
-  { from: "Ahrefs / SEMrush", to: "Rank Tracker + Local Search Grid" },
-  { from: "SurferSEO / Clearscope", to: "Quality Gates + Post Validator" },
-  { from: "Jasper / Copy.ai", to: "Content Engine with GPT-4o" },
-  { from: "HubSpot / Pipedrive", to: "Lead to Booking CRM" },
-  { from: "FreshBooks / QuickBooks", to: "Invoice Builder" },
-  { from: "Intercom / Drift", to: "AI Widget" },
-  { from: "LinkWhisper", to: "Cross-Post Link Builder" },
-  { from: "Screaming Frog", to: "On-Page SEO Auditor" },
+const replacements: { from: string; to: string; icon: any; color: string; bgColor: string }[] = [
+  { from: "Ahrefs / SEMrush", to: "Rank Tracker + Local Search Grid", icon: SiSemrush, color: "text-orange-500", bgColor: "bg-orange-500/10" },
+  { from: "SurferSEO / Clearscope", to: "Quality Gates + Post Validator", icon: Search, color: "text-blue-500", bgColor: "bg-blue-500/10" },
+  { from: "Jasper / Copy.ai", to: "Content Engine with GPT-4o", icon: PenTool, color: "text-rose-500", bgColor: "bg-rose-500/10" },
+  { from: "HubSpot / Pipedrive", to: "Lead to Booking CRM", icon: SiHubspot, color: "text-amber-600", bgColor: "bg-amber-600/10" },
+  { from: "FreshBooks / QuickBooks", to: "Invoice Builder", icon: SiQuickbooks, color: "text-emerald-600", bgColor: "bg-emerald-600/10" },
+  { from: "Intercom / Drift", to: "AI Widget", icon: SiIntercom, color: "text-blue-600", bgColor: "bg-blue-600/10" },
+  { from: "LinkWhisper", to: "Cross-Post Link Builder", icon: Link2, color: "text-cyan-500", bgColor: "bg-cyan-500/10" },
+  { from: "Screaming Frog", to: "On-Page SEO Auditor", icon: Search, color: "text-violet-500", bgColor: "bg-violet-500/10" },
 ];
 
 const audiences = [
@@ -388,19 +389,25 @@ export default function Pricing() {
             </div>
 
             <div className="grid sm:grid-cols-2 gap-4">
-              {replacements.map((r, i) => (
-                <Card key={i} className={`transition-all hover:-translate-y-1 ${colorShadows[i % colorShadows.length]}`} data-testid={`card-replace-${i}`}>
-                  <CardContent className="p-5 flex items-start gap-4">
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-muted-foreground line-through decoration-muted-foreground/40">{r.from}</p>
-                      <p className="text-sm font-semibold mt-1 flex items-center gap-1.5">
-                        <ArrowRight className="w-3.5 h-3.5 text-primary flex-shrink-0" />
-                        {r.to}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+              {replacements.map((r, i) => {
+                const Icon = r.icon;
+                return (
+                  <Card key={i} className={`transition-all hover:-translate-y-1 ${colorShadows[i % colorShadows.length]}`} data-testid={`card-replace-${i}`}>
+                    <CardContent className="p-5 flex items-start gap-4">
+                      <div className={`w-10 h-10 rounded-lg ${r.bgColor} flex items-center justify-center flex-shrink-0`}>
+                        <Icon className={`w-5 h-5 ${r.color}`} />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-muted-foreground line-through decoration-muted-foreground/40">{r.from}</p>
+                        <p className="text-sm font-semibold mt-1 flex items-center gap-1.5">
+                          <ArrowRight className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+                          {r.to}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           </div>
         </section>
