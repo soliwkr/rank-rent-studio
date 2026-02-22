@@ -517,17 +517,16 @@ export default function Home2() {
             <p className="text-lg text-muted-foreground max-w-xl mb-10 leading-relaxed">Multiple tools. Infinite logins. Juggling Tabs. One frustrated agency.</p>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-14">
               {[
-                { icon: <PenTool className="w-5 h-5 text-primary" />, label: "Content Platforms", value: "Juggle tools" },
-                { icon: <Search className="w-5 h-5 text-primary" />, label: "Rank Tracker Costs", value: "$$ cost p/mo" },
-                { icon: <Globe className="w-5 h-5 text-primary" />, label: "Local Grid Search", value: "$$ cost p/mo" },
-                { icon: <BarChart3 className="w-5 h-5 text-primary" />, label: "Reporting Tools", value: "$$ cost p/mo" },
-                { icon: <Receipt className="w-5 h-5 text-primary" />, label: "Agency Overheads", value: "$$ cost p/mo" },
-                { icon: <Key className="w-5 h-5 text-primary" />, label: "API & Integrations", value: "$$ cost p/mo" },
+                { icon: <PenTool className="w-5 h-5 text-primary" />, label: "Content Platforms" },
+                { icon: <Search className="w-5 h-5 text-primary" />, label: "Rank Tracker Costs" },
+                { icon: <Globe className="w-5 h-5 text-primary" />, label: "Local Grid Search" },
+                { icon: <BarChart3 className="w-5 h-5 text-primary" />, label: "Reporting Tools" },
+                { icon: <Receipt className="w-5 h-5 text-primary" />, label: "Agency Overheads" },
+                { icon: <Key className="w-5 h-5 text-primary" />, label: "API & Integrations" },
               ].map((item, idx) => (
                 <div key={idx} className="border border-border rounded-xl p-5 text-center">
                   <div className="flex justify-center mb-2">{item.icon}</div>
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-2">{item.label}</p>
-                  <p className="text-lg font-mono font-semibold text-foreground/70">{item.value}</p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-widest">{item.label}</p>
                 </div>
               ))}
             </div>
