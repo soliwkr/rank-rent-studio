@@ -38,7 +38,7 @@ export default function About() {
               data-testid="hero-video-founder"
             />
             <div className="absolute inset-0 flex items-end justify-center z-10 pointer-events-none pb-6 sm:pb-10">
-              <div className="bg-black/35 backdrop-blur-[3px] rounded-xl px-6 py-4 sm:px-8 sm:py-5 text-center shadow-[0_0_20px_rgba(234,179,8,0.18)]">
+              <div className="bg-black/15 sm:bg-black/35 backdrop-blur-[1px] sm:backdrop-blur-[3px] rounded-xl px-6 py-4 sm:px-8 sm:py-5 text-center shadow-[0_0_20px_rgba(234,179,8,0.18)]">
                 <p className="text-white text-base sm:text-lg font-semibold tracking-tight leading-snug">
                   The revenue chain <span className="bg-gradient-to-r from-yellow-300 to-amber-400 bg-clip-text text-transparent font-extrabold">belongs to you.</span>
                 </p>
