@@ -522,7 +522,7 @@ export default function Home2() {
                 { icon: <Globe className="w-5 h-5 text-primary" />, label: "Local Grid Search" },
                 { icon: <BarChart3 className="w-5 h-5 text-primary" />, label: "Reporting Tools" },
                 { icon: <Receipt className="w-5 h-5 text-primary" />, label: "Agency Overheads" },
-                { icon: <Key className="w-5 h-5 text-primary" />, label: "API & Integrations" },
+                { icon: <Key className="w-5 h-5 text-primary" />, label: "Track Metrics" },
               ].map((item, idx) => (
                 <div key={idx} className="border border-border rounded-xl p-5 text-center">
                   <div className="flex justify-center mb-2">{item.icon}</div>
