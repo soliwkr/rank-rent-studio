@@ -155,7 +155,7 @@ export function AIWidget({ workspaceId, logoUrl }: AIWidgetProps = {}) {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
-      text: "Hi! I'm indexFlow AI, How can I help you today?",
+      text: "Hi! How can I help you today?",
       isBot: true,
       timestamp: new Date(),
     },
