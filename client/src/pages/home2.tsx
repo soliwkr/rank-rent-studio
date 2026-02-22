@@ -500,9 +500,17 @@ export default function Home2() {
       </section>
 
       {/* MARQUEE */}
-      <div className="border-t border-b border-border bg-accent/20 py-4 overflow-hidden" data-testid="marquee-section">
+      <div className="border-t border-b border-border bg-accent/20 py-3 overflow-hidden space-y-3" data-testid="marquee-section">
         <div className="flex gap-14 animate-[marquee_30s_linear_infinite] whitespace-nowrap">
-          {[...marqueeItems, ...marqueeItems, ...marqueeItems].map((item, i) => (
+          {[...marqueeItems.slice(0, 9), ...marqueeItems.slice(0, 9), ...marqueeItems.slice(0, 9)].map((item, i) => (
+            <span key={i} className="text-xs font-semibold text-muted-foreground uppercase tracking-[2px] flex items-center gap-2.5 flex-shrink-0">
+              <span className="text-primary text-[9px]">●</span>
+              {item}
+            </span>
+          ))}
+        </div>
+        <div className="flex gap-14 animate-[marqueeReverse_30s_linear_infinite] whitespace-nowrap">
+          {[...marqueeItems.slice(9), ...marqueeItems.slice(9), ...marqueeItems.slice(9)].map((item, i) => (
             <span key={i} className="text-xs font-semibold text-muted-foreground uppercase tracking-[2px] flex items-center gap-2.5 flex-shrink-0">
               <span className="text-primary text-[9px]">●</span>
               {item}
@@ -1060,7 +1068,11 @@ export default function Home2() {
       <style>{`
         @keyframes marquee {
           from { transform: translateX(0); }
-          to { transform: translateX(-50%); }
+          to { transform: translateX(-33.333%); }
+        }
+        @keyframes marqueeReverse {
+          from { transform: translateX(-33.333%); }
+          to { transform: translateX(0); }
         }
       `}</style>
     </Layout>
