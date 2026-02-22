@@ -893,9 +893,10 @@ export default function Home2() {
               ))}
             </div>
           </FadeIn>
-          <FadeIn className="text-center mt-8">
+          <FadeIn className="text-center mt-12">
+            <p className="text-muted-foreground text-base mb-6">Ready to consolidate your stack? One platform. One bill. Everything connected.</p>
             <Link href="/contact">
-              <Button size="lg" className="text-base px-8 py-4">Start Free Trial →</Button>
+              <Button size="lg" className="text-base px-8 py-4">Start Your Free Trial →</Button>
             </Link>
             <p className="text-muted-foreground text-xs mt-4">No contracts. No setup fees. Start your free trial today.</p>
           </FadeIn>
