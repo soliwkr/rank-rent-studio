@@ -36,6 +36,26 @@ export default function About() {
               title="indexFlow"
               data-testid="hero-video-founder"
             />
+            <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+              <div className="bg-black/40 backdrop-blur-md rounded-xl px-8 py-6 sm:px-10 sm:py-8 text-center max-w-lg">
+                <p className="text-white text-xl sm:text-2xl lg:text-3xl font-extrabold leading-tight mb-1">
+                  The revenue chain
+                </p>
+                <p className="text-white text-xl sm:text-2xl lg:text-3xl font-extrabold leading-tight mb-1">
+                  belongs to you.
+                </p>
+                <p className="text-white/60 text-lg sm:text-xl lg:text-2xl font-semibold italic">
+                  Not your Seo tools.
+                </p>
+                <div className="flex items-center justify-center gap-3 mt-5 text-white/80 text-xs sm:text-sm font-medium tracking-wide">
+                  <span>40+ SEO Tools</span>
+                  <span className="text-white/30">|</span>
+                  <span>One Platform</span>
+                  <span className="text-white/30">|</span>
+                  <span>Zero Middlemen</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
