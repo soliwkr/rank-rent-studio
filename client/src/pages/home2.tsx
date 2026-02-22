@@ -517,14 +517,14 @@ export default function Home2() {
             <p className="text-lg text-muted-foreground max-w-xl mb-10 leading-relaxed">Multiple tools. Infinite logins. Juggling Tabs. 100% Frustration.</p>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-14">
               {[
-                { icon: <PenTool className="w-5 h-5 text-primary" />, label: "Multi Platforms" },
-                { icon: <Search className="w-5 h-5 text-primary" />, label: "Rank Tracking" },
-                { icon: <Globe className="w-5 h-5 text-primary" />, label: "Local Grid Search" },
-                { icon: <BarChart3 className="w-5 h-5 text-primary" />, label: "Reporting Tools" },
-                { icon: <Receipt className="w-5 h-5 text-primary" />, label: "Agency Overheads" },
-                { icon: <Key className="w-5 h-5 text-primary" />, label: "Track Metrics" },
+                { icon: <PenTool className="w-5 h-5 text-muted-foreground" />, label: "Multi Platforms" },
+                { icon: <Search className="w-5 h-5 text-muted-foreground" />, label: "Rank Tracking" },
+                { icon: <Globe className="w-5 h-5 text-muted-foreground" />, label: "Local Grid Search" },
+                { icon: <BarChart3 className="w-5 h-5 text-muted-foreground" />, label: "Reporting Tools" },
+                { icon: <Receipt className="w-5 h-5 text-muted-foreground" />, label: "Agency Overheads" },
+                { icon: <Key className="w-5 h-5 text-muted-foreground" />, label: "Track Metrics" },
               ].map((item, idx) => (
-                <div key={idx} className="border border-border rounded-xl p-5 text-center">
+                <div key={idx} className="rounded-xl p-5 text-center shadow-[0_4px_20px_rgba(0,0,0,0.08)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.25)] border border-border/50">
                   <div className="flex justify-center mb-2">{item.icon}</div>
                   <p className="text-[10px] text-muted-foreground uppercase tracking-widest">{item.label}</p>
                 </div>
