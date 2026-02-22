@@ -214,18 +214,30 @@ const audiences = [
   {
     title: "SEO Agencies",
     description: "Rank tracking, local search grids, on-page audits, GSC Ingestion Layer",
+    icon: Search,
+    color: "text-blue-500",
+    bgColor: "bg-blue-500/10",
   },
   {
     title: "Content Agencies",
     description: "Bulk AI drafts, quality gates, CMS publishing, content reporting",
+    icon: PenTool,
+    color: "text-rose-500",
+    bgColor: "bg-rose-500/10",
   },
   {
     title: "Digital Marketing Agencies",
     description: "Full-service SEO, content, CRM, invoicing and reporting",
+    icon: BarChart3,
+    color: "text-emerald-500",
+    bgColor: "bg-emerald-500/10",
   },
   {
     title: "Freelancers & Consultants",
     description: "Professional tools at solo pricing. White label from day one.",
+    icon: Users,
+    color: "text-violet-500",
+    bgColor: "bg-violet-500/10",
   },
 ];
 
@@ -406,14 +418,22 @@ export default function Pricing() {
             </div>
 
             <div className="grid sm:grid-cols-2 gap-6">
-              {audiences.map((a, i) => (
-                <Card key={a.title} className={`transition-all hover:-translate-y-1 ${colorShadows[i % colorShadows.length]}`} data-testid={`card-audience-${i}`}>
-                  <CardContent className="p-6">
-                    <h3 className="font-semibold text-base mb-2">{a.title}</h3>
-                    <p className="text-sm text-muted-foreground">{a.description}</p>
-                  </CardContent>
-                </Card>
-              ))}
+              {audiences.map((a, i) => {
+                const Icon = a.icon;
+                return (
+                  <Card key={a.title} className={`transition-all hover:-translate-y-1 ${colorShadows[i % colorShadows.length]}`} data-testid={`card-audience-${i}`}>
+                    <CardContent className="p-6 flex items-start gap-4">
+                      <div className={`w-10 h-10 rounded-lg ${a.bgColor} flex items-center justify-center flex-shrink-0`}>
+                        <Icon className={`w-5 h-5 ${a.color}`} />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-base mb-1">{a.title}</h3>
+                        <p className="text-sm text-muted-foreground">{a.description}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           </div>
         </section>
