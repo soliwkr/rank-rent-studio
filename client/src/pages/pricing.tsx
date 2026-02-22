@@ -370,7 +370,7 @@ export default function Pricing() {
                 What You Replace
               </h2>
               <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-                One login instead of eleven.<br />
+                One login instead of eleven plus.<br />
                 See exactly what IndexFlow replaces in your current stack.
               </p>
             </div>
