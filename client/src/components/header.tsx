@@ -57,8 +57,6 @@ const resourceItems = [
 const companyItems = [
   { href: "/about", label: "About", icon: Globe, desc: "Our mission & story" },
   { href: "/contact", label: "Contact", icon: Mail, desc: "Get in touch with us" },
-  { href: "/partners", label: "Partners", icon: Handshake, desc: "Partner program & benefits" },
-  { href: "/careers", label: "Careers", icon: GraduationCap, desc: "Join our team" },
 ];
 
 interface NavItem {
