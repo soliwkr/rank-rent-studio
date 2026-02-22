@@ -534,7 +534,7 @@ export default function Home2() {
           <FadeIn>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {painCards.map((c, i) => (
-                <div key={i} className={`bg-card border border-border rounded-xl p-8 sm:p-10 hover:-translate-y-1 transition-all ${colorShadows[i % colorShadows.length]}`} data-testid={`pain-card-${i}`}>
+                <div key={i} className={`bg-card rounded-xl p-8 sm:p-10 hover:-translate-y-1 transition-all border border-border/50 ${colorShadows[i % colorShadows.length]}`} data-testid={`pain-card-${i}`}>
                   <span className="mb-4 block">{c.icon}</span>
                   <h3 className="font-bold text-lg mb-2">{c.title}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">{c.desc}</p>
