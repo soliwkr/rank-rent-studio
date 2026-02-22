@@ -441,25 +441,7 @@ export function AIWidget({ workspaceId, logoUrl }: AIWidgetProps = {}) {
                         : "bg-primary text-primary-foreground"
                     }`}
                   >
-                    <p className="text-sm p-3 pb-1 whitespace-pre-line">{message.text}</p>
-                    {message.isBot && ttsSupported && (
-                      <div className="px-3 pb-2 flex justify-end">
-                        <button
-                          onClick={() => handleSpeakMessage(message)}
-                          className="text-muted-foreground hover:text-foreground transition-colors p-0.5"
-                          data-testid={`button-speak-${message.id}`}
-                        >
-                          {isSpeaking && speakingMessageId === message.id ? (
-                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                          ) : (
-                            <Volume2 className="w-3.5 h-3.5" />
-                          )}
-                        </button>
-                      </div>
-                    )}
-                    {(!message.isBot || !ttsSupported) && (
-                      <div className="pb-2" />
-                    )}
+                    <p className="text-sm p-3 pb-3 whitespace-pre-line">{message.text}</p>
                   </div>
                   {!message.isBot && (
                     <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
