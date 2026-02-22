@@ -978,6 +978,53 @@ export default function Home2() {
                 </div>
               ))}
             </div>
+            <p className="text-lg text-muted-foreground text-center mt-8">
+              Every plan includes the full suite. No feature gating.
+            </p>
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* REPLACEMENTS */}
+      <section className="py-20 lg:py-24 bg-accent/20">
+        <div className="max-w-4xl mx-auto px-6 sm:px-12">
+          <FadeIn>
+            <div className="text-center mb-14">
+              <h2 className="text-3xl font-bold mb-3">What You Replace</h2>
+              <p className="text-lg text-muted-foreground">One login instead of eleven plus.</p>
+            </div>
+            <div className="grid sm:grid-cols-2 gap-4">
+              {replaceItems.map((r, i) => (
+                <div key={i} className="bg-card border border-border rounded-xl p-5 flex items-center justify-between hover:-translate-y-0.5 transition-all">
+                  <span className="text-sm font-medium text-muted-foreground line-through decoration-muted-foreground/40">{r.before}</span>
+                  <div className="flex items-center gap-2">
+                    <ArrowRight className="w-4 h-4 text-primary" />
+                    <span className="text-sm font-semibold">{r.after}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* WHO WE SERVE */}
+      <section className="py-20 lg:py-24">
+        <div className="max-w-6xl mx-auto px-6 sm:px-12">
+          <FadeIn>
+            <div className="text-center mb-14">
+              <h2 className="text-3xl font-bold mb-3">Who We Serve — IndexFlow scales with you.</h2>
+              <p className="text-lg text-muted-foreground">Built for agencies & solo teams.</p>
+            </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {serveCards.map((c, i) => (
+                <div key={i} className={`bg-card border border-border rounded-xl p-8 hover:-translate-y-1 transition-all ${colorShadows[i % colorShadows.length]}`}>
+                  <span className="mb-4 block">{c.icon}</span>
+                  <h3 className="font-bold text-lg mb-2">{c.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{c.desc}</p>
+                </div>
+              ))}
+            </div>
           </FadeIn>
         </div>
       </section>
