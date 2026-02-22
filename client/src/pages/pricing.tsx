@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { Check, ArrowRight, Users, Layers, Building2, Crown, Zap } from "lucide-react";
+import { Check, ArrowRight, Users, Layers, Building2, Crown, Zap, PenTool, Search, BarChart3, UsersRound, Bot, Link2, PieChart, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -90,6 +90,9 @@ const plans = [
 const toolCategories = [
   {
     title: "Programmatic Content Engine",
+    icon: PenTool,
+    color: "text-rose-500",
+    bgColor: "bg-rose-500/10",
     items: [
       "AI Post Generator — bulk drafts at scale",
       "Post Editor",
@@ -102,6 +105,9 @@ const toolCategories = [
   },
   {
     title: "SEO Tools",
+    icon: Search,
+    color: "text-blue-500",
+    bgColor: "bg-blue-500/10",
     items: [
       "Internal Link Builder",
       "Link Health Monitor",
@@ -115,6 +121,9 @@ const toolCategories = [
   },
   {
     title: "Rank Tracker",
+    icon: BarChart3,
+    color: "text-emerald-500",
+    bgColor: "bg-emerald-500/10",
     items: [
       "Rank Tracker — 1,000 keywords weekly",
       "Local Search Grid (5x5) — see where you rank",
@@ -126,6 +135,9 @@ const toolCategories = [
   },
   {
     title: "CRM & Pipeline",
+    icon: UsersRound,
+    color: "text-violet-500",
+    bgColor: "bg-violet-500/10",
     items: [
       "Lead to Booking CRM",
       "Contacts Manager",
@@ -135,6 +147,9 @@ const toolCategories = [
   },
   {
     title: "AI & Communications",
+    icon: Bot,
+    color: "text-amber-500",
+    bgColor: "bg-amber-500/10",
     items: [
       "AI Widget — website chat",
       "Widget Monitoring",
@@ -146,6 +161,9 @@ const toolCategories = [
   },
   {
     title: "Connections (BYOK)",
+    icon: Link2,
+    color: "text-cyan-500",
+    bgColor: "bg-cyan-500/10",
     items: [
       "AI Provider Connections",
       "Image Bank Connections",
@@ -155,6 +173,9 @@ const toolCategories = [
   },
   {
     title: "Analytics & Reporting",
+    icon: PieChart,
+    color: "text-orange-500",
+    bgColor: "bg-orange-500/10",
     items: [
       "Analytics Overview",
       "Export Data",
@@ -164,6 +185,9 @@ const toolCategories = [
   },
   {
     title: "Settings & Admin",
+    icon: Settings,
+    color: "text-slate-500",
+    bgColor: "bg-slate-500/10",
     items: [
       "Team & Invites",
       "White Label Branding",
@@ -285,42 +309,54 @@ export default function Pricing() {
 
         <section className="py-20 lg:py-28 bg-accent/40">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-14">
-              <h2 className="text-3xl lg:text-4xl font-bold mb-3" data-testid="text-everything-title">
+            <div className="text-center mb-16">
+              <Badge variant="outline" className="mb-4 text-xs tracking-widest uppercase" data-testid="badge-everything">
+                Full Platform
+              </Badge>
+              <h2 className="text-3xl lg:text-4xl font-bold mb-4" data-testid="text-everything-title">
                 Everything In The Box
               </h2>
-              <p className="text-lg text-muted-foreground max-w-xl mx-auto">
+              <p className="text-base text-muted-foreground max-w-lg mx-auto leading-relaxed">
                 40+ tools. One subscription.<br />
                 No feature gating. Every tier gets the full suite. Here's exactly what you get from day one.
               </p>
             </div>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {toolCategories.map((cat, i) => (
-                <Card key={cat.title} className={`transition-all hover:-translate-y-1 ${colorShadows[i % colorShadows.length]}`} data-testid={`card-tools-${i}`}>
-                  <CardContent className="p-6">
-                    <h3 className="font-semibold text-base mb-4">{cat.title}</h3>
-                    <ul className="space-y-2">
-                      {cat.items.map((item, j) => (
-                        <li key={j} className="flex items-start gap-2 text-sm text-muted-foreground">
-                          <ArrowRight className="w-3.5 h-3.5 text-primary flex-shrink-0 mt-0.5" />
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-              ))}
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              {toolCategories.map((cat, i) => {
+                const Icon = cat.icon;
+                return (
+                  <Card key={cat.title} className={`transition-all hover:-translate-y-1 ${colorShadows[i % colorShadows.length]} border-border/60`} data-testid={`card-tools-${i}`}>
+                    <CardContent className="p-5">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className={`w-9 h-9 rounded-lg ${cat.bgColor} flex items-center justify-center flex-shrink-0`}>
+                          <Icon className={`w-4.5 h-4.5 ${cat.color}`} />
+                        </div>
+                        <h3 className="font-semibold text-sm leading-tight">{cat.title}</h3>
+                      </div>
+                      <ul className="space-y-1.5">
+                        {cat.items.map((item, j) => (
+                          <li key={j} className="flex items-start gap-2 text-[13px] text-muted-foreground leading-snug">
+                            <Check className="w-3 h-3 text-primary/60 flex-shrink-0 mt-0.5" />
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
 
-            <div className="mt-14 text-center">
-              <div className="inline-flex items-baseline gap-2">
-                <span className="text-5xl font-bold">40+</span>
-                <span className="text-muted-foreground text-sm max-w-md text-left leading-snug">
-                  tools across 8 categories — content · SEO · CRM · AI · comms · analytics · white label · admin
-                </span>
+            <div className="mt-16 flex flex-col items-center gap-3">
+              <div className="flex items-center gap-3">
+                <span className="text-5xl lg:text-6xl font-black tracking-tight">40+</span>
+                <div className="text-left">
+                  <p className="text-sm font-medium">tools across 8 categories</p>
+                  <p className="text-xs text-muted-foreground">content · SEO · CRM · AI · comms · analytics · white label · admin</p>
+                </div>
               </div>
-              <p className="text-sm text-muted-foreground mt-3">
+              <p className="text-xs text-muted-foreground tracking-wide">
                 Solo · Pro · Agency · Enterprise — every plan, full access
               </p>
             </div>
