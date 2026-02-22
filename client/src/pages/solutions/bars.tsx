@@ -7,6 +7,7 @@ import { Layout } from "@/components/layout";
 import { SEO, seoData } from "@/components/seo";
 import { colorShadows } from "@/lib/color-shadows";
 import { ClosingCTA } from "@/components/closing-cta";
+import { DoubleTicker } from "@/components/double-ticker";
 
 const challenges = [
   {
@@ -139,6 +140,8 @@ export default function DigitalMarketingAgenciesSolution() {
           </div>
         </div>
       </section>
+
+      <DoubleTicker />
 
       <section className="py-16 lg:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
