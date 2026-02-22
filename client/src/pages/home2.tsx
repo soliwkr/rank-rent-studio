@@ -506,6 +506,8 @@ export default function Home2() {
         </div>
       </div>
 
+      <div className="max-w-6xl mx-auto h-px bg-border" />
+
       {/* PAIN */}
       <section className="py-20 lg:py-24 bg-accent/20" data-testid="pain-section">
         <div className="max-w-6xl mx-auto px-6 sm:px-12">
@@ -542,6 +544,8 @@ export default function Home2() {
         </div>
       </section>
 
+      <div className="max-w-6xl mx-auto h-px bg-border" />
+
       {/* SOLUTION */}
       <section className="py-20 lg:py-24" data-testid="solution-section">
         <div className="max-w-6xl mx-auto px-6 sm:px-12">
@@ -565,6 +569,8 @@ export default function Home2() {
           </FadeIn>
         </div>
       </section>
+
+      <div className="max-w-6xl mx-auto h-px bg-border" />
 
       {/* 40+ TOOLS */}
       <section className="py-20 lg:py-24 bg-accent/20" id="tools" data-testid="tools-section">
@@ -658,6 +664,8 @@ export default function Home2() {
         </div>
       </section>
 
+      <div className="max-w-6xl mx-auto h-px bg-border" />
+
       {/* HOW IT WORKS */}
       <section className="py-20 lg:py-24" data-testid="steps-section">
         <div className="max-w-6xl mx-auto px-6 sm:px-12">
@@ -711,6 +719,8 @@ export default function Home2() {
         </div>
       </section>
 
+      <div className="max-w-6xl mx-auto h-px bg-border" />
+
       {/* CMS PUBLISH */}
       <section className="py-16 lg:py-20" data-testid="cms-section">
         <div className="max-w-6xl mx-auto px-6 sm:px-12">
@@ -739,6 +749,8 @@ export default function Home2() {
         </div>
       </section>
 
+      <div className="max-w-6xl mx-auto h-px bg-border" />
+
       {/* INFRASTRUCTURE */}
       <section className="py-20 lg:py-24 bg-[#0D1B2A]" data-testid="infra-section">
         <div className="max-w-6xl mx-auto px-6 sm:px-12">
@@ -762,6 +774,8 @@ export default function Home2() {
           </FadeIn>
         </div>
       </section>
+
+      <div className="max-w-6xl mx-auto h-px bg-border" />
 
       {/* WHY INDEXFLOW */}
       <section className="py-20 lg:py-24" id="compare" data-testid="why-section">
@@ -852,6 +866,8 @@ export default function Home2() {
         </div>
       </section>
 
+      <div className="max-w-6xl mx-auto h-px bg-border" />
+
       {/* PRICING */}
       <section className="py-20 lg:py-24" id="pricing" data-testid="pricing-section">
         <div className="max-w-6xl mx-auto px-6 sm:px-12">
@@ -903,6 +919,8 @@ export default function Home2() {
         </div>
       </section>
 
+      <div className="max-w-6xl mx-auto h-px bg-border" />
+
       {/* FAQ */}
       <section className="py-20 lg:py-24 bg-accent/20" id="faq" data-testid="faq-section">
         <div className="max-w-6xl mx-auto px-6 sm:px-12">
@@ -927,6 +945,8 @@ export default function Home2() {
           </FadeIn>
         </div>
       </section>
+
+      <div className="max-w-6xl mx-auto h-px bg-border" />
 
       {/* CTA */}
       <section className="py-32 lg:py-40 text-center relative overflow-hidden" data-testid="cta-section">
@@ -980,6 +1000,8 @@ export default function Home2() {
         </div>
       </section>
 
+      <div className="max-w-6xl mx-auto h-px bg-border" />
+
       {/* REPLACEMENTS */}
       <section className="py-20 lg:py-24 bg-accent/20">
         <div className="max-w-4xl mx-auto px-6 sm:px-12">
@@ -1002,6 +1024,8 @@ export default function Home2() {
           </FadeIn>
         </div>
       </section>
+
+      <div className="max-w-6xl mx-auto h-px bg-border" />
 
       {/* WHO WE SERVE */}
       <section className="py-20 lg:py-24">
