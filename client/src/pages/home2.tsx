@@ -405,11 +405,11 @@ export default function Home2() {
       <SEO {...seoData.home} structuredData={combinedHomeSchema} />
 
       {/* HERO */}
-      <section className="relative flex flex-col items-center justify-center text-center px-4 sm:px-12 pt-12 sm:py-32 pb-16 sm:pb-32 overflow-hidden" data-testid="hero-section">
+      <section className="relative flex flex-col items-center justify-center text-center px-6 sm:px-12 pt-12 sm:py-32 pb-16 sm:pb-32 overflow-hidden" data-testid="hero-section">
         <HeroVideo />
 
         <div className="relative z-10 flex flex-col items-center w-full">
-          <div className="bg-black/25 sm:bg-black/25 backdrop-blur-md rounded-2xl px-4 sm:px-14 py-6 sm:py-14 w-full max-w-4xl">
+          <div className="bg-black/25 sm:bg-black/25 backdrop-blur-md rounded-2xl px-6 sm:px-14 py-6 sm:py-14 w-full max-w-4xl">
             <h1 className="text-[1.5rem] sm:text-5xl lg:text-7xl font-extrabold leading-[1.1] sm:leading-none tracking-tight max-w-4xl mb-4 sm:mb-7 text-white" data-testid="hero-heading">
               The revenue chain<br />
               <span className="bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-500 bg-clip-text text-transparent">belongs to you.</span><br />
@@ -955,7 +955,7 @@ export default function Home2() {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px]" />
         <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-purple-500/8 rounded-full blur-[100px]" />
 
-        <div className="relative z-10 max-w-4xl mx-auto px-6">
+        <div className="relative z-10 max-w-4xl mx-auto px-8 sm:px-6">
           <FadeIn>
             <p className="text-xs font-bold tracking-[3px] uppercase text-primary mb-6">Get Started</p>
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1] mb-6 text-white">
