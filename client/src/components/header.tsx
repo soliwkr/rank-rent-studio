@@ -341,7 +341,13 @@ export function Header() {
                 testId="link-nav-features"
                 footer={{ label: "View all features", href: "/platform/content-engine" }}
               />
-              <NavLink href="/platform/seo" label="Platform" location={location} testId="link-nav-platform" />
+              <NavDropdown
+                label="Platform"
+                items={featureItems.slice(6)}
+                location={location}
+                testId="link-nav-platform"
+                footer={{ label: "View all platform features", href: "/platform/seo" }}
+              />
               <NavDropdown
                 label="Solutions"
                 items={solutionItems}
@@ -429,19 +435,15 @@ export function Header() {
                 onNavigate={() => setIsOpen(false)}
                 testId="link-mobile-features"
               />
-              <Link href="/platform/seo">
-                <button
-                  className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
-                    location.startsWith("/platform")
-                      ? "text-primary bg-primary/5"
-                      : "text-foreground/80 hover:text-foreground hover:bg-muted/50"
-                  }`}
-                  onClick={() => setIsOpen(false)}
-                  data-testid="link-mobile-platform"
-                >
-                  Platform
-                </button>
-              </Link>
+              <MobileDropdown
+                label="Platform"
+                items={featureItems.slice(6)}
+                location={location}
+                isOpen={openMobileDropdown === "platform"}
+                onToggle={() => toggleMobileDropdown("platform")}
+                onNavigate={() => setIsOpen(false)}
+                testId="link-mobile-platform"
+              />
               <MobileDropdown
                 label="Solutions"
                 items={solutionItems}
