@@ -563,12 +563,6 @@ export default function Home2() {
               ))}
             </div>
           </FadeIn>
-          <FadeIn className="text-center mt-12">
-            <p className="text-muted-foreground text-base mb-6">Ready to consolidate your stack? One platform. One bill. Everything connected.</p>
-            <Link href="/contact">
-              <Button size="lg" className="text-base px-8 py-4">Start Your Free Trial →</Button>
-            </Link>
-          </FadeIn>
         </div>
       </section>
 
