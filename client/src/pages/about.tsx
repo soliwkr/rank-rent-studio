@@ -41,8 +41,8 @@ export default function About() {
                 <p className="text-white text-xl sm:text-2xl lg:text-3xl font-extrabold leading-tight mb-1">
                   The revenue chain
                 </p>
-                <p className="text-white text-xl sm:text-2xl lg:text-3xl font-extrabold leading-tight mb-1">
-                  belongs to you.
+                <p className="text-xl sm:text-2xl lg:text-3xl font-extrabold leading-tight mb-1">
+                  <span className="bg-gradient-to-r from-yellow-300 via-amber-400 to-yellow-500 bg-clip-text text-transparent">belongs to you.</span>
                 </p>
                 <p className="text-white/60 text-lg sm:text-xl lg:text-2xl font-semibold italic">
                   Not your Seo tools.
