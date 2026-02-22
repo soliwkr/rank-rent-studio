@@ -280,13 +280,6 @@ export default function Pricing() {
               ))}
             </div>
 
-            <div className="text-center mt-12">
-              <Link href="/contact">
-                <Button size="lg" data-testid="button-start-free-trial">
-                  Start Free Trial <ArrowRight className="w-4 h-4 ml-1" />
-                </Button>
-              </Link>
-            </div>
           </div>
         </section>
 
