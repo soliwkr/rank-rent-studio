@@ -103,7 +103,7 @@ export default function About() {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
             {[
               { icon: FileText, label: "Content Platforms" },
-              { icon: BarChart3, label: "Rank Trackers" },
+              { icon: BarChart3, label: "Rank Tracker Costs" },
               { icon: Grid3X3, label: "Local Grid Scanners" },
               { icon: ClipboardList, label: "Reporting Tools" },
               { icon: Sparkles, label: "AI Overheads" },
