@@ -44,6 +44,10 @@ function TextTicker() {
   );
 }
 
+function TickerDivider() {
+  return <div className="max-w-5xl mx-auto h-px bg-border/50 my-2" />;
+}
+
 function CmsTicker() {
   return (
     <div className="text-center py-8">
@@ -75,11 +79,13 @@ export function DoubleTicker({ cmsFirst = false }: { cmsFirst?: boolean }) {
       {cmsFirst ? (
         <>
           <CmsTicker />
+          <TickerDivider />
           <TextTicker />
         </>
       ) : (
         <>
           <TextTicker />
+          <TickerDivider />
           <CmsTicker />
         </>
       )}
