@@ -99,6 +99,7 @@ export default function About() {
             The same fragmented stack. The same repetitive production work. The same tools promising AI-powered results that don't deliver. The same Monday morning of copy-pasting data between dashboards that should never have been separate.
           </p>
 
+          <p className="text-sm font-semibold text-foreground mb-4">Sound familiar?</p>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
             {[
               { icon: FileText, label: "Content Platforms" },
