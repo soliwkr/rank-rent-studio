@@ -1,3 +1,5 @@
+import { SiWordpress, SiShopify, SiWebflow, SiGhost, SiWix } from "react-icons/si";
+
 const marqueeItems = [
   "Content Engine | Deploy to LLM | CMS instantly",
   "Pages | Posts | Articles | Listicles",
@@ -40,7 +42,14 @@ export function DoubleTicker() {
         </div>
       </div>
       <div className="text-center py-6">
-        <p className="text-sm font-semibold text-muted-foreground tracking-wide">Publish Instantly to any LLM or CMS.</p>
+        <p className="text-sm font-semibold text-muted-foreground tracking-wide mb-3">Publish Instantly to any LLM or CMS.</p>
+        <div className="flex items-center justify-center gap-6">
+          <SiWordpress className="w-5 h-5 text-muted-foreground/60" />
+          <SiShopify className="w-5 h-5 text-muted-foreground/60" />
+          <SiWebflow className="w-5 h-5 text-muted-foreground/60" />
+          <SiGhost className="w-5 h-5 text-muted-foreground/60" />
+          <SiWix className="w-5 h-5 text-muted-foreground/60" />
+        </div>
       </div>
       <style>{`
         @keyframes marquee {
