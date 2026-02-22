@@ -29,6 +29,7 @@ import hotelBold from "@/assets/images/templates/hotel-bold.webp";
 import hotelVibrant from "@/assets/images/templates/hotel-vibrant.webp";
 import hotelSimple from "@/assets/images/templates/hotel-simple.webp";
 import hotelMinimalistic from "@/assets/images/templates/hotel-minimalistic.webp";
+import { ClosingCTA } from "@/components/closing-cta";
 
 const categoryFilters = [
   { id: "all", label: "All Templates" },
@@ -493,6 +494,7 @@ export default function Gallery() {
           </div>
         </div>
       )}
+      <ClosingCTA />
     </Layout>
   );
 }

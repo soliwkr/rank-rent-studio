@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Layout } from "@/components/layout";
 import { SEO, seoData } from "@/components/seo";
+import { ClosingCTA } from "@/components/closing-cta";
 
 const features = [
   {
@@ -171,6 +172,7 @@ export default function WaitlistFeature() {
           </Link>
         </div>
       </section>
+      <ClosingCTA />
     </Layout>
   );
 }

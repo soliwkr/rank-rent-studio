@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Layout } from "@/components/layout";
 import { SEO, seoData } from "@/components/seo";
 import { useState } from "react";
+import { ClosingCTA } from "@/components/closing-cta";
 
 const gridColors = [
   "bg-green-500", "bg-green-500", "bg-green-400", "bg-yellow-400", "bg-orange-400",
@@ -762,6 +763,7 @@ export default function LocalSearchGridPage() {
           </div>
         </div>
       </section>
+      <ClosingCTA />
     </Layout>
   );
 }

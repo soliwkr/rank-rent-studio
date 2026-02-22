@@ -7,6 +7,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { SEO, seoData, faqSchema } from "@/components/seo";
+import { ClosingCTA } from "@/components/closing-cta";
 
 const faqs = [
   {
@@ -79,6 +80,7 @@ export default function FAQ() {
           </Accordion>
         </div>
       </section>
+      <ClosingCTA />
     </Layout>
   );
 }

@@ -9,6 +9,7 @@ import { SiWordpress, SiShopify, SiSquarespace, SiWebflow, SiGhost, SiReplit } f
 import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/layout";
 import { SEO, seoData, combinedHomeSchema } from "@/components/seo";
+import { ClosingCTA } from "@/components/closing-cta";
 
 function HeroVideo() {
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -966,6 +967,8 @@ export default function Home2() {
           </FadeIn>
         </div>
       </section>
+
+      <ClosingCTA />
 
       {/* MARQUEE KEYFRAMES */}
       <style>{`

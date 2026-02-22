@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, ChevronRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/layout";
+import { ClosingCTA } from "@/components/closing-cta";
 
 export type BlogCategory =
   | "Agency Growth"
@@ -642,6 +643,7 @@ export default function Blog() {
           </Link>
         </div>
       </section>
+      <ClosingCTA />
     </Layout>
   );
 }

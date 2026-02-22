@@ -3,6 +3,7 @@ import { ArrowRight, Phone, Wrench, Lightbulb, FileText, BarChart3, Grid3X3, Cli
 import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/layout";
 import { SEO, seoData } from "@/components/seo";
+import { ClosingCTA } from "@/components/closing-cta";
 
 export default function About() {
   return (
@@ -196,6 +197,7 @@ export default function About() {
           </div>
         </div>
       </section>
+      <ClosingCTA />
     </Layout>
   );
 }

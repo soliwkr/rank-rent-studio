@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Layout } from "@/components/layout";
 import { SEO, seoData } from "@/components/seo";
+import { ClosingCTA } from "@/components/closing-cta";
 
 const aiProviders = [
   { name: "OpenAI", description: "GPT-4o & GPT-4o-mini", icon: Brain, color: "text-green-500", bgColor: "bg-green-500/10" },
@@ -229,6 +230,7 @@ export default function ByokPage() {
           </Link>
         </div>
       </section>
+      <ClosingCTA />
     </Layout>
   );
 }

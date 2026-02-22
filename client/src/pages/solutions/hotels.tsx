@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Layout } from "@/components/layout";
 import { SEO, seoData } from "@/components/seo";
 import { colorShadows } from "@/lib/color-shadows";
+import { ClosingCTA } from "@/components/closing-cta";
 
 const challenges = [
   {
@@ -233,6 +234,7 @@ export default function FreelancersConsultantsSolution() {
           </Link>
         </div>
       </section>
+      <ClosingCTA />
     </Layout>
   );
 }
