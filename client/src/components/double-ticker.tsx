@@ -24,7 +24,7 @@ const marqueeItems = [
 function TextTicker() {
   return (
     <div className="border-t border-b border-border bg-accent/20 py-3 overflow-hidden space-y-3">
-      <div className="flex gap-14 animate-[marquee_40s_linear_infinite] whitespace-nowrap will-change-transform">
+      <div className="ticker-row-1 flex gap-14 whitespace-nowrap will-change-transform">
         {[...marqueeItems.slice(0, 9), ...marqueeItems.slice(0, 9), ...marqueeItems.slice(0, 9)].map((item, i) => (
           <span key={i} className="text-xs font-semibold text-muted-foreground uppercase tracking-[2px] flex items-center gap-2.5 flex-shrink-0">
             <span className="text-red-500 text-[9px]">●</span>
@@ -32,7 +32,7 @@ function TextTicker() {
           </span>
         ))}
       </div>
-      <div className="flex gap-14 animate-[marqueeReverse_40s_linear_infinite] whitespace-nowrap will-change-transform">
+      <div className="ticker-row-2 flex gap-14 whitespace-nowrap will-change-transform">
         {[...marqueeItems.slice(9), ...marqueeItems.slice(9), ...marqueeItems.slice(9)].map((item, i) => (
           <span key={i} className="text-xs font-semibold text-muted-foreground uppercase tracking-[2px] flex items-center gap-2.5 flex-shrink-0">
             <span className="text-blue-500 text-[9px]">●</span>
@@ -56,7 +56,7 @@ function CmsTicker() {
         Instantly to <em className="text-muted-foreground/50 italic">any LLM or CMS.</em>
       </h3>
       <div className="overflow-hidden">
-        <div className="flex gap-12 animate-[marquee_20s_linear_infinite] whitespace-nowrap will-change-transform">
+        <div className="ticker-cms flex gap-12 whitespace-nowrap will-change-transform">
           {[...Array(4)].flatMap((_, setIndex) => [
             <SiWordpress key={`wp-${setIndex}`} className="w-8 h-8 flex-shrink-0 opacity-40 grayscale" />,
             <SiShopify key={`sh-${setIndex}`} className="w-8 h-8 flex-shrink-0 opacity-40 grayscale" />,
@@ -97,6 +97,14 @@ export function DoubleTicker({ cmsFirst = false }: { cmsFirst?: boolean }) {
         @keyframes marqueeReverse {
           0% { transform: translate3d(-33.333%, 0, 0); }
           100% { transform: translate3d(0, 0, 0); }
+        }
+        .ticker-row-1 { animation: marquee 40s linear infinite; }
+        .ticker-row-2 { animation: marqueeReverse 40s linear infinite; }
+        .ticker-cms { animation: marquee 20s linear infinite; }
+        @media (max-width: 640px) {
+          .ticker-row-1 { animation-duration: 18s; }
+          .ticker-row-2 { animation-duration: 18s; }
+          .ticker-cms { animation-duration: 10s; }
         }
       `}</style>
     </>
