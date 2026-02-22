@@ -5,7 +5,7 @@ import indexFlowLogo from "@assets/image_1771351451425.webp";
 import clientDashImg from "@assets/client_dash_1771696909138.webp";
 import wixLogo from "@assets/image_1771707999263.png";
 import { colorShadows } from "@/lib/color-shadows";
-import { SiWordpress, SiShopify, SiSquarespace, SiWebflow, SiGhost, SiReplit } from "react-icons/si";
+import { SiWordpress, SiShopify, SiSquarespace, SiWebflow, SiGhost, SiReplit, SiCloudflare, SiGithub } from "react-icons/si";
 import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/layout";
 import { SEO, seoData, combinedHomeSchema } from "@/components/seo";
@@ -759,7 +759,11 @@ export default function Home2() {
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight mb-5 text-white">
               Built on enterprise <em className="text-white/30 italic">infrastructure.</em>
             </h2>
-            <p className="text-lg text-white/50 max-w-xl mb-14 leading-relaxed">SOC 2 compliant. Cloudflare edge. GitHub pipeline. The infrastructure Fortune 500 companies pay millions for — available from $99/month.</p>
+            <p className="text-lg text-white/50 max-w-xl mb-10 leading-relaxed">SOC 2 compliant. Cloudflare edge. GitHub pipeline. The infrastructure Fortune 500 companies pay millions for — available from $99/month.</p>
+            <div className="flex items-center gap-6 mb-14">
+              <SiCloudflare className="w-8 h-8 text-white/30" />
+              <SiGithub className="w-8 h-8 text-white/30" />
+            </div>
           </FadeIn>
           <FadeIn>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
