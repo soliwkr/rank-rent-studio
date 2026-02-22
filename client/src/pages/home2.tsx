@@ -511,18 +511,18 @@ export default function Home2() {
         <div className="max-w-6xl mx-auto px-6 sm:px-12">
           <FadeIn>
             <p className="text-xs font-bold tracking-[3px] uppercase text-primary mb-4">The Pain Problem</p>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight mb-5 text-slate-400">Sound familiar?</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-14">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight mb-8 text-white">Sound familiar?</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-14">
               {[
-                { label: "Content Platforms", value: "+++", color: "text-rose-500", bgColor: "bg-rose-500/10", border: "border-rose-500/20" },
-                { label: "Rank Tracker Costs", value: "$$", color: "text-blue-500", bgColor: "bg-blue-500/10", border: "border-blue-500/20" },
-                { label: "Local Grid Search", value: "$$ cost", color: "text-emerald-500", bgColor: "bg-emerald-500/10", border: "border-emerald-500/20" },
-                { label: "Reporting Tools", value: "+ $$ p/mo", color: "text-amber-500", bgColor: "bg-amber-500/10", border: "border-amber-500/20" },
-                { label: "Agency Overheads", value: "+ $$", color: "text-violet-500", bgColor: "bg-violet-500/10", border: "border-violet-500/20" },
+                { label: "Content Platforms", value: "+++", color: "text-rose-400", shadow: "shadow-rose-500/20" },
+                { label: "Rank Tracker Costs", value: "$$", color: "text-blue-400", shadow: "shadow-blue-500/20" },
+                { label: "Local Grid Search", value: "$$ cost", color: "text-emerald-400", shadow: "shadow-emerald-500/20" },
+                { label: "Reporting Tools", value: "+ $$ p/mo", color: "text-amber-400", shadow: "shadow-amber-500/20" },
+                { label: "Agency Overheads", value: "+ $$", color: "text-violet-400", shadow: "shadow-violet-500/20" },
               ].map((item, idx) => (
-                <div key={idx} className={`${item.bgColor} backdrop-blur-sm border ${item.border} rounded-xl p-4 sm:p-6 text-center group hover:scale-[1.02] transition-all duration-300`}>
-                  <p className="text-[10px] sm:text-xs text-slate-400 uppercase tracking-widest mb-3 font-semibold">{item.label}</p>
-                  <p className={`text-lg sm:text-2xl font-mono ${item.color} font-bold tracking-tighter`}>{item.value}</p>
+                <div key={idx} className={`bg-slate-900/60 backdrop-blur-md border border-white/10 rounded-2xl p-6 text-center transition-all duration-300 hover:-translate-y-1 shadow-lg ${item.shadow}`}>
+                  <p className="text-[10px] sm:text-xs text-white/40 uppercase tracking-[0.2em] mb-4 font-bold">{item.label}</p>
+                  <p className={`text-xl sm:text-3xl font-mono ${item.color} font-black tracking-tighter drop-shadow-sm`}>{item.value}</p>
                 </div>
               ))}
             </div>
