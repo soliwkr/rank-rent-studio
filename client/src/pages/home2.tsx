@@ -515,17 +515,19 @@ export default function Home2() {
             <p className="text-xs font-bold tracking-[3px] uppercase text-primary mb-4">The Pain Problem</p>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight mb-5">Sound familiar?</h2>
             <p className="text-lg text-muted-foreground max-w-xl mb-10 leading-relaxed">Multiple tools. Infinite logins. Juggling Tabs. One frustrated agency.</p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-14">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-14">
               {[
-                { label: "Content Platforms", value: "Juggle tools" },
-                { label: "Rank Tracker Costs", value: "$$ cost p/mo" },
-                { label: "Local Grid Search", value: "$$ cost p/mo" },
-                { label: "Reporting Tools", value: "$$ cost p/mo" },
-                { label: "Agency Overheads", value: "$$ cost p/mo" },
+                { icon: <PenTool className="w-5 h-5 text-primary" />, label: "Content Platforms", value: "Juggle tools" },
+                { icon: <Search className="w-5 h-5 text-primary" />, label: "Rank Tracker Costs", value: "$$ cost p/mo" },
+                { icon: <Globe className="w-5 h-5 text-primary" />, label: "Local Grid Search", value: "$$ cost p/mo" },
+                { icon: <BarChart3 className="w-5 h-5 text-primary" />, label: "Reporting Tools", value: "$$ cost p/mo" },
+                { icon: <Receipt className="w-5 h-5 text-primary" />, label: "Agency Overheads", value: "$$ cost p/mo" },
+                { icon: <Key className="w-5 h-5 text-primary" />, label: "API & Integrations", value: "$$ cost p/mo" },
               ].map((item, idx) => (
                 <div key={idx} className="border border-border rounded-xl p-5 text-center">
+                  <div className="flex justify-center mb-2">{item.icon}</div>
                   <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-2">{item.label}</p>
-                  <p className="text-xl font-mono font-semibold text-foreground/70">{item.value}</p>
+                  <p className="text-lg font-mono font-semibold text-foreground/70">{item.value}</p>
                 </div>
               ))}
             </div>
