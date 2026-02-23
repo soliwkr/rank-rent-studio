@@ -22,6 +22,11 @@ export default function About() {
           </p>
 
           <div className="relative w-full rounded-xl overflow-hidden shadow-2xl" style={{ paddingBottom: "56.25%" }}>
+            <img
+              src="/hero-poster.jpg"
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover"
+            />
             <iframe
               src="https://player.vimeo.com/video/1165788581?badge=0&autopause=0&player_id=0&app_id=58479&autoplay=1&loop=1&muted=1&background=1&playsinline=1"
               frameBorder="0"

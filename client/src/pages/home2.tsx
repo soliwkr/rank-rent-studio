@@ -14,7 +14,12 @@ import { ClosingCTA } from "@/components/closing-cta";
 function HeroVideo() {
   return (
     <div className="absolute inset-0 w-full h-full overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" />
+      <img
+        src="/hero-poster.jpg"
+        alt=""
+        className="absolute inset-0 w-full h-full object-cover"
+        fetchPriority="high"
+      />
       <iframe
         src="https://player.vimeo.com/video/1165788581?badge=0&autopause=0&player_id=0&app_id=58479&autoplay=1&loop=1&muted=1&background=1&playsinline=1"
         frameBorder="0"
