@@ -19,7 +19,7 @@ function HeroVideo() {
     <div className="absolute inset-0 w-full h-full overflow-hidden bg-slate-900">
       <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" />
       {showVideo && (
-        <div className="absolute inset-0" style={{ padding: "56.25% 0 0 0", position: "relative" }}>
+        <div className="absolute inset-0">
           <iframe
             ref={iframeRef}
             src="https://player.vimeo.com/video/1165788581?badge=0&autopause=0&player_id=0&app_id=58479&autoplay=1&loop=1&muted=1&background=1"
