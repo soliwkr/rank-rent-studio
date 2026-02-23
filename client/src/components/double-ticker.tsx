@@ -102,9 +102,9 @@ export function DoubleTicker({ cmsFirst = false }: { cmsFirst?: boolean }) {
         .ticker-row-2 { animation: marqueeReverse 40s linear infinite; }
         .ticker-cms { animation: marquee 20s linear infinite; }
         @media (max-width: 640px) {
-          .ticker-row-1 { animation-duration: 18s; }
-          .ticker-row-2 { animation-duration: 18s; }
-          .ticker-cms { animation-duration: 10s; }
+          .ticker-row-1 { animation-duration: 10s; }
+          .ticker-row-2 { animation-duration: 10s; }
+          .ticker-cms { animation-duration: 6s; }
         }
       `}</style>
     </>
