@@ -12,6 +12,8 @@ import { SEO, seoData, combinedHomeSchema } from "@/components/seo";
 import { ClosingCTA } from "@/components/closing-cta";
 
 function HeroVideo() {
+  const [iframeLoaded, setIframeLoaded] = useState(false);
+
   return (
     <div className="absolute inset-0 w-full h-full overflow-hidden">
       <img
@@ -20,16 +22,22 @@ function HeroVideo() {
         className="absolute inset-0 w-full h-full object-cover"
         fetchPriority="high"
       />
-      <iframe
-        src="https://player.vimeo.com/video/1165788581?badge=0&autopause=0&player_id=0&app_id=58479&autoplay=1&loop=1&muted=1&background=1&playsinline=1"
-        frameBorder="0"
-        allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
-        loading="eager"
-        className="absolute"
-        style={{ top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: "177.78vh", minWidth: "100%", height: "56.25vw", minHeight: "100%", border: 0 }}
-        title="indexFlow"
-        data-testid="hero-video"
-      />
+      <div
+        className="absolute inset-0"
+        style={{ opacity: iframeLoaded ? 1 : 0, transition: "opacity 1.2s ease-in-out" }}
+      >
+        <iframe
+          src="https://player.vimeo.com/video/1165788581?badge=0&autopause=0&player_id=0&app_id=58479&autoplay=1&loop=1&muted=1&background=1&playsinline=1"
+          frameBorder="0"
+          allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+          loading="eager"
+          onLoad={() => setTimeout(() => setIframeLoaded(true), 500)}
+          className="absolute"
+          style={{ top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: "177.78vh", minWidth: "100%", height: "56.25vw", minHeight: "100%", border: 0 }}
+          title="indexFlow"
+          data-testid="hero-video"
+        />
+      </div>
     </div>
   );
 }

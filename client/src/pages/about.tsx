@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "wouter";
 import { ArrowRight, Phone, Wrench, Layers, ShieldCheck, Lightbulb, FileText, BarChart3, Grid3X3, ClipboardList, Sparkles, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -7,6 +8,8 @@ import { ClosingCTA } from "@/components/closing-cta";
 import { DoubleTicker } from "@/components/double-ticker";
 
 export default function About() {
+  const [iframeLoaded, setIframeLoaded] = useState(false);
+
   return (
     <Layout>
       <SEO {...seoData.about} />
@@ -27,16 +30,22 @@ export default function About() {
               alt=""
               className="absolute inset-0 w-full h-full object-cover"
             />
-            <iframe
-              src="https://player.vimeo.com/video/1165788581?badge=0&autopause=0&player_id=0&app_id=58479&autoplay=1&loop=1&muted=1&background=1&playsinline=1"
-              frameBorder="0"
-              allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
-              loading="eager"
-              className="absolute inset-0 w-full h-full"
-              style={{ border: 0 }}
-              title="indexFlow"
-              data-testid="hero-video-founder"
-            />
+            <div
+              className="absolute inset-0"
+              style={{ opacity: iframeLoaded ? 1 : 0, transition: "opacity 1.2s ease-in-out" }}
+            >
+              <iframe
+                src="https://player.vimeo.com/video/1165788581?badge=0&autopause=0&player_id=0&app_id=58479&autoplay=1&loop=1&muted=1&background=1&playsinline=1"
+                frameBorder="0"
+                allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+                loading="eager"
+                onLoad={() => setTimeout(() => setIframeLoaded(true), 500)}
+                className="absolute inset-0 w-full h-full"
+                style={{ border: 0 }}
+                title="indexFlow"
+                data-testid="hero-video-founder"
+              />
+            </div>
             <div className="absolute inset-0 flex items-end justify-center z-10 pointer-events-none pb-6 sm:pb-10">
               <div className="bg-black/15 sm:bg-black/35 backdrop-blur-[1px] sm:backdrop-blur-[3px] rounded-xl px-6 py-4 sm:px-8 sm:py-5 text-center shadow-[0_0_20px_rgba(234,179,8,0.18)]">
                 <p className="text-white text-base sm:text-lg font-semibold tracking-tight leading-snug">
