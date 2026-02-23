@@ -12,43 +12,24 @@ import { SEO, seoData, combinedHomeSchema } from "@/components/seo";
 import { ClosingCTA } from "@/components/closing-cta";
 
 function HeroVideo() {
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [videoPlaying, setVideoPlaying] = useState(false);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const iframe = iframeRef.current;
-    if (!iframe) return;
-
-    function onMessage(e: MessageEvent) {
-      if (typeof e.data !== 'string') return;
-      try {
-        const data = JSON.parse(e.data);
-        if (data.event === 'ready' && iframe?.contentWindow) {
-          iframe.contentWindow.postMessage('{"method":"addEventListener","value":"play"}', '*');
-        }
-        if (data.event === 'play') {
-          setVideoPlaying(true);
-        }
-      } catch {}
-    }
-
-    window.addEventListener('message', onMessage);
-    return () => window.removeEventListener('message', onMessage);
+    const t = setTimeout(() => setReady(true), 800);
+    return () => clearTimeout(t);
   }, []);
 
   return (
     <div className="absolute inset-0 w-full h-full overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" />
       <div
-        className="absolute inset-0 transition-opacity duration-500"
-        style={{ opacity: videoPlaying ? 1 : 0 }}
+        className="absolute inset-0 transition-opacity duration-700"
+        style={{ opacity: ready ? 1 : 0 }}
       >
         <iframe
-          ref={iframeRef}
-          src="https://player.vimeo.com/video/1165788581?badge=0&autopause=0&player_id=0&app_id=58479&autoplay=1&loop=1&muted=1&background=1&quality=auto&preload=auto&api=1"
+          src="https://player.vimeo.com/video/1165788581?badge=0&autopause=0&player_id=0&app_id=58479&autoplay=1&loop=1&muted=1&background=1&quality=auto&playsinline=1"
           frameBorder="0"
-          allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
-          referrerPolicy="strict-origin-when-cross-origin"
+          allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
           loading="eager"
           style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: "177.78vh", minWidth: "100%", height: "56.25vw", minHeight: "100%", border: 0 }}
           title="indexFlow"
