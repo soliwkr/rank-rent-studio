@@ -98,7 +98,6 @@ const languages = [
   { code: "pt", label: "Português", flag: "🇧🇷" },
   { code: "it", label: "Italiano", flag: "🇮🇹" },
   { code: "nl", label: "Nederlands", flag: "🇳🇱" },
-  { code: "ar", label: "العربية", flag: "🇸🇦" },
 ];
 
 function LanguageDropdown() {
