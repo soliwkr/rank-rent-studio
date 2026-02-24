@@ -80,31 +80,7 @@ export function Footer() {
   return (
     <footer className="bg-muted/40 dark:bg-muted/20 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-10 lg:gap-8">
-          <div className="col-span-2 md:col-span-3 lg:col-span-2 lg:pr-8">
-            <Link href="/" className="inline-block mb-4" data-testid="link-footer-logo">
-              <img
-                src={indexFlowLogo}
-                alt="indexFlow - SEO & Content Platform"
-                className="h-10 w-auto"
-              />
-            </Link>
-            <p className="text-sm text-muted-foreground leading-relaxed mb-5">
-              White-label agency operating system. 40+ SEO tools, one subscription, keep 100% of the revenue chain.
-            </p>
-            <div className="flex items-center gap-4">
-              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors" aria-label="X (Twitter)" data-testid="link-footer-x">
-                <SiX className="w-4 h-4" />
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors" aria-label="LinkedIn" data-testid="link-footer-linkedin">
-                <SiLinkedin className="w-4 h-4" />
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors" aria-label="GitHub" data-testid="link-footer-github">
-                <SiGithub className="w-4 h-4" />
-              </a>
-            </div>
-          </div>
-
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-10 lg:gap-8">
           <FooterColumn title="Content & SEO" links={contentSeoLinks} />
           <FooterColumn title="Rank Intelligence" links={rankIntelLinks} />
           <FooterColumn title="Business Tools" links={businessToolLinks} />
@@ -119,9 +95,27 @@ export function Footer() {
         </div>
 
         <div className="border-t border-border/50 mt-12 pt-6">
-          <p className="text-xs text-muted-foreground text-center">
-            &copy; {new Date().getFullYear()} indexFlow. All rights reserved.
-          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <Link href="/" data-testid="link-footer-logo">
+                <img src={indexFlowLogo} alt="indexFlow" className="h-7 w-auto" />
+              </Link>
+              <p className="text-xs text-muted-foreground">
+                &copy; {new Date().getFullYear()} indexFlow. All rights reserved.
+              </p>
+            </div>
+            <div className="flex items-center gap-4">
+              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors" aria-label="X (Twitter)" data-testid="link-footer-x">
+                <SiX className="w-4 h-4" />
+              </a>
+              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors" aria-label="LinkedIn" data-testid="link-footer-linkedin">
+                <SiLinkedin className="w-4 h-4" />
+              </a>
+              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors" aria-label="GitHub" data-testid="link-footer-github">
+                <SiGithub className="w-4 h-4" />
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </footer>
