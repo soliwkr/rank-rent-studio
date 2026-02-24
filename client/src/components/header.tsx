@@ -547,18 +547,6 @@ export function Header() {
               testId="topbar-compare"
             />
             <span className="text-gray-500">|</span>
-            <TopbarDropdown
-              label="Explore"
-              links={[
-                { href: "/case-studies", label: "Case Studies" },
-                { href: "/testimonials", label: "Testimonials" },
-                { href: "/pricing", label: "Pricing" },
-                { href: "/blog", label: "Blog" },
-                { href: "/docs", label: "Documentation" },
-              ]}
-              testId="topbar-explore"
-            />
-            <span className="text-gray-500">|</span>
             <Link href="/contact" className="text-gray-200/90 hover:text-white transition-colors" data-testid="link-topbar-demo">
               Book a Demo
             </Link>
