@@ -56,6 +56,7 @@ export const workspaces = pgTable(
     timezone: text("timezone").notNull().default("America/New_York"),
     plan: text("plan").notNull().default("complete"),
     status: text("status").notNull().default("active"),
+    aiKeySource: text("ai_key_source").notNull().default("agency"),
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
   },

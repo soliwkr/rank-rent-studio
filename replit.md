@@ -187,3 +187,4 @@ All prefixed with `/api/`:
 - Rebuilt Client Dashboard sidebar with 11 collapsible sections
 - Created UserAvatarDropdown component with theme toggle, account, sign out
 - Logo asset: @assets/image_1771351451425.png (indexFlow logo)
+- **White Label Sub-BYOK**: Added per-workspace `aiKeySource` toggle ('agency' | 'client') to workspaces table. Agency Key mode = workspace BYOK key → platform fallback. Client Key mode = client-provided key only, zero fallback. Key resolution via `resolveAiKey()` in server/ai-chat.ts. UI toggle on connections-ai page. AI status endpoint: GET /api/workspaces/:id/ai-status

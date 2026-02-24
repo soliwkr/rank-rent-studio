@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import type { InsertRoomBooking } from "@shared/schema";
 import { insertSupportTicketSchema, getPlanTier } from "@shared/schema";
-import { getAiResponse, buildWidgetSystemPrompt } from "./ai-chat";
+import { getAiResponse, buildWidgetSystemPrompt, resolveAiKey } from "./ai-chat";
 import fs from "fs";
 import path from "path";
 
@@ -393,6 +393,9 @@ export async function registerRoutes(
     try {
       if (!await authorizeVenueAccess(req, req.params.id)) {
         return res.status(403).json({ error: "Forbidden" });
+      }
+      if (req.body.aiKeySource && !["agency", "client"].includes(req.body.aiKeySource)) {
+        return res.status(400).json({ error: "aiKeySource must be 'agency' or 'client'" });
       }
       const venue = await storage.updateWorkspace(req.params.id, req.body);
       if (!venue) return res.status(404).json({ error: "Workspace not found" });
@@ -997,6 +1000,22 @@ export async function registerRoutes(
         return res.status(400).json({ error: "Invalid AI provider settings", details: error.errors });
       }
       res.status(500).json({ error: "Failed to update AI provider settings" });
+    }
+  });
+
+  app.get("/api/workspaces/:workspaceId/ai-status", async (req, res) => {
+    try {
+      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+        return res.status(403).json({ error: "Forbidden" });
+      }
+      const resolved = await resolveAiKey(req.params.workspaceId, "openai");
+      res.json({
+        available: !!resolved.apiKey,
+        source: resolved.source,
+        provider: resolved.provider,
+      });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to check AI status" });
     }
   });
 
