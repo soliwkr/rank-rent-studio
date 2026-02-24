@@ -21,11 +21,8 @@ const resourceLinks = [
   { href: "/docs", label: "Documentation" },
   { href: "/blog", label: "Blog" },
   { href: "/case-studies", label: "Case Studies" },
-];
-
-const companyLinks = [
-  { href: "/founder-statement", label: "Founder Statement" },
   { href: "/contact", label: "Contact" },
+  { href: "/founder-statement", label: "Founder Statement" },
 ];
 
 const legalLinks = [
@@ -66,29 +63,18 @@ export function Footer() {
   return (
     <footer className="bg-muted/40 dark:bg-muted/20 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8 lg:gap-6">
-          <FooterColumn title="Product" links={productLinks} />
-          <FooterColumn title="Solutions" links={solutionLinks} />
-          <FooterColumn title="Resources" links={resourceLinks} />
-          <FooterColumn title="Company" links={companyLinks} />
-          <FooterColumn title="Legal" links={legalLinks} />
-        </div>
-
-        <div className="border-t border-border/50 mt-12 pt-8">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
-              <Link href="/" className="shrink-0" data-testid="link-footer-logo">
-                <img
-                  src={indexFlowLogo}
-                  alt="indexFlow - SEO & Content Platform"
-                  className="h-8 w-auto"
-                />
-              </Link>
-              <p className="text-sm text-muted-foreground">
-                &copy; {new Date().getFullYear()} indexFlow. All rights reserved.
-              </p>
-            </div>
-
+        <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr_1fr_1fr_1fr] gap-10 lg:gap-8">
+          <div className="lg:pr-8">
+            <Link href="/" className="inline-block mb-4" data-testid="link-footer-logo">
+              <img
+                src={indexFlowLogo}
+                alt="indexFlow - SEO & Content Platform"
+                className="h-10 w-auto"
+              />
+            </Link>
+            <p className="text-sm text-muted-foreground leading-relaxed mb-5">
+              The white-label agency operating system. 40+ SEO tools, one subscription, 100% of the revenue chain.
+            </p>
             <div className="flex items-center gap-4">
               <a href="#" className="text-muted-foreground hover:text-foreground transition-colors" aria-label="X (Twitter)" data-testid="link-footer-x">
                 <SiX className="w-4 h-4" />
@@ -101,6 +87,17 @@ export function Footer() {
               </a>
             </div>
           </div>
+
+          <FooterColumn title="Product" links={productLinks} />
+          <FooterColumn title="Solutions" links={solutionLinks} />
+          <FooterColumn title="Resources" links={resourceLinks} />
+          <FooterColumn title="Legal" links={legalLinks} />
+        </div>
+
+        <div className="border-t border-border/50 mt-12 pt-6">
+          <p className="text-xs text-muted-foreground text-center">
+            &copy; {new Date().getFullYear()} indexFlow. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>
