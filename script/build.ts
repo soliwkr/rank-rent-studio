@@ -44,6 +44,12 @@ async function buildAll() {
       ssr: "src/entry-server.tsx",
       outDir: "../dist/ssr",
       emptyOutDir: true,
+      rollupOptions: {
+        output: {
+          format: "cjs",
+          entryFileNames: "entry-server.cjs",
+        },
+      },
     },
   });
 

@@ -31,7 +31,7 @@ export function serveStatic(app: Express) {
   app.use(express.static(distPath));
 
   let ssrRender: any = null;
-  const ssrModulePath = path.resolve(__dirname, "ssr", "entry-server.js");
+  const ssrModulePath = path.resolve(__dirname, "ssr", "entry-server.cjs");
   if (fs.existsSync(ssrModulePath)) {
     try {
       const ssrModule = require(ssrModulePath);
