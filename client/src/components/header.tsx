@@ -593,9 +593,9 @@ export function Header() {
                 testId="link-nav-compare"
               />
               <NavLink href="/pricing" label="Pricing" location={location} testId="link-nav-pricing" />
-              <NavLink href="/blog" label="Blog" location={location} testId="link-nav-blog" />
               <NavLink href="/founder-statement" label="Founder Statement" location={location} testId="link-nav-founder" />
               <NavLink href="/contact" label="Contact" location={location} testId="link-nav-contact" />
+              <NavLink href="/blog" label="Blog" location={location} testId="link-nav-blog" />
             </nav>
 
             <div className="hidden lg:flex items-center gap-3">
@@ -681,9 +681,9 @@ export function Header() {
                 testId="link-mobile-compare"
               />
               <MobileSimpleLink href="/pricing" label="Pricing" location={location} onClick={() => setIsOpen(false)} testId="link-mobile-pricing" />
-              <MobileSimpleLink href="/blog" label="Blog" location={location} onClick={() => setIsOpen(false)} testId="link-mobile-blog" />
               <MobileSimpleLink href="/founder-statement" label="Founder Statement" location={location} onClick={() => setIsOpen(false)} testId="link-mobile-founder" />
               <MobileSimpleLink href="/contact" label="Contact" location={location} onClick={() => setIsOpen(false)} testId="link-mobile-contact" />
+              <MobileSimpleLink href="/blog" label="Blog" location={location} onClick={() => setIsOpen(false)} testId="link-mobile-blog" />
 
               <div className="border-t border-border/30 my-2" />
 
