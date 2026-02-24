@@ -90,6 +90,74 @@ function MegaMenuItem({ item, location, testId, onClick }: { item: NavItem; loca
   );
 }
 
+const languages = [
+  { code: "en", label: "English", flag: "🇺🇸" },
+  { code: "es", label: "Español", flag: "🇪🇸" },
+  { code: "fr", label: "Français", flag: "🇫🇷" },
+  { code: "de", label: "Deutsch", flag: "🇩🇪" },
+  { code: "pt", label: "Português", flag: "🇧🇷" },
+  { code: "it", label: "Italiano", flag: "🇮🇹" },
+  { code: "nl", label: "Nederlands", flag: "🇳🇱" },
+  { code: "ja", label: "日本語", flag: "🇯🇵" },
+  { code: "zh", label: "中文", flag: "🇨🇳" },
+  { code: "ko", label: "한국어", flag: "🇰🇷" },
+  { code: "ar", label: "العربية", flag: "🇸🇦" },
+];
+
+function LanguageDropdown() {
+  const [open, setOpen] = useState(false);
+  const [selected, setSelected] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("indexflow_lang") || "en";
+    }
+    return "en";
+  });
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handleClick = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    const handleEsc = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    document.addEventListener("mousedown", handleClick);
+    document.addEventListener("keydown", handleEsc);
+    return () => { document.removeEventListener("mousedown", handleClick); document.removeEventListener("keydown", handleEsc); };
+  }, [open]);
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen(!open)}
+        className="text-muted-foreground hover:text-foreground transition-colors outline-none focus:outline-none flex items-center gap-1"
+        data-testid="button-language-toggle"
+      >
+        <Globe className="w-4 h-4" />
+        <span className="text-xs uppercase">{selected}</span>
+      </button>
+      {open && (
+        <div className="absolute right-0 top-full mt-2 w-44 bg-white dark:bg-gray-900 border border-border/50 rounded-lg shadow-lg py-1 z-[200]">
+          {languages.map((lang) => (
+            <button
+              key={lang.code}
+              onClick={() => {
+                setSelected(lang.code);
+                localStorage.setItem("indexflow_lang", lang.code);
+                setOpen(false);
+              }}
+              className={`w-full text-left px-3 py-1.5 text-sm flex items-center gap-2.5 hover:bg-muted/50 transition-colors ${selected === lang.code ? "text-primary font-medium" : "text-foreground/80"}`}
+              data-testid={`lang-option-${lang.code}`}
+            >
+              <span className="text-base">{lang.flag}</span>
+              <span>{lang.label}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function NavDropdown({ label, items, location, testId, align = "start", columns, footer }: NavDropdownProps) {
   const allItems = columns ? columns.flatMap(c => c.items) : items;
   const isActive = allItems.some((item) => location === item.href || location.startsWith(item.href + "/"));
@@ -403,6 +471,7 @@ export function Header() {
                 <Moon className="w-4 h-4 dark:hidden" />
                 <Sun className="w-4 h-4 hidden dark:block" />
               </button>
+              <LanguageDropdown />
               <Link href="/pricing">
                 <Button data-testid="button-start-trial">Start Free Trial</Button>
               </Link>
