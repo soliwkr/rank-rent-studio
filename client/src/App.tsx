@@ -214,7 +214,7 @@ const HotelMinimalistic = lazy(() => import("@/pages/templates/hotel-minimalisti
 
 function getAdminRole(): AdminRole {
   try {
-    const session = localStorage.getItem("indexflow_admin_session");
+    const session = typeof window !== 'undefined' ? localStorage.getItem("indexflow_admin_session") : null;
     if (session) {
       const parsed = JSON.parse(session);
       return (parsed.role as AdminRole) || "super_admin";

@@ -20,7 +20,7 @@ const STORAGE_KEY = "resto_venue_id";
 
 export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const [selectedId, setSelectedId] = useState<string | null>(() => {
-    try { return localStorage.getItem(STORAGE_KEY); } catch { return null; }
+    try { return typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null; } catch { return null; }
   });
 
   const { data: venues = [], isLoading } = useQuery<Venue[]>({

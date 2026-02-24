@@ -42,7 +42,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 
   const [selectedId, setSelectedId] = useState<string | null>(() => {
     if (urlWorkspaceId) return urlWorkspaceId;
-    try { return localStorage.getItem(STORAGE_KEY); } catch { return null; }
+    try { return typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null; } catch { return null; }
   });
 
   const { data: workspaces = [], isLoading } = useQuery<Workspace[]>({
