@@ -98,9 +98,6 @@ const languages = [
   { code: "pt", label: "Português", flag: "🇧🇷" },
   { code: "it", label: "Italiano", flag: "🇮🇹" },
   { code: "nl", label: "Nederlands", flag: "🇳🇱" },
-  { code: "ja", label: "日本語", flag: "🇯🇵" },
-  { code: "zh", label: "中文", flag: "🇨🇳" },
-  { code: "ko", label: "한국어", flag: "🇰🇷" },
   { code: "ar", label: "العربية", flag: "🇸🇦" },
 ];
 
