@@ -88,6 +88,7 @@ const marqueeItems = [
   "White Label Branding",
   "Client Reports",
   "Invoice engine powered by Stripe/Paypal",
+  "Multi-Location Analytics",
 ];
 
 const painCards = [
