@@ -593,18 +593,7 @@ export function Header() {
                 location={location}
                 testId="link-nav-compare"
               />
-              <NavDropdown
-                label="Resources"
-                items={resourceItems}
-                location={location}
-                testId="link-nav-resources"
-              />
-              <NavDropdown
-                label="Company"
-                items={companyItems}
-                location={location}
-                testId="link-nav-company"
-              />
+              <NavLink href="/blog" label="Blog" location={location} testId="link-nav-blog" />
             </nav>
 
             <div className="hidden lg:flex items-center gap-3">
@@ -690,18 +679,7 @@ export function Header() {
                 onNavigate={() => setIsOpen(false)}
                 testId="link-mobile-compare"
               />
-              <MobileSimpleDropdown
-                label="Resources"
-                links={[
-                  ...resourceItems.map(i => ({ href: i.href, label: i.label })),
-                  ...companyItems.map(i => ({ href: i.href, label: i.label })),
-                ]}
-                location={location}
-                isOpen={openMobileDropdown === "resources"}
-                onToggle={() => toggleMobileDropdown("resources")}
-                onNavigate={() => setIsOpen(false)}
-                testId="link-mobile-resources"
-              />
+              <MobileSimpleLink href="/blog" label="Blog" location={location} onClick={() => setIsOpen(false)} testId="link-mobile-blog" />
 
               <div className="border-t border-border/30 my-2" />
 
