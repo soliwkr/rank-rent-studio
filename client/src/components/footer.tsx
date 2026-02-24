@@ -86,20 +86,9 @@ export function Footer() {
           <FooterColumn title="Business Tools" links={businessToolLinks} />
           <FooterColumn title="Solutions" links={solutionLinks} />
           <FooterColumn title="Resources" links={resourceLinks} />
-          <FooterColumn title="Legal" links={legalLinks} />
-        </div>
-
-        <div className="border-t border-border/50 mt-12 pt-6">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <Link href="/" data-testid="link-footer-logo">
-                <img src={indexFlowLogo} alt="indexFlow" className="h-7 w-auto" />
-              </Link>
-              <p className="text-xs text-muted-foreground">
-                &copy; {new Date().getFullYear()} indexFlow. All rights reserved.
-              </p>
-            </div>
-            <div className="flex items-center gap-4">
+          <div>
+            <FooterColumn title="Legal" links={legalLinks} />
+            <div className="flex items-center gap-4 mt-6">
               <a href="#" className="text-muted-foreground hover:text-foreground transition-colors" aria-label="X (Twitter)" data-testid="link-footer-x">
                 <SiX className="w-4 h-4" />
               </a>
@@ -110,6 +99,17 @@ export function Footer() {
                 <SiGithub className="w-4 h-4" />
               </a>
             </div>
+          </div>
+        </div>
+
+        <div className="border-t border-border/50 mt-12 pt-6">
+          <div className="flex items-center justify-center gap-4">
+            <Link href="/" data-testid="link-footer-logo">
+              <img src={indexFlowLogo} alt="indexFlow" className="h-7 w-auto" />
+            </Link>
+            <p className="text-xs text-muted-foreground">
+              &copy; {new Date().getFullYear()} indexFlow. All rights reserved.
+            </p>
           </div>
         </div>
       </div>
