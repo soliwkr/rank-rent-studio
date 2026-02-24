@@ -39,7 +39,7 @@ export function Layout({ children }: { children: ReactNode }) {
         }
       `}</style>
       <Header />
-      <main className="flex-1 pt-14 lg:pt-16">
+      <main className="flex-1 pt-14 lg:pt-24">
         {children}
       </main>
       <Footer />

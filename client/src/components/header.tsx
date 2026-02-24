@@ -1,40 +1,30 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, LogIn, ArrowRight, ChevronDown, FileText, Search, TrendingUp, Grid3X3, Code, Link2, ClipboardCheck, Layout, Users, Receipt, Bot, Palette, Briefcase, Building2, Rocket, User, Globe, Mail, Handshake, GraduationCap, BookOpen, HelpCircle, Newspaper, BarChart3, Radio, Moon, Sun, Mic, Phone, MessageSquare } from "lucide-react";
+import { Menu, X, LogIn, ArrowRight, ChevronDown, FileText, Search, TrendingUp, Grid3X3, Code, Link2, ClipboardCheck, Layout, Users, Receipt, Bot, Palette, Briefcase, Building2, User, Globe, Mail, BookOpen, Newspaper, BarChart3, Moon, Sun, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import indexFlowLogo from "@assets/image_1771351451425.webp";
 
-const contentEngineItems = [
+const contentSeoItems = [
   { href: "/platform/content-engine", label: "Content Engine", icon: FileText, desc: "AI-powered blog & content creation" },
   { href: "/platform/schema-markup", label: "Schema Markup", icon: Code, desc: "Structured data for rich results" },
   { href: "/platform/link-builder", label: "Link Builder", icon: Link2, desc: "Internal & external link management" },
   { href: "/platform/seo-audit", label: "On-Page SEO Audit", icon: ClipboardCheck, desc: "Automated page-level SEO checks" },
   { href: "/platform/cms-integration", label: "CMS Integration", icon: Layout, desc: "Connect your existing CMS" },
-  { href: "/platform/crm-pipeline", label: "CRM & Pipeline", icon: Users, desc: "Manage leads and deals" },
-  { href: "/platform/invoices-reports", label: "Invoices & Reports", icon: Receipt, desc: "Billing and performance reports" },
-  { href: "/platform/white-label", label: "White Label", icon: Palette, desc: "Your brand, your platform" },
-  { href: "/platform/content-marketing", label: "Content Marketing", icon: FileText, desc: "Plan & execute content strategy" },
-  { href: "/platform/byok", label: "BYOK", icon: Code, desc: "Bring your own API keys" },
 ];
 
-const rankTrackerItems = [
+const rankIntelItems = [
   { href: "/platform/rank-tracking", label: "Track Keywords", icon: TrendingUp, desc: "Monitor 1000+ keywords on Google" },
   { href: "/platform/local-search-grid", label: "Local Search Grid", icon: Grid3X3, desc: "See where you rank across the map" },
   { href: "/platform/search-console", label: "GSC", icon: Search, desc: "Google Search Console integration" },
 ];
 
-const voiceSmsWebItems = [
-  { href: "/platform/ai-widget-voice", label: "Website Widget (AI)", icon: Bot, desc: "AI-powered website chat widget" },
-  { href: "/platform/twilio", label: "Twilio SMS Voice", icon: Phone, desc: "SMS & voice automation" },
-];
-
-const featureItems = [...contentEngineItems, ...rankTrackerItems, ...voiceSmsWebItems];
-
-const platformItems = [
-  { href: "/platform/cms-integration", label: "CMS Integration", icon: Layout, desc: "Connect your existing CMS" },
+const businessToolItems = [
   { href: "/platform/crm-pipeline", label: "CRM & Pipeline", icon: Users, desc: "Manage leads and deals" },
-  { href: "/platform/invoices-reports", label: "Invoices & Reports", icon: Receipt, desc: "Billing and performance reports" },
+  { href: "/platform/invoices-reports", label: "Invoicing & Reports", icon: Receipt, desc: "Billing and performance reports" },
+  { href: "/platform/ai-widget-voice", label: "AI Widget", icon: Bot, desc: "AI-powered website chat widget" },
   { href: "/platform/white-label", label: "White Label", icon: Palette, desc: "Your brand, your platform" },
+  { href: "/platform/byok", label: "BYOK", icon: Code, desc: "Bring your own API keys" },
+  { href: "/platform/twilio", label: "Twilio SMS & Voice", icon: Phone, desc: "SMS & voice automation" },
 ];
 
 const solutionItems = [
@@ -49,6 +39,7 @@ const resourceItems = [
   { href: "/docs", label: "Documentation", icon: BookOpen, desc: "Setup guides & platform docs" },
   { href: "/blog", label: "Blog", icon: Newspaper, desc: "Industry insights & tips" },
   { href: "/case-studies", label: "Case Studies", icon: BarChart3, desc: "Client success stories" },
+  { href: "/templates", label: "Templates", icon: Layout, desc: "Ready-made content templates" },
 ];
 
 const companyItems = [
@@ -336,6 +327,22 @@ export function Header() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50">
+      <div className="hidden lg:block bg-gray-950 text-gray-400 text-xs">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-8">
+          <span className="tracking-wide">Agency Operating System — SEO, Content, CRM & White Label</span>
+          <div className="flex items-center gap-4">
+            <Link href="/contact" className="hover:text-white transition-colors" data-testid="link-topbar-demo">
+              Book a Demo
+            </Link>
+            <span className="text-gray-700">|</span>
+            <Link href="/select-workspace" className="hover:text-white transition-colors flex items-center gap-1" data-testid="link-topbar-login">
+              <LogIn className="w-3 h-3" />
+              Log In
+            </Link>
+          </div>
+        </div>
+      </div>
+
       <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-b border-border/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14 lg:h-16">
@@ -349,22 +356,16 @@ export function Header() {
 
             <nav className="hidden lg:flex items-center gap-0.5">
               <NavDropdown
-                label="Features"
+                label="Product"
                 items={[]}
                 location={location}
-                testId="link-nav-features"
+                testId="link-nav-product"
                 columns={[
-                  { label: "Content Engine", items: contentEngineItems },
-                  { label: "Rank Tracker & Voice", items: [...rankTrackerItems, ...voiceSmsWebItems] },
+                  { label: "Content & SEO", items: contentSeoItems },
+                  { label: "Rank Intelligence", items: rankIntelItems },
+                  { label: "Business Tools", items: businessToolItems },
                 ]}
                 footer={{ label: "View all features", href: "/platform/content-engine" }}
-              />
-              <NavDropdown
-                label="Platform"
-                items={platformItems}
-                location={location}
-                testId="link-nav-platform"
-                footer={{ label: "View all platform features", href: "/platform/seo" }}
               />
               <NavDropdown
                 label="Solutions"
@@ -381,7 +382,7 @@ export function Header() {
                 testId="link-nav-resources"
               />
               <NavDropdown
-                label="Why IndexFlow"
+                label="Company"
                 items={companyItems}
                 location={location}
                 testId="link-nav-company"
@@ -402,12 +403,6 @@ export function Header() {
                 <Moon className="w-4 h-4 dark:hidden" />
                 <Sun className="w-4 h-4 hidden dark:block" />
               </button>
-              <Link href="/select-workspace">
-                <span className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer flex items-center gap-1.5" data-testid="link-login">
-                  <LogIn className="w-4 h-4" />
-                  Log In
-                </span>
-              </Link>
               <Link href="/pricing">
                 <Button data-testid="button-start-trial">Start Free Trial</Button>
               </Link>
@@ -445,27 +440,18 @@ export function Header() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <nav className="py-3 max-h-[calc(100vh-6rem)] overflow-y-auto space-y-0.5">
               <MobileDropdown
-                label="Features"
+                label="Product"
                 items={[]}
                 location={location}
-                isOpen={openMobileDropdown === "features"}
-                onToggle={() => toggleMobileDropdown("features")}
+                isOpen={openMobileDropdown === "product"}
+                onToggle={() => toggleMobileDropdown("product")}
                 onNavigate={() => setIsOpen(false)}
-                testId="link-mobile-features"
+                testId="link-mobile-product"
                 sections={[
-                  { label: "Content Engine", items: contentEngineItems },
-                  { label: "Rank Tracker", items: rankTrackerItems },
-                  { label: "Voice, SMS & Web", items: voiceSmsWebItems },
+                  { label: "Content & SEO", items: contentSeoItems },
+                  { label: "Rank Intelligence", items: rankIntelItems },
+                  { label: "Business Tools", items: businessToolItems },
                 ]}
-              />
-              <MobileDropdown
-                label="Platform"
-                items={platformItems}
-                location={location}
-                isOpen={openMobileDropdown === "platform"}
-                onToggle={() => toggleMobileDropdown("platform")}
-                onNavigate={() => setIsOpen(false)}
-                testId="link-mobile-platform"
               />
               <MobileDropdown
                 label="Solutions"
@@ -499,7 +485,7 @@ export function Header() {
                 testId="link-mobile-resources"
               />
               <MobileDropdown
-                label="Why IndexFlow"
+                label="Company"
                 items={companyItems}
                 location={location}
                 isOpen={openMobileDropdown === "company"}
