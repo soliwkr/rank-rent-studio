@@ -482,8 +482,16 @@ function PostsTab({ workspaceId }: { workspaceId: string }) {
             </TableHeader>
             <TableBody>
               {posts.map((post: any) => (
-                <TableRow key={post.id} data-testid={`row-post-${post.id}`}>
-                  <TableCell className="font-medium">{post.title}</TableCell>
+                <TableRow key={post.id} data-testid={`row-post-${post.id}`} className="cursor-pointer hover:bg-muted/50" onClick={() => openEditPost(post)}>
+                  <TableCell className="font-medium">
+                    <button
+                      className="text-left hover:text-sidebar-primary hover:underline transition-colors cursor-pointer"
+                      onClick={(e) => { e.stopPropagation(); openEditPost(post); }}
+                      data-testid={`link-post-title-${post.id}`}
+                    >
+                      {post.title}
+                    </button>
+                  </TableCell>
                   <TableCell><Badge variant={post.status === "published" ? "default" : "secondary"}>{post.status || "draft"}</Badge></TableCell>
                   <TableCell>{post.category || "—"}</TableCell>
                   <TableCell>{post.schemaType || "Article"}</TableCell>
@@ -491,7 +499,7 @@ function PostsTab({ workspaceId }: { workspaceId: string }) {
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" data-testid={`button-post-menu-${post.id}`}><MoreHorizontal className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="icon" data-testid={`button-post-menu-${post.id}`} onClick={(e) => e.stopPropagation()}><MoreHorizontal className="h-4 w-4" /></Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => openEditPost(post)}><Pencil className="h-4 w-4 mr-2" />Edit</DropdownMenuItem>
