@@ -156,9 +156,16 @@ export default function PostEditor() {
     setImageGenerating(true);
     try {
       const lines = content.split("\n");
+      const alreadyHasImages = lines.some(l => l.includes("<BlogImage") || /!\[.*\]\(http/.test(l));
+      if (alreadyHasImages) {
+        toast({ title: "Images already present", description: "This post already contains images or image placeholders." });
+        setImageGenerating(false);
+        return;
+      }
+
       let wordCount = 0;
-      const insertions: Array<{ lineIndex: number; query: string }> = [];
-      let lastHeading = title || "SEO agency";
+      const insertions: Array<{ lineIndex: number; prompt: string }> = [];
+      let lastHeading = title || "professional business";
 
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
@@ -168,9 +175,9 @@ export default function PostEditor() {
         const words = line.trim().split(/\s+/).filter(Boolean).length;
         wordCount += words;
 
-        if (wordCount >= 250 && i < lines.length - 1) {
-          const query = lastHeading.replace(/[^a-zA-Z0-9\s]/g, "").trim().split(/\s+/).slice(0, 5).join(" ");
-          insertions.push({ lineIndex: i, query: query || "business professional" });
+        if (wordCount >= 250 && i < lines.length - 2) {
+          const prompt = lastHeading.replace(/[^a-zA-Z0-9\s,]/g, "").trim();
+          insertions.push({ lineIndex: i, prompt: prompt || "professional business workplace" });
           wordCount = 0;
         }
       }
@@ -181,42 +188,92 @@ export default function PostEditor() {
         return;
       }
 
-      const imageResults: Array<{ lineIndex: number; url: string; alt: string; credit: string }> = [];
-
-      for (const ins of insertions) {
-        try {
-          const res = await fetch(`/api/workspaces/${wsId}/images/search?source=pixabay&q=${encodeURIComponent(ins.query)}&page=1`);
-          if (res.ok) {
-            const results = await res.json();
-            if (results.length > 0) {
-              const pick = results[Math.floor(Math.random() * Math.min(5, results.length))];
-              imageResults.push({
-                lineIndex: ins.lineIndex,
-                url: pick.full_url || pick.thumb_url,
-                alt: ins.query,
-                credit: pick.credit_name ? `Photo by ${pick.credit_name}` : "",
-              });
-            }
-          }
-        } catch {}
-      }
-
-      if (imageResults.length === 0) {
-        toast({ title: "No images found", description: "Could not find matching stock images.", variant: "destructive" });
-        setImageGenerating(false);
-        return;
-      }
-
       const newLines = [...lines];
       let offset = 0;
-      for (const img of imageResults) {
-        const imgMarkdown = `\n![${img.alt}](${img.url})\n*${img.credit}*\n`;
-        newLines.splice(img.lineIndex + 1 + offset, 0, imgMarkdown);
+      for (const ins of insertions) {
+        const placeholder = `\n<BlogImage prompt="${ins.prompt}" />\n`;
+        newLines.splice(ins.lineIndex + 1 + offset, 0, placeholder);
         offset++;
       }
+      const updatedContent = newLines.join("\n");
+      setContent(updatedContent);
 
-      setContent(newLines.join("\n"));
-      toast({ title: "Images inserted", description: `Added ${imageResults.length} image${imageResults.length > 1 ? "s" : ""} to the post.` });
+      const savePayload: any = {
+        title,
+        slug: slug || title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""),
+        category,
+        schemaType,
+        description,
+        tags,
+        mdxContent: updatedContent,
+        status: existing?.status || "draft",
+        workspaceId: wsId,
+      };
+
+      if (isNew) {
+        await apiRequest("POST", "/api/admin/blog/posts", savePayload);
+      } else {
+        await apiRequest("PUT", `/api/admin/blog/posts/${postId}`, savePayload);
+      }
+
+      toast({ title: "Placeholders inserted", description: `Added ${insertions.length} image placeholder${insertions.length > 1 ? "s" : ""}. Resolving stock images...` });
+
+      if (!isNew && postId) {
+        try {
+          const resolveRes = await apiRequest("POST", `/api/blog/posts/${postId}/process-images`);
+          const data = await resolveRes.json();
+
+          if (data.images && data.images.length > 0) {
+            const imagePayload = data.images.map((img: any) => ({
+              src: "",
+              alt: img.alt,
+              caption: img.caption,
+              searchQuery: img.searchQuery,
+            }));
+
+            const searchResults: Array<{ src: string; alt: string; caption: string; credit: string; creditUrl: string }> = [];
+            for (const img of data.images) {
+              const query = img.searchQuery || img.prompt;
+              const searchRes = await fetch(`/api/workspaces/${wsId}/images/search?source=pixabay&q=${encodeURIComponent(query)}&page=1`);
+              if (searchRes.ok) {
+                const results = await searchRes.json();
+                if (results.length > 0) {
+                  const pick = results[Math.floor(Math.random() * Math.min(5, results.length))];
+                  searchResults.push({
+                    src: pick.full_url || pick.thumb_url,
+                    alt: img.alt,
+                    caption: img.caption || "",
+                    credit: pick.credit_name || "",
+                    creditUrl: pick.credit_url || "",
+                  });
+                  continue;
+                }
+              }
+              searchResults.push({ src: "", alt: img.alt, caption: "", credit: "", creditUrl: "" });
+            }
+
+            const validImages = searchResults.filter(i => i.src);
+            if (validImages.length > 0) {
+              await apiRequest("POST", `/api/blog/posts/${postId}/apply-images`, { images: searchResults });
+              queryClient.invalidateQueries({ queryKey: ["/api/admin/blog/posts"] });
+              toast({ title: "Images resolved", description: `${validImages.length} stock image${validImages.length > 1 ? "s" : ""} applied to the post.` });
+
+              const refreshRes = await fetch(`/api/admin/blog/posts?workspaceId=${wsId}`);
+              if (refreshRes.ok) {
+                const posts = await refreshRes.json();
+                const updated = posts.find((p: any) => p.id === postId);
+                if (updated?.mdxContent) {
+                  setContent(updated.mdxContent);
+                }
+              }
+            } else {
+              toast({ title: "No stock images found", description: "Placeholders remain — you can manually replace them.", variant: "destructive" });
+            }
+          }
+        } catch (err) {
+          toast({ title: "Image processing note", description: "Placeholders added. Stock image resolution requires AI access." });
+        }
+      }
     } catch (err) {
       toast({ title: "Image generation failed", variant: "destructive" });
     }
