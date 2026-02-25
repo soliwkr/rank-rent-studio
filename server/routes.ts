@@ -1196,6 +1196,23 @@ export async function registerRoutes(
   app.post("/api/admin/blog/posts/:id/publish-now", async (req, res) => {
     try {
       const post = await storage.updateWorkspaceBlogPost(req.params.id, { status: "published", publishedAt: new Date() });
+
+      if (process.env.GITHUB_TOKEN) {
+        fetch("https://api.github.com/repos/projectbuiltdev-svg/indexflow/dispatches", {
+          method: "POST",
+          headers: {
+            "Accept": "application/vnd.github.v3+json",
+            "Authorization": `Bearer ${process.env.GITHUB_TOKEN}`,
+          },
+          body: JSON.stringify({
+            event_type: "client-publish",
+            client_payload: { post_id: req.params.id },
+          }),
+        })
+          .then((r) => console.log(`GitHub dispatch: ${r.status}`))
+          .catch((err) => console.error("GitHub dispatch failed:", err));
+      }
+
       res.json(post);
     } catch (error) {
       res.status(500).json({ error: "Failed to publish post" });
