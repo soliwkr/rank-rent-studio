@@ -51,7 +51,7 @@ export default function Documentation() {
   });
 
   if (!workspaceId) {
-    return <div className="p-6 text-muted-foreground" data-testid="no-venue-message">Please select a workspace from the sidebar to view documentation.</div>;
+    return <div className="p-6 text-muted-foreground" data-testid="no-workspace-message">Please select a workspace from the sidebar to view documentation.</div>;
   }
 
   if (isLoading) {

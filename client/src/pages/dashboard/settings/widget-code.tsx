@@ -164,7 +164,7 @@ export default function SettingsWidgetCode() {
   const currentCms = cmsOptions.find(cms => cms.id === selectedCms) || cmsOptions[0];
 
   const scriptCode = `<!-- indexFlow Widget -->
-<script src="https://indexflow.io/widget.js" data-venue-id="${workspaceId}"></script>
+<script src="https://indexflow.io/widget.js" data-workspace-id="${workspaceId}"></script>
 <div id="indexflow-widget"></div>`;
 
   const iframeCode = `<!-- indexFlow Widget -->

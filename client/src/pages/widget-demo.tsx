@@ -28,7 +28,7 @@ export default function WidgetDemo() {
               <CardContent><p className="text-muted-foreground mb-4">Real-time availability synced with your scheduling system for accurate appointments.</p><Button data-testid="button-try-calendar">Try Calendar Demo</Button></CardContent>
             </Card>
             <Card data-testid="card-ai-demo">
-              <CardHeader><CardTitle className="flex items-center gap-2"><Bot className="w-5 h-5" /> AI Concierge</CardTitle></CardHeader>
+              <CardHeader><CardTitle className="flex items-center gap-2"><Bot className="w-5 h-5" /> AI Assistant</CardTitle></CardHeader>
               <CardContent><p className="text-muted-foreground mb-4">Smart recommendations, service suggestions, and personalized client experiences.</p><Button data-testid="button-try-ai">Try AI Demo</Button></CardContent>
             </Card>
           </div>

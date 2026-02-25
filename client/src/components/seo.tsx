@@ -92,6 +92,11 @@ export const seoData: Record<string, SEOProps> = {
     description: "Professional website templates for agencies and businesses.",
     canonical: `${BASE_URL}/templates`,
   },
+  seoAgencies: {
+    title: "SEO Agencies - IndexFlow",
+    description: "All-in-one SEO platform for agencies. Rank tracking, local search grid, on-page audits, link building, and white-label reporting from one dashboard.",
+    canonical: `${BASE_URL}/solutions/seo-agencies`,
+  },
   restaurants: {
     title: "SEO Agencies - IndexFlow",
     description: "All-in-one SEO platform for agencies. Rank tracking, local search grid, on-page audits, link building, and white-label reporting from one dashboard.",
@@ -116,6 +121,11 @@ export const seoData: Record<string, SEOProps> = {
     title: "White-Label Resellers - IndexFlow",
     description: "Resell IndexFlow as your own SaaS product. White-label branding, custom domain, BYOK support, and flexible pricing for recurring revenue.",
     canonical: `${BASE_URL}/solutions/enterprise`,
+  },
+  aiWidget: {
+    title: "AI Widget & Voice - indexFlow Platform",
+    description: "Embeddable AI chat widget and voice assistant for agency client sites. Powered by BYOK with OpenAI, Anthropic, and more.",
+    canonical: `${BASE_URL}/platform/ai-widget`,
   },
   aiConcierge: {
     title: "AI Widget & Voice - indexFlow Platform",

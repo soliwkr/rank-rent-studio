@@ -22,7 +22,7 @@ const clientRankings = [
   { client: "Apex Digital Agency", keywords: 45, avgPos: 8.2, topKeyword: "best seo agency austin", change: "+3", gsc: true },
   { client: "Jake Morrison SEO", keywords: 38, avgPos: 12.5, topKeyword: "freelance seo consultant", change: "+1", gsc: true },
   { client: "Greenfield Law Firm", keywords: 32, avgPos: 15.8, topKeyword: "personal injury lawyer miami", change: "-2", gsc: true },
-  { client: "Meridian Hotels Group", keywords: 28, avgPos: 18.3, topKeyword: "luxury hotel booking", change: "+5", gsc: false },
+  { client: "Meridian Hotels Group", keywords: 28, avgPos: 18.3, topKeyword: "luxury hotel near me", change: "+5", gsc: false },
   { client: "BrightPath Marketing", keywords: 22, avgPos: 22.1, topKeyword: "digital marketing agency", change: "+2", gsc: true },
 ];
 

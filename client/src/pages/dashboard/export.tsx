@@ -40,7 +40,7 @@ export default function DashboardExport() {
   const [loading, setLoading] = useState<string | null>(null);
 
   if (!selectedWorkspace?.id) {
-    return <div className="p-6 text-muted-foreground" data-testid="no-venue-message">Please select a workspace from the sidebar to export data.</div>;
+    return <div className="p-6 text-muted-foreground" data-testid="no-workspace-message">Please select a workspace from the sidebar to export data.</div>;
   }
 
   const handleExport = async (item: typeof exportItems[0]) => {

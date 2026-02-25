@@ -143,8 +143,8 @@ export interface IStorage {
   getWorkspacesByOwner(ownerId: string): Promise<Workspace[]>;
   countWorkspacesByOwner(ownerId: string): Promise<number>;
   getWorkspace(id: string): Promise<Workspace | undefined>;
-  createWorkspace(venue: InsertWorkspace): Promise<Workspace>;
-  updateWorkspace(id: string, venue: Partial<InsertWorkspace>): Promise<Workspace | undefined>;
+  createWorkspace(data: InsertWorkspace): Promise<Workspace>;
+  updateWorkspace(id: string, data: Partial<InsertWorkspace>): Promise<Workspace | undefined>;
   deleteWorkspace(id: string): Promise<boolean>;
   getReservations(workspaceId: string): Promise<Reservation[]>;
   getReservationsByDate(workspaceId: string, date: string): Promise<Reservation[]>;
@@ -410,7 +410,7 @@ export class MemStorage implements IStorage {
 
   async createWorkspace(data: InsertWorkspace): Promise<Workspace> {
     const id = randomUUID();
-    const venue: Workspace = {
+    const ws: Workspace = {
       id,
       ownerId: data.ownerId,
       name: data.name,
@@ -432,14 +432,14 @@ export class MemStorage implements IStorage {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    this.workspaces.set(id, venue);
-    return venue;
+    this.workspaces.set(id, ws);
+    return ws;
   }
 
   async updateWorkspace(id: string, update: Partial<InsertWorkspace>): Promise<Workspace | undefined> {
-    const venue = this.workspaces.get(id);
-    if (!venue) return undefined;
-    const updated = { ...venue, ...update, updatedAt: new Date() };
+    const ws = this.workspaces.get(id);
+    if (!ws) return undefined;
+    const updated = { ...ws, ...update, updatedAt: new Date() };
     this.workspaces.set(id, updated);
     return updated;
   }
@@ -1586,18 +1586,18 @@ export class DbStorage implements IStorage {
   }
 
   async getWorkspace(id: string): Promise<Workspace | undefined> {
-    const [venue] = await db!.select().from(workspaces).where(eq(workspaces.id, id));
-    return venue;
+    const [ws] = await db!.select().from(workspaces).where(eq(workspaces.id, id));
+    return ws;
   }
 
   async createWorkspace(data: InsertWorkspace): Promise<Workspace> {
-    const [venue] = await db!.insert(workspaces).values({ id: randomUUID(), ...data }).returning();
-    return venue;
+    const [ws] = await db!.insert(workspaces).values({ id: randomUUID(), ...data }).returning();
+    return ws;
   }
 
   async updateWorkspace(id: string, update: Partial<InsertWorkspace>): Promise<Workspace | undefined> {
-    const [venue] = await db!.update(workspaces).set({ ...update, updatedAt: new Date() }).where(eq(workspaces.id, id)).returning();
-    return venue;
+    const [ws] = await db!.update(workspaces).set({ ...update, updatedAt: new Date() }).where(eq(workspaces.id, id)).returning();
+    return ws;
   }
 
   async deleteWorkspace(id: string): Promise<boolean> {
@@ -2240,7 +2240,7 @@ export class DbStorage implements IStorage {
       const { isPrimary, ...otherFields } = data;
       if (otherFields.domain) otherFields.domain = otherFields.domain.toLowerCase();
       // Atomic swap: partial unique index (venue_domains_one_primary_per_venue)
-      // allows only one isPrimary=true per venue. Unset others first, then set
+      // allows only one isPrimary=true per workspace. Unset others first, then set
       // the target, all inside one transaction for concurrency safety.
       return await db!.transaction(async (tx) => {
         await tx.update(workspaceDomains)

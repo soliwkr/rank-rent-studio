@@ -582,7 +582,7 @@ export default function Blog() {
   });
 
   useEffect(() => {
-    document.title = "Blog | indexFlow - Hospitality Booking Insights";
+    document.title = "Blog | indexFlow - SEO & Content Marketing Insights";
   }, []);
 
   useEffect(() => {

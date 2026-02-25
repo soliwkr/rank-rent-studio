@@ -12,23 +12,23 @@ import {
 import { CalendarCheck, PhoneCall, MessageCircle, MessageSquare, TrendingUp, FileEdit, Phone, Users } from "lucide-react";
 
 const stats = [
-  { label: "Total Bookings", value: "2,847", change: "+12%", icon: CalendarCheck },
+  { label: "Total Leads", value: "2,847", change: "+12%", icon: CalendarCheck },
   { label: "AI Voice Calls", value: "1,293", change: "+8%", icon: PhoneCall },
   { label: "SMS Sent", value: "3,847", change: "+15%", icon: MessageCircle },
   { label: "Widget Chats", value: "5,621", change: "+23%", icon: MessageSquare },
   { label: "Keywords Tracked", value: "342", change: "+18%", icon: TrendingUp },
   { label: "Website Changes", value: "89", change: "+9%", icon: FileEdit },
-  { label: "Phone Bookings", value: "456", change: "+11%", icon: Phone },
+  { label: "Phone Leads", value: "456", change: "+11%", icon: Phone },
   { label: "Active Users", value: "156", change: "+5%", icon: Users },
 ];
 
 const topClients = [
-  { name: "Acme Digital", bookings: 342, calls: 156, sms: 423, widgets: 823, keywords: 28, changes: 12, twilioConnected: true, gscConnected: true },
-  { name: "Summit Marketing", bookings: 289, calls: 134, sms: 398, widgets: 567, keywords: 35, changes: 8, twilioConnected: true, gscConnected: true },
-  { name: "Dragon Media", bookings: 234, calls: 98, sms: 287, widgets: 445, keywords: 18, changes: 5, twilioConnected: true, gscConnected: true },
-  { name: "Coastal SEO", bookings: 198, calls: 0, sms: 0, widgets: 389, keywords: 22, changes: 15, twilioConnected: false, gscConnected: false },
-  { name: "Sakura Digital", bookings: 167, calls: 45, sms: 134, widgets: 312, keywords: 15, changes: 3, twilioConnected: true, gscConnected: true },
-  { name: "Metro Creative", bookings: 156, calls: 67, sms: 189, widgets: 298, keywords: 10, changes: 6, twilioConnected: true, gscConnected: false },
+  { name: "Acme Digital", leads: 342, calls: 156, sms: 423, widgets: 823, keywords: 28, changes: 12, twilioConnected: true, gscConnected: true },
+  { name: "Summit Marketing", leads: 289, calls: 134, sms: 398, widgets: 567, keywords: 35, changes: 8, twilioConnected: true, gscConnected: true },
+  { name: "Dragon Media", leads: 234, calls: 98, sms: 287, widgets: 445, keywords: 18, changes: 5, twilioConnected: true, gscConnected: true },
+  { name: "Coastal SEO", leads: 198, calls: 0, sms: 0, widgets: 389, keywords: 22, changes: 15, twilioConnected: false, gscConnected: false },
+  { name: "Sakura Digital", leads: 167, calls: 45, sms: 134, widgets: 312, keywords: 15, changes: 3, twilioConnected: true, gscConnected: true },
+  { name: "Metro Creative", leads: 156, calls: 67, sms: 189, widgets: 298, keywords: 10, changes: 6, twilioConnected: true, gscConnected: false },
 ];
 
 export default function AdminAnalytics() {
@@ -68,7 +68,7 @@ export default function AdminAnalytics() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Client</TableHead>
-                  <TableHead className="text-right">Bookings</TableHead>
+                  <TableHead className="text-right">Leads</TableHead>
                   <TableHead className="text-right">AI Calls</TableHead>
                   <TableHead className="text-right">SMS</TableHead>
                   <TableHead className="text-right">Widgets</TableHead>
@@ -87,7 +87,7 @@ export default function AdminAnalytics() {
                         <span className="font-medium">{client.name}</span>
                       </div>
                     </TableCell>
-                    <TableCell className="text-right">{client.bookings}</TableCell>
+                    <TableCell className="text-right">{client.leads}</TableCell>
                     <TableCell className="text-right">{client.calls}</TableCell>
                     <TableCell className="text-right">{client.sms}</TableCell>
                     <TableCell className="text-right">{client.widgets}</TableCell>

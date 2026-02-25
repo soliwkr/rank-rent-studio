@@ -31,7 +31,7 @@ export default function AdminSettingsConfig() {
         <Tabs defaultValue="general" className="space-y-6">
           <TabsList data-testid="tabs-settings">
             <TabsTrigger value="general" data-testid="tab-general">General</TabsTrigger>
-            <TabsTrigger value="venue" data-testid="tab-venue">Venue Settings</TabsTrigger>
+            <TabsTrigger value="workspace" data-testid="tab-workspace">Workspace Settings</TabsTrigger>
             <TabsTrigger value="api-keys" data-testid="tab-api-keys">API Keys</TabsTrigger>
             <TabsTrigger value="seo" data-testid="tab-seo">SEO</TabsTrigger>
             <TabsTrigger value="ai-providers" data-testid="tab-ai-providers">AI Providers</TabsTrigger>
@@ -110,10 +110,10 @@ export default function AdminSettingsConfig() {
             </div>
           </TabsContent>
 
-          <TabsContent value="venue">
+          <TabsContent value="workspace">
             <Card>
               <CardContent className="py-16 text-center">
-                <p className="text-muted-foreground" data-testid="text-venue-empty">Venue settings will appear here</p>
+                <p className="text-muted-foreground" data-testid="text-workspace-empty">Workspace settings will appear here</p>
               </CardContent>
             </Card>
           </TabsContent>

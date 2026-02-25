@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { MapPin, ArrowRight, ChevronRight } from "lucide-react";
-import { Utensils, Coffee, Wine, Bed } from "lucide-react";
+import { Search, PenTool, Megaphone, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,11 +9,11 @@ import { SEO } from "@/components/seo";
 import { locations, getAllRegions, getLocationsByRegion } from "@/data/locations";
 import { serviceTypes } from "@/data/services";
 
-const serviceIcons: Record<string, typeof Utensils> = {
-  restaurants: Utensils,
-  cafes: Coffee,
-  bars: Wine,
-  hotels: Bed,
+const serviceIcons: Record<string, typeof Search> = {
+  "seo-agencies": Search,
+  "content-agencies": PenTool,
+  "marketing-agencies": Megaphone,
+  "freelancers": User,
 };
 
 export default function Locations() {
@@ -22,10 +22,10 @@ export default function Locations() {
   return (
     <Layout>
       <SEO 
-        title="Restaurant Booking Software by Location"
-        description={`indexFlow serves businesses in ${locations.length}+ cities worldwide. Find AI-powered booking software for restaurants, cafes, bars, and hotels in your city.`}
+        title="SEO & Marketing Platform by Location"
+        description={`indexFlow serves agencies and businesses in ${locations.length}+ cities worldwide. Find the all-in-one SEO and content platform for your market.`}
         canonical="/locations"
-        keywords="restaurant booking software, reservation system, AI booking by city, restaurant software locations, booking technology"
+        keywords="seo platform, content marketing platform, agency software, seo tools by city, marketing agency platform"
       />
       <div className="min-h-screen">
         <nav className="border-b bg-muted/30 py-2 px-4" aria-label="Breadcrumb" data-testid="breadcrumb-nav">
@@ -44,18 +44,18 @@ export default function Locations() {
             </Badge>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6" data-testid="text-page-title">
-              Restaurant Booking Software<br />
+              SEO & Content Platform<br />
               <span className="text-primary">Wherever You Are</span>
             </h1>
             
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8" data-testid="text-page-description">
-              indexFlow serves businesses in major cities across North America, Europe, 
-              Asia-Pacific, and beyond. Find your city and see how we can help.
+              indexFlow serves agencies and businesses in major cities across North America, Europe, 
+              Asia-Pacific, and beyond. Find your market and see how we can help.
             </p>
 
             <div className="flex flex-wrap justify-center gap-3 mb-12">
               {serviceTypes.map((service) => {
-                const Icon = serviceIcons[service.slug] || Utensils;
+                const Icon = serviceIcons[service.slug] || Search;
                 return (
                   <Badge key={service.slug} variant="outline" className="py-2 px-4">
                     <Icon className="h-4 w-4 mr-2" />
@@ -104,8 +104,8 @@ export default function Locations() {
               Don't See Your City?
             </h2>
             <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-              indexFlow works with businesses worldwide. Even if your city isn't listed, 
-              we can help you streamline reservations and grow your business.
+              indexFlow works with agencies and businesses worldwide. Even if your city isn't listed, 
+              we can help you scale your SEO and content operations.
             </p>
             <Button size="lg" asChild data-testid="button-contact">
               <Link href="/contact">
@@ -123,7 +123,7 @@ export default function Locations() {
             </h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {serviceTypes.map((service) => {
-                const Icon = serviceIcons[service.slug] || Utensils;
+                const Icon = serviceIcons[service.slug] || Search;
                 return (
                   <Card key={service.slug} className="h-full hover-elevate">
                     <CardContent className="p-6 text-center">
@@ -161,43 +161,43 @@ export default function Locations() {
             </h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
               <div>
-                <h3 className="font-semibold mb-3">Restaurant Booking</h3>
+                <h3 className="font-semibold mb-3">SEO Agencies</h3>
                 <ul className="space-y-2 text-muted-foreground">
-                  <li><Link href="/locations/new-york/restaurants" className="hover:text-primary">New York Restaurants</Link></li>
-                  <li><Link href="/locations/los-angeles/restaurants" className="hover:text-primary">Los Angeles Restaurants</Link></li>
-                  <li><Link href="/locations/london/restaurants" className="hover:text-primary">London Restaurants</Link></li>
-                  <li><Link href="/locations/paris/restaurants" className="hover:text-primary">Paris Restaurants</Link></li>
-                  <li><Link href="/locations/tokyo/restaurants" className="hover:text-primary">Tokyo Restaurants</Link></li>
+                  <li><Link href="/locations/new-york/seo-agencies" className="hover:text-primary">New York SEO</Link></li>
+                  <li><Link href="/locations/los-angeles/seo-agencies" className="hover:text-primary">Los Angeles SEO</Link></li>
+                  <li><Link href="/locations/london/seo-agencies" className="hover:text-primary">London SEO</Link></li>
+                  <li><Link href="/locations/paris/seo-agencies" className="hover:text-primary">Paris SEO</Link></li>
+                  <li><Link href="/locations/tokyo/seo-agencies" className="hover:text-primary">Tokyo SEO</Link></li>
                 </ul>
               </div>
               <div>
-                <h3 className="font-semibold mb-3">Cafe Booking</h3>
+                <h3 className="font-semibold mb-3">Content Agencies</h3>
                 <ul className="space-y-2 text-muted-foreground">
-                  <li><Link href="/locations/melbourne/cafes" className="hover:text-primary">Melbourne Cafes</Link></li>
-                  <li><Link href="/locations/seattle/cafes" className="hover:text-primary">Seattle Cafes</Link></li>
-                  <li><Link href="/locations/amsterdam/cafes" className="hover:text-primary">Amsterdam Cafes</Link></li>
-                  <li><Link href="/locations/vienna/cafes" className="hover:text-primary">Vienna Cafes</Link></li>
-                  <li><Link href="/locations/copenhagen/cafes" className="hover:text-primary">Copenhagen Cafes</Link></li>
+                  <li><Link href="/locations/melbourne/content-agencies" className="hover:text-primary">Melbourne Content</Link></li>
+                  <li><Link href="/locations/seattle/content-agencies" className="hover:text-primary">Seattle Content</Link></li>
+                  <li><Link href="/locations/amsterdam/content-agencies" className="hover:text-primary">Amsterdam Content</Link></li>
+                  <li><Link href="/locations/vienna/content-agencies" className="hover:text-primary">Vienna Content</Link></li>
+                  <li><Link href="/locations/copenhagen/content-agencies" className="hover:text-primary">Copenhagen Content</Link></li>
                 </ul>
               </div>
               <div>
-                <h3 className="font-semibold mb-3">Bar Booking</h3>
+                <h3 className="font-semibold mb-3">Marketing Agencies</h3>
                 <ul className="space-y-2 text-muted-foreground">
-                  <li><Link href="/locations/miami/bars" className="hover:text-primary">Miami Bars</Link></li>
-                  <li><Link href="/locations/las-vegas/bars" className="hover:text-primary">Las Vegas Bars</Link></li>
-                  <li><Link href="/locations/barcelona/bars" className="hover:text-primary">Barcelona Bars</Link></li>
-                  <li><Link href="/locations/berlin/bars" className="hover:text-primary">Berlin Bars</Link></li>
-                  <li><Link href="/locations/hong-kong/bars" className="hover:text-primary">Hong Kong Bars</Link></li>
+                  <li><Link href="/locations/miami/marketing-agencies" className="hover:text-primary">Miami Marketing</Link></li>
+                  <li><Link href="/locations/las-vegas/marketing-agencies" className="hover:text-primary">Las Vegas Marketing</Link></li>
+                  <li><Link href="/locations/barcelona/marketing-agencies" className="hover:text-primary">Barcelona Marketing</Link></li>
+                  <li><Link href="/locations/berlin/marketing-agencies" className="hover:text-primary">Berlin Marketing</Link></li>
+                  <li><Link href="/locations/hong-kong/marketing-agencies" className="hover:text-primary">Hong Kong Marketing</Link></li>
                 </ul>
               </div>
               <div>
-                <h3 className="font-semibold mb-3">Hotel Booking</h3>
+                <h3 className="font-semibold mb-3">Freelancers</h3>
                 <ul className="space-y-2 text-muted-foreground">
-                  <li><Link href="/locations/dubai/hotels" className="hover:text-primary">Dubai Hotels</Link></li>
-                  <li><Link href="/locations/singapore/hotels" className="hover:text-primary">Singapore Hotels</Link></li>
-                  <li><Link href="/locations/sydney/hotels" className="hover:text-primary">Sydney Hotels</Link></li>
-                  <li><Link href="/locations/rome/hotels" className="hover:text-primary">Rome Hotels</Link></li>
-                  <li><Link href="/locations/cape-town/hotels" className="hover:text-primary">Cape Town Hotels</Link></li>
+                  <li><Link href="/locations/dubai/freelancers" className="hover:text-primary">Dubai Freelancers</Link></li>
+                  <li><Link href="/locations/singapore/freelancers" className="hover:text-primary">Singapore Freelancers</Link></li>
+                  <li><Link href="/locations/sydney/freelancers" className="hover:text-primary">Sydney Freelancers</Link></li>
+                  <li><Link href="/locations/rome/freelancers" className="hover:text-primary">Rome Freelancers</Link></li>
+                  <li><Link href="/locations/cape-town/freelancers" className="hover:text-primary">Cape Town Freelancers</Link></li>
                 </ul>
               </div>
             </div>

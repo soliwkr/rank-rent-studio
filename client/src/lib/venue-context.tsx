@@ -2,35 +2,35 @@ import { createContext, useContext, useState, useCallback, type ReactNode } from
 import { useQuery } from "@tanstack/react-query";
 import type { Workspace } from "@shared/schema";
 
-interface VenueContextType {
-  venues: Venue[];
-  selectedWorkspace: Venue | null;
-  selectWorkspace: (v: Venue | null) => void;
+interface WorkspaceContextType {
+  workspaces: Workspace[];
+  selectedWorkspace: Workspace | null;
+  selectWorkspace: (w: Workspace | null) => void;
   isLoading: boolean;
 }
 
-const VenueContext = createContext<VenueContextType>({
-  venues: [],
+const WorkspaceContext = createContext<WorkspaceContextType>({
+  workspaces: [],
   selectedWorkspace: null,
   selectWorkspace: () => {},
   isLoading: true,
 });
 
-const STORAGE_KEY = "resto_venue_id";
+const STORAGE_KEY = "indexflow_workspace_id";
 
 export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const [selectedId, setSelectedId] = useState<string | null>(() => {
     try { return typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null; } catch { return null; }
   });
 
-  const { data: venues = [], isLoading } = useQuery<Venue[]>({
+  const { data: workspaces = [], isLoading } = useQuery<Workspace[]>({
     queryKey: ["/api/workspaces"],
   });
 
-  const selectedWorkspace = venues.find((v) => v.id === selectedId) || venues[0] || null;
+  const selectedWorkspace = workspaces.find((w) => w.id === selectedId) || workspaces[0] || null;
 
-  const selectWorkspace = useCallback((v: Venue | null) => {
-    const id = v?.id || null;
+  const selectWorkspace = useCallback((w: Workspace | null) => {
+    const id = w?.id || null;
     setSelectedId(id);
     try {
       if (id) localStorage.setItem(STORAGE_KEY, id);
@@ -39,12 +39,12 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <VenueContext.Provider value={{ venues, selectedWorkspace, selectWorkspace, isLoading }}>
+    <WorkspaceContext.Provider value={{ workspaces, selectedWorkspace, selectWorkspace, isLoading }}>
       {children}
-    </VenueContext.Provider>
+    </WorkspaceContext.Provider>
   );
 }
 
 export function useWorkspace() {
-  return useContext(VenueContext);
+  return useContext(WorkspaceContext);
 }

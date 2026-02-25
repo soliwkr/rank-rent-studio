@@ -96,7 +96,7 @@ export default function RoomBookings() {
   });
 
   if (!workspaceId) {
-    return <div className="p-6 text-muted-foreground" data-testid="no-venue-message">Please select a workspace from the sidebar to manage project engagements.</div>;
+    return <div className="p-6 text-muted-foreground" data-testid="no-workspace-message">Please select a workspace from the sidebar to manage project engagements.</div>;
   }
 
   if (isLoading) {

@@ -147,7 +147,7 @@ export default function SettingsResources() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Building2 className="w-5 h-5" />
-              Venue Resources
+              Workspace Resources
             </CardTitle>
           </CardHeader>
           <CardContent>

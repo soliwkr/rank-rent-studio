@@ -15,7 +15,7 @@ const stats = [
   { label: "Total Voice Calls", value: "1,293", subtitle: "+87 this week", icon: Phone },
   { label: "SMS Sent", value: "3,847", subtitle: "+312 this week", icon: MessageSquare },
   { label: "Twilio Connected", value: "38", subtitle: "of 47 clients", icon: Wifi },
-  { label: "Bookings via Phone", value: "456", subtitle: "+34 this week", icon: CalendarCheck },
+  { label: "Leads via Phone", value: "456", subtitle: "+34 this week", icon: CalendarCheck },
 ];
 
 const clientStatus = [
@@ -34,7 +34,7 @@ const recentSms = [
 ];
 
 const voiceFeatures = ["Inbound call handling", "AI voice assistant", "Call recording", "Voicemail transcription", "Call forwarding"];
-const smsFeatures = ["Booking confirmations", "Reminder notifications", "Two-way messaging", "Bulk SMS campaigns", "Auto-responses"];
+const smsFeatures = ["Appointment confirmations", "Reminder notifications", "Two-way messaging", "Bulk SMS campaigns", "Auto-responses"];
 const securityConfig = ["Webhook validation", "API key rotation", "Rate limiting", "Number verification", "Audit logging"];
 
 export default function AdminSystemTwilio() {

@@ -125,5 +125,5 @@ export async function seedDatabase() {
     { workspaceId: v3.id, provider: "SEMrush", siteUrl: "https://blog.greenfieldlaw.com", isConnected: false },
   ]);
 
-  console.log("Database seeded successfully with venue schema");
+  console.log("Database seeded successfully");
 }

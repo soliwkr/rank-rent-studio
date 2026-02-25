@@ -550,7 +550,7 @@ function LocationLandingContent({ location, service }: LocationLandingProps) {
           <section className="py-16" data-testid="services-section">
             <div className="container max-w-6xl mx-auto px-4">
               <h2 className="text-3xl font-bold text-center mb-4">
-                Booking Solutions by Venue Type
+                Solutions by Business Type
               </h2>
               <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
                 Explore our specialized solutions for different types of businesses in {location.city}.

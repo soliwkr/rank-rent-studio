@@ -166,9 +166,9 @@ export default function WidgetMonitoring() {
               <p>Messages: {selectedSession?.messages}</p>
             </div>
             <div className="space-y-2 border rounded-md p-3">
-              <div className="text-sm"><span className="font-medium">Visitor:</span> Hi, I need help with my reservation.</div>
-              <div className="text-sm"><span className="font-medium">AI:</span> Of course! I'd be happy to help you with your reservation. Could you provide your booking reference?</div>
-              <div className="text-sm"><span className="font-medium">Visitor:</span> It's BK-4821</div>
+              <div className="text-sm"><span className="font-medium">Visitor:</span> Hi, I need help with my account.</div>
+              <div className="text-sm"><span className="font-medium">AI:</span> Of course! I'd be happy to help you with your account. Could you provide your reference number?</div>
+              <div className="text-sm"><span className="font-medium">Visitor:</span> It's REF-4821</div>
               <div className="text-sm text-muted-foreground text-center">--- End of transcript preview ---</div>
             </div>
           </div>

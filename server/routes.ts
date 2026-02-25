@@ -33,16 +33,16 @@ function normalizeTime(value: unknown): string {
   return t;
 }
 
-async function authorizeVenueAccess(req: Request, workspaceId: string): Promise<boolean> {
+async function authorizeWorkspaceAccess(req: Request, workspaceId: string): Promise<boolean> {
   if (process.env.NODE_ENV !== "production") {
-    const venue = await storage.getWorkspace(workspaceId);
-    return !!venue;
+    const workspace = await storage.getWorkspace(workspaceId);
+    return !!workspace;
   }
   const userId = (req as any).user?.id;
   if (!userId) return false;
-  const venue = await storage.getWorkspace(workspaceId);
-  if (!venue) return false;
-  if (venue.ownerId === userId) return true;
+  const workspace = await storage.getWorkspace(workspaceId);
+  if (!workspace) return false;
+  if (workspace.ownerId === userId) return true;
   const teamMember = await storage.getTeamMemberByUserAndWorkspace(userId, workspaceId);
   return !!teamMember;
 }
@@ -210,7 +210,7 @@ export async function registerRoutes(
       if (process.env.NODE_ENV === "production") {
         const userId = (req as any).user?.id;
         if (!userId) return res.status(401).json({ error: "Unauthorized" });
-        const authorized = await authorizeVenueAccess(req, workspaceId);
+        const authorized = await authorizeWorkspaceAccess(req, workspaceId);
         if (!authorized) return res.status(403).json({ error: "Forbidden" });
       }
       
@@ -227,7 +227,7 @@ export async function registerRoutes(
       const userId = (req as any).user?.id || "dev-user";
       if (process.env.NODE_ENV === "production") {
         if (!userId || userId === "dev-user") return res.status(401).json({ error: "Unauthorized" });
-        const authorized = await authorizeVenueAccess(req, workspaceId);
+        const authorized = await authorizeWorkspaceAccess(req, workspaceId);
         if (!authorized) return res.status(403).json({ error: "Forbidden" });
       }
 
@@ -341,20 +341,20 @@ export async function registerRoutes(
       const venues = await storage.getWorkspacesByOwner(userId);
       res.json(venues);
     } catch (error) {
-      res.status(500).json({ error: "Failed to fetch venues" });
+      res.status(500).json({ error: "Failed to fetch workspaces" });
     }
   });
 
   app.get("/api/workspaces/:id", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.id)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.id)) {
         return res.status(403).json({ error: "Forbidden" });
       }
-      const venue = await storage.getWorkspace(req.params.id);
-      if (!venue) return res.status(404).json({ error: "Workspace not found" });
-      res.json(venue);
+      const workspace = await storage.getWorkspace(req.params.id);
+      if (!workspace) return res.status(404).json({ error: "Workspace not found" });
+      res.json(workspace);
     } catch (error) {
-      res.status(500).json({ error: "Failed to fetch venue" });
+      res.status(500).json({ error: "Failed to fetch workspace" });
     }
   });
 
@@ -380,49 +380,49 @@ export async function registerRoutes(
       }
 
       const validatedData = insertWorkspaceSchema.parse({ ...req.body, ownerId: userId });
-      const venue = await storage.createWorkspace(validatedData);
-      res.status(201).json(venue);
+      const workspace = await storage.createWorkspace(validatedData);
+      res.status(201).json(workspace);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ error: "Invalid venue data", details: error.errors });
+        return res.status(400).json({ error: "Invalid workspace data", details: error.errors });
       }
-      res.status(500).json({ error: "Failed to create venue" });
+      res.status(500).json({ error: "Failed to create workspace" });
     }
   });
 
   app.patch("/api/workspaces/:id", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.id)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.id)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       if (req.body.aiKeySource && !["agency", "client"].includes(req.body.aiKeySource)) {
         return res.status(400).json({ error: "aiKeySource must be 'agency' or 'client'" });
       }
-      const venue = await storage.updateWorkspace(req.params.id, req.body);
-      if (!venue) return res.status(404).json({ error: "Workspace not found" });
-      res.json(venue);
+      const workspace = await storage.updateWorkspace(req.params.id, req.body);
+      if (!workspace) return res.status(404).json({ error: "Workspace not found" });
+      res.json(workspace);
     } catch (error) {
-      res.status(500).json({ error: "Failed to update venue" });
+      res.status(500).json({ error: "Failed to update workspace" });
     }
   });
 
   app.delete("/api/workspaces/:id", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.id)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.id)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const deleted = await storage.deleteWorkspace(req.params.id);
       if (!deleted) return res.status(404).json({ error: "Workspace not found" });
       res.status(204).send();
     } catch (error) {
-      res.status(500).json({ error: "Failed to delete venue" });
+      res.status(500).json({ error: "Failed to delete workspace" });
     }
   });
 
   // Reservations
   app.get("/api/workspaces/:workspaceId/reservations", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const { date } = req.query;
@@ -439,7 +439,7 @@ export async function registerRoutes(
     try {
       const reservation = await storage.getReservation(req.params.id);
       if (!reservation) return res.status(404).json({ error: "Reservation not found" });
-      if (!await authorizeVenueAccess(req, reservation.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, reservation.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       res.json(reservation);
@@ -450,7 +450,7 @@ export async function registerRoutes(
 
   app.post("/api/workspaces/:workspaceId/reservations", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const validatedData = insertReservationSchema.parse({
@@ -473,7 +473,7 @@ export async function registerRoutes(
     try {
       const reservation = await storage.getReservation(req.params.id);
       if (!reservation) return res.status(404).json({ error: "Reservation not found" });
-      if (!await authorizeVenueAccess(req, reservation.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, reservation.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const updates = { ...req.body };
@@ -490,7 +490,7 @@ export async function registerRoutes(
     try {
       const reservation = await storage.getReservation(req.params.id);
       if (!reservation) return res.status(404).json({ error: "Reservation not found" });
-      if (!await authorizeVenueAccess(req, reservation.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, reservation.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       await storage.deleteReservation(req.params.id);
@@ -503,7 +503,7 @@ export async function registerRoutes(
   // Business Hours
   app.get("/api/workspaces/:workspaceId/hours", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const hours = await storage.getBusinessHours(req.params.workspaceId);
@@ -515,7 +515,7 @@ export async function registerRoutes(
 
   app.put("/api/workspaces/:workspaceId/hours", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const hoursArray = z.array(insertBusinessHoursSchema).parse(req.body);
@@ -532,7 +532,7 @@ export async function registerRoutes(
   // Closures
   app.get("/api/workspaces/:workspaceId/closures", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const closures = await storage.getClosures(req.params.workspaceId);
@@ -544,7 +544,7 @@ export async function registerRoutes(
 
   app.post("/api/workspaces/:workspaceId/closures", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const validatedData = insertClosureSchema.parse({
@@ -565,7 +565,7 @@ export async function registerRoutes(
     try {
       const closure = await storage.getClosure(parseInt(req.params.id));
       if (!closure) return res.status(404).json({ error: "Closure not found" });
-      if (!await authorizeVenueAccess(req, closure.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, closure.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       await storage.deleteClosure(parseInt(req.params.id));
@@ -578,7 +578,7 @@ export async function registerRoutes(
   // Resources
   app.get("/api/workspaces/:workspaceId/resources", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const resources = await storage.getResources(req.params.workspaceId);
@@ -590,7 +590,7 @@ export async function registerRoutes(
 
   app.post("/api/workspaces/:workspaceId/resources", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const validatedData = insertResourceSchema.parse({
@@ -611,7 +611,7 @@ export async function registerRoutes(
     try {
       const resource = await storage.getResource(req.params.id);
       if (!resource) return res.status(404).json({ error: "Resource not found" });
-      if (!await authorizeVenueAccess(req, resource.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, resource.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const updated = await storage.updateResource(req.params.id, req.body);
@@ -625,7 +625,7 @@ export async function registerRoutes(
     try {
       const resource = await storage.getResource(req.params.id);
       if (!resource) return res.status(404).json({ error: "Resource not found" });
-      if (!await authorizeVenueAccess(req, resource.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, resource.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       await storage.deleteResource(req.params.id);
@@ -638,7 +638,7 @@ export async function registerRoutes(
   // Team Members
   app.get("/api/workspaces/:workspaceId/team", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const members = await storage.getTeamMembers(req.params.workspaceId);
@@ -650,7 +650,7 @@ export async function registerRoutes(
 
   app.post("/api/workspaces/:workspaceId/team", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
 
@@ -690,7 +690,7 @@ export async function registerRoutes(
     try {
       const member = await storage.getTeamMember(parseInt(req.params.id));
       if (!member) return res.status(404).json({ error: "Team member not found" });
-      if (!await authorizeVenueAccess(req, member.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, member.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const updated = await storage.updateTeamMember(parseInt(req.params.id), req.body);
@@ -704,7 +704,7 @@ export async function registerRoutes(
     try {
       const member = await storage.getTeamMember(parseInt(req.params.id));
       if (!member) return res.status(404).json({ error: "Team member not found" });
-      if (!await authorizeVenueAccess(req, member.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, member.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       await storage.deleteTeamMember(parseInt(req.params.id));
@@ -717,7 +717,7 @@ export async function registerRoutes(
   // Knowledge Base
   app.get("/api/workspaces/:workspaceId/knowledge-base", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const items = await storage.getKnowledgeBaseItems(req.params.workspaceId);
@@ -729,7 +729,7 @@ export async function registerRoutes(
 
   app.post("/api/workspaces/:workspaceId/knowledge-base", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const validatedData = insertKnowledgeBaseItemSchema.parse({
@@ -750,7 +750,7 @@ export async function registerRoutes(
     try {
       const item = await storage.getKnowledgeBaseItem(req.params.id);
       if (!item) return res.status(404).json({ error: "Knowledge base item not found" });
-      if (!await authorizeVenueAccess(req, item.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, item.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const updated = await storage.updateKnowledgeBaseItem(req.params.id, req.body);
@@ -764,7 +764,7 @@ export async function registerRoutes(
     try {
       const item = await storage.getKnowledgeBaseItem(req.params.id);
       if (!item) return res.status(404).json({ error: "Knowledge base item not found" });
-      if (!await authorizeVenueAccess(req, item.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, item.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       await storage.deleteKnowledgeBaseItem(req.params.id);
@@ -777,7 +777,7 @@ export async function registerRoutes(
   // Call Logs
   app.get("/api/workspaces/:workspaceId/calls", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const logs = await storage.getCallLogs(req.params.workspaceId);
@@ -791,7 +791,7 @@ export async function registerRoutes(
     try {
       const log = await storage.getCallLog(req.params.id);
       if (!log) return res.status(404).json({ error: "Call log not found" });
-      if (!await authorizeVenueAccess(req, log.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, log.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       res.json(log);
@@ -803,7 +803,7 @@ export async function registerRoutes(
   // Widget Settings
   app.get("/api/workspaces/:workspaceId/widget-settings", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const settings = await storage.getWidgetSettings(req.params.workspaceId);
@@ -815,7 +815,7 @@ export async function registerRoutes(
 
   app.put("/api/workspaces/:workspaceId/widget-settings", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const validatedData = insertWidgetSettingsSchema.parse({
@@ -835,7 +835,7 @@ export async function registerRoutes(
   // Twilio Settings
   app.get("/api/workspaces/:workspaceId/twilio-settings", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const settings = await storage.getTwilioSettings(req.params.workspaceId);
@@ -851,7 +851,7 @@ export async function registerRoutes(
 
   app.put("/api/workspaces/:workspaceId/twilio-settings", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const validatedData = insertTwilioSettingsSchema.parse({
@@ -871,7 +871,7 @@ export async function registerRoutes(
   // Payment Settings
   app.get("/api/workspaces/:workspaceId/payment-settings", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const settings = await storage.getPaymentSettings(req.params.workspaceId);
@@ -894,7 +894,7 @@ export async function registerRoutes(
 
   app.put("/api/workspaces/:workspaceId/payment-settings", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const { provider, ...credentials } = req.body;
@@ -971,7 +971,7 @@ export async function registerRoutes(
   // AI Provider Settings
   app.get("/api/workspaces/:workspaceId/ai-providers", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const settings = await storage.getAiProviderSettings(req.params.workspaceId);
@@ -987,7 +987,7 @@ export async function registerRoutes(
 
   app.put("/api/workspaces/:workspaceId/ai-providers", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const validatedData = insertAiProviderSettingsSchema.parse({
@@ -1006,7 +1006,7 @@ export async function registerRoutes(
 
   app.get("/api/workspaces/:workspaceId/ai-status", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const resolved = await resolveAiKey(req.params.workspaceId, "openai");
@@ -1162,7 +1162,7 @@ export async function registerRoutes(
       const venues = await storage.getWorkspaces();
       res.json(venues);
     } catch (error) {
-      res.status(500).json({ error: "Failed to fetch venues" });
+      res.status(500).json({ error: "Failed to fetch workspaces" });
     }
   });
 
@@ -1170,8 +1170,8 @@ export async function registerRoutes(
     try {
       const venues = await storage.getWorkspaces();
       const allLogs: any[] = [];
-      for (const venue of venues) {
-        const logs = await storage.getCallLogs(venue.id);
+      for (const ws of venues) {
+        const logs = await storage.getCallLogs(ws.id);
         allLogs.push(...logs);
       }
       allLogs.sort((a, b) => {
@@ -1189,8 +1189,8 @@ export async function registerRoutes(
     try {
       const venues = await storage.getWorkspaces();
       const allSettings: any[] = [];
-      for (const venue of venues) {
-        const settings = await storage.getWidgetSettings(venue.id);
+      for (const ws of venues) {
+        const settings = await storage.getWidgetSettings(ws.id);
         if (settings) allSettings.push(settings);
       }
       res.json(allSettings);
@@ -1639,7 +1639,7 @@ export async function registerRoutes(
     try {
       const workspaceId = req.query.workspaceId as string;
       if (workspaceId) {
-        if (!(await authorizeVenueAccess(req, workspaceId))) {
+        if (!(await authorizeWorkspaceAccess(req, workspaceId))) {
           return res.status(403).json({ error: "Forbidden" });
         }
         const messages = await storage.getContactMessages();
@@ -1659,7 +1659,7 @@ export async function registerRoutes(
     try {
       const workspaceId = req.query.workspaceId as string;
       if (!workspaceId) return res.json([]);
-      if (!(await authorizeVenueAccess(req, workspaceId))) {
+      if (!(await authorizeWorkspaceAccess(req, workspaceId))) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const date = req.query.date as string;
@@ -1678,7 +1678,7 @@ export async function registerRoutes(
     try {
       const workspaceId = req.query.workspaceId as string;
       if (!workspaceId) return res.json([]);
-      if (!(await authorizeVenueAccess(req, workspaceId))) {
+      if (!(await authorizeWorkspaceAccess(req, workspaceId))) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const calls = await storage.getCallLogs(workspaceId);
@@ -1692,8 +1692,8 @@ export async function registerRoutes(
     try {
       const venues = await storage.getWorkspaces();
       const allReservations: any[] = [];
-      for (const venue of venues) {
-        const reservations = await storage.getReservations(venue.id);
+      for (const ws of venues) {
+        const reservations = await storage.getReservations(ws.id);
         allReservations.push(...reservations);
       }
       allReservations.sort((a, b) => {
@@ -1731,12 +1731,12 @@ export async function registerRoutes(
 
       const domainRecord = await storage.getWorkspaceDomainByDomain(domain);
       if (!domainRecord) return res.json({ blogTemplate: "editorial", accentColor: null, accentForeground: null, posts: [] });
-      const venue = await storage.getWorkspace(domainRecord.workspaceId);
+      const workspace = await storage.getWorkspace(domainRecord.workspaceId);
       const posts = await storage.getWorkspaceBlogPosts(domainRecord.workspaceId, "published");
       res.json({
-        blogTemplate: (venue as any)?.blogTemplate || "editorial",
-        accentColor: (venue as any)?.accentColor || null,
-        accentForeground: (venue as any)?.accentForeground || null,
+        blogTemplate: (workspace as any)?.blogTemplate || "editorial",
+        accentColor: (workspace as any)?.accentColor || null,
+        accentForeground: (workspace as any)?.accentForeground || null,
         posts,
       });
     } catch (error) {
@@ -1764,11 +1764,11 @@ export async function registerRoutes(
           const posts = await storage.getWorkspaceBlogPosts(ws.id, "published");
           const post = posts.find(p => p.slug === slug);
           if (post) {
-            const venue = await storage.getWorkspace(ws.id);
+            const workspace = await storage.getWorkspace(ws.id);
             return res.json({
-              blogTemplate: (venue as any)?.blogTemplate || "editorial",
-              accentColor: (venue as any)?.accentColor || null,
-              accentForeground: (venue as any)?.accentForeground || null,
+              blogTemplate: (workspace as any)?.blogTemplate || "editorial",
+              accentColor: (workspace as any)?.accentColor || null,
+              accentForeground: (workspace as any)?.accentForeground || null,
               ...(await compileIfNeeded(post)),
             });
           }
@@ -1790,7 +1790,7 @@ export async function registerRoutes(
   // Room Types
   app.get("/api/workspaces/:workspaceId/room-types", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const roomTypes = await storage.getRoomTypes(req.params.workspaceId);
@@ -1802,7 +1802,7 @@ export async function registerRoutes(
 
   app.get("/api/workspaces/:workspaceId/room-types/:id", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const roomType = await storage.getRoomType(req.params.id);
@@ -1817,7 +1817,7 @@ export async function registerRoutes(
 
   app.post("/api/workspaces/:workspaceId/room-types", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const validatedData = insertRoomTypeSchema.parse({
@@ -1840,7 +1840,7 @@ export async function registerRoutes(
       if (!existing) {
         return res.status(404).json({ error: "Room type not found" });
       }
-      if (!await authorizeVenueAccess(req, existing.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, existing.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const validation = insertRoomTypeSchema.partial().safeParse(req.body);
@@ -1860,7 +1860,7 @@ export async function registerRoutes(
       if (!existing) {
         return res.status(404).json({ error: "Room type not found" });
       }
-      if (!await authorizeVenueAccess(req, existing.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, existing.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       await storage.deleteRoomType(req.params.id);
@@ -1873,7 +1873,7 @@ export async function registerRoutes(
   // Rooms
   app.get("/api/workspaces/:workspaceId/rooms", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const rooms = await storage.getRooms(req.params.workspaceId);
@@ -1885,7 +1885,7 @@ export async function registerRoutes(
 
   app.get("/api/workspaces/:workspaceId/rooms/:id", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const room = await storage.getRoom(req.params.id);
@@ -1900,7 +1900,7 @@ export async function registerRoutes(
 
   app.post("/api/workspaces/:workspaceId/rooms", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const validatedData = insertRoomSchema.parse({
@@ -1923,7 +1923,7 @@ export async function registerRoutes(
       if (!existing) {
         return res.status(404).json({ error: "Room not found" });
       }
-      if (!await authorizeVenueAccess(req, existing.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, existing.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const validation = insertRoomSchema.partial().safeParse(req.body);
@@ -1943,7 +1943,7 @@ export async function registerRoutes(
       if (!existing) {
         return res.status(404).json({ error: "Room not found" });
       }
-      if (!await authorizeVenueAccess(req, existing.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, existing.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       await storage.deleteRoom(req.params.id);
@@ -1956,7 +1956,7 @@ export async function registerRoutes(
   // Room Bookings
   app.get("/api/workspaces/:workspaceId/room-bookings", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const { startDate, endDate } = req.query;
@@ -1982,7 +1982,7 @@ export async function registerRoutes(
       if (!booking) {
         return res.status(404).json({ error: "Room booking not found" });
       }
-      if (!await authorizeVenueAccess(req, booking.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, booking.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       res.json(booking);
@@ -1993,7 +1993,7 @@ export async function registerRoutes(
 
   app.post("/api/workspaces/:workspaceId/room-bookings", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const checkIn = normalizeISODate(req.body.checkIn);
@@ -2041,7 +2041,7 @@ export async function registerRoutes(
       if (!existing) {
         return res.status(404).json({ error: "Room booking not found" });
       }
-      if (!await authorizeVenueAccess(req, existing.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, existing.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const validation = insertRoomBookingSchema.partial().safeParse(req.body);
@@ -2096,7 +2096,7 @@ export async function registerRoutes(
       if (!existing) {
         return res.status(404).json({ error: "Room booking not found" });
       }
-      if (!await authorizeVenueAccess(req, existing.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, existing.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       await storage.deleteRoomBooking(req.params.id);
@@ -2109,7 +2109,7 @@ export async function registerRoutes(
   // Website Change Requests
   app.get("/api/workspaces/:workspaceId/website-changes", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const changes = await storage.getWebsiteChangeRequests(req.params.workspaceId);
@@ -2121,7 +2121,7 @@ export async function registerRoutes(
 
   app.post("/api/workspaces/:workspaceId/website-changes", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const userId = (req as any).user?.id || "anonymous";
@@ -2145,7 +2145,7 @@ export async function registerRoutes(
 
   app.patch("/api/workspaces/:workspaceId/website-changes/:id", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const { status, adminNotes } = req.body;
@@ -2163,7 +2163,7 @@ export async function registerRoutes(
   // Rank Tracker - Keywords
   app.get("/api/workspaces/:workspaceId/rank-tracker/keywords", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const keywords = await storage.getRankTrackerKeywords(req.params.workspaceId);
@@ -2175,7 +2175,7 @@ export async function registerRoutes(
 
   app.post("/api/workspaces/:workspaceId/rank-tracker/keywords", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const { keywords } = req.body;
@@ -2207,7 +2207,7 @@ export async function registerRoutes(
 
   app.delete("/api/workspaces/:workspaceId/rank-tracker/keywords/:keywordId", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       await storage.deleteRankTrackerKeyword(parseInt(req.params.keywordId));
@@ -2219,7 +2219,7 @@ export async function registerRoutes(
 
   app.delete("/api/workspaces/:workspaceId/rank-tracker/keywords", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       await storage.deleteAllRankTrackerKeywords(req.params.workspaceId);
@@ -2232,7 +2232,7 @@ export async function registerRoutes(
   // Rank Tracker - Results
   app.get("/api/workspaces/:workspaceId/rank-tracker/results", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const page = parseInt(req.query.page as string) || 1;
@@ -2246,7 +2246,7 @@ export async function registerRoutes(
 
   app.get("/api/workspaces/:workspaceId/rank-tracker/latest", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const results = await storage.getLatestRankTrackerResults(req.params.workspaceId);
@@ -2260,7 +2260,7 @@ export async function registerRoutes(
   // Rank Tracker - Check Rankings (weekly limit)
   app.post("/api/workspaces/:workspaceId/rank-tracker/check", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
 
@@ -2289,8 +2289,8 @@ export async function registerRoutes(
         return res.status(400).json({ error: "No keywords to check. Add keywords first." });
       }
 
-      const venue = await storage.getWorkspace(req.params.workspaceId);
-      const siteUrl = venue?.website || "";
+      const workspace = await storage.getWorkspace(req.params.workspaceId);
+      const siteUrl = workspace?.website || "";
       
       if (!siteUrl) {
         return res.status(400).json({ error: "No custom domain configured for this workspace. The Rank Tracker only works with your workspace's custom domain. Please set up a domain in your workspace settings." });
@@ -2407,7 +2407,7 @@ export async function registerRoutes(
   // Grid Keywords
   app.get("/api/workspaces/:workspaceId/grid-keywords", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const keywords = await storage.getGridKeywords(req.params.workspaceId);
@@ -2419,7 +2419,7 @@ export async function registerRoutes(
 
   app.post("/api/workspaces/:workspaceId/grid-keywords", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const { keywords, gridSize, distance } = req.body;
@@ -2456,7 +2456,7 @@ export async function registerRoutes(
 
   app.delete("/api/workspaces/:workspaceId/grid-keywords/:keywordId", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       await storage.deleteGridKeyword(parseInt(req.params.keywordId));
@@ -2468,7 +2468,7 @@ export async function registerRoutes(
 
   app.delete("/api/workspaces/:workspaceId/grid-keywords", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       await storage.deleteAllGridKeywords(req.params.workspaceId);
@@ -2481,7 +2481,7 @@ export async function registerRoutes(
   // Grid Refresh Credits
   app.get("/api/workspaces/:workspaceId/grid-refresh-credits", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const credits = await storage.getGridRefreshCredits(req.params.workspaceId);
@@ -2493,7 +2493,7 @@ export async function registerRoutes(
 
   app.post("/api/workspaces/:workspaceId/grid-refresh-credits/purchase", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const { amount } = req.body;
@@ -2510,7 +2510,7 @@ export async function registerRoutes(
 
   app.post("/api/workspaces/:workspaceId/grid-refresh-credits/use", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const result = await storage.useGridRefreshCredit(req.params.workspaceId);
@@ -2525,16 +2525,16 @@ export async function registerRoutes(
 
   app.post("/api/workspaces/:workspaceId/grid-scan", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
 
-      const venue = await storage.getWorkspace(req.params.workspaceId);
-      if (!venue) {
+      const workspace = await storage.getWorkspace(req.params.workspaceId);
+      if (!workspace) {
         return res.status(404).json({ error: "Workspace not found" });
       }
 
-      if (!venue.latitude || !venue.longitude) {
+      if (!workspace.latitude || !workspace.longitude) {
         return res.status(400).json({ error: "Workspace has no coordinates set. Please update your workspace address with latitude and longitude." });
       }
 
@@ -2550,8 +2550,8 @@ export async function registerRoutes(
         return res.status(503).json({ error: "Grid scanning service not configured. Please contact support." });
       }
 
-      const centerLat = parseFloat(venue.latitude as string);
-      const centerLng = parseFloat(venue.longitude as string);
+      const centerLat = parseFloat(workspace.latitude as string);
+      const centerLng = parseFloat(workspace.longitude as string);
       const gridSize = 5;
       const distanceMiles = parseFloat(gridKeywordsList[0]?.distance as string) || 2;
 
@@ -2569,8 +2569,8 @@ export async function registerRoutes(
       }
 
       const allResults: any[] = [];
-      const venueName = venue.name.toLowerCase();
-      const venueWebsite = (venue.website || "").replace(/https?:\/\//, "").replace(/\/$/, "").toLowerCase();
+      const wsName = workspace.name.toLowerCase();
+      const wsWebsite = (workspace.website || "").replace(/https?:\/\//, "").replace(/\/$/, "").toLowerCase();
       const authHeader = "Basic " + Buffer.from(`${dfsLogin}:${dfsPassword}`).toString("base64");
 
       const scanPoint = async (keyword: string, point: { lat: number; lng: number; index: number }) => {
@@ -2614,9 +2614,9 @@ export async function registerRoutes(
               const itemDomain = (item.domain || "").toLowerCase();
 
               if (
-                itemTitle.includes(venueName) ||
-                venueName.includes(itemTitle) ||
-                (venueWebsite && itemDomain.includes(venueWebsite))
+                itemTitle.includes(wsName) ||
+                wsName.includes(itemTitle) ||
+                (wsWebsite && itemDomain.includes(wsWebsite))
               ) {
                 rank = item.rank_absolute || (i + 1);
                 businessName = item.title;
@@ -2676,7 +2676,7 @@ export async function registerRoutes(
 
   app.get("/api/workspaces/:workspaceId/grid-scan-results/:keyword", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const results = await storage.getLatestGridScanResults(req.params.workspaceId, decodeURIComponent(req.params.keyword));
@@ -2688,7 +2688,7 @@ export async function registerRoutes(
 
   app.get("/api/workspaces/:workspaceId/grid-scan-keywords", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const keywords = await storage.getGridScanKeywords(req.params.workspaceId);
@@ -2700,7 +2700,7 @@ export async function registerRoutes(
 
   app.get("/api/workspaces/:workspaceId/grid-refresh-history", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const history = await storage.getGridRefreshHistory(req.params.workspaceId);
@@ -2713,7 +2713,7 @@ export async function registerRoutes(
   // Rank Tracker Credits
   app.get("/api/workspaces/:workspaceId/rank-tracker-credits", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const credits = await storage.getRankTrackerCredits(req.params.workspaceId);
@@ -2725,7 +2725,7 @@ export async function registerRoutes(
 
   app.post("/api/workspaces/:workspaceId/rank-tracker-credits/purchase", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const { amount } = req.body;
@@ -2741,7 +2741,7 @@ export async function registerRoutes(
 
   app.post("/api/workspaces/:workspaceId/rank-tracker-credits/use", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const result = await storage.useRankTrackerCredit(req.params.workspaceId);
@@ -2756,7 +2756,7 @@ export async function registerRoutes(
 
   app.get("/api/workspaces/:workspaceId/rank-tracker-history", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const history = await storage.getRankTrackerHistory(req.params.workspaceId);
@@ -2769,7 +2769,7 @@ export async function registerRoutes(
   // SEO Settings
   app.get("/api/workspaces/:workspaceId/seo-settings", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const settings = await storage.getSeoSettings(req.params.workspaceId);
@@ -2781,7 +2781,7 @@ export async function registerRoutes(
 
   app.post("/api/workspaces/:workspaceId/seo-settings", async (req, res) => {
     try {
-      if (!await authorizeVenueAccess(req, req.params.workspaceId)) {
+      if (!await authorizeWorkspaceAccess(req, req.params.workspaceId)) {
         return res.status(403).json({ error: "Forbidden" });
       }
       const { provider, apiKey, apiLogin, apiPassword, siteUrl, isConnected } = req.body;
@@ -2832,20 +2832,20 @@ export async function registerRoutes(
         widgetRateLimit.set(rateLimitKey, { count: 1, resetAt: now + WIDGET_RATE_WINDOW });
       }
 
-      const venue = await storage.getWorkspace(workspaceId);
-      if (!venue) {
+      const workspace = await storage.getWorkspace(workspaceId);
+      if (!workspace) {
         return res.status(404).json({ error: "Workspace not found" });
       }
 
       const widgetSettings = await storage.getWidgetSettings(workspaceId);
       if (widgetSettings && !widgetSettings.isEnabled) {
-        return res.status(403).json({ error: "Widget is not enabled for this venue" });
+        return res.status(403).json({ error: "Widget is not enabled for this workspace" });
       }
 
       const knowledgeBase = await storage.getKnowledgeBaseItems(workspaceId);
       const systemPrompt = buildWidgetSystemPrompt(
-        venue.name,
-        venue.type || "restaurant",
+        workspace.name,
+        workspace.type || "agency",
         knowledgeBase,
         widgetSettings?.welcomeMessage
       );

@@ -141,7 +141,7 @@ const toolCategories = [
     color: "text-violet-500",
     bgColor: "bg-violet-500/10",
     items: [
-      "Lead to Booking CRM",
+      "Lead to Close CRM",
       "Contacts Manager",
       "Deal Pipeline (Kanban)",
       "Full-Funnel Attribution",
@@ -205,7 +205,7 @@ const replacements: { from: string; to: string; icon: any; color: string; bgColo
   { from: "Ahrefs / SEMrush", to: "Rank Tracker + Local Search Grid", icon: SiSemrush, color: "text-orange-500", bgColor: "bg-orange-500/10" },
   { from: "SurferSEO / Clearscope", to: "Quality Gates + Post Validator", icon: Search, color: "text-blue-500", bgColor: "bg-blue-500/10" },
   { from: "Jasper / Copy.ai", to: "Content Engine with GPT-4o", icon: PenTool, color: "text-rose-500", bgColor: "bg-rose-500/10" },
-  { from: "HubSpot / Pipedrive", to: "Lead to Booking CRM", icon: SiHubspot, color: "text-amber-600", bgColor: "bg-amber-600/10" },
+  { from: "HubSpot / Pipedrive", to: "Lead to Close CRM", icon: SiHubspot, color: "text-amber-600", bgColor: "bg-amber-600/10" },
   { from: "FreshBooks / QuickBooks", to: "Invoice Builder", icon: SiQuickbooks, color: "text-emerald-600", bgColor: "bg-emerald-600/10" },
   { from: "Intercom / Drift", to: "AI Widget", icon: SiIntercom, color: "text-blue-600", bgColor: "bg-blue-600/10" },
   { from: "LinkWhisper", to: "Cross-Post Link Builder", icon: Link2, color: "text-cyan-500", bgColor: "bg-cyan-500/10" },

@@ -14,7 +14,7 @@ const row1Items = [
 ];
 
 const row2Items = [
-  "CRM | Pipeline | Lead to Booking",
+  "CRM | Pipeline | Lead to Close",
   "AI Website Widget",
   "Twilio Voice SMS",
   "BYOK AI Connections",
