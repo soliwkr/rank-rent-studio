@@ -130,7 +130,14 @@ function PostsTab({ workspaceId }: { workspaceId: string }) {
   const [editorPreviewMode, setEditorPreviewMode] = useState<"html" | "preview">("preview");
 
   const queryKey = `/api/admin/blog/posts?workspaceId=${workspaceId}`;
-  const { data: posts = [], isLoading } = useQuery<any[]>({ queryKey: [queryKey] });
+  const { data: posts = [], isLoading } = useQuery<any[]>({
+    queryKey: [queryKey],
+    refetchInterval: (query) => {
+      const data = query.state.data as any[] | undefined;
+      const hasGenerating = data?.some((p: any) => p.generationStatus === "pending" || p.generationStatus === "generating");
+      return hasGenerating ? 5000 : false;
+    },
+  });
 
   const createMutation = useMutation({
     mutationFn: (data: any) => apiRequest("POST", "/api/admin/blog/posts", data),
@@ -162,12 +169,20 @@ function PostsTab({ workspaceId }: { workspaceId: string }) {
   });
 
   const bulkMutation = useMutation({
-    mutationFn: (data: any) => apiRequest("POST", "/api/admin/blog/posts/bulk/create", data),
-    onSuccess: () => {
+    mutationFn: async (data: any) => {
+      const created: any = await apiRequest("POST", "/api/admin/blog/posts/bulk/create", data);
+      if (Array.isArray(created) && created.length > 0) {
+        const postIds = created.map((p: any) => p.id);
+        await apiRequest("POST", "/api/admin/blog/posts/bulk/generate", { postIds });
+      }
+      return created;
+    },
+    onSuccess: (created: any) => {
       queryClient.invalidateQueries({ queryKey: [queryKey] });
       setBulkOpen(false);
       setBulkRows([{ title: "", keyword: "", intent: "Informational", funnel: "TOFU", type: "Standard" }]);
-      toast({ title: "Drafts created" });
+      const count = Array.isArray(created) ? created.length : 0;
+      toast({ title: "Generation started", description: `${count} posts are being written with AI. Refresh in a minute to see results.` });
     },
     onError: (err: any) => toast({ title: "Error", description: err.message, variant: "destructive" }),
   });
@@ -579,7 +594,7 @@ function PostsTab({ workspaceId }: { workspaceId: string }) {
           <div className="flex justify-end gap-2 mt-2">
             <Button variant="outline" onClick={() => setBulkOpen(false)} data-testid="button-cancel-bulk">Cancel</Button>
             <Button
-              onClick={() => bulkMutation.mutate({ posts: validBulkRows.map(r => ({ workspaceId, title: r.title, primaryKeyword: r.keyword, intent: r.intent, funnel: r.funnel, schemaType: r.type, status: "draft" })) })}
+              onClick={() => bulkMutation.mutate({ posts: validBulkRows.map(r => ({ workspaceId, title: r.title, primaryKeyword: r.keyword, intent: r.intent, funnel: r.funnel, schemaType: r.type, status: "draft", generationStatus: "pending" })) })}
               disabled={validBulkRows.length === 0 || bulkMutation.isPending}
               data-testid="button-create-drafts"
             >

@@ -54,6 +54,9 @@ interface Post {
   publishedAt: string | null;
   createdAt: string | null;
   workspaceId: string;
+  generationStatus: string | null;
+  qualityGateStatus: string | null;
+  qualityFailReasons: string[] | null;
 }
 
 const statusVariant = (status: string) => {
@@ -85,6 +88,11 @@ export default function ContentPosts() {
       return res.json();
     },
     enabled: !!wsId,
+    refetchInterval: (query) => {
+      const data = query.state.data as Post[] | undefined;
+      const hasGenerating = data?.some((p) => p.generationStatus === "pending" || p.generationStatus === "generating");
+      return hasGenerating ? 5000 : false;
+    },
   });
 
   const [search, setSearch] = useState("");
@@ -168,7 +176,7 @@ export default function ContentPosts() {
     const topics = bulkTopics.split("\n").filter((t) => t.trim());
     if (topics.length === 0) return;
     try {
-      await apiRequest("POST", "/api/admin/blog/posts/bulk/create", {
+      const created: any = await apiRequest("POST", "/api/admin/blog/posts/bulk/create", {
         topics: topics.map((t) => t.trim()),
         category: bulkCategory,
         workspaceId: wsId,
@@ -177,7 +185,15 @@ export default function ContentPosts() {
       setBulkOpen(false);
       setBulkTopics("");
       setBulkCategory("SEO");
-      toast({ title: "Bulk generation started", description: `${topics.length} posts have been queued.` });
+
+      if (Array.isArray(created) && created.length > 0) {
+        const postIds = created.map((p: any) => p.id);
+        toast({ title: "Drafts created", description: `Generating content for ${postIds.length} posts...` });
+        await apiRequest("POST", "/api/admin/blog/posts/bulk/generate", { postIds });
+        toast({ title: "Generation started", description: `${postIds.length} posts are being written with AI. Refresh in a minute to see results.` });
+      } else {
+        toast({ title: "Drafts created", description: `${topics.length} posts queued.` });
+      }
     } catch {
       toast({ title: "Bulk generation failed", variant: "destructive" });
     }

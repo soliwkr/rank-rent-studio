@@ -136,8 +136,8 @@ export async function resolvePostImages(postId: string): Promise<{ resolved: num
   console.log(`[ImageResolver] Processing ${placeholders.length} placeholders for post "${post.title}"`);
 
   const openai = new OpenAI({
-    baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
-    apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
+    baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL || undefined,
+    apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY || process.env.OPENAI_API_KEY,
   });
 
   const seoPrompt = `You are an SEO specialist. For each image prompt below, generate optimized image metadata.

@@ -5,8 +5,8 @@ import type { WorkspaceBlogPost } from "@shared/schema";
 import { resolvePostImages } from "./image-resolver";
 
 const openai = new OpenAI({
-  baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
-  apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
+  baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL || undefined,
+  apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY || process.env.OPENAI_API_KEY,
 });
 
 interface QualityResult {
@@ -54,7 +54,7 @@ function runQualityGate(mdx: string): QualityResult {
 const SYSTEM_PROMPT = `You are an expert SEO content writer specializing in digital marketing, SEO, and business growth. You create high-quality, informative blog posts in MDX format.
 
 STRICT REQUIREMENTS:
-- Write between 1800-2500 words of actual prose content. This is a HARD requirement - never write fewer than 1800 words. Aim for 2000+ words. Count your words carefully before finishing.
+- Write between 1800-2500 words of actual prose content. This is a HARD requirement - never write fewer than 1800 words. Aim for 2200+ words. You MUST count your words before finishing. If your draft is under 1800 words, expand each section with more detail, examples, and actionable advice until you exceed 1800 words. Err on the side of writing MORE rather than less.
 - Use at least 6 headings (H2 and H3) to structure the content
 - Include a FAQ section at the end with at least 3 questions
 - IMAGE PLACEHOLDERS: You MUST insert a <BlogImage /> placeholder every 250-300 words throughout the article. Each placeholder MUST include a "prompt" attribute with a detailed, descriptive prompt suitable for AI image generation or stock photo search. The prompt should describe the scene, mood, style and subject matter relevant to the surrounding text.
@@ -114,26 +114,40 @@ export async function generateSingleDraft(postId: string): Promise<WorkspaceBlog
       workspaceName = ws?.name;
     } catch {}
 
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        { role: "system", content: SYSTEM_PROMPT },
-        {
-          role: "user",
-          content: buildUserPrompt(
-            post.title,
-            post.primaryKeyword,
-            post.intent || "informational",
-            post.funnel || "tofu",
-            workspaceName
-          ),
-        },
-      ],
-      max_tokens: 8192,
-      temperature: 0.7,
-    });
+    const userPrompt = buildUserPrompt(
+      post.title,
+      post.primaryKeyword,
+      post.intent || "informational",
+      post.funnel || "tofu",
+      workspaceName
+    );
 
-    const mdxContent = response.choices[0]?.message?.content || "";
+    const messages: Array<{ role: "system" | "user" | "assistant"; content: string }> = [
+      { role: "system", content: SYSTEM_PROMPT },
+      { role: "user", content: userPrompt },
+    ];
+
+    let mdxContent = "";
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages,
+        max_tokens: 16384,
+        temperature: 0.7,
+      });
+
+      mdxContent = response.choices[0]?.message?.content || "";
+      const wordCount = mdxContent.split(/\s+/).filter(Boolean).length;
+      console.log(`[DraftGenerator] Attempt ${attempt + 1} for "${post.title}": ${wordCount} words`);
+
+      if (wordCount >= 1500 || attempt === 1) break;
+
+      messages.push({ role: "assistant", content: mdxContent });
+      messages.push({
+        role: "user",
+        content: `This draft is only ${wordCount} words. I need at least 1800 words. Please rewrite and significantly expand EVERY section with more detail, real-world examples, step-by-step instructions, data points, and actionable tips. Add 2-3 more paragraphs per section. Keep the same structure and image placeholders but make each section much more comprehensive. Return the complete expanded article.`,
+      });
+    }
     if (!mdxContent || mdxContent.length < 500) {
       await storage.updateWorkspaceBlogPost(postId, {
         generationStatus: "failed",

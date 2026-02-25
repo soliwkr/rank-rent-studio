@@ -5,6 +5,7 @@ import type { InsertRoomBooking } from "@shared/schema";
 import { insertSupportTicketSchema, getPlanTier } from "@shared/schema";
 import { getAiResponse, buildWidgetSystemPrompt, resolveAiKey } from "./ai-chat";
 import { compileMdxToHtml } from "./mdx-compiler";
+import { generateSingleDraft } from "./draft-generator";
 import fs from "fs";
 import path from "path";
 
@@ -1373,8 +1374,10 @@ export async function registerRoutes(
         posts = req.body.topics.map((topic: string) => ({
           workspaceId: wId,
           title: topic.trim(),
+          primaryKeyword: topic.trim().toLowerCase().replace(/[^a-z0-9\s]/g, "").split(/\s+/).slice(0, 6).join(" "),
           category: cat,
           status: "draft",
+          generationStatus: "pending",
         }));
       }
       if (posts.length > 0 && posts[0].workspaceId) {
@@ -1428,9 +1431,28 @@ export async function registerRoutes(
 
   app.post("/api/admin/blog/posts/bulk/generate", async (req, res) => {
     try {
-      res.json({ message: "Content generation is not available in this environment" });
-    } catch (error) {
-      res.status(500).json({ error: "Failed to generate content" });
+      const postIds: string[] = req.body.postIds || [];
+      if (postIds.length === 0) {
+        return res.status(400).json({ error: "No post IDs provided" });
+      }
+
+      res.json({ queued: postIds.length, message: `Generating ${postIds.length} posts in background` });
+
+      (async () => {
+        for (const id of postIds) {
+          try {
+            console.log(`[BulkGenerate] Starting generation for post ${id}`);
+            await generateSingleDraft(id);
+            console.log(`[BulkGenerate] Completed generation for post ${id}`);
+          } catch (err: any) {
+            console.error(`[BulkGenerate] Failed post ${id}:`, err.message);
+          }
+        }
+        console.log(`[BulkGenerate] Batch complete: ${postIds.length} posts processed`);
+      })();
+    } catch (error: any) {
+      console.error("[BulkGenerate] Error:", error.message);
+      res.status(500).json({ error: "Failed to start generation" });
     }
   });
 
