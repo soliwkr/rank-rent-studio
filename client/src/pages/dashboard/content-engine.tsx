@@ -395,10 +395,17 @@ function PostsTab({ workspaceId }: { workspaceId: string }) {
                   <Button variant="ghost" size="icon" data-testid="button-fullscreen-preview"><Maximize2 className="h-4 w-4" /></Button>
                 </div>
               </div>
-              <Card className="min-h-[400px]">
+              <Card className="min-h-[400px] overflow-auto max-h-[600px]">
                 <CardContent className="p-4">
                   {editorContent ? (
-                    <div className="prose dark:prose-invert max-w-none text-sm whitespace-pre-wrap">{editorContent}</div>
+                    editorPreviewMode === "html" ? (
+                      <pre className="text-xs font-mono whitespace-pre-wrap break-words">{selectedPost?.compiledHtml || editorContent}</pre>
+                    ) : (
+                      <div
+                        className="prose dark:prose-invert max-w-none text-sm [&_img]:rounded-lg [&_img]:max-w-full [&_figure]:my-4"
+                        dangerouslySetInnerHTML={{ __html: selectedPost?.compiledHtml || editorContent }}
+                      />
+                    )
                   ) : (
                     <p className="text-muted-foreground text-sm">Preview will appear here...</p>
                   )}

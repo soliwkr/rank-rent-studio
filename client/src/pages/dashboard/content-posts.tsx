@@ -50,6 +50,7 @@ interface Post {
   description: string | null;
   tags: string[] | null;
   mdxContent: string | null;
+  compiledHtml: string | null;
   schemaType: string | null;
   publishedAt: string | null;
   createdAt: string | null;
@@ -542,12 +543,12 @@ export default function ContentPosts() {
       </Dialog>
 
       <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
-        <DialogContent data-testid="dialog-preview-post">
+        <DialogContent data-testid="dialog-preview-post" className="max-w-4xl max-h-[85vh] overflow-hidden flex flex-col">
           <DialogHeader>
             <DialogTitle>Preview: {previewPost?.title}</DialogTitle>
           </DialogHeader>
           {previewPost && (
-            <div className="space-y-3">
+            <div className="space-y-3 overflow-auto flex-1">
               <div className="flex items-center gap-2 flex-wrap">
                 <Badge variant={statusVariant(previewPost.status)}>{previewPost.status}</Badge>
                 <Badge variant="outline">{previewPost.schemaType || "-"}</Badge>
@@ -559,6 +560,18 @@ export default function ContentPosts() {
               </div>
               {previewPost.description && (
                 <p className="text-sm text-muted-foreground">{previewPost.description}</p>
+              )}
+              {previewPost.compiledHtml ? (
+                <div
+                  className="prose dark:prose-invert max-w-none text-sm [&_img]:rounded-lg [&_img]:max-w-full [&_figure]:my-4 border-t pt-4"
+                  dangerouslySetInnerHTML={{ __html: previewPost.compiledHtml }}
+                />
+              ) : previewPost.mdxContent ? (
+                <div className="border-t pt-4">
+                  <pre className="text-sm whitespace-pre-wrap font-mono">{previewPost.mdxContent}</pre>
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground italic border-t pt-4">No content yet.</p>
               )}
             </div>
           )}
