@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Plus, CheckCircle, Pencil, Trash2, Search } from "lucide-react";
+import { Plus, CheckCircle, Pencil, Trash2, Search, ShoppingCart, Loader2, AlertTriangle } from "lucide-react";
 import { ContentEngineTabs } from "@/components/content-engine-tabs";
 import type { WorkspaceDomain } from "@shared/schema";
 
@@ -58,6 +58,13 @@ export default function ContentDomains() {
 
   const [removeOpen, setRemoveOpen] = useState(false);
   const [removeDomain, setRemoveDomain] = useState<WorkspaceDomain | null>(null);
+
+  // Domain registration state
+  const [registerOpen, setRegisterOpen] = useState(false);
+  const [registerDomain, setRegisterDomain] = useState("");
+  const [registerProvider, setRegisterProvider] = useState<"porkbun" | "ovh">("porkbun");
+  const [checkResult, setCheckResult] = useState<{ available: boolean | null; pricing?: { registration?: number; currency: string } | null; error?: string } | null>(null);
+  const [isChecking, setIsChecking] = useState(false);
 
   const { data: domains = [], isLoading } = useQuery<WorkspaceDomain[]>({
     queryKey: ["/api/admin/blog/domains", `?workspaceId=${workspaceId}`],
@@ -106,6 +113,39 @@ export default function ContentDomains() {
       toast({ title: "Failed to remove domain", description: err.message, variant: "destructive" });
     },
   });
+
+  const registerMutation = useMutation({
+    mutationFn: async (data: { domain: string; workspaceId: string; provider: string }) => {
+      const res = await apiRequest("POST", "/api/domains/register", data);
+      return res.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/blog/domains"] });
+      setRegisterOpen(false);
+      setRegisterDomain("");
+      setCheckResult(null);
+      const dnsNote = data.dnsErrors?.length ? ` DNS warnings: ${data.dnsErrors.join(", ")}` : " DNS configurato automaticamente.";
+      toast({ title: "Dominio registrato!", description: `${data.domain?.domain} è stato acquistato.${dnsNote}` });
+    },
+    onError: (err: Error) => {
+      toast({ title: "Registrazione fallita", description: err.message, variant: "destructive" });
+    },
+  });
+
+  const handleCheckDomain = async () => {
+    if (!registerDomain.trim()) return;
+    setIsChecking(true);
+    setCheckResult(null);
+    try {
+      const res = await apiRequest("POST", "/api/domains/check", { domain: registerDomain.trim(), workspaceId });
+      const data = await res.json();
+      setCheckResult(data);
+    } catch (e: any) {
+      setCheckResult({ available: null, error: e.message });
+    } finally {
+      setIsChecking(false);
+    }
+  };
 
   const domainsWithStatus = domains.map((d) => ({
     ...d,
@@ -171,10 +211,16 @@ export default function ContentDomains() {
       <ContentEngineTabs />
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <h1 className="text-2xl font-serif italic font-semibold" data-testid="text-page-title">Domains</h1>
-        <Button data-testid="button-add-domain" onClick={() => setAddOpen(true)}>
-          <Plus className="w-4 h-4 mr-2" />
-          Add Domain
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => { setRegisterOpen(true); setCheckResult(null); setRegisterDomain(""); }}>
+            <ShoppingCart className="w-4 h-4 mr-2" />
+            Register Domain
+          </Button>
+          <Button data-testid="button-add-domain" onClick={() => setAddOpen(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            Add Domain
+          </Button>
+        </div>
       </div>
 
       <div className="flex items-center gap-3 flex-wrap">
@@ -315,6 +361,86 @@ export default function ContentDomains() {
             <Button variant="outline" onClick={() => setRemoveOpen(false)} data-testid="button-cancel-remove-domain">Cancel</Button>
             <Button variant="destructive" onClick={handleRemoveConfirm} disabled={deleteMutation.isPending} data-testid="button-confirm-remove-domain">
               {deleteMutation.isPending ? "Removing..." : "Remove"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Register Domain Modal ── */}
+      <Dialog open={registerOpen} onOpenChange={setRegisterOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <ShoppingCart className="w-5 h-5" /> Registra Dominio
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Nome dominio</Label>
+              <div className="flex gap-2">
+                <Input
+                  placeholder="miodominio.it"
+                  value={registerDomain}
+                  onChange={e => { setRegisterDomain(e.target.value); setCheckResult(null); }}
+                  onKeyDown={e => e.key === "Enter" && handleCheckDomain()}
+                  className="font-mono"
+                />
+                <Button variant="outline" onClick={handleCheckDomain} disabled={isChecking || !registerDomain.trim()}>
+                  {isChecking ? <Loader2 className="w-4 h-4 animate-spin" /> : "Verifica"}
+                </Button>
+              </div>
+            </div>
+
+            {checkResult && (
+              <div className={`rounded-md p-3 text-sm ${checkResult.available === true ? "bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200" : checkResult.available === false ? "bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200" : "bg-muted border text-muted-foreground"}`}>
+                {checkResult.available === true && (
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-1.5 font-medium">
+                      <CheckCircle className="w-4 h-4" /> Disponibile!
+                    </div>
+                    {checkResult.pricing?.registration && (
+                      <p>Prezzo registrazione: <strong>${checkResult.pricing.registration} {checkResult.pricing.currency}/anno</strong></p>
+                    )}
+                  </div>
+                )}
+                {checkResult.available === false && (
+                  <div className="flex items-center gap-1.5 font-medium">
+                    <AlertTriangle className="w-4 h-4" /> Dominio già registrato
+                  </div>
+                )}
+                {checkResult.available === null && (
+                  <div className="flex items-center gap-1.5">
+                    <AlertTriangle className="w-4 h-4" /> {checkResult.error ?? "Verifica non disponibile — puoi procedere comunque"}
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <Label>Registrar</Label>
+              <Select value={registerProvider} onValueChange={v => setRegisterProvider(v as "porkbun" | "ovh")}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="porkbun">Porkbun</SelectItem>
+                  <SelectItem value="ovh">OVH</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <p className="text-xs text-muted-foreground">
+              Dopo la registrazione il DNS A record (@, www) verrà configurato automaticamente sul VPS.
+              Configura le credenziali del registrar in <strong>Connessioni → Domain Registrar</strong>.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRegisterOpen(false)}>Annulla</Button>
+            <Button
+              onClick={() => registerMutation.mutate({ domain: registerDomain.trim(), workspaceId, provider: registerProvider })}
+              disabled={!registerDomain.trim() || registerMutation.isPending || checkResult?.available === false}
+            >
+              {registerMutation.isPending ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Acquisto...</> : "Acquista e configura DNS"}
             </Button>
           </DialogFooter>
         </DialogContent>

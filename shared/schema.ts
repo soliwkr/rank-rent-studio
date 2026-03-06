@@ -908,6 +908,12 @@ export const workspaceDomains = pgTable(
     blogTemplate: text("blog_template").notNull().default("editorial"),
     accentColor: text("accent_color"),
     accentForeground: text("accent_foreground"),
+    // Domain registration tracking
+    registrar: text("registrar"), // "porkbun" | "ovh" | null (manually added)
+    registrationStatus: text("registration_status").default("manual"), // "manual" | "registered" | "pending" | "failed"
+    registeredAt: timestamp("registered_at"),
+    expiresAt: timestamp("expires_at"),
+    autoRenew: boolean("auto_renew").default(true),
     createdAt: timestamp("created_at").defaultNow(),
   },
   (t) => [
@@ -921,6 +927,38 @@ export const insertWorkspaceDomainSchema = createInsertSchema(workspaceDomains).
 });
 export type InsertWorkspaceDomain = z.infer<typeof insertWorkspaceDomainSchema>;
 export type WorkspaceDomain = typeof workspaceDomains.$inferSelect;
+
+// Domain registrar credentials (Porkbun / OVH) — BYOK per workspace
+export const registrarSettings = pgTable(
+  "registrar_settings",
+  {
+    id: serial("id").primaryKey(),
+    workspaceId: varchar("venue_id", { length: 36 })
+      .notNull()
+      .references(() => workspaces.id, { onDelete: "cascade" }),
+    provider: text("provider").notNull(), // "porkbun" | "ovh"
+    // Porkbun
+    apiKey: text("api_key"),
+    secretKey: text("secret_key"),
+    // OVH
+    ovhAppKey: text("ovh_app_key"),
+    ovhAppSecret: text("ovh_app_secret"),
+    ovhConsumerKey: text("ovh_consumer_key"),
+    ovhEndpoint: text("ovh_endpoint").default("ovh-eu"),
+    isEnabled: boolean("is_enabled").default(false),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (t) => [
+    uniqueIndex("registrar_settings_workspace_provider_uq").on(t.workspaceId, t.provider),
+  ]
+);
+
+export const insertRegistrarSettingsSchema = createInsertSchema(registrarSettings).omit({
+  id: true,
+  updatedAt: true,
+});
+export type InsertRegistrarSettings = z.infer<typeof insertRegistrarSettingsSchema>;
+export type RegistrarSettings = typeof registrarSettings.$inferSelect;
 
 export const postStatuses = ["draft", "scheduled", "published", "archived"] as const;
 export type PostStatus = typeof postStatuses[number];

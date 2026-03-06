@@ -1,10 +1,18 @@
 import type { Express, Request, Response } from "express";
 import { storage } from "./storage";
 import { compileMdxToHtml } from "./mdx-compiler";
-import { insertWorkspaceBlogPostSchema, insertWorkspaceDomainSchema, insertContentAssetSchema, insertContentAssetUsageSchema, insertInvoiceSchema, insertInvoiceLineItemSchema, insertContentReportSchema, blogTemplates } from "@shared/schema";
+import { insertWorkspaceBlogPostSchema, insertWorkspaceDomainSchema, insertRegistrarSettingsSchema, insertContentAssetSchema, insertContentAssetUsageSchema, insertInvoiceSchema, insertInvoiceLineItemSchema, insertContentReportSchema, blogTemplates } from "@shared/schema";
 import { z } from "zod";
 import { bulkCreateDraftPosts, generateCampaignDrafts, generateSingleDraft } from "./draft-generator";
 import { randomUUID } from "crypto";
+import {
+  checkDomainAvailability,
+  getPorkbunTldPricing,
+  registerWithPorkbun,
+  configurePorkbunDns,
+  registerWithOvh,
+  configureOvhDns,
+} from "./domain-registrar";
 import OpenAI from "openai";
 import fs from "fs";
 import path from "path";
@@ -491,6 +499,115 @@ ${placeholders.map((p, i) => `${i + 1}. "${p.prompt}"`).join("\n")}`;
       const deleted = await storage.deleteWorkspaceDomain(req.params.id);
       if (!deleted) return res.status(404).json({ error: "Domain not found" });
       res.json({ success: true });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // ── Domain Registrar Settings ──────────────────────────────────────────────
+
+  app.get("/api/workspaces/:workspaceId/registrar-settings", async (req, res) => {
+    if (!requireSuperAdmin(req, res)) return;
+    try {
+      const settings = await storage.getRegistrarSettings(req.params.workspaceId);
+      res.json(settings);
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  app.put("/api/workspaces/:workspaceId/registrar-settings", async (req, res) => {
+    if (!requireSuperAdmin(req, res)) return;
+    try {
+      const data = insertRegistrarSettingsSchema.parse({ ...req.body, workspaceId: req.params.workspaceId });
+      const settings = await storage.upsertRegistrarSettings(data);
+      res.json(settings);
+    } catch (err: any) {
+      res.status(400).json({ error: err.message });
+    }
+  });
+
+  // ── Domain Availability Check ──────────────────────────────────────────────
+
+  app.post("/api/domains/check", async (req, res) => {
+    if (!requireSuperAdmin(req, res)) return;
+    const { domain, workspaceId } = req.body as { domain: string; workspaceId: string };
+    if (!domain) return res.status(400).json({ error: "domain required" });
+    try {
+      const availability = await checkDomainAvailability(domain.toLowerCase().trim());
+      // If Porkbun credentials available, fetch pricing too
+      let pricing: { registration?: number; renewal?: number; currency: string } | null = null;
+      if (workspaceId) {
+        const allSettings = await storage.getRegistrarSettings(workspaceId);
+        const porkbun = allSettings.find(s => s.provider === "porkbun" && s.isEnabled && s.apiKey && s.secretKey);
+        if (porkbun) {
+          const tld = domain.split(".").slice(1).join(".");
+          pricing = await getPorkbunTldPricing(porkbun.apiKey!, porkbun.secretKey!, tld);
+        }
+      }
+      res.json({ domain, ...availability, pricing });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // ── Domain Registration ────────────────────────────────────────────────────
+
+  const VPS_IP = process.env.VPS_IP || "89.167.65.226";
+
+  app.post("/api/domains/register", async (req, res) => {
+    if (!requireSuperAdmin(req, res)) return;
+    const { domain, workspaceId, provider, configureDns = true } = req.body as {
+      domain: string;
+      workspaceId: string;
+      provider: "porkbun" | "ovh";
+      configureDns?: boolean;
+    };
+    if (!domain || !workspaceId || !provider) {
+      return res.status(400).json({ error: "domain, workspaceId, provider required" });
+    }
+    try {
+      const allSettings = await storage.getRegistrarSettings(workspaceId);
+      const creds = allSettings.find(s => s.provider === provider && s.isEnabled);
+      if (!creds) return res.status(400).json({ error: `No enabled ${provider} credentials found` });
+
+      let result: { success: boolean; error?: string };
+      if (provider === "porkbun") {
+        result = await registerWithPorkbun(domain, creds.apiKey!, creds.secretKey!);
+      } else {
+        const ovhResult = await registerWithOvh(domain, creds.ovhAppKey!, creds.ovhAppSecret!, creds.ovhConsumerKey!, creds.ovhEndpoint ?? "ovh-eu");
+        result = { success: ovhResult.success, error: ovhResult.error };
+      }
+
+      if (!result.success) return res.status(422).json({ error: result.error });
+
+      // Configure DNS
+      let dnsErrors: string[] = [];
+      if (configureDns) {
+        if (provider === "porkbun") {
+          const dns = await configurePorkbunDns(domain, VPS_IP, creds.apiKey!, creds.secretKey!);
+          dnsErrors = dns.errors;
+        } else {
+          const dns = await configureOvhDns(domain, VPS_IP, creds.ovhAppKey!, creds.ovhAppSecret!, creds.ovhConsumerKey!, creds.ovhEndpoint ?? "ovh-eu");
+          dnsErrors = dns.errors;
+        }
+      }
+
+      // Add domain to workspace
+      const expiresAt = new Date();
+      expiresAt.setFullYear(expiresAt.getFullYear() + 1);
+      const workspaceDomain = await storage.createWorkspaceDomain({
+        workspaceId,
+        domain,
+        isPrimary: false,
+        registrar: provider,
+        registrationStatus: "registered",
+        registeredAt: new Date(),
+        expiresAt,
+        autoRenew: true,
+      });
+
+      res.json({ success: true, domain: workspaceDomain, dnsErrors });
     } catch (err: any) {
       res.status(500).json({ error: err.message });
     }

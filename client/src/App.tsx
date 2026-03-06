@@ -113,6 +113,7 @@ const ConnectionsAi = lazy(() => import("@/pages/dashboard/connections-ai"));
 const ConnectionsImages = lazy(() => import("@/pages/dashboard/connections-images"));
 const ConnectionsPayments = lazy(() => import("@/pages/dashboard/connections-payments"));
 const ConnectionsTwilio = lazy(() => import("@/pages/dashboard/connections-twilio"));
+const ConnectionsRegistrar = lazy(() => import("@/pages/dashboard/connections-registrar"));
 
 const AiTrainingKb = lazy(() => import("@/pages/dashboard/ai-training-kb"));
 const AiTrainingChannels = lazy(() => import("@/pages/dashboard/ai-training-channels"));
@@ -430,6 +431,7 @@ export function AppRoutes() {
         <Route path="/:workspaceId/connections/image-banks">{() => <ClientRoute component={ConnectionsImages} />}</Route>
         <Route path="/:workspaceId/connections/payments">{() => <ClientRoute component={ConnectionsPayments} />}</Route>
         <Route path="/:workspaceId/connections/twilio">{() => <ClientRoute component={ConnectionsTwilio} />}</Route>
+        <Route path="/:workspaceId/connections/domain-registrar">{() => <ClientRoute component={ConnectionsRegistrar} />}</Route>
 
         {/* AI Training */}
         <Route path="/:workspaceId/ai-training/knowledge-base">{() => <ClientRoute component={AiTrainingKb} />}</Route>

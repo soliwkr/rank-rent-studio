@@ -26,6 +26,8 @@ import {
   type InsertPaymentSettings,
   type AiProviderSettings,
   type InsertAiProviderSettings,
+  type RegistrarSettings,
+  type InsertRegistrarSettings,
   type AdminSettings,
   type RoomType,
   type InsertRoomType,
@@ -96,6 +98,7 @@ import {
   twilioSettings,
   paymentSettings,
   aiProviderSettings,
+  registrarSettings,
   adminSettings,
   users,
   roomTypes,
@@ -187,6 +190,8 @@ export interface IStorage {
   upsertPaymentSettings(settings: InsertPaymentSettings): Promise<PaymentSettings>;
   getAiProviderSettings(workspaceId: string): Promise<AiProviderSettings[]>;
   upsertAiProviderSettings(settings: InsertAiProviderSettings): Promise<AiProviderSettings>;
+  getRegistrarSettings(workspaceId: string): Promise<RegistrarSettings[]>;
+  upsertRegistrarSettings(settings: InsertRegistrarSettings): Promise<RegistrarSettings>;
   getAdminSetting(key: string): Promise<AdminSettings | undefined>;
   setAdminSetting(key: string, value: any): Promise<AdminSettings>;
   // Room Types
@@ -804,6 +809,14 @@ export class MemStorage implements IStorage {
     };
     this.aiProviderSettingsMap.set(key, settings);
     return { ...settings, apiKey: decryptField(settings.apiKey) };
+  }
+
+  async getRegistrarSettings(workspaceId: string): Promise<RegistrarSettings[]> {
+    return [];
+  }
+
+  async upsertRegistrarSettings(data: InsertRegistrarSettings): Promise<RegistrarSettings> {
+    throw new Error("Not implemented in memory storage");
   }
 
   async getAdminSetting(key: string): Promise<AdminSettings | undefined> {
@@ -1834,6 +1847,34 @@ export class DbStorage implements IStorage {
     }
     const [s] = await db!.insert(aiProviderSettings).values(encrypted).returning();
     return { ...s, apiKey: decryptField(s.apiKey) };
+  }
+
+  async getRegistrarSettings(workspaceId: string): Promise<RegistrarSettings[]> {
+    const rows = await db!.select().from(registrarSettings).where(eq(registrarSettings.workspaceId, workspaceId));
+    return rows.map(r => ({
+      ...r,
+      apiKey: decryptField(r.apiKey),
+      secretKey: decryptField(r.secretKey),
+      ovhAppSecret: decryptField(r.ovhAppSecret),
+    }));
+  }
+
+  async upsertRegistrarSettings(data: InsertRegistrarSettings): Promise<RegistrarSettings> {
+    const encrypted = {
+      ...data,
+      apiKey: encryptField(data.apiKey) ?? null,
+      secretKey: encryptField(data.secretKey) ?? null,
+      ovhAppSecret: encryptField(data.ovhAppSecret) ?? null,
+    };
+    const [existing] = await db!.select().from(registrarSettings).where(
+      and(eq(registrarSettings.workspaceId, data.workspaceId), eq(registrarSettings.provider, data.provider))
+    );
+    if (existing) {
+      const [s] = await db!.update(registrarSettings).set({ ...encrypted, updatedAt: new Date() }).where(eq(registrarSettings.id, existing.id)).returning();
+      return { ...s, apiKey: decryptField(s.apiKey), secretKey: decryptField(s.secretKey), ovhAppSecret: decryptField(s.ovhAppSecret) };
+    }
+    const [s] = await db!.insert(registrarSettings).values(encrypted).returning();
+    return { ...s, apiKey: decryptField(s.apiKey), secretKey: decryptField(s.secretKey), ovhAppSecret: decryptField(s.ovhAppSecret) };
   }
 
   async getAdminSetting(key: string): Promise<AdminSettings | undefined> {

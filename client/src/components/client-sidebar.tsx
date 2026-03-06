@@ -104,6 +104,7 @@ const navGroups: NavGroup[] = [
       { title: "Image Banks", path: "/connections/image-banks", icon: ImageIcon },
       { title: "Payments", path: "/connections/payments", icon: CreditCard },
       { title: "Twilio Account", path: "/connections/twilio", icon: Phone },
+      { title: "Domain Registrar", path: "/connections/domain-registrar", icon: Globe },
     ],
   },
   {
