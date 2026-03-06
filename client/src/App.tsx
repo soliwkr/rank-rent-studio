@@ -7,7 +7,6 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ClientLayout } from "@/components/client-layout";
-import { useAuth } from "@/hooks/use-auth";
 
 const NotFound = lazy(() => import("@/pages/not-found"));
 const Home = lazy(() => import("@/pages/home2"));
@@ -28,7 +27,6 @@ const Pricing = lazy(() => import("@/pages/pricing"));
 const FAQ = lazy(() => import("@/pages/faq"));
 const Docs = lazy(() => import("@/pages/docs"));
 const Login = lazy(() => import("@/pages/login"));
-const Setup = lazy(() => import("@/pages/setup"));
 const DevClient = lazy(() => import("@/pages/dev-client"));
 const DevAdmin = lazy(() => import("@/pages/dev-admin"));
 
@@ -230,9 +228,6 @@ function hasAdminPermission(role: AdminRole, permission: string): boolean {
 }
 
 function ClientRoute({ component: Component }: { component: ComponentType }) {
-  const { isAuthenticated, isLoading } = useAuth();
-  if (isLoading) return null;
-  if (!isAuthenticated) return <Redirect to="/login" />;
   return (
     <ClientLayout>
       <Component />
@@ -333,8 +328,6 @@ export function AppRoutes() {
         <Route path="/demo-cms" component={DemoCMSLogos} />
         <Route path="/demo-chat" component={DemoChatWidget} />
         <Route path="/client-login" component={Login} />
-        <Route path="/login" component={Login} />
-        <Route path="/setup" component={Setup} />
         <Route path="/dev/client" component={DevClient} />
         <Route path="/dev/admin" component={DevAdmin} />
 
@@ -503,10 +496,8 @@ export function AppRoutes() {
 function AppContent() {
   const [location] = useLocation();
   const [mounted, setMounted] = useState(false);
-  const isAppRoute = location.startsWith("/login") ||
-                      location.startsWith("/setup") ||
-                      location.startsWith("/client-login") ||
-                      location.startsWith("/select-workspace") ||
+  const isAppRoute = location.startsWith("/client-login") || 
+                      location.startsWith("/select-workspace") || 
                       location.startsWith("/preview/") ||
                       location.startsWith("/widget-demo") ||
                       location.startsWith("/demo-") ||
