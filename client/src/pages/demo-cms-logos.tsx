@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { SiWordpress, SiWix, SiShopify, SiGhost, SiSquarespace, SiWebflow, SiDrupal, SiJoomla, SiMagento, SiBigcommerce } from "react-icons/si";
+import { SiWordpress, SiWix, SiShopify, SiGhost, SiSquarespace, SiWebflow, SiDrupal, SiJoomla, SiWoocommerce, SiBigcommerce } from "react-icons/si";
 import indexFlowLogo from "@assets/image_1771351451425.webp";
 
 const cmsPartners = [
@@ -11,7 +11,7 @@ const cmsPartners = [
   { name: "Webflow", icon: SiWebflow, color: "#4353FF" },
   { name: "Drupal", icon: SiDrupal, color: "#0678BE" },
   { name: "Joomla", icon: SiJoomla, color: "#5091CD" },
-  { name: "Magento", icon: SiMagento, color: "#EE672F" },
+  { name: "Magento", icon: SiWoocommerce, color: "#EE672F" },
   { name: "BigCommerce", icon: SiBigcommerce, color: "#121118" },
 ];
 

@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { DashboardLayout } from "@/components/dashboard-layout";
 import { useLocation } from "wouter";
-import { SiWordpress, SiWix, SiShopify, SiSquarespace, SiWebflow, SiDrupal, SiJoomla, SiMagento, SiBigcommerce, SiGhost } from "react-icons/si";
+import { SiWordpress, SiWix, SiShopify, SiSquarespace, SiWebflow, SiDrupal, SiJoomla, SiWoocommerce, SiBigcommerce, SiGhost } from "react-icons/si";
 
 type CmsPlatform = {
   id: string;
@@ -124,7 +124,7 @@ const cmsOptions: CmsPlatform[] = [
   {
     id: "magento",
     name: "Magento",
-    icon: SiMagento,
+    icon: SiWoocommerce,
     embedType: "script",
     instructions: [
       "Go to Content → Blocks",

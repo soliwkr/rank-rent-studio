@@ -1,5 +1,6 @@
 import { Link } from "wouter";
-import { SiLinkedin, SiX, SiGithub } from "react-icons/si";
+import { SiX, SiGithub } from "react-icons/si";
+import { Linkedin } from "lucide-react";
 import indexFlowLogo from "@assets/image_1771351451425.webp";
 
 const contentSeoLinks = [
@@ -93,7 +94,7 @@ export function Footer() {
                 <SiX className="w-4 h-4" />
               </a>
               <a href="#" className="text-muted-foreground hover:text-foreground transition-colors" aria-label="LinkedIn" data-testid="link-footer-linkedin">
-                <SiLinkedin className="w-4 h-4" />
+                <Linkedin className="w-4 h-4" />
               </a>
               <a href="#" className="text-muted-foreground hover:text-foreground transition-colors" aria-label="GitHub" data-testid="link-footer-github">
                 <SiGithub className="w-4 h-4" />

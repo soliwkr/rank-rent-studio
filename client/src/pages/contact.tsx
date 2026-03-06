@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Mail, Clock, Send, MessageCircle, Calendar, Building2, ChevronLeft, ChevronRight, Code } from "lucide-react";
-import { SiWordpress, SiWix, SiSquarespace, SiShopify, SiWebflow, SiDrupal, SiMagento, SiBigcommerce, SiJoomla } from "react-icons/si";
+import { SiWordpress, SiWix, SiSquarespace, SiShopify, SiWebflow, SiDrupal, SiWoocommerce, SiBigcommerce, SiJoomla } from "react-icons/si";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -487,7 +487,7 @@ export default function Contact() {
                       { name: "Shopify", icon: SiShopify, color: "text-[#96bf48]" },
                       { name: "Webflow", icon: SiWebflow, color: "text-[#4353ff]" },
                       { name: "Drupal", icon: SiDrupal, color: "text-[#0678be]" },
-                      { name: "Magento", icon: SiMagento, color: "text-[#f46f25]" },
+                      { name: "Magento", icon: SiWoocommerce, color: "text-[#f46f25]" },
                       { name: "BigCommerce", icon: SiBigcommerce, color: "text-[#121118]" },
                       { name: "Joomla", icon: SiJoomla, color: "text-[#5091cd]" },
                       { name: "Custom", icon: Code, color: "text-purple-500" },
