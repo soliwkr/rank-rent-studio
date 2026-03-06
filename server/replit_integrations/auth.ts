@@ -75,9 +75,8 @@ export function requireAuth(req: Request, res: Response, next: NextFunction): vo
 export function registerAuthRoutes(app: Express): void {
   // Check if any user with a password exists (first-run setup)
   app.get("/api/auth/setup-status", async (_req, res) => {
-    const withPassword = await db.select({ id: users.id }).from(users)
-      .where(isNotNull(users.passwordHash)).limit(1);
-    res.json({ needsSetup: withPassword.length === 0 });
+    const result = await pool.query("SELECT id FROM users WHERE password_hash IS NOT NULL LIMIT 1");
+    res.json({ needsSetup: result.rowCount === 0 });
   });
 
   // First-time admin registration (only if no user with password exists)
@@ -85,9 +84,8 @@ export function registerAuthRoutes(app: Express): void {
     const { email, password, firstName, lastName } = req.body;
     if (!email || !password) return res.status(400).json({ error: "Email e password obbligatorie" });
 
-    const existing = await db.select({ id: users.id }).from(users)
-      .where(isNotNull(users.passwordHash)).limit(1);
-    if (existing.length > 0) return res.status(403).json({ error: "Setup già completato" });
+    const existing = await pool.query("SELECT id FROM users WHERE password_hash IS NOT NULL LIMIT 1");
+    if ((existing.rowCount ?? 0) > 0) return res.status(403).json({ error: "Setup già completato" });
 
     const passwordHash = await bcrypt.hash(password, 12);
     const [user] = await db.insert(users).values({
