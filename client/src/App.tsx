@@ -142,9 +142,6 @@ const ByokGoogle = lazy(() => import("@/pages/dashboard/byok/google"));
 const ByokMistral = lazy(() => import("@/pages/dashboard/byok/mistral"));
 const ByokCohere = lazy(() => import("@/pages/dashboard/byok/cohere"));
 const ByokPerplexity = lazy(() => import("@/pages/dashboard/byok/perplexity"));
-const RoomTypes = lazy(() => import("@/pages/dashboard/room-types"));
-const Rooms = lazy(() => import("@/pages/dashboard/rooms"));
-const RoomBookings = lazy(() => import("@/pages/dashboard/room-bookings"));
 const Documentation = lazy(() => import("@/pages/dashboard/documentation"));
 const Support = lazy(() => import("@/pages/dashboard/support"));
 const ExportData = lazy(() => import("@/pages/dashboard/export-data"));
@@ -187,7 +184,6 @@ const ComparisonPlatform = lazy(() => import("@/pages/comparisons/platform"));
 
 const AnalyticsFeature = lazy(() => import("@/pages/features/analytics"));
 const MultiLanguageFeature = lazy(() => import("@/pages/features/multi-language"));
-const PrepaidReservationsFeature = lazy(() => import("@/pages/features/prepaid-reservations"));
 const SmsConfirmationsFeature = lazy(() => import("@/pages/features/sms-confirmations"));
 const VoiceBookingFeature = lazy(() => import("@/pages/features/voice-booking"));
 const WaitlistFeature = lazy(() => import("@/pages/features/waitlist"));
@@ -305,7 +301,6 @@ export function AppRoutes() {
 
         <Route path="/features/analytics" component={AnalyticsFeature} />
         <Route path="/features/multi-language" component={MultiLanguageFeature} />
-        <Route path="/features/prepaid-reservations" component={PrepaidReservationsFeature} />
         <Route path="/features/sms-confirmations" component={SmsConfirmationsFeature} />
         <Route path="/features/voice-booking" component={VoiceBookingFeature} />
         <Route path="/features/waitlist" component={WaitlistFeature} />
@@ -467,9 +462,6 @@ export function AppRoutes() {
         <Route path="/:workspaceId/byok/mistral">{() => <ClientRoute component={ByokMistral} />}</Route>
         <Route path="/:workspaceId/byok/cohere">{() => <ClientRoute component={ByokCohere} />}</Route>
         <Route path="/:workspaceId/byok/perplexity">{() => <ClientRoute component={ByokPerplexity} />}</Route>
-        <Route path="/:workspaceId/room-types">{() => <ClientRoute component={RoomTypes} />}</Route>
-        <Route path="/:workspaceId/rooms">{() => <ClientRoute component={Rooms} />}</Route>
-        <Route path="/:workspaceId/room-bookings">{() => <ClientRoute component={RoomBookings} />}</Route>
         <Route path="/:workspaceId/export-data">{() => <ClientRoute component={ExportData} />}</Route>
         <Route path="/:workspaceId/website-changes">{() => <ClientRoute component={WebsiteChanges} />}</Route>
         <Route path="/:workspaceId/documentation">{() => <ClientRoute component={Documentation} />}</Route>
@@ -515,9 +507,6 @@ function AppContent() {
                       location.includes("/analytics") ||
                       location.includes("/settings") ||
                       location.includes("/byok") ||
-                      location.includes("/room-types") ||
-                      location.includes("/rooms") ||
-                      location.includes("/room-bookings") ||
                       location.includes("/documentation") ||
                       location.includes("/support") ||
                       location.includes("/export-data") ||
