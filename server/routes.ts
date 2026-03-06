@@ -67,7 +67,7 @@ import {
   insertWorkspaceSiteProfileSchema,
 } from "@shared/schema";
 import { z } from "zod";
-import { setupAuth, registerAuthRoutes } from "./replit_integrations/auth";
+import { setupAuth, registerAuthRoutes, requireAuth } from "./replit_integrations/auth";
 import { registerTwilioWebhooks } from "./twilio-webhooks";
 import { registerCrmRoutes } from "./crm-routes";
 import { registerContentRoutes } from "./content-routes";
@@ -78,6 +78,13 @@ export async function registerRoutes(
 ): Promise<Server> {
   await setupAuth(app);
   registerAuthRoutes(app);
+
+  // Protect all /api routes except auth, widget, and public lead/track endpoints
+  const PUBLIC_API_PREFIXES = ["/auth/", "/widget/", "/chat", "/leads", "/track", "/blog"];
+  app.use("/api", (req, res, next) => {
+    if (PUBLIC_API_PREFIXES.some((p) => req.path.startsWith(p))) return next();
+    return requireAuth(req, res, next);
+  });
 
   app.get("/api/db-dump", (_req, res) => {
     if (process.env.NODE_ENV === "production") {

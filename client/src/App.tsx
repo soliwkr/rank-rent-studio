@@ -7,6 +7,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ClientLayout } from "@/components/client-layout";
+import { useAuth } from "@/hooks/use-auth";
 
 const NotFound = lazy(() => import("@/pages/not-found"));
 const Home = lazy(() => import("@/pages/home2"));
@@ -27,6 +28,7 @@ const Pricing = lazy(() => import("@/pages/pricing"));
 const FAQ = lazy(() => import("@/pages/faq"));
 const Docs = lazy(() => import("@/pages/docs"));
 const Login = lazy(() => import("@/pages/login"));
+const Setup = lazy(() => import("@/pages/setup"));
 const DevClient = lazy(() => import("@/pages/dev-client"));
 const DevAdmin = lazy(() => import("@/pages/dev-admin"));
 
@@ -228,6 +230,9 @@ function hasAdminPermission(role: AdminRole, permission: string): boolean {
 }
 
 function ClientRoute({ component: Component }: { component: ComponentType }) {
+  const { isAuthenticated, isLoading } = useAuth();
+  if (isLoading) return <div className="flex items-center justify-center min-h-screen bg-background"><div className="h-8 w-8 animate-spin rounded-full border-4 border-muted border-t-primary" /></div>;
+  if (!isAuthenticated) return <Redirect to="/login" />;
   return (
     <ClientLayout>
       <Component />
@@ -327,6 +332,8 @@ export function AppRoutes() {
         <Route path="/demo-reminder" component={DemoReminder} />
         <Route path="/demo-cms" component={DemoCMSLogos} />
         <Route path="/demo-chat" component={DemoChatWidget} />
+        <Route path="/login" component={Login} />
+        <Route path="/setup" component={Setup} />
         <Route path="/client-login" component={Login} />
         <Route path="/dev/client" component={DevClient} />
         <Route path="/dev/admin" component={DevAdmin} />
@@ -380,7 +387,7 @@ export function AppRoutes() {
         <Route path="/admin/widget-config">{() => <AdminRoute component={AdminWidgetConfig} permission="widgets" />}</Route>
 
         {/* Client Dashboard Routes */}
-        <Route path="/select-workspace" component={SelectWorkspace} />
+        <Route path="/select-workspace">{() => <ClientRoute component={SelectWorkspace} />}</Route>
         <Route path="/:workspaceId/today">{() => <ClientRoute component={Today} />}</Route>
         <Route path="/:workspaceId/calendar">{() => <ClientRoute component={CalendarView} />}</Route>
         <Route path="/:workspaceId/bookings/:bookingId">{() => <ClientRoute component={BookingDetail} />}</Route>

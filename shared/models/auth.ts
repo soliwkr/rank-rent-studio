@@ -154,6 +154,7 @@ export const users = pgTable(
     firstName: varchar("first_name"),
     lastName: varchar("last_name"),
     profileImageUrl: varchar("profile_image_url"),
+    passwordHash: varchar("password_hash"),
     plan: varchar("plan", { length: 50 }).notNull().default("solo"),
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
