@@ -6,7 +6,7 @@ import { Strategy as LocalStrategy } from "passport-local";
 import bcrypt from "bcryptjs";
 import { db, pool } from "../db";
 import { users } from "@shared/schema";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 
 declare global {
   namespace Express {
@@ -73,21 +73,20 @@ export function requireAuth(req: Request, res: Response, next: NextFunction): vo
 }
 
 export function registerAuthRoutes(app: Express): void {
-  // Check if any user exists (first-run setup)
+  // Check if any user with a password exists (first-run setup)
   app.get("/api/auth/setup-status", async (_req, res) => {
-    const [first] = await db.select({ id: users.id }).from(users).where(eq(users.plan, users.plan)).limit(1);
-    const [withPassword] = await db.select({ id: users.id }).from(users)
-      .where(eq(users.plan, users.plan)).limit(100);
-    const hasUsers = await db.select({ id: users.id }).from(users).limit(1);
-    res.json({ needsSetup: hasUsers.length === 0 });
+    const withPassword = await db.select({ id: users.id }).from(users)
+      .where(sql`password_hash IS NOT NULL`).limit(1);
+    res.json({ needsSetup: withPassword.length === 0 });
   });
 
-  // First-time admin registration (only if no users exist)
+  // First-time admin registration (only if no user with password exists)
   app.post("/api/auth/register", async (req, res) => {
     const { email, password, firstName, lastName } = req.body;
     if (!email || !password) return res.status(400).json({ error: "Email e password obbligatorie" });
 
-    const existing = await db.select({ id: users.id }).from(users).limit(1);
+    const existing = await db.select({ id: users.id }).from(users)
+      .where(sql`password_hash IS NOT NULL`).limit(1);
     if (existing.length > 0) return res.status(403).json({ error: "Setup già completato" });
 
     const passwordHash = await bcrypt.hash(password, 12);
